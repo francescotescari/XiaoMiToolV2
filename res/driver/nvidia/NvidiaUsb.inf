@@ -1,0 +1,303 @@
+[Version]
+Signature = "$Windows NT$"
+Class = NvBoot
+ClassGuid={EAD8C4F6-6102-45c7-AA66-36E6D7204600}
+Provider = %ProviderName%
+DriverVer=04/01/2010,1.00.01 
+; CatalogFile=MyCatFile.cat  FIXME Need own catlog file, which is signed
+
+;
+; This section seems to be required for WinUsb driver installation.
+; If this section is removed the installer will report an error
+; "Required section not found in INF file".
+;
+[ClassInstall32]
+Addreg = AndroidWinUsbClassReg
+
+[AndroidWinUsbClassReg]
+HKR,,,0,%WinUSB_SvcDesc%
+HKR,,Icon,,-1
+
+; ========== Manufacturer/Models sections ===========
+
+[Manufacturer]
+%ProviderName% = NvidiaUsb_WinUSB,NTx86,NTamd64
+
+[NvidiaUsb_WinUSB.NTx86]
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7014
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7015
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7115
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7215
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7315
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7415
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7515
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7615
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7715
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7815
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7915
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7a15
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7b15
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7c15
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7d15
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7e15
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7f15
+
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7016
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7116
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7216
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7316
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7416
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7516
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7616
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7716
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7816
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7916
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7a16
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7b16
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7c16
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7d16
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7e16
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7f16
+
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7020
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7120
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7220
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7320
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7420
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7520
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7620
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7720
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7820
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7920
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7a20
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7b20
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7c20
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7d20
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7e20
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7f20
+
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7030
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7130
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7230
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7330
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7430
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7530
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7630
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7730
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7830
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7930
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7a30
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7b30
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7c30
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7d30
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7e30
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7f30
+
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7035
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7135
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7235
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7335
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7435
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7535
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7635
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7735
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7835
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7935
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7a35
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7b35
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7c35
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7d35
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7e35
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7f35
+
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7040
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7140
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7240
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7340
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7440
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7540
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7640
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7740
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7840
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7940
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7a40
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7b40
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7c40
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7d40
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7e40
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7f40
+
+[NvidiaUsb_WinUSB.NTamd64]
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7014
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7015
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7115
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7130
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7215
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7315
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7415
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7515
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7615
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7715
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7815
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7915
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7a15
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7b15
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7c15
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7d15
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7e15
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7f15
+
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7016
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7116
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7216
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7316
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7416
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7516
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7616
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7716
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7816
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7916
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7a16
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7b16
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7c16
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7d16
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7e16
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7f16
+
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7020
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7120
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7220
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7320
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7420
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7520
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7620
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7720
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7820
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7920
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7a20
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7b20
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7c20
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7d20
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7e20
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7f20
+
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7030
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7130
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7230
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7330
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7430
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7530
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7630
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7730
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7830
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7930
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7a30
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7b30
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7c30
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7d30
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7e30
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7f30
+
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7035
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7135
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7235
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7335
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7435
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7535
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7635
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7735
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7835
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7935
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7a35
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7b35
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7c35
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7d35
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7e35
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7f35
+
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7040
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7140
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7240
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7340
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7440
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7540
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7640
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7740
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7840
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7940
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7a40
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7b40
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7c40
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7d40
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7e40
+%USB\NvidiaUsb.DeviceDesc% =NvidiaUsb_Install, USB\VID_0955&PID_7f40
+
+; =================== Installation ===================
+
+[NvidiaUsb_Install]
+Include=winusb.inf
+Needs=WINUSB.NT
+
+[NvidiaUsb_Install.Services]
+Include=winusb.inf
+AddService=WinUSB,0x00000002,WinUSB_ServiceInstall
+
+[WinUSB_ServiceInstall]
+DisplayName     = %WinUSB_SvcDesc%
+ServiceType     = 1
+StartType       = 3
+ErrorControl    = 1
+ServiceBinary   = %12%\WinUSB.sys
+
+[NvidiaUsb_Install.Wdf]
+KmdfService=WINUSB, WinUsb_Install
+
+[WinUSB_Install]
+KmdfLibraryVersion=1.7
+
+[NvidiaUsb_Install.HW]
+AddReg=Dev_AddReg
+
+[Dev_AddReg]
+; FIXME use our own GUID
+HKR,,DeviceInterfaceGUIDs,0x10000,"{EAD8C4F6-6102-45c7-AA66-36E6D7204600}"
+
+[NvidiaUsb_Install.CoInstallers]
+AddReg=CoInstallers_AddReg
+CopyFiles=CoInstallers_CopyFiles
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WdfCoInstaller01007.dll,WdfCoInstaller","WinUSBCoInstaller.dll"
+
+[CoInstallers_CopyFiles]
+WinUSBCoInstaller.dll
+WdfCoInstaller01007.dll
+
+[DestinationDirs]
+CoInstallers_CopyFiles=11
+
+; ================= Source Media Section =====================
+
+[SourceDisksNames]
+1 = %DISK_NAME%,,,\i386
+2 = %DISK_NAME%,,,\amd64
+
+[SourceDisksFiles.x86]
+WinUSBCoInstaller.dll=1
+WdfCoInstaller01007.dll=1
+
+[SourceDisksFiles.amd64]
+WinUSBCoInstaller.dll=2
+WdfCoInstaller01007.dll=2
+
+; =================== Strings ===================
+
+[Strings]
+ProviderName="NVIDIA Corporation"
+USB\NvidiaUsb.DeviceDesc="NVIDIA USB Boot-recovery driver for Mobile devices"
+USB\NvidiaUsb.DeviceDescFastboot="NVIDIA Android Fastboot Device"
+USB\NvidiaUsb.DeviceDescAdbComposite="NVIDIA Android Composite Device"
+USB\NvidiaUsb.DeviceDescAdbDebug="Android Debug Bridge Interface"
+WinUSB_SvcDesc="NVIDIA Boot Recovery"
+DISK_NAME="NVIDIA USB Boot Recovery Install Disk"
+

@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Class-Path: annotations-java8.jar json-20180130.jar commons-io-2.6.jar
+  src.zip javafx-swt.jar javafx.web.jar javafx.base.jar javafx.fxml.ja
+ r javafx.media.jar javafx.swing.jar javafx.controls.jar javafx.graphi
+ cs.jar commons-codec-1.11.jar commons-lang3-3.7.jar httpclient-4.5.5.
+ jar httpcore-4.4.9.jar commons-logging-1.2.jar commons-codec-1.10.jar
+  commons-logging-1.2.jar commons-compress-1.17.jar
+Main-Class: com.xiaomitool.v2.gui.MainWindow
+
