@@ -21,7 +21,12 @@ public class DeviceManager {
     public static void initScanThreads(){
         AdbCommunication.registerAutoScanDevices();
     }
-    public void addDevice(Device device){
+
+    public static void stopScanThreads() {
+        AdbCommunication.unregisterAutoScanDevices();
+    }
+
+    public static void addDevice(Device device){
         deviceMap.put(device.getSerial(), device);
     }
     public static void setSelectedDevice(Device device){

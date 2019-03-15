@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.tasks;
 
+import com.xiaomitool.v2.adb.AdbCommunication;
 import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.process.AdbRunner;
@@ -15,15 +16,17 @@ import java.util.regex.Pattern;
 public class AdbSideloadTask extends Task {
     private static final Pattern PROGRESS_MATCH = Pattern.compile("\\[\\s*(\\d+)/\\s*(\\d+)\\]");
     private File fileToSideload;
-    private String token;
-    public AdbSideloadTask(File fileToSideload, String token){
+    private String token, serial;
+    public AdbSideloadTask(File fileToSideload, String token, String serial){
         this.fileToSideload = fileToSideload;
         this.token = token;
+        this.serial = serial;
     }
 
     @Override
     protected void startInternal() {
         AdbRunner runner = new AdbRunner();
+        runner.setDeviceSerial(serial);
         runner.addArgument("sideload");
         if (fileToSideload == null){
             this.error(new InstallException("null file to sideload", InstallException.Code.INTERNAL_ERROR, false));
@@ -55,12 +58,16 @@ public class AdbSideloadTask extends Task {
 
             }
         });
+        AdbCommunication.getAllAccess();
         try {
             runner.runWait();
         } catch (IOException e) {
             this.error(e);
             return;
+        } finally {
+            AdbCommunication.giveAllAccess();
         }
+
         if (runner.getExitValue() != 0){
             error(new InstallException(new AdbException("adb sideload exited with status: "+runner.getExitValue())));
             return;

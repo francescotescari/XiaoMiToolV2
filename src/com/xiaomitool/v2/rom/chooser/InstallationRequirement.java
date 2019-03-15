@@ -13,6 +13,8 @@ import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.procedure.install.StockRecoveryInstall;
 import com.xiaomitool.v2.procedure.install.TwrpInstall;
 import com.xiaomitool.v2.rom.Installable;
+import com.xiaomitool.v2.rom.MiuiRom;
+import com.xiaomitool.v2.rom.MiuiZipRom;
 import com.xiaomitool.v2.utility.YesNoMaybe;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 
@@ -46,7 +48,7 @@ public abstract class   InstallationRequirement {
     public static final InstallationRequirement STOCKRECOVERY_REACHABLE = new InstallationRequirement("stock recovery reachable", USB_DEBUG_ENABLED) {
         @Override
         public boolean isSatisfied(Device device) {
-            return  !device.getDeviceProperties().getSideloadProperties().isFailed();
+            return  !YesNoMaybe.YES.equals(device.getAnswers().hasTwrpRecovery()) && device.getDeviceProperties().getSideloadProperties().isParsed();
         }
 
         @Override
@@ -182,13 +184,36 @@ public abstract class   InstallationRequirement {
     }
 
     public static InstallationRequirement[] getInstallableRequirements(Installable installable, Device device){
-        List<InstallationRequirement> requirementList = new ArrayList<>();
+        List<InstallationRequirement> requirementList = new LinkedList<>();
         switch (installable.getType()){
             case RECOVERY:
-                if (installable.hasInstallToken() || installable.isOfficial() && UnlockStatus.UNLOCKED.equals(device.getAnswers().getUnlockStatus())){
-                    requirementList.add(STOCKRECOVERY_REACHABLE);
-                } else {
+                Log.debug("Trying get install recovery requirements...");
+                Log.debug("Has iToken? "+installable.hasInstallToken());
+                Log.debug("Is official? "+installable.isOfficial());
+                Log.debug("Bootloader status: "+device.getAnswers().getUnlockStatus());
+                Log.debug("Stock recovery reachable? "+STOCKRECOVERY_REACHABLE.isSatisfied(device));
+                boolean hasStockRecovery = (!UnlockStatus.UNLOCKED.equals(device.getAnswers().getUnlockStatus()) || STOCKRECOVERY_REACHABLE.isSatisfied(device));
+                boolean isStockRecoveryInstallable = (installable.hasInstallToken() || installable.isOfficial()) && (installable instanceof MiuiZipRom);
+                boolean isUnsafeCrossRegionInstallation = false;
+                if (isStockRecoveryInstallable){
+                    MiuiZipRom zipRom = (MiuiZipRom) installable;
+                    MiuiRom.Specie wantToInstallSpecie = zipRom.getSpecie();
+                    MiuiRom.Specie currentSpecie = device.getAnswers().getCurrentSpecie();
+                    if (currentSpecie.getZone() != wantToInstallSpecie.getZone()){
+                        Log.debug("Different rom zone installation, this might be an unsafe cross region installation");
+                        String product = (String) device.getDeviceProperties().get(DeviceProperties.CODENAME);
+                        isUnsafeCrossRegionInstallation = !DeviceGroups.isSafeToChangeRecoveryLocked(product);
+                    }
+                }
+                if (!isStockRecoveryInstallable){
                     requirementList.add(TWRP_INSTALLED);
+                } else {
+                    if (isUnsafeCrossRegionInstallation) {
+                        requirementList.add(UNLOCKED_BOOTLOADER);
+                    }
+                    if (!hasStockRecovery) {
+                        requirementList.add(STOCKRECOVERY_REACHABLE);
+                    }
                 }
                 break;
             case IMAGE:

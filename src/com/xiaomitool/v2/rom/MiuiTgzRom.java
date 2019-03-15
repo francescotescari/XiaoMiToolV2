@@ -5,6 +5,7 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.RInstall;
 import com.xiaomitool.v2.procedure.install.FastbootInstall;
 import com.xiaomitool.v2.tasks.*;
+import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.miuithings.Codebase;
 import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
 
@@ -62,6 +63,8 @@ public class MiuiTgzRom extends MiuiRom {
         super(Type.FASTBOOT, isOfficial, "", false, true);
         setFake(true);
     }
+
+
 
 
     @Override

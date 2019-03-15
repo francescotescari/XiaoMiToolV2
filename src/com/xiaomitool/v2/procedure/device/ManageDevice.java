@@ -6,7 +6,6 @@ import com.xiaomitool.v2.adb.device.DeviceAnswers;
 import com.xiaomitool.v2.adb.device.DeviceManager;
 import com.xiaomitool.v2.engine.actions.ActionsDynamic;
 import com.xiaomitool.v2.gui.WindowManager;
-import com.xiaomitool.v2.gui.visual.ButtonPane;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.install.InstallException;
@@ -26,18 +25,8 @@ public class ManageDevice {
     }
 
     public static RInstall checkIfTwrpInstalled(){
-        return RNode.sequence(new RInstall() {
-            @Override
-            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Device device = Procedures.requireDevice(runner);
-                try {
-                    device.requireAccessibile();
-                } catch (AdbException e) {
-                    throw new InstallException(e);
-                }
-            }
-        },
-                RNode.fallback(RNode.sequence(RebootDevice.rebootRecovery(true, false), TwrpInstall.checkIfIsInTwrp(), new RInstall() {
+        return RNode.sequence(requireAccessible(),
+                RNode.fallback(RNode.sequence(RebootDevice.rebootRecovery(true, false, 15), TwrpInstall.checkIfIsInTwrp(), new RInstall() {
                     @Override
                     public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                         Device device = Procedures.requireDevice(runner);
@@ -46,8 +35,10 @@ public class ManageDevice {
                 }), new RInstall() {
                     @Override
                     public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+
                         Device device = Procedures.requireDevice(runner);
                         device.getAnswers().setAnswer(DeviceAnswers.HAS_TWRP, YesNoMaybe.NO);
+                        ActionsDynamic.HOWTO_GO_RECOVERY(device).run();
                     }
                 }));
 
@@ -62,10 +53,10 @@ public class ManageDevice {
             }
         });
     }
-    public static RInstall checkAccessible(){
-        return checkAccessible(true);
+    public static RInstall requireAccessible(){
+        return requireAccessible(true);
     }
-    public static RInstall checkNoUnauthOffline(boolean refresh){
+    public static RInstall requireNoUnauthOffline(boolean refresh){
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -83,7 +74,7 @@ public class ManageDevice {
         };
     }
 
-    public static RInstall checkConnected(boolean refresh){
+    public static RInstall requireConnected(boolean refresh){
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -95,23 +86,39 @@ public class ManageDevice {
                     return;
                 }
                 ActionsDynamic.REQUIRE_DEVICE_CONNECTED(device).run();
+                //ActionsDynamic.REQUIRE_DEVICE_AUTH(device).run();
 
             }
         };
     }
 
-    public static RInstall checkAccessible(boolean refresh){
-        return RNode.sequence(checkConnected(refresh), checkNoUnauthOffline(refresh));
+    public static RInstall waitRequireAccessible(int timeout, Device.Status showTextExpectedDeviceStatus){
+        return RNode.sequence(RNode.setSkipOnException(waitDevice(timeout, showTextExpectedDeviceStatus)), requireAccessible(true));
+    }
+
+    public static RInstall requireAccessible(boolean refresh){
+        return RNode.sequence(requireConnected(refresh), requireNoUnauthOffline(refresh));
     }
 
 
-    public static RInstall waitDevice(int timeout){
+    public static RInstall waitDevice(int timeout, Device.Status showTextExpectedDeviceStatus){
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
-
-                if (device.waitActive(timeout) == null){
+                if (showTextExpectedDeviceStatus != null){
+                    String connectionType = Device.Status.DEVICE.equals(showTextExpectedDeviceStatus) ? "ADB":  showTextExpectedDeviceStatus.toString();
+                    runner.text(LRes.WAITING_DEVICE_ACTIVE.toString(connectionType));
+                }
+                int t = timeout;
+                if (t < 2){
+                    t = 2;
+                }
+                t-=2;
+                Thread.sleep(1500);
+                device.setConnected(false);
+                DeviceManager.refresh();
+                if (device.waitActive(t) == null){
                     throw new InstallException("Waited device for "+timeout+" seconds but it wasn't active", InstallException.Code.WAIT_DEVICE_TIMEOUT, true);
                 }
 

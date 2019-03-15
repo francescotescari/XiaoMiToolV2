@@ -5,8 +5,8 @@ import com.xiaomitool.v2.adb.AdbCommons;
 import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.FastbootCommons;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.utility.NotNull;
 import com.xiaomitool.v2.utility.WaitSemaphore;
-import org.jetbrains.annotations.NotNull;
 
 public class Device {
 
@@ -104,6 +104,8 @@ public class Device {
         isConnected = connected;
         if (connected){
             deviceActiveSem.setPermits(1);
+        } else {
+            deviceActiveSem.setPermits(0);
         }
     }
     public boolean isConnected() {
@@ -135,6 +137,7 @@ public class Device {
         return rebootNoWait(toStatus, false);
     }
     private boolean rebootInternal(Status toStatus, boolean wait) throws InterruptedException, AdbException {
+        deviceActiveSem.setPermits(0);
         if (Status.FASTBOOT.equals(this.status)){
             return fastbootReboot(toStatus, wait);
         } else {
@@ -144,26 +147,30 @@ public class Device {
     private boolean fastbootReboot(Status toStatus, boolean wait) throws AdbException, InterruptedException {
         if (Status.FASTBOOT.equals(toStatus)){
             FastbootCommons.rebootBootloader(serial);
-            return rebootWait(toStatus);
+            return wait ? rebootWait(toStatus) : true;
         } else if (Status.EDL.equals(toStatus)){
             FastbootCommons.oemEdl(serial);
-            return rebootWait(toStatus);
-        } else {
-            if (!Status.DEVICE.equals(toStatus) && !wait){
-                throw new AdbException("Cannot reboot from fastboot to "+toStatus.toString()+" without waiting");
+            return wait ? rebootWait(toStatus) : true;
+        } else if (Status.SIDELOAD.equals(toStatus) || Status.RECOVERY.equals(toStatus)){
+            if (FastbootCommons.oemRebootRecovery(serial)){
+                return wait ? rebootNoWait(toStatus) : true;
             }
-            FastbootCommons.reboot(serial);
-            if (!wait){
+        }
+        if (!Status.DEVICE.equals(toStatus) && !wait){
+            throw new AdbException("Cannot reboot from fastboot to "+toStatus.toString()+" without waiting");
+        }
+        FastbootCommons.reboot(serial);
+        if (!wait){
+            return true;
+        }
+        if (!rebootWait(Status.DEVICE)){
+            if (isConnected && toStatus.equals(this.status)){
                 return true;
             }
-            if (!rebootWait(Status.DEVICE)){
-                if (isConnected && toStatus.equals(this.status)){
-                    return true;
-                }
-                return false;
-            }
-            return reboot(toStatus,false);
+            return false;
         }
+        return reboot(toStatus,false);
+
     }
 
 
@@ -183,6 +190,8 @@ public class Device {
         String status = toStatus.toString();
         if (Status.FASTBOOT.equals(toStatus)){
             status = "bootloader";
+        } else if (Status.SIDELOAD.equals(toStatus)){
+            status = Status.RECOVERY.toString();
         }
         AdbCommons.reboot(serial,status);
         return !wait || rebootWait(toStatus);

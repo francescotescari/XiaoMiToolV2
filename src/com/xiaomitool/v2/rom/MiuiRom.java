@@ -154,6 +154,10 @@ public abstract class MiuiRom extends Installable {
 
     protected Specie specie;
 
+    public Specie getSpecie() {
+        return specie;
+    }
+
     @Override
     public String getDownloadUrl() {
         if (downloadUrl != null && !downloadUrl.isEmpty()){

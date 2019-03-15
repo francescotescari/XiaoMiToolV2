@@ -4,8 +4,11 @@ import com.xiaomitool.v2.adb.AdbCommons;
 import com.xiaomitool.v2.crypto.Hash;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.process.AdbRunner;
+import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.utility.YesNoMaybe;
 import com.xiaomitool.v2.utility.utils.StrUtils;
+import com.xiaomitool.v2.xiaomi.miuithings.Branch;
+import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 
 import java.util.HashMap;
@@ -108,4 +111,11 @@ public class DeviceAnswers {
         setAnswer(NEED_DEVICE_DEBUG, answer);
     }
 
+    public MiuiRom.Specie getCurrentSpecie() {
+        String product = (String) device.getDeviceProperties().get(DeviceProperties.CODENAME);
+        MiuiVersion version = MiuiVersion.fromObject(device.getDeviceProperties().get(DeviceProperties.FULL_VERSION));
+        Branch branch = version == null ? Branch.DEVELOPER : version.getBranch();
+        branch = branch == null ? Branch.DEVELOPER : branch;
+        return MiuiRom.Specie.fromStringBranch(product,branch);
+    }
 }

@@ -87,12 +87,12 @@ public class StockRecoveryFetch {
     }
 
     public static RInstall allLatestOta(){
-        return RNode.setSkipOnException(RNode.sequence(
+        return RNode.skipOnException(
                 fetchOnlyIfDeviceLockedOrNoFastboot(MiuiRom.Specie.CHINA_STABLE, findInstallWay(MiuiRom.Specie.CHINA_STABLE)),
                 fetchOnlyIfDeviceLockedOrNoFastboot(MiuiRom.Specie.CHINA_DEVELOPER,findInstallWay(MiuiRom.Specie.CHINA_DEVELOPER)),
                 fetchOnlyIfDeviceLockedOrNoFastboot(MiuiRom.Specie.GLOBAL_STABLE,findInstallWay(MiuiRom.Specie.GLOBAL_STABLE)),
                 fetchOnlyIfDeviceLockedOrNoFastboot(MiuiRom.Specie.GLOBAL_DEVELOPER,findInstallWay(MiuiRom.Specie.GLOBAL_DEVELOPER))
-        ));
+        );
     }
 
     public static RInstall validatePkgRom(){
@@ -120,6 +120,7 @@ public class StockRecoveryFetch {
                 }
                 params.setPkg(md5);
                 HashMap<MiuiRom.Kind, MiuiZipRom> rom ;
+                runner.text(LRes.REQUEST_OTA_INSTALLATION_TOKEN.toString(specie.toString()));
                 try {
                     rom = MiuiRomOta.otaV3_request(params);
                 } catch (XiaomiProcedureException e) {
@@ -225,7 +226,7 @@ public class StockRecoveryFetch {
                     params.setPkg(md5);
                 }
                 HashMap<MiuiRom.Kind, MiuiZipRom> rom ;
-                runner.text(LRes.SEARCHING_LATEST_RECOVERY_ROM.toString(params.getSpecie().toString()));
+                runner.text(LRes.SEARCHING_LATEST_OTA_ROM.toString(params.getSpecie().toString()));
                         try {
                             rom = MiuiRomOta.otaV3_request(params);
                         } catch (XiaomiProcedureException e) {
@@ -246,14 +247,14 @@ public class StockRecoveryFetch {
                 if (installable == null){
                     throw new InstallException("Ota response doesn't contain an installable rom data", InstallException.Code.MISSING_PROPERTY, true);
                 }
-                if (!installable.hasInstallToken() && !UnlockStatus.UNLOCKED.equals(Procedures.requireDevice(runner).getAnswers().getUnlockStatus()) && installable.getMd5() != null && !installable.getMd5().isEmpty()){
+                /*if (!installable.hasInstallToken() && !UnlockStatus.UNLOCKED.equals(Procedures.requireDevice(runner).getAnswers().getUnlockStatus()) && installable.getMd5() != null && !installable.getMd5().isEmpty()){
                     runner.setContext(SRF_MD5, installable.getMd5());
                     this.run(runner);
                     return;
-                }
+                }*/
 
 
-                chooser.add(id, installable);
+                //chooser.add(id, installable);
                 Procedures.setInstallable(runner,installable);
 
 

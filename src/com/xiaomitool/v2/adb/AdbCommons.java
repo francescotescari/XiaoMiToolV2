@@ -98,7 +98,7 @@ public class AdbCommons {
         return runner.getOutputString();
     }
 
-    private static String adb_shellWithOr(String cmd, String device, int timeout){
+    public static String adb_shellWithOr(String cmd, String device, int timeout){
         cmd += " || echo "+CHECK_RETURN_CODE;
         String output = adb_shell(cmd, device, timeout);
         return (output == null || output.contains(CHECK_RETURN_CODE)) ? null : output;

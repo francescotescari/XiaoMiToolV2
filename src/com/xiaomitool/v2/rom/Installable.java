@@ -8,6 +8,7 @@ import com.xiaomitool.v2.utility.Choiceable;
 import com.xiaomitool.v2.utility.CommandClass;
 import com.xiaomitool.v2.utility.WaitSemaphore;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
+import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.miuithings.Codebase;
 import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
 
@@ -160,6 +161,11 @@ public abstract class Installable extends CommandClass implements Choiceable {
             return finalFile;
         }
         return extractInternal(listener);
+    }
+
+
+    public String toLogString() {
+        return this.getClass().getSimpleName()+" - "+StrUtils.str(this.getType())+"[url:"+StrUtils.str(this.downloadUrl)+",dl:"+StrUtils.str(downloadedFile)+",final:"+StrUtils.str(finalFile)+"]";
     }
 
     public void fetchResources(UpdateListener downloadListener, UpdateListener extractListener) {

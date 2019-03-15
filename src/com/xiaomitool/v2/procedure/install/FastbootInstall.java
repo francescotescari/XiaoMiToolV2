@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.procedure.install;
 
+import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.AdbUtils;
 import com.xiaomitool.v2.adb.FastbootCommons;
 import com.xiaomitool.v2.adb.device.Device;
@@ -34,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
@@ -165,7 +167,12 @@ public class FastbootInstall {
                         String line = (String) arg;
                         Matcher m = p.matcher(line);
                         if (m.find()){
-                            procedureRunner.text(m.group(1));
+                            String text = m.group(1);
+                            procedureRunner.text(text);
+                            if (text.toLowerCase().endsWith("system")){
+                                procedureRunner.text(LRes.CAN_TAKE_COUPLE_MIN);
+                            }
+
                         }
                         lastLine.pointed = line;
                     }
@@ -187,6 +194,8 @@ public class FastbootInstall {
 
     }
 
+    private static final HashMap<String, String> UNLOCK_TOKEN_CACHE = new HashMap<>();
+
     @ExportFunction("unlock_bootlaoder")
     public static RInstall unlockBootloader(){
         return RNode.sequence(RebootDevice.requireFastboot(), new RInstall() {
@@ -205,11 +214,13 @@ public class FastbootInstall {
                     throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, true);
                 }
                 try {
+                    runner.text(LRes.UNLOCK_CHECKING_ACCOUNT);
                     String info = UnlockCommonRequests.userInfo();
                     if (info != null){
                         //TODO
                         Log.debug(info);
                     }
+                    runner.text(LRes.UNLOCK_CHECKING_DEVICE);
                     String alert = UnlockCommonRequests.deviceClear((String) device.getDeviceProperties().get(DeviceProperties.CODENAME));
                     if (alert != null){
                         //TODO
@@ -228,53 +239,69 @@ public class FastbootInstall {
                 if (click != 0){
                     throw new InstallException("Unlock procedure aborted, cannot continue", InstallException.Code.ABORTED, true);
                 }
-                token = AdbUtils.parseFastbootVar("token",FastbootCommons.getvar("token", device.getSerial()));
-                if (token == null){
-                    throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, true);
-                }
-                try {
-                    String unlockData = null;
-                    if (false) { //TODO REMOVE FAKE UNLOCK
+                while (true) {
+                    token = AdbUtils.parseFastbootVar("token", FastbootCommons.getvar("token", device.getSerial()));
+                    if (token == null) {
+                        throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, true);
+                    }
+                    try {
+                        String unlockData = null;
                         unlockData = UnlockCommonRequests.ahaUnlock(token, (String) device.getDeviceProperties().get(DeviceProperties.CODENAME), (String) device.getDeviceProperties().getFastbootProperties().get("", ""), (String) device.getDeviceProperties().getFastbootProperties().get("", ""), "");
-                    } else {
-                        unlockData = "{\"code\":0,\"encryptData\":\"86B700178A7F1BF7886D7A3FA05EBDEECA3095AB4D091C2750A313F1310EF2E898DB92ED3CA7E1FD09E17A92D93BEF63C15653ECB848E672B9C892C4A172F117D671F64A49846A768E95FEAD6643F09D723AC90847D738B8AC12BDB29C8DE2B3AB9A855729A655BDF8A5A0E69B8AC102E78C673D836A808D400157F7FF305BE567AAB5D640FCFBA3229B63F77D81DDABCF2CC01B57E7400D0081547B99F92E2F470CB5B7DF2F43318F0F9205A315FFD19981FC9662371BA4C157A528B448B1BAF5D1D950E349504240DB4BA4AE57C57B85B24834F6130651D555437C24BE0EFFEB7E1277925AFB1D631B66012BBA78CE6161F7C6AF50021BF0849BF15AFD6F42\",\"description\":\"私钥签名成功\",\"uid\":\"1606054557\"}";
-                    }
-                    if (unlockData == null){
-                        throw new InstallException("Failed to get the unlock data required", InstallException.Code.INFO_RETRIVE_FAILED, true);
-                    }
-                    Log.debug(unlockData);
-                    JSONObject json = new JSONObject(unlockData);
-                    int code = json.optInt("code",-100);
-                    String description = json.optString("description", "null");
-                    String encryptData = json.optString("encryptData",null);
+                        if (unlockData == null) {
+                            throw new InstallException("Failed to get the unlock data required", InstallException.Code.INFO_RETRIVE_FAILED, true);
+                        }
+                        Log.debug(unlockData);
+                        JSONObject json = new JSONObject(unlockData);
+                        int code = json.optInt("code", -100);
+                        String description = json.optString("description", "null");
+                        String encryptData = json.optString("encryptData", null);
+                        Log.debug(description);
+                        if (code != 0 || encryptData == null) {
+                           // throw new InstallException("The server responded, but the unlock is not permitted, code: " + code + ", description: " + description, InstallException.Code.XIAOMI_EXCEPTION, true);
+                            ButtonPane unlockButtonPane = new ButtonPane(LRes.TRY_AGAIN, LRes.ABORT);
+                            unlockButtonPane.setContentText(LRes.UNLOCK_ERROR_TEXT.toString(code, UnlockCommonRequests.getUnlockCodeMeaning(code,json)));
+                            WindowManager.setMainContent(unlockButtonPane,false);
+                            int choice = unlockButtonPane.waitClick();
+                            WindowManager.removeTopContent();
+                            if(choice == 0){
+                                continue;
+                            } else {
+                                throw InstallException.ABORT_EXCEPTION;
+                            }
+                        } else {
+                            UNLOCK_TOKEN_CACHE.put(token, encryptData);
+                        }
+                        YesNoMaybe unlocked = FastbootCommons.oemUnlock(device.getSerial(), encryptData);
+                        if (YesNoMaybe.NO.equals(unlocked)) {
+                            throw new InstallException("Failed to unlock the device, fastboot exit with status non zero or internal error", InstallException.Code.UNLOCK_ERROR, true);
+                        }
+                        device.getDeviceProperties().getFastbootProperties().put(DeviceProperties.X_LOCKSTATUS, UnlockStatus.UNKNOWN);
+                        Thread.sleep(1000);
+                        DeviceManager.refresh();
+                        try {
+                            device.waitStatus(Device.Status.FASTBOOT, 4);
+                            Device.Status status = device.getStatus();
+                            if (Device.Status.FASTBOOT.equals(status)) {
+                                device.getDeviceProperties().getFastbootProperties().parse(true);
+                            }
+                            if (UnlockStatus.LOCKED.equals(device.getAnswers().getUnlockStatus())) {
+                                throw new InstallException("Failed to unlock the device, the procedure failed during the unlock command, the device doens't seem to be unlocked", UNLOCK_ERROR, true);
+                            }
+                        } catch (AdbException e){
+                            //Device not in fastboot after 4 seconds = unlock success;
+                            Log.debug("Successful unlock!");
+                        }
+                        break;
 
-                    if (code != 0 || encryptData == null){
-                        throw new InstallException("The server responded, but the unlock is not permitted, code: "+code+", description: "+description, InstallException.Code.XIAOMI_EXCEPTION, true);
+                    } catch (XiaomiProcedureException e) {
+                        throw new InstallException(e);
+                    } catch (CustomHttpException e) {
+                        throw new InstallException(e);
+                    } catch (InstallException e) {
+                        throw e;
+                    } catch (Exception e){
+                        throw new InstallException("Internal error while parsing unlock data: "+e.getMessage(), InstallException.Code.INTERNAL_ERROR, true);
                     }
-                    YesNoMaybe unlocked = FastbootCommons.oemUnlock(device.getSerial(), encryptData);
-                    if (YesNoMaybe.NO.equals(unlocked)){
-                        throw new InstallException("Failed to unlock the device, fastboot exit with status non zero or internal error", InstallException.Code.UNLOCK_ERROR, true);
-                    }
-                    device.getDeviceProperties().getFastbootProperties().put(DeviceProperties.X_LOCKSTATUS, UnlockStatus.UNKNOWN);
-                    Thread.sleep(1000);
-                    DeviceManager.refresh();
-                    device.waitStatus(Device.Status.FASTBOOT, 4);
-                    Device.Status status = device.getStatus();
-                    if (Device.Status.FASTBOOT.equals(status)){
-                        device.getDeviceProperties().getFastbootProperties().parse(true);
-                    }
-                    if (UnlockStatus.LOCKED.equals(device.getAnswers().getUnlockStatus())){
-                        throw new InstallException("Failed to unlock the device, the procedure failed during the unlock command, the device doens't seem to be unlocked", UNLOCK_ERROR, true);
-                    }
-
-                } catch (XiaomiProcedureException e) {
-                    throw new InstallException(e);
-                } catch (CustomHttpException e) {
-                    throw new InstallException(e);
-                } catch (InstallException e){
-                   throw e;
-                } catch (Exception e){
-                    throw new InstallException("Internal error while parsing unlock data: "+e.getMessage(), InstallException.Code.INTERNAL_ERROR, true);
                 }
 
             }

@@ -5,8 +5,12 @@ import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceManager;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.engine.CommonsMessages;
+import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.gui.GuiUtils;
+import com.xiaomitool.v2.gui.PopupWindow;
 import com.xiaomitool.v2.gui.WindowManager;
+import com.xiaomitool.v2.gui.deviceView.Animatable;
+import com.xiaomitool.v2.gui.deviceView.DeviceRecoveryView;
 import com.xiaomitool.v2.gui.deviceView.DeviceView;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.other.DeviceTableEntry;
@@ -17,8 +21,13 @@ import com.xiaomitool.v2.procedure.GuiListener;
 import com.xiaomitool.v2.procedure.ProcedureRunner;
 import com.xiaomitool.v2.procedure.RInstall;
 import com.xiaomitool.v2.procedure.RMessage;
+import com.xiaomitool.v2.procedure.device.ManageDevice;
+import com.xiaomitool.v2.procedure.device.RebootDevice;
 import com.xiaomitool.v2.procedure.install.GenericInstall;
+import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.procedure.uistuff.ChooseProcedure;
+import com.xiaomitool.v2.procedure.uistuff.ConfirmationProcedure;
+import com.xiaomitool.v2.utility.CommandClass;
 import com.xiaomitool.v2.utility.Nullable;
 import com.xiaomitool.v2.utility.RunnableMessage;
 
@@ -38,8 +47,12 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
+
+import java.util.HashMap;
 
 import static com.xiaomitool.v2.engine.CommonsMessages.NOOP;
+
 
 public class ActionsDynamic {
     public static RunnableMessage MAIN_SCREEN_LOADING(LRes message){
@@ -81,7 +94,7 @@ public class ActionsDynamic {
             case RECOVERY:
                 msg = LRes.NO_DEVICE_CONNECTED_RECOVERY;
                 button = LRes.HT_GO_RECOVERY;
-                howto = ActionsStatic.HOWTO_GO_RECOVERY();
+                howto = HOWTO_GO_RECOVERY(null);
                 break;
             case FASTBOOT:
                 msg = LRes.NO_DEVICE_CONNECTED_FASTBOOT;
@@ -90,6 +103,7 @@ public class ActionsDynamic {
             default:
                 msg = LRes.NO_DEVICE_CONNECTED;
                 button = LRes.HT_ENABLE_USB_DEBUG;
+                howto = ActionsDynamic.HOW_TO_ENABLE_USB_DEBUGGING(null, DeviceManager.getDevices().isEmpty());
 
         }
         ButtonPane pane = new ButtonPane(LRes.SEARCH_AGAIN, button);
@@ -103,7 +117,7 @@ public class ActionsDynamic {
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(20);
         pane.setContent(vBox);
-        Log.debug("SDSDSASEW");
+
         WindowManager.setMainContent(pane);
         DeviceManager.addMessageReceiver(pane.getIdClickReceiver());
         int message = CommonsMessages.NOOP;
@@ -111,7 +125,7 @@ public class ActionsDynamic {
             message=pane.waitClick();
             if (message > 0 && howto != null){
                 message = howto.run();
-                if (message >= 0){
+                if (message == 0){
                     message = NOOP;
                 }
             }
@@ -240,7 +254,7 @@ public class ActionsDynamic {
             vBox.setAlignment(Pos.CENTER);
             vBox.setSpacing(20);
             pane.setContent(vBox);
-            WindowManager.setMainContent(pane);
+            WindowManager.setMainContent(pane, false);
             IDClickReceiver receiver = pane.getIdClickReceiver();
             DeviceManager.addMessageReceiver(receiver);
             int message = NOOP;
@@ -254,14 +268,16 @@ public class ActionsDynamic {
                 if (message == 0){
                     MAIN_SCREEN_LOADING(LRes.SEARCHING_CONNECTED_DEVICES).run();
                     ActionsStatic.RESTART_ADB_SERVER().run();
+                    WindowManager.removeTopContent();
                     if (device.isConnected()){
                         break;
                     }
-                    WindowManager.removeTopContent();
+
                 }
                 message = NOOP;
             }
             DeviceManager.removeMessageReceiver(receiver);
+            WindowManager.removeTopContent();
             return 1;
         };
     }
@@ -272,6 +288,7 @@ public class ActionsDynamic {
     public static RunnableMessage WAIT_USB_DEBUG_ENABLE(Device device, String text){
         return () -> {
             ButtonPane pane = new ButtonPane(LRes.HT_ENABLE_USB_DEBUG, LRes.SEARCH_AGAIN);
+            pane.setContentText(LRes.WAITING_USB_ENABLE.toString(LRes.SEARCH_AGAIN));
             WindowManager.setMainContent(pane);
             IDClickReceiver receiver = pane.getIdClickReceiver();
             DeviceManager.addMessageReceiver(receiver);
@@ -285,11 +302,18 @@ public class ActionsDynamic {
                 }
                 if (message == 1){
                     ActionsStatic.RESTART_ADB_SERVER().run();
-                    if (device.isTurnedOn()){
+                    WindowManager.removeTopContent();
+                    if (device.isTurnedOn() || Device.Status.UNAUTHORIZED.equals(device.getStatus())){
                         break;
                     }
-                    WindowManager.removeTopContent();
 
+
+                } else if (message == 0){
+                    if (HOW_TO_ENABLE_USB_DEBUGGING(device, true).run() > 0){
+                        if (device.isTurnedOn() || Device.Status.UNAUTHORIZED.equals(device.getStatus())){
+                            break;
+                        }
+                    }
                 }
 
                     message = NOOP;
@@ -297,6 +321,52 @@ public class ActionsDynamic {
             }
             DeviceManager.removeMessageReceiver(receiver);
             return  0;};
+    }
+
+    public static RunnableMessage REBOOT_STOCK_RECOVERY(Device device, boolean force){
+        return new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+
+                if (device == null){
+                    return 0;
+                }
+                if (!force){
+                    if (Device.Status.SIDELOAD.equals(device.getStatus())){
+                        return 1;
+                    }
+                }
+                REQUIRE_DEVICE_CONNECTED(device).run();
+                REQUIRE_DEVICE_AUTH(device).run();
+                if (Device.Status.FASTBOOT.equals(device.getStatus())){
+                    try {
+                        if (!device.reboot(Device.Status.DEVICE)){
+                            throw new AdbException("Failed to reboot device to device mode");
+                        }
+                    } catch (AdbException e) {
+                        REQUIRE_DEVICE_CONNECTED(device).run();
+                        REQUIRE_DEVICE_AUTH(device).run();
+                        if (!device.isTurnedOn()){
+                            return 0;
+                        }
+
+                    }
+                }
+                Thread.sleep(1000);
+                try {
+                    if (!device.rebootNoWait(Device.Status.SIDELOAD,force)){
+                        throw new AdbException("Failed to reboot device to recovery mode");
+                    }
+                    HOWTO_GO_RECOVERY(device).run();
+                    if(!device.waitStatus(Device.Status.SIDELOAD)){
+                        throw new AdbException("Failed to reboot device to recovery mode");
+                    }
+                } catch (AdbException e) {
+                    return 0;
+                }
+                return 1;
+            }
+        };
     }
 
     public static RunnableMessage FIND_DEVICE_INFO(Device device){
@@ -354,7 +424,7 @@ public class ActionsDynamic {
                         ActionsUtil.setDevicePropertiesText(device, texts);
                     }
 
-                    if (!device.getDeviceProperties().getSideloadProperties().isParsed()) {
+                    if (!device.getDeviceProperties().getSideloadProperties().isParsed() && !device.getDeviceProperties().getRecoveryProperties().isParsed()) {
                         try {
                             if (UnlockStatus.UNLOCKED.equals(device.getAnswers().getUnlockStatus())) {
                                 Platform.runLater(new Runnable() {
@@ -365,11 +435,13 @@ public class ActionsDynamic {
                                 });
 
                             } else {
-                                if (!device.reboot(Device.Status.RECOVERY)) {
-                                    throw new Exception("Failed to reboot to recovery");
-                                } else {
-                                    ActionsUtil.setDevicePropertiesText(device, texts);
+
+                                boolean result = REBOOT_STOCK_RECOVERY(device, true).run() != 0;
+                                if (!result){
+                                    throw new Exception("Failed to reboot to stock recovery");
                                 }
+                                ActionsUtil.setDevicePropertiesText(device, texts);
+
                             }
                         } catch (Exception e) {
                             Platform.runLater(new Runnable() {
@@ -411,32 +483,31 @@ public class ActionsDynamic {
 
             IDClickReceiver receiver = pane.getIdClickReceiver();
             DeviceManager.addMessageReceiver(receiver);
-            DeviceView deviceView = new DeviceView(DeviceView.DEVICE_18_9, 900);
+            DeviceView deviceView = new DeviceView(DeviceView.DEVICE_18_9, 880);
             ImageView image = new ImageView(DrawableManager.getPng(DrawableManager.DEVICE_AUTH).toString());
-            image.setViewport(new Rectangle2D(0,image.getImage().getHeight()-2160,1080,2160));
+            //image.setViewport(new Rectangle2D(0,image.getImage().getHeight()-2160,1080,2160));
             deviceView.setContent(image);
             deviceView.buildCircleTransition(800,2060,Animation.INDEFINITE);
-            Pane cropped = GuiUtils.crop(deviceView,0,550,900/deviceView.getOuterAspectRatio(),350);
-            cropped.setPrefSize(900/deviceView.getOuterAspectRatio(),350);
-            GuiUtils.debug(cropped);
+
+            //GuiUtils.debug(cropped);
             Text text = new Text(LRes.AUTH_DEVICE_TEXT.toString());
             text.setTextAlignment(TextAlignment.CENTER);
             text.setFont(Font.font(16));
             text.setWrappingWidth(600);
-            VBox vBox = new VBox(GuiUtils.center(cropped),text);
+            VBox vBox = new VBox(GuiUtils.center(DeviceView.crop(deviceView,310,570)),text);
             vBox.setAlignment(Pos.CENTER);
             vBox.setSpacing(20);
 
             pane.setContent(vBox);
 
-            WindowManager.setMainContent(pane);
+            WindowManager.setMainContent(pane, false);
 
 
             int messsage = NOOP;
             while (messsage == NOOP){
                 messsage = receiver.waitClick();
                 if(messsage == CommonsMessages.DEVICE_UPDATE_FINISH){
-                    if (!device.needAuthorization()){
+                    if (!device.needAuthorization()  && device.isConnected()){
                         break;
                     }
                 }
@@ -447,16 +518,20 @@ public class ActionsDynamic {
                     DeviceManager.refresh();
                     if (device.needAuthorization()) {
                         ActionsStatic.RESTART_ADB_SERVER().run();
-                        if (!device.needAuthorization()){
+                        if (!device.needAuthorization() && device.isConnected()){
                             break;
                         } else {
-                            WindowManager.setMainContent(pane);
+                            WindowManager.setMainContent(pane, false);
                         }
+                    } else {
+                        break;
                     }
                     messsage = NOOP;
                 }
             }
+
             DeviceManager.removeMessageReceiver(receiver);
+            WindowManager.removeTopContent();
             return 1;
         };
     }
@@ -489,25 +564,157 @@ public class ActionsDynamic {
 
                 //runner.setContext("prop_"+DeviceProperties.CODENAME,"whyred");
                 //FastbootFetch.findAllLatestFastboot().run(runner);
+                RInstall main = GenericInstall.main();
                 try {
+                    try {
+                   /* RebootDevice.rebootNoWaitIfConnected().run(runner);
                     Log.debug("PRO0 CHOOSE CAT");
                     ChooseProcedure.chooseRomCategory().run(runner);
                     Log.debug("PRO0 CHOOSE ROM");
                     ChooseProcedure.chooseRom().run(runner);
                     Log.debug("PRO0 FETCH RESOURCE");
+                    ConfirmationProcedure.confirmInstallableProcedure().run(runner);
+                    ConfirmationProcedure.confirmInstallationStart().run(runner);
+                    runner.text(LRes.WAITING_DEVICE_ACTIVE);
+                    ManageDevice.waitDevice(60);
+                    GenericInstall.satisfyAllRequirements().run(runner);
                     GenericInstall.resourceFetchWait().run(runner);
-                    Log.debug("PRO0 INSTALL ROM");
+                    DeviceManager.refresh();
                     GenericInstall.runInstallProcedure().run(runner);
-                    Log.debug("PRO0 FINISHED");
-                    GenericInstall.installationSuccess().run(runner);
-                } catch (Exception e){
-                    e.printStackTrace();
-                } catch (RMessage rMessage) {
+                    GenericInstall.installationSuccess().run(runner);*/
+                        main.run(runner);
+
+                    } catch (Exception e) {
+                        try {
+                            runner.handleException(new InstallException(e.getMessage(), InstallException.Code.INTERNAL_ERROR, false), main);
+                        } catch (InstallException e1) {
+                            throw new RMessage(e1);
+                        }
+                    }
+                }catch (RMessage rMessage) {
+                    Log.debug("RMSG: "+rMessage.getCmd());
                     rMessage.printStackTrace();
+                    if (CommandClass.Command.ABORT.equals(rMessage.getCmd())){
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    ActionsStatic.MOD_CHOOSE_SCREEN().run();
+                                } catch (InterruptedException e) {
+                                    Log.debug(e.getMessage());
+                                }
+                            }
+                        }).start();
+                        return 0;
+                    }
+                    Stage st = WindowManager.launchPopup(new PopupWindow.ImageTextPopup("A fatal error has occured: type: "+rMessage.getCmd()+"\nThe tool will now exit",PopupWindow.Icon.ERROR));
+                    if (st != null){
+                        while (st.isShowing()){
+                            Thread.sleep(100);
+                        }
+
+                    }
+                    ToolManager.exit(1);
+                    System.exit(1);
                 }
-
-
                 return 0;
+            }
+        };
+    }
+    public static RunnableMessage HOWTO_GO_RECOVERY(Device device){
+        return HOWTO_GO_RECOVERY(true,device);
+    }
+
+    public static RunnableMessage HOWTO_GO_RECOVERY(boolean rebootingText, Device device){
+        return  () -> {
+            ButtonPane buttonPane = new ButtonPane(LRes.OK_FINISHED);
+            SidePane sidePane = new SidePane();
+            DeviceRecoveryView deviceRecoveryView = new DeviceRecoveryView(DeviceView.DEVICE_18_9,640);
+            deviceRecoveryView.animateSelectThird(3000);
+            String nText;
+            if (!rebootingText){
+                nText = "1) "+LRes.BTN_VOLUP_POW.toString()+"\n2) "+LRes.HT_RECOVERY_TEXT_1.toString();
+            } else {
+                nText = LRes.ENTER_STOCK_RECOVERY_MODE.toString();
+            }
+            Text t = new Text(nText);
+
+            t.setWrappingWidth(400);
+            t.setFont(Font.font(15));
+            sidePane.setLeft(t);
+            Pane p = DeviceView.crop(deviceRecoveryView,410);
+
+            //GuiUtils.debug(p);
+            sidePane.setRight(GuiUtils.center(p));
+            buttonPane.setContent(sidePane);
+            WindowManager.setMainContent(buttonPane,false);
+            DeviceManager.addMessageReceiver(buttonPane.getIdClickReceiver());
+            int msg = NOOP;
+            int exitcode = 0;
+            while (msg < 0){
+                exitcode = 0;
+
+                if (device != null && device.isConnected() && Device.Status.SIDELOAD.equals(device.getStatus())){
+                    exitcode = 1;
+                    break;
+                }
+                //Log.debug(msg+" - "+DeviceManager.count(Device.Status.SIDELOAD));
+                msg = buttonPane.waitClick();
+            }
+            DeviceManager.removeMessageReceiver(buttonPane.getIdClickReceiver());
+            WindowManager.removeTopContent();
+            return exitcode;
+        };
+    }
+
+    public static RunnableMessage HOW_TO_ENABLE_USB_DEBUGGING(Device device, boolean search){
+        return new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+                String[] text = new String[]{LRes.HT_ENABLE_USB_1.toString(),LRes.HT_ENABLE_USB_2.toString(),LRes.HT_ENABLE_USB_3.toString(),LRes.HT_ENABLE_USB_4.toString(),LRes.HT_ENABLE_USB_5.toString(),LRes.HT_ENABLE_USB_6.toString(),LRes.HT_ENABLE_USB_7.toString(),};
+                Image[] images = new Image[7];
+                for (int i = 0; i<7; i++){
+                    images[i] = new Image(DrawableManager.getPng("usbdbg"+(i+1)).toString(),false);
+                }
+                HashMap<Integer, Animatable.AnimationPayload> animations = new HashMap<>();
+                animations.put(0,new Animatable.AnimationPayload(664,1323,Animation.INDEFINITE, true));
+                animations.put(1,new Animatable.AnimationPayload(400,435,Animation.INDEFINITE, true));
+                animations.put(2,new Animatable.AnimationPayload(400,1050,Animation.INDEFINITE, true));
+                animations.put(3,new Animatable.AnimationPayload(400,1954,Animation.INDEFINITE, true));
+                animations.put(4,new Animatable.AnimationPayload(400,1746,Animation.INDEFINITE, true));
+                animations.put(5,new Animatable.AnimationPayload(950,1082,Animation.INDEFINITE, true));
+                animations.put(6,new Animatable.AnimationPayload(800,2060,Animation.INDEFINITE, true));
+                DeviceImgInstructionPane instructionPane = new DeviceImgInstructionPane(WindowManager.getContentHeight() + 30, WindowManager.getContentHeight() - 10, text, images, animations);
+                //instructionPane.setOverlayLen(WindowManager.requireOverlayPane(), 0.6);
+
+                IDClickReceiver receiver = instructionPane.getIdClickReceiver();
+                WindowManager.setMainContent(instructionPane, false);
+                if (search) {
+                    DeviceManager.addMessageReceiver(receiver);
+                }
+                int message = CommonsMessages.NOOP;
+                int exitcode = 0;
+                while (message < 0){
+                    exitcode = 0;
+                    if (device != null) {
+                        if (Device.Status.DEVICE.equals(device.getStatus()) || Device.Status.UNAUTHORIZED.equals(device.getStatus())) {
+                            exitcode = 1;
+                            break;
+                        }
+                    } else {
+                        if (message == CommonsMessages.NEW_DEVICE && !DeviceManager.getDevices().isEmpty()){
+                            Device d = DeviceManager.getFirstDevice();
+                            if (d != null && (Device.Status.DEVICE.equals(d.getStatus()) || Device.Status.UNAUTHORIZED.equals(d.getStatus()))) {
+                                exitcode = 1;
+                                break;
+                            }
+                        }
+                    }
+                    message = instructionPane.waitClick();
+                }
+                DeviceManager.removeMessageReceiver(receiver);
+                WindowManager.removeTopContent();
+                return exitcode;
             }
         };
     }

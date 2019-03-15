@@ -9,6 +9,7 @@ import com.xiaomitool.v2.gui.visual.ToastPane;
 import com.xiaomitool.v2.gui.visual.VisiblePane;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.Pointer;
+import com.xiaomitool.v2.utility.SilentCompleteFuture;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -149,17 +150,30 @@ public class WindowManager {
         toastPane.toast(message);
     }
     public static Stage launchPopup(PopupWindow popupWindow){
-        Pointer pointer = new Pointer();
-        PopupController controller = new PopupController(popupWindow);
-        Stage stage = launchWindow(FRAME_POPUP,controller,null,pointer);
-        Parent p = stage.getScene().getRoot();
-        StackPane mainPane = (StackPane) p;
-        ((Pane) pointer.pointed).setMinSize(popupWindow.getWidth(),popupWindow.getHeight());
+        SilentCompleteFuture<Stage> future = new SilentCompleteFuture<>();
 
-        stage.setTitle(DEFAULT_TITLE);
-        stage.sizeToScene();
-        centerStage(stage);
-        return stage;
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Pointer pointer = new Pointer();
+                PopupController controller = new PopupController(popupWindow);
+                Stage stage = launchWindow(FRAME_POPUP,controller,null,pointer);
+                Parent p = stage.getScene().getRoot();
+                StackPane mainPane = (StackPane) p;
+                ((Pane) pointer.pointed).setMinSize(popupWindow.getWidth(),popupWindow.getHeight());
+
+                stage.setTitle(DEFAULT_TITLE);
+                stage.sizeToScene();
+                centerStage(stage);
+                future.complete(stage);
+            }
+        };
+        if (Platform.isFxApplicationThread()){
+            runnable.run();
+        } else {
+            Platform.runLater(runnable);
+        }
+        return future.getSilently();
 
     }
     private static Stage launchWindow(String fxml, DefaultController controller, Stage primaryStage){
@@ -267,5 +281,9 @@ public class WindowManager {
             }
         });
 
+    }
+
+    public static OverlayPane requireOverlayPane() {
+        return mainOverlay;
     }
 }

@@ -4,24 +4,31 @@ import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.visual.ButtonPane;
 import com.xiaomitool.v2.language.LRes;
+import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.chooser.InstallationRequirement;
+import com.xiaomitool.v2.utility.utils.InetUtils;
 
 import java.util.List;
 
 public class ConfirmationProcedure {
 
+    public static final String KEY_BOOL_CONFIRM_STEPS = "bool_confirm_steps";
+
+
     public static RInstall confirmInstallableProcedure(){
-        return RNode.fallback(new RInstall() {
+        return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Procedures.saveProcedure("confirmInstallableProcedure",this).run(runner);
+                Procedures.saveProcedure("confirmInstallableProcedure",confirmInstallableProcedure()).run(runner);
                 Installable installable = Procedures.requireInstallable(runner);
                 Device device = Procedures.requireDevice(runner);
                 List<InstallationRequirement> requirements = InstallationRequirement.getAllInstallableRequirements(installable,device);
+                runner.setContext(KEY_BOOL_CONFIRM_STEPS, Boolean.TRUE);
                 if (requirements.isEmpty()){
+                    Log.debug("No requirements for this installation");
                     return;
                 }
                 StringBuilder text = new StringBuilder(LRes.CONFIRM_REQUIREMENTS_TEXT.toString(LRes.CONTINUE.toString(), LRes.CANCEL.toString()));
@@ -34,10 +41,51 @@ public class ConfirmationProcedure {
                 int click = buttonPane.waitClick();
                 WindowManager.removeTopContent();
                 if (click != 0){
-                    throw new InstallException("You should not see this text", InstallException.Code.INTERNAL_ERROR, false);
+                    runner.setContext(KEY_BOOL_CONFIRM_STEPS, Boolean.FALSE);
                 }
 
             }
-        },RNode.sequence(ChooseProcedure.chooseRom(), Procedures.runSavedProcedure("confirmInstallableProcedure")));
+        },RNode.conditional(KEY_BOOL_CONFIRM_STEPS, null, RNode.sequence(ChooseProcedure.chooseRom(), Procedures.runSavedProcedure("confirmInstallableProcedure"))));
+    }
+
+    public static RInstall suggestInternetIfMissing(String message, String keyWasSkipped){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                if(InetUtils.isInternetAvailable()){
+                    runner.setContext(keyWasSkipped, Boolean.FALSE);
+                    return;
+                }
+                ButtonPane buttonPane = new ButtonPane(LRes.SKIP, LRes.TRY_AGAIN);
+                buttonPane.setContentText(message);
+                WindowManager.setMainContent(buttonPane,false);
+                int click = buttonPane.waitClick();
+                WindowManager.removeTopContent();
+                if (click == 0){
+                    runner.setContext(keyWasSkipped, Boolean.TRUE);
+                    return;
+                }
+                this.run(runner);
+            }
+        };
+    }
+
+    private static final String KEY_BOOL_CONFIRM_INSTALL = "bool_confirm_install";
+    public static RInstall confirmInstallationStart(){
+        return RNode.sequence(new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Procedures.saveProcedure("confirmInstallationStart", confirmInstallationStart()).run(runner);
+                runner.setContext(KEY_BOOL_CONFIRM_INSTALL, Boolean.TRUE);
+                ButtonPane buttonPane = new ButtonPane(LRes.CONTINUE, LRes.CANCEL);
+                buttonPane.setContentText(LRes.CONFIRM_INSTALLATION_START.toString(LRes.CONTINUE));
+                WindowManager.setMainContent(buttonPane,false);
+                int click = buttonPane.waitClick();
+                WindowManager.removeTopContent();
+                if (click != 0){
+                    runner.setContext(KEY_BOOL_CONFIRM_INSTALL, Boolean.FALSE);
+                }
+            }
+        }, RNode.conditional(KEY_BOOL_CONFIRM_INSTALL, null, RNode.sequence(ChooseProcedure.chooseRom(), confirmInstallableProcedure(), Procedures.runSavedProcedure("confirmInstallationStart"))));
     }
 }

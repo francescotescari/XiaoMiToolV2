@@ -34,8 +34,5 @@ public abstract class ZipRom extends Installable {
         return TwrpInstall.installZip();
     }
 
-    /*@Override
-    public ChooserPane.Choice getChoice() {
-        return null;//TODO
-    }*/
+
 }

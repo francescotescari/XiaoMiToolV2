@@ -21,4 +21,8 @@ public class NumberUtils {
             return null;
         }
     }
+
+    public static int double2int(double number) {
+        return Double.valueOf(number).intValue();
+    }
 }

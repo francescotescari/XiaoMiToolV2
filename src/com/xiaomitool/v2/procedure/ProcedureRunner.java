@@ -4,8 +4,10 @@ import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceManager;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.gui.visual.InstallPane;
+import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.Installable;
+import com.xiaomitool.v2.utility.utils.StrUtils;
 import javafx.scene.layout.Pane;
 
 
@@ -137,10 +139,14 @@ public class ProcedureRunner extends GuiListener {
     private HashMap<String, Object> context = new HashMap<>();
     public void setContext(String key, Object value){
         context.put(key,value);
+        Log.debug("Context var set: "+key+" -> "+StrUtils.str(value));
     }
 
     public Object getContext(String key){
-        return context.get(key);
+
+        Object res = context.get(key);
+        Log.debug("Getting context var: "+key+" -> "+StrUtils.str(res));
+        return res;
     }
     public Object requireContext(String key) throws InstallException {
         Object res = getContext(key);

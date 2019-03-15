@@ -24,7 +24,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import sun.net.ResourceManager;
+
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -95,6 +95,7 @@ public class ChooseProcedure {
                     runner.setContext(IS_CHOOSEN_PROCEDURE, Boolean.TRUE);
                 } else {
                     Installable choosenIntallable  = optionsInstallable.get(i);
+                    Log.debug("Choosen installable: "+choosenIntallable.toLogString());
                     Procedures.setInstallable(runner, choosenIntallable);
                     Log.debug("CHOOSEN INSTALLABLE: "+choosenIntallable);
                     runner.setContext(IS_CHOOSEN_PROCEDURE, Boolean.FALSE);
@@ -111,7 +112,7 @@ public class ChooseProcedure {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 ChooserPane.Choice[] choices = new ChooserPane.Choice[]{
-                        new ChooserPane.Choice(LRes.CHOOSE_XIAOMI_TITLE.toString(), LRes.CHOOSE_XIAOMI_SUB.toString(), ResourcesManager.b64toImage(ResourceImages.IMG_MILOGO)),
+                        new ChooserPane.Choice(LRes.CHOOSE_XIAOMI_TITLE.toString(), LRes.CHOOSE_XIAOMI_SUB.toString(), new Image(DrawableManager.getPng("milogo.png").toString())),
                         new ChooserPane.Choice(LRes.CHOOSE_CUSTOM_TITLE.toString(), LRes.CHOOSE_CUSTOM_SUB.toString(), new Image(DrawableManager.getPng("lineage.png").toString())),
                         new ChooserPane.Choice(LRes.CHOOSE_MOD_TITLE.toString(), LRes.CHOOSE_MOD_SUB.toString(), new Image(DrawableManager.getPng("magisk.png").toString())),
                         new ChooserPane.Choice(LRes.CHOOSE_UNLOCK_TITLE.toString(), LRes.CHOOSE_UNLOCK_SUB.toString(), new Image(DrawableManager.getPng("locker.png").toString()))
@@ -129,17 +130,19 @@ public class ChooseProcedure {
                 int i = chooserPane.getIdClickReceiver().waitClick();
                 WindowManager.removeTopContent();
                 RInstall toDoNext = null;
+                String noInternetMsg = LRes.NO_INTERNET_BEFORE_FETCH.toString();
+                String keySkip = "key_skip_no_int";
                 switch (i){
                     case 0:
-                        toDoNext = GenericFetch.fetchAllOfficial().next();
+                        toDoNext = RNode.sequence(ConfirmationProcedure.suggestInternetIfMissing(noInternetMsg, keySkip), RNode.conditional(keySkip, null, GenericFetch.fetchAllOfficial().next()));
                         idGroup = InstallableChooser.IdGroup.officialRom;
                         break;
                     case 1:
-                        toDoNext = GenericFetch.fetchAllUnofficial();
+                        toDoNext = RNode.sequence(ConfirmationProcedure.suggestInternetIfMissing(noInternetMsg, keySkip),RNode.conditional(keySkip, null,GenericFetch.fetchAllUnofficial()));
                         idGroup = InstallableChooser.IdGroup.unofficialRoms;
                         break;
                     case 2:
-                        toDoNext = GenericFetch.fetchAllMods();
+                        toDoNext = RNode.sequence(ConfirmationProcedure.suggestInternetIfMissing(noInternetMsg, keySkip),RNode.conditional(keySkip, null,GenericFetch.fetchAllMods()));
                         idGroup = InstallableChooser.IdGroup.modsAndStuff;
                         break;
                     case 3:

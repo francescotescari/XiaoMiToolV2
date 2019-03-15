@@ -4,7 +4,7 @@ import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceManager;
 import com.xiaomitool.v2.engine.CommonsMessages;
-import com.xiaomitool.v2.engine.actions.ActionsStatic;
+import com.xiaomitool.v2.engine.actions.ActionsDynamic;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.visual.ButtonPane;
 import com.xiaomitool.v2.language.LRes;
@@ -15,7 +15,7 @@ import com.xiaomitool.v2.procedure.install.InstallException;
 public class RebootDevice {
 
     public static RInstall rebootDevice(boolean wait, boolean force){
-        return new RInstall() {
+        return RNode.sequence(ManageDevice.requireAccessible(),new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
@@ -23,6 +23,7 @@ public class RebootDevice {
                 runner.text(LRes.REBOOTING_TO_MODE.toString(Device.Status.DEVICE.toString()));
                 try {
                     if (wait) {
+                        runner.text(LRes.WAITING_DEVICE_ACTIVE.toString(Device.Status.DEVICE.toString()));
                         result = device.reboot(Device.Status.DEVICE, force);
                     } else {
                         result = device.rebootNoWait(Device.Status.DEVICE, force);
@@ -34,12 +35,14 @@ public class RebootDevice {
                     throw new InstallException("Failed to reboot device to recovery mode", InstallException.Code.REBOOT_FAILED, false);
                 }
             }
-        };
+        });
     }
 
-
     public static RInstall rebootRecovery(boolean wait, boolean force){
-        return RNode.sequence(rebootDeviceIfNoAdbAccessible(),new RInstall() {
+        return rebootRecovery(wait,force,-1);
+    }
+    public static RInstall rebootRecovery(boolean wait, boolean force, int timeout){
+        return RNode.sequence(ManageDevice.requireAccessible(),rebootDeviceIfNoAdbAccessible(),new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
@@ -47,7 +50,15 @@ public class RebootDevice {
                 runner.text(LRes.REBOOTING_TO_MODE.toString(Device.Status.RECOVERY.toString()));
                 try {
                     if (wait) {
-                        result = device.reboot(Device.Status.RECOVERY, force);
+                        runner.text(LRes.WAITING_DEVICE_ACTIVE.toString(Device.Status.RECOVERY.toString()));
+                        if (timeout <= 0) {
+                            result = device.reboot(Device.Status.RECOVERY, force);
+                        } else {
+                            result = device.rebootNoWait(Device.Status.RECOVERY, force);
+                            Thread.sleep(2000);
+                            device.setConnected(false);
+                            result = result && device.waitStatus(Device.Status.RECOVERY, timeout);
+                        }
                     } else {
                         result = device.rebootNoWait(Device.Status.RECOVERY, force);
                     }
@@ -62,11 +73,21 @@ public class RebootDevice {
     }
 
     public static RInstall rebootNoWaitIfConnected(){
-        return RNode.fallback(rebootDevice(false,false), Procedures.doNothing());
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Device device = Procedures.requireDevice(runner);
+                try {
+                    device.rebootNoWait(Device.Status.DEVICE,false);
+                } catch (Throwable e) {
+                    Log.debug("Device not rebooted, but it doesn't matter");
+                }
+            }
+        };
     }
 
     public static RInstall requireRecovery(){
-        return RNode.sequence(ManageDevice.checkAccessible(),new RInstall() {
+        return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
@@ -125,7 +146,7 @@ public class RebootDevice {
     }
 
     public static RInstall rebootBootloader(boolean wait, boolean force){
-        return new RInstall() {
+        return RNode.sequence(ManageDevice.requireAccessible(),new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
@@ -133,7 +154,7 @@ public class RebootDevice {
                 runner.text(LRes.REBOOTING_TO_MODE.toString(Device.Status.FASTBOOT.toString()));
                 try {
                     if (wait) {
-                        runner.text(LRes.WAITING_DEVICE_ACTIVE);
+                        runner.text(LRes.WAITING_DEVICE_ACTIVE.toString(Device.Status.FASTBOOT.toString()));
                         result = device.reboot(Device.Status.FASTBOOT, force);
                     } else {
                         result = device.rebootNoWait(Device.Status.FASTBOOT, force);
@@ -145,7 +166,7 @@ public class RebootDevice {
                     throw new InstallException("Failed to reboot device to fastboot mode", InstallException.Code.REBOOT_FAILED, false);
                 }
             }
-        };
+        });
     }
 
     public static RInstall requireFastboot(){
@@ -201,25 +222,14 @@ public class RebootDevice {
         });
     }
 
-    public static RInstall rebootStockRecovery(boolean wait, boolean force){
-        return RNode.sequence(rebootDeviceIfNoAdbAccessible(),new RInstall() {
+    public static RInstall rebootStockRecovery(boolean force){
+        return RNode.sequence(ManageDevice.requireAccessible(),rebootDeviceIfNoAdbAccessible(),new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
-                boolean result = false;
-                runner.text(LRes.REBOOTING_TO_MODE.toString(Device.Status.FASTBOOT.toString()));
-                try {
-                    if (wait) {
-                        runner.text(LRes.WAITING_DEVICE_ACTIVE);
-                        result = device.reboot(Device.Status.FASTBOOT, force);
-                    } else {
-                        result = device.rebootNoWait(Device.Status.FASTBOOT, force);
-                    }
-                } catch (AdbException e){
-                    throw new InstallException(e);
-                }
+                boolean result = ActionsDynamic.REBOOT_STOCK_RECOVERY(device,force).run() != 0;
                 if (!result){
-                    throw new InstallException("Failed to reboot device to fastboot mode", InstallException.Code.REBOOT_FAILED, false);
+                    throw new InstallException("Failed to reboot device to stock recovery mode", InstallException.Code.REBOOT_FAILED, false);
                 }
             }
         });
@@ -240,7 +250,7 @@ public class RebootDevice {
     }
 
     public static RInstall requireStockRecovery(){
-        return RNode.sequence(ManageDevice.checkAccessible(),new RInstall() {
+        return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
@@ -252,13 +262,7 @@ public class RebootDevice {
                 while (true) {
                     Log.debug(device.getStatus());
                     try {
-                        rebootStockRecovery(false, false).setFlag(RNode.FLAG_THROWRAWEXCEPTION, true).run(runner);
-                        ActionsStatic.HOWTO_GO_RECOVERY().run();
-                        try {
-                            device.waitStatus(Device.Status.SIDELOAD, 120);
-                        } catch (AdbException e) {
-                            throw new InstallException(e);
-                        }
+                        rebootStockRecovery(false).setFlag(RNode.FLAG_THROWRAWEXCEPTION, true).run(runner);
                         return;
                     } catch (Exception e) {
                         ButtonPane buttonPane = new ButtonPane(LRes.TRY_AGAIN, LRes.ABORT);

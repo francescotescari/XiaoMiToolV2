@@ -14,6 +14,10 @@ public enum Branch {
         this.code = code;
     }
 
+    public static boolean isDev(Branch branch) {
+        return !Branch.STABLE.equals(branch);
+    }
+
     public void setCode(String code) {
         this.code = code;
     }

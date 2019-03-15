@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.xiaomi.romota;
 
+import com.xiaomitool.v2.adb.device.DeviceGroups;
 import com.xiaomitool.v2.crypto.Hash;
 import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.inet.EasyHttp;
@@ -239,6 +240,10 @@ public class MiuiRomOta {
         String region = params.isInternational() ? "global" : "cn";
         String n = params.getCarrier();
         String lang = params.getLanguage();
+        if (DeviceGroups.hasEEARegion(device) && params.isInternational() && !Branch.isDev(branch)){
+            region = "eea"; //TODO should be in specie
+            device = device.replace("_global","_eea_global");
+        }
         String url = String.format("http://update.miui.com/updates/miota-fullrom.php?d=%s&b=%s&r=%s&n=%s&l=%s", device, branch.getCode(), region, n, lang);
         String result;
             result = EasyHttp.get(url).getBody();
@@ -275,7 +280,9 @@ public class MiuiRomOta {
         Branch b = params.getBranch();
         b = b == null ? Branch.STABLE : b.getDual();
         String branch =  Branch.STABLE.equals(b) ? "1" : "0";
-
+        if (DeviceGroups.hasEEARegion(device) && params.isInternational()  && !Branch.isDev(b)){
+            device = device.replace("_global","_eea_global"); //TODO should be in specie
+        }
        String url = "https://update.miui.com/updates/v1/latestverinfo.php";
        EasyResponse response;
 
@@ -306,7 +313,12 @@ public class MiuiRomOta {
     public static MiuiTgzRom latestFastboot2_request(RequestParams params) throws XiaomiProcedureException, CustomHttpException {
         String device = params.getModDevice();
         Branch branch = params.getBranch();
+
         String region = params.isInternational() ? "global" : "cn";
+        if (DeviceGroups.hasEEARegion(device) && params.isInternational() && !Branch.isDev(branch)){
+            region = "eea"; //TODO should be in specie
+            device = device.replace("_global","_eea_global");
+        }
         String n = params.getCarrier();
         String url = String.format("https://update.miui.com/updates/v1/fullromdownload.php?d=%s&b=%s&r=%s&n=%s", device, branch.getCode(), region, n), dl;
 

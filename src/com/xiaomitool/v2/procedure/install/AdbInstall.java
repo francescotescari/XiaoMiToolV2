@@ -46,6 +46,7 @@ public class AdbInstall {
                 if (destinationpath == null){
                     destinationpath = "/sdcard/";
                 }
+                String outputPath = destinationpath.endsWith("/") ? (destinationpath+FilenameUtils.getName(fileToPush.toString())) : destinationpath;
                 Device device = Procedures.requireDevice(runner);
                 ProgressPane.DefProgressPane defProgressPane = new ProgressPane.DefProgressPane();
                 UpdateListener listener = defProgressPane.getUpdateListener(200);
@@ -56,7 +57,7 @@ public class AdbInstall {
                         defProgressPane.setText(LRes.STARTING_TASK);
                     }
                 });
-                AdbPushTask pushTask = new AdbPushTask(listener,fileToPush, destinationpath, device.getSerial());
+                AdbPushTask pushTask = new AdbPushTask(listener,fileToPush, outputPath, device.getSerial());
                 WindowManager.setMainContent(defProgressPane, false);
                 TaskManager.getInstance().startSameThread(pushTask);
                 pushTask.waitFinished();
@@ -64,7 +65,7 @@ public class AdbInstall {
                 if (pushTask.getError() != null){
                     throw new InstallException(new AdbException("Failed to push file on device: "+pushTask.getError().getMessage()));
                 }
-                runner.setContext(OUTPUT_DST_PATH, destinationpath.endsWith("/") ? (destinationpath+FilenameUtils.getName(fileToPush.toString())) : destinationpath);
+                runner.setContext(OUTPUT_DST_PATH, outputPath);
 
             }
         };

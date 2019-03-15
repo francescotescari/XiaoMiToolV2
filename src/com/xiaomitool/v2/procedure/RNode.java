@@ -39,6 +39,10 @@ public abstract class RNode extends RInstall {
         this.type = type;
         this.chidren = chidren;
     }
+    @Override
+    void runInternal(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+        run(runner);
+    }
 
     public static RNode sequence(RInstall... chidren){
         return new RNodeSequence(chidren);
@@ -72,7 +76,7 @@ public abstract class RNode extends RInstall {
                 for (RInstall install : chidren) {
                     do {
                         try {
-                            install.run(runner);
+                            install.runInternal(runner);
                             break;
                         } catch (InstallException e) {
                             Log.debug("PROCEDURE EXC: "+e.getMessage());
@@ -90,10 +94,19 @@ public abstract class RNode extends RInstall {
                                 }
                                 throw new RMessage(cmd);
                             }
+                        } catch (RMessage rMessage){
+                            if (rMessage.getCmd().equals(CommandClass.Command.RETRY)){
+                                continue;
+                            } else if (rMessage.getCmd().equals(CommandClass.Command.UPLEVEL)){
+                                cmd = CommandClass.Command.UPLEVEL;
+                                break;
+                            } else {
+                                throw rMessage;
+                            }
                         }
                     } while (true);
                     if (CommandClass.Command.UPLEVEL.equals(cmd)){
-                        this.run(runner);
+                        this.runInternal(runner);
                         return;
                     }
                 }
@@ -118,7 +131,7 @@ public abstract class RNode extends RInstall {
                 }
                 try {
                     cause = install;
-                    install.run(runner);
+                    install.runInternal(runner);
                     allRight = true;
                 } catch (InstallException e){
                     exception = e;
@@ -135,6 +148,24 @@ public abstract class RNode extends RInstall {
                 throw new RMessage(cmd);
             }
         }
+    }
+
+    public static RInstall conditional(String keyBoolean, RInstall ifTrue, RInstall ifFalse){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Boolean ifBody = (Boolean) runner.requireContext(keyBoolean);
+                if (ifBody){
+                    if (ifTrue != null) {
+                        ifTrue.run(runner);
+                    }
+                } else {
+                    if(ifFalse != null) {
+                        ifFalse.run(runner);
+                    }
+                }
+            }
+        };
     }
 
 

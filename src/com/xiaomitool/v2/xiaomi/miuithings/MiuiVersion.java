@@ -8,6 +8,17 @@ import java.util.List;
 import static com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion.CompareStatus.NEWER;
 
 public class MiuiVersion extends KeepOriginClass {
+
+    public static MiuiVersion fromObject(Object miuiVersion){
+        if (miuiVersion instanceof  String){
+            return new MiuiVersion((String) miuiVersion);
+        } else if (miuiVersion instanceof MiuiVersion){
+            return (MiuiVersion) miuiVersion;
+        } else {
+            return null;
+        }
+    }
+
     private Branch branch;
     private List<Integer> numbers;
     private int bigversion;

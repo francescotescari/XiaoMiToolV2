@@ -31,26 +31,26 @@ public class Main {
             System.err.println("Usage: MiOtaUpdates.jar passToken userId");
             System.exit(1);
         }*/
-        String aargv[] = new String[]{"V1:isBbO7qT2fhtbwL9sYAWOw1F/3NxY9rEGd/Rpl90v+8g3MPwBcGj+LhM7gm2KKdML2d2Z/ubuxQVmZzlyNSjzunw7/coc/ayIf3HCqBZ9Dxg5EURCySg6KexJHox4JTkNOfLrsKEAIue8xdbjH+d5srzS7oSw1feUoLmo89t9WPye0e2w2UG/MJs+YxW+tBTLOhgbnVz0H9nXBcWQayyZwwuNOiB5HPbfjBX2kM6IBxuHA7cdDRWjSDkDMfVwvch", "513820086"};
+        //String aargv[] = new String[]{"V1:isBbO7qT2fhtbwL9sYAWOw1F/3NxY9rEGd/Rpl90v+8g3MPwBcGj+LhM7gm2KKdML2d2Z/ubuxQVmZzlyNSjzunw7/coc/ayIf3HCqBZ9Dxg5EURCySg6KexJHox4JTkNOfLrsKEAIue8xdbjH+d5srzS7oSw1feUoLmo89t9WPye0e2w2UG/MJs+YxW+tBTLOhgbnVz0H9nXBcWQayyZwwuNOiB5HPbfjBX2kM6IBxuHA7cdDRWjSDkDMfVwvch", "513820086"};
         //String aar
-        //gv[] = new String[]{"V1:sYLMdrtmr68+XYlt3KEGMvIK33el49rcewgc/Aj2eDbhlxtUYYoC403jFphGxbILHMBOxCZ8jb09lYio/ueuyNEA2FG5GGTYdcWWcK09ydkY/wBzMoVhriDnVRguxt7Qj+Xn52Lo2RbErRDknI35gYeIN4gWRpDGwDeL9qTo8ODgyOftZSYklvth66lqzghIiGBiLUu+suwcbaQ/wh+sZostweENZGAfGkRGNF8FsD0VgBHsi+X5xKFoh+FndaZ1", "1606054557"};
-
+        String gv[] = new String[]{"V1:sYLMdrtmr68+XYlt3KEGMvIK33el49rcewgc/Aj2eDbhlxtUYYoC403jFphGxbILHMBOxCZ8jb09lYio/ueuyNEA2FG5GGTYdcWWcK09ydkY/wBzMoVhriDnVRguxt7Qj+Xn52Lo2RbErRDknI35gYeIN4gWRpDGwDeL9qTo8ODgyOftZSYklvth66lqzghIiGBiLUu+suwcbaQ/wh+sZostweENZGAfGkRGNF8FsD0VgBHsi+X5xKFoh+FndaZ1", "1606054557"};
+        gv = new String[]{"V1:UzVU8KYgKUF+aP6f4QkYe4nJRAa4IB4o9a7MjeCocT+PwZw8pVAI1B0a8atv9RktplQq+EFYLvU+swKN2705sjUXC3nGlb2blWkFgUYFtqrWhxPaM2NLUysFwD5fakuzmDKQAREQK5KrtLVt0nSBRrOi1gkqUyOwn42Pe/TsY6R1oEKqMjtB+0gQJvXe67kECSWaGRM6YLO3SrHIZwfxyViNMLihMppHznq9yWQJfE8bAk96Tsk5N6uZMk69BeVs","1606054557"};
 
 
         XiaomiKeystore keystore = XiaomiKeystore.getInstance();
-        keystore.setCredentials(aargv[1], aargv[0]);
-        keystore.requireServiceKeyAndToken("miuiromota");
-        RequestParams params = new DeviceRequestParams("jason_global","V10.1.2.0.NCHMIFI","7.1",Branch.STABLE,"0xe92ab831",2);
-        params.setPkg("d8f3965aebf2dbfb0291fb21be6cff1b");
+        keystore.setCredentials(gv[1], gv[0]);
+        //*keystore.requireServiceKeyAndToken("miuiromota");
+        RequestParams params = new DeviceRequestParams("jason_global","V10.1.2.0.NCHMIFI","7.1",Branch.STABLE,"0xb7f63ec7",2);
+        /*params.setPkg("d8f3965aebf2dbfb0291fb21be6cff1b");
         MiuiRomOta.otaV3_request(params);
         if (true){
             return;
-        }
+        }*/
         scarto = 0;
         //Log.debug(UnlockCommonRequests.test());VQEBIQEQdAsBSujVP9OjWVoBu7zFTwMHY2VwaGV1cwIEQXtF7A==
 
         //Log.debug(UnlockCommonRequests.ahaUnlock("VQEBMwEgdAsBSujVP9OjWVoBu7zFT3QLAUro1T/To1laAbu8xU8DCWJlcnlsbGl1bQIEQXtF7A==","dipper","","",""));
-        Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIwEQdAsBSujVP9OjWVoBu7zFTwMJYmVyeWxsaXVtAgRBe0Xs","dipper","","","")); //Please unlock 49 hours later
+        Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIQEQRbgeQ5xHgGiytTxvaushBQMHZGF2aW5jaQIENrrqAw==","scorpio","","","")); //Please unlock 49 hours later
         //Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIAEQdAsBSujVP9OjWVoBu7zFTwMGZGlwcGVyAgRBe0Xs","dipper","","",""));//Please unlock 337 hours later
 
         if (true){

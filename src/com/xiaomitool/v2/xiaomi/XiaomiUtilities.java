@@ -1,6 +1,7 @@
 package com.xiaomitool.v2.xiaomi;
 
 
+import com.xiaomitool.v2.adb.device.DeviceGroups;
 import com.xiaomitool.v2.utility.NotNull;
 
 public class XiaomiUtilities {
@@ -29,6 +30,7 @@ public class XiaomiUtilities {
     }
     
     public static  String deviceToXiaomiEuName(@NotNull String codename) {
+        codename = DeviceGroups.stripCodename(codename);
         if (codename.equalsIgnoreCase("aries")) {
             codename = "MI2";
         } else if (codename.equalsIgnoreCase("aqua")) {
@@ -145,6 +147,30 @@ public class XiaomiUtilities {
             codename = "HM6";
         } else if (codename.equalsIgnoreCase("sakura")) {
             codename = "HM6Pro";
+        } else if (codename.equalsIgnoreCase("ursa")) {
+            codename = "MI8Explorer";
+        } else if (codename.equalsIgnoreCase("beryllium")) {
+            codename = "POCOF1";
+        } else if (codename.equalsIgnoreCase("clover")) {
+            codename = "MIPAD4";
+        } else if (codename.equalsIgnoreCase("perseus")) {
+            codename = "MIMix3";
+        } else if (codename.equalsIgnoreCase("platina")) {
+            codename = "MI8LITE";
+        } else if (codename.equalsIgnoreCase("tulip")) {
+            codename = "HMNote6Pro";
+        } else if (codename.equalsIgnoreCase("equuleus")) {
+            codename = "MI8Pro";
+        } else if (codename.equalsIgnoreCase("lavender")) {
+            codename = "HMNote7";
+        } else if (codename.equalsIgnoreCase("cepheus")) {
+            codename = "MI9";
+        } else if (codename.equalsIgnoreCase("grus")) {
+            codename = "MI9SE";
+        } else if (codename.equalsIgnoreCase("onclite")) {
+            codename = "HM7";
+        } else if (codename.equalsIgnoreCase("violet")) {
+            codename = "HMNote7Pro";
         }
         return codename;
     }

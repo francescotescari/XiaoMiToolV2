@@ -182,34 +182,7 @@ public class ActionsStatic {
         };
     }
 
-    public static RunnableMessage HOWTO_GO_RECOVERY(){
-        return  () -> {
-            ButtonPane buttonPane = new ButtonPane(LRes.OK_UNDERSTAND);
-            SidePane sidePane = new SidePane();
-            DeviceRecoveryView deviceRecoveryView = new DeviceRecoveryView(DeviceView.DEVICE_18_9,640);
-            deviceRecoveryView.animateSelectThird(2500);
-            Text t = new Text("1) "+LRes.BTN_VOLUP_POW.toString()+"\n2) "+LRes.HT_RECOVERY_TEXT_1.toString());
 
-            t.setWrappingWidth(400);
-            t.setFont(Font.font(15));
-            sidePane.setLeft(t);
-            Pane p = DeviceView.crop(deviceRecoveryView,410);
-
-            GuiUtils.debug(p);
-            sidePane.setRight(GuiUtils.center(p));
-            buttonPane.setContent(sidePane);
-            WindowManager.setMainContent(buttonPane,false);
-            DeviceManager.addMessageReceiver(buttonPane.getIdClickReceiver());
-            int msg = NOOP;
-            while (msg < 0 && (msg != CommonsMessages.NEW_DEVICE || DeviceManager.count(Device.Status.SIDELOAD) < 1)){
-                //Log.debug(msg+" - "+DeviceManager.count(Device.Status.SIDELOAD));
-                msg = buttonPane.waitClick();
-            }
-            DeviceManager.removeMessageReceiver(buttonPane.getIdClickReceiver());
-            WindowManager.removeTopContent();
-            return msg;
-        };
-    }
 
     public static RunnableMessage REQUIRE_INTERNET_CONNECTION(){
         return () -> {
@@ -260,6 +233,8 @@ public class ActionsStatic {
 
 
 
+
+
     public static RunnableMessage FIRST_DISCLAIMER() { return  () -> {
         ButtonPane buttonPane = new ButtonPane(LRes.DONT_AGREE.toString(),LRes.AGREE.toString());
         Text t2 = new Text(RawManager.getDisclaimer());
@@ -280,7 +255,7 @@ public class ActionsStatic {
                 DeviceView running = new DeviceView(DeviceView.DEVICE_18_9,height, Color.WHITE,null), recover = new DeviceView(DeviceView.DEVICE_18_9,height, Color.BLACK, null);
                 running.getImagePane().setCursor(Cursor.HAND);
                 recover.getImagePane().setCursor(Cursor.HAND);
-                recover.setContent(DrawableManager.getPng(DrawableManager.FASTBOOT_LOGO));
+                recover.setContent(DrawableManager.getPng(DrawableManager.FASTBOOT_LOGO),true);
                 running.setContent(DrawableManager.getPng(DrawableManager.MIUI10));
                 Button b1 = new CustomButton(LRes.CHOOSE);
                 Button b2 = new CustomButton(LRes.CHOOSE);
@@ -310,4 +285,6 @@ public class ActionsStatic {
         });
         return idClickReceiver.waitClick()%2;
     };}
+
+
 }

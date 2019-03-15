@@ -1,5 +1,7 @@
 package com.xiaomitool.v2.xiaomi.miuithings;
 
+import com.xiaomitool.v2.adb.device.Device;
+import com.xiaomitool.v2.adb.device.DeviceGroups;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.utility.Nullable;
@@ -51,7 +53,7 @@ public class DefaultRequestParams extends RequestParams implements Cloneable {
         map.put("v","MIUI-"+version.toString());
         map.put("bv",version.getBigVersion());
         map.put("c",codebase.toString());
-        map.put("d",device+specie.getSuffix());
+        map.put("d",device+((DeviceGroups.hasEEARegion(device) && isInternational() && !Branch.isDev(branch)) ? "_eea" : "")+specie.getSuffix()); //TODO fix this mess with specie
         map.put("g",androidHash);
         if (!isInternational()){
             map.put("i",imeiHash);

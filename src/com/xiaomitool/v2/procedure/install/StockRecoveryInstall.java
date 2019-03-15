@@ -169,7 +169,7 @@ public class StockRecoveryInstall {
                 if (StrUtils.isNullOrEmpty(token)){
                     throw new InstallException("Empty install token", InstallException.Code.SIDELOAD_INSTALL_FAILED, false);
                 }
-                AdbSideloadTask sideloadTask = new AdbSideloadTask(installable.getFinalFile(), token);
+                AdbSideloadTask sideloadTask = new AdbSideloadTask(installable.getFinalFile(), token, device.getSerial());
                 ProgressPane.DefProgressPane defProgressPane = new ProgressPane.DefProgressPane();
                 UpdateListener listener = defProgressPane.getUpdateListener(300);
                 final Pointer textInstalling = new Pointer();
@@ -221,13 +221,13 @@ public class StockRecoveryInstall {
                 progressPane.setContentText(LRes.MTP_INSTALLING_FILE.toString() + "\n" + LRes.DONT_REBOOT_DEVICE.toString());
                 WindowManager.setMainContent(progressPane, false);
                 LocalDateTime startTime = LocalDateTime.now();
-                AdbCommunication.closeAccess();
+                AdbCommunication.getAllAccess();
                 try {
                     adbRunner.runWait(3600);
                 } catch (IOException e) {
                     throw new InstallException("Failed to start mtpinstall process: " + e.getMessage(), InstallException.Code.INTERNAL_ERROR, true);
                 }
-                AdbCommunication.openAccess();
+                AdbCommunication.giveAllAccess();
                 WindowManager.removeTopContent();
                 Duration timeElapsed = Duration.between(startTime, LocalDateTime.now());
                 if (adbRunner.getExitValue() != 0) {

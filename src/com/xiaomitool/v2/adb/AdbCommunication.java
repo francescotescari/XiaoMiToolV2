@@ -12,18 +12,23 @@ import java.util.Map;
 
 public class AdbCommunication {
     public static Thread trackDevicesThread, refreshDevicesThread;
-    private static boolean canInterrupt = true, isTrackDeviceActive=false;
+    private static int cannotInterruptCount = 0; private static boolean isTrackDeviceActive=false;
     private static final int REFRESH_TIME_MS  = 2500;
     private static AdbRunner trackDeviceProcess;
+    private static final Object sync = new Object();
+    public static boolean canInterrupt(){
+        return cannotInterruptCount == 0;
+    }
+
     public static void startServer(){
-        if (!canInterrupt){
+        if (!canInterrupt()){
             Log.debug("Cannot interrupt adb connection");
         }
         AdbCommons.start_server();
 
     }
     public static void killServer(){
-        if (!canInterrupt){
+        if (!canInterrupt()){
             Log.debug("Cannot interrupt adb connection");
             return;
         }
@@ -34,14 +39,14 @@ public class AdbCommunication {
         startServer();
     }
 
-    public static boolean canInterrupt() {
-        return canInterrupt;
-    }
+
 
 
     public static void registerAutoScanDevices(){
-        if (refreshDevicesThread != null){
-            return;
+        synchronized (sync) {
+            if (refreshDevicesThread != null) {
+                return;
+            }
         }
         Runnable trackDevices = new Runnable() {
             @Override
@@ -109,15 +114,19 @@ public class AdbCommunication {
         refreshFastbootDevices();
     }
 
-    public static void closeAccess() {
-        canInterrupt = false;
+    public static void getAllAccess() {
+        cannotInterruptCount++;
         unregisterAutoScanDevices();
     }
-    public static void openAccess(){
-        canInterrupt = true;
-        registerAutoScanDevices();
+    public static void giveAllAccess(){
+        if (cannotInterruptCount > 0){
+            cannotInterruptCount--;
+        }
+        if (canInterrupt()) {
+            registerAutoScanDevices();
+        }
     }
-    private static void unregisterAutoScanDevices(){
+    public static void unregisterAutoScanDevices(){
         if (trackDeviceProcess != null){
             trackDeviceProcess.kill();
         }

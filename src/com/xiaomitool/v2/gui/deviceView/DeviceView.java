@@ -1,5 +1,9 @@
 package com.xiaomitool.v2.gui.deviceView;
 
+import com.mortennobel.imagescaling.AdvancedResizeOp;
+import com.mortennobel.imagescaling.MultiStepRescaleOp;
+import com.mortennobel.imagescaling.ResampleFilters;
+import com.mortennobel.imagescaling.ResampleOp;
 import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.visual.OverlayPane;
@@ -7,9 +11,12 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.Nullable;
 import com.xiaomitool.v2.utility.Pointer;
 
+import com.xiaomitool.v2.utility.utils.NumberUtils;
 import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
@@ -24,10 +31,16 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
 
 public class DeviceView extends StackPane {
-    private DeviceImage deviceImage;
+    protected DeviceImage deviceImage;
     private ImageView deviceBorders, displayedImageView;
     protected double wantedHeight, scaleRatio;
     private Color background = Color.rgb(49, 53, 57), innerShadow = Color.BLACK;
@@ -93,6 +106,7 @@ public class DeviceView extends StackPane {
         super.getChildren().add(containerPane);
 
     }
+    protected double contentScaleRatio;
     public void setContent(ImageView image){
         setContent(image,false);
     }
@@ -107,7 +121,7 @@ public class DeviceView extends StackPane {
         setContent(new Image(url.toString()));
     }
     public void setContent(URL url, boolean keepratio){
-        setContent(new Image(url.toString(), keepratio));
+        setContent(new Image(url.toString(), false),keepratio);
     }
         public double getOuterAspectRatio(){
         return deviceImage.getOuterHeight()/deviceImage.getOuterWidth();
@@ -115,41 +129,139 @@ public class DeviceView extends StackPane {
         public double getInnerAspectRatio(){
         return deviceImage.getInnerHeight()/deviceImage.getInnerWidth();
         }
-
-    public void setContent(ImageView image, boolean keepRatio) {
-
-
-        image.setPreserveRatio(true);
-        displayedImage = image.getImage();
-        if (keepRatio){
-            image.setViewport(new Rectangle2D(0,-1*(deviceImage.getInnerHeight()-displayedImage.getHeight())/2,displayedImage.getWidth(), deviceImage.getInnerHeight()));
+        private double getInnerHeight(){
+            return this.deviceImage.getInnerHeight()*this.scaleRatio;
         }
-                //image.setSmooth(true);
-        double offsetX = 0, offsetY =0 , height, width;
-        if (image.getViewport() != null){
-            height = image.getViewport().getHeight();
-            width = image.getViewport().getWidth();
-            offsetX = image.getViewport().getMinX();
-            offsetY = image.getViewport().getMinY();
+    private double getInnerWidth(){
+        return this.deviceImage.getInnerWidth()*this.scaleRatio;
+    }
+
+    protected double imageOffsetX, imageOffsetY;
+    protected boolean keepRatio;
+    public void setContent(ImageView image, boolean keepRatio) {
+        this.keepRatio = keepRatio;
+        displayedImage = image.getImage();
+        Log.debug("Original image size: "+displayedImage.getHeight()+"x"+displayedImage.getWidth());
+        double origImgRatio = displayedImage.getHeight()/displayedImage.getWidth();
+        int resizeWidth, resizeHeight;
+        Rectangle2D viewport;
+        if (origImgRatio < this.getInnerAspectRatio()){
+            resizeWidth = NumberUtils.double2int(this.getInnerWidth());
+            resizeHeight = NumberUtils.double2int(keepRatio ? resizeWidth*origImgRatio : this.getInnerHeight());
+            imageOffsetY = keepRatio ? (this.getInnerHeight()-resizeHeight)/2 : 0;
+            imageOffsetX = 0;
+            viewport = keepRatio ? new Rectangle2D(0,-1*imageOffsetY,this.getInnerWidth(), this.getInnerHeight()) : null;
+
         } else {
+            resizeHeight = NumberUtils.double2int(this.getInnerHeight());
+            resizeWidth = NumberUtils.double2int(keepRatio ? resizeHeight/origImgRatio : this.getInnerWidth());
+            imageOffsetX = keepRatio ? (this.getInnerWidth()-resizeWidth)/2 : 0;
+            imageOffsetY = 0;
+            viewport = keepRatio ? new Rectangle2D(-1*imageOffsetX,0,this.getInnerWidth(), this.getInnerHeight()) : null;
+        }
+        Log.debug("Viewport: "+viewport);
+        Log.debug("iOX = "+imageOffsetX+", iOY = "+imageOffsetY);
+        contentScaleRatio = ((double) resizeHeight)/displayedImage.getHeight();
+        Log.debug("RSW: "+resizeWidth+", RSH: "+resizeHeight+", CSR: "+contentScaleRatio+", DIH:"+displayedImage.getHeight());
+        BufferedImage srcImg = SwingFXUtils.fromFXImage(image.getImage(), null);
+        BufferedImage img = new BufferedImage(resizeWidth, resizeHeight, srcImg.getType());
+        if (true){
+            MultiStepRescaleOp resampleOp = new MultiStepRescaleOp(resizeWidth, resizeHeight, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            resampleOp.doFilter(srcImg, img, resizeWidth, resizeHeight);
+        } else {
+            ResampleOp resampleOp = new ResampleOp(resizeWidth, resizeHeight);
+            resampleOp.setFilter(ResampleFilters.getBiCubicFilter());
+            resampleOp.doFilter(srcImg, img, resizeWidth, resizeHeight);
+        }
+        Log.debug("Raw resized img: "+img.getHeight()+"x"+img.getWidth());
+
+        //
+
+        Image resizedImage = SwingFXUtils.toFXImage(img, null);
+        image.setImage(resizedImage);
+        if (viewport != null){
+            image.setViewport(viewport);
+        }
+        image.setFitWidth(NumberUtils.double2int(this.getInnerWidth()));
+        image.setFitHeight(NumberUtils.double2int(this.getInnerHeight()));
+        Log.debug("Result: "+image.getFitHeight()+"x"+image.getFitWidth()+" -img-> "+image.getImage().getHeight()+"x"+image.getImage().getWidth());
+
+        contentPane.getChildren().clear();
+
+        displayedImageView = image;
+
+        imageWrapPane = new Pane(image);
+
+
+        contentPane.getChildren().clear();
+        contentPane.getChildren().add(GuiUtils.center(imageWrapPane));
+
+
+        /*        //image.setSmooth(true);
+        double offsetX = 0, offsetY =0 , height, width;
+        image.setPreserveRatio(true);
+        if (keepRatio){
+
+            Log.debug("KEEEPRATIIOOO");
+            height =  deviceImage.getInnerHeight();
+            width = displayedImage.getWidth();
+
+            offsetX = 0;
+            offsetY = -1*(deviceImage.getInnerHeight()-displayedImage.getHeight())/2;
+            image.setViewport(new Rectangle2D(offsetX,offsetY,width,height));
+        } else {
+            Log.debug("DONTT KEEEPRATIIOOO");
             height = displayedImage.getHeight();
+            Log.debug("Height: "+displayedImage.getHeight());
             width = displayedImage.getWidth();
         }
+        Log.debug("Width: "+width+", height: "+height);
         double setHeight = height-offsetY;
         double setWidth = width-offsetX;
         double innerRatio = deviceImage.getInnerHeight()/deviceImage.getInnerWidth();
         double imgRatio = setHeight/setWidth;
+        double wantedH = -1, wantedW = -1;
         if (innerRatio < imgRatio){
             Log.debug("Image is taller than frame: height -> "+setHeight);
-            double h = Double.min(setHeight, deviceImage.getInnerHeight()*scaleRatio);
+            wantedH = Double.min(setHeight, deviceImage.getInnerHeight()*scaleRatio);
             //h = keepRatio ? Double.min(h, displayedImage.getHeight()) : h;
-            image.setFitHeight(h);
+            Log.debug("Wanted height: "+wantedH);
+
         } else {
-            double w = Double.min(setWidth, deviceImage.getInnerWidth()*scaleRatio);
+            wantedW = Double.min(setWidth, deviceImage.getInnerWidth()*scaleRatio);
            //w = keepRatio ? Double.min(w, displayedImage.getWidth()) : w;
             Log.debug("Image is wider than frame: width -> "+(deviceImage.getInnerWidth()*scaleRatio));
-            image.setFitWidth(w);
+            Log.debug("Wanted width: "+wantedW);
 
+        }
+        int dstH = new Double(wantedH).intValue(), dstW = new Double(wantedW).intValue();
+        if (dstH < 0){
+            Log.debug(keepRatio);
+            Log.debug("DstH: "+dstH+", DstW: "+dstW);
+            Log.debug(displayedImage.impl_getUrl());
+            Log.debug("Dst ration: "+(displayedImage.getHeight()/displayedImage.getWidth()));
+            dstH = new Double(keepRatio ? (dstW*displayedImage.getHeight()/displayedImage.getWidth()) : dstW*getInnerAspectRatio()).intValue();
+        } else if (dstW <0){
+            Log.debug("DstH: "+dstH+", DstW: "+dstW);
+            Log.debug(displayedImage.impl_getUrl());
+            Log.debug("Dst ration: "+(displayedImage.getWidth()/displayedImage.getHeight()));
+            dstW = new Double(keepRatio ? (dstH*displayedImage.getWidth()/displayedImage.getHeight()) : dstH/getInnerAspectRatio()).intValue();
+        }
+        Log.debug("DstH: "+dstH+", DstW: "+dstW);
+
+        BufferedImage srcImg = SwingFXUtils.fromFXImage(image.getImage(), null);
+        BufferedImage img = new BufferedImage(dstW, dstH, srcImg.getType());
+        new ResampleOp(dstW, dstH).doFilter(srcImg, img, dstW, dstH);
+        Image dstImg = SwingFXUtils.toFXImage(img, null);
+            image.setSmooth(false);
+            image.setImage(dstImg);
+
+
+        if (wantedW >= 0){
+            image.setFitWidth(wantedW);
+        }
+        if (wantedH >= 0){
+            image.setFitHeight(wantedH);
         }
         //image.setFitHeight(wantedHeight * deviceImage.getInnerHeight() / deviceImage.getOuterHeight());
         contentPane.getChildren().clear();
@@ -157,7 +269,7 @@ public class DeviceView extends StackPane {
         displayedImageView = image;
 
         imageWrapPane = new Pane(image);
-        contentPane.getChildren().add(GuiUtils.center(imageWrapPane));
+        contentPane.getChildren().add(GuiUtils.center(imageWrapPane));*/
 
     }
 
@@ -255,7 +367,7 @@ public class DeviceView extends StackPane {
         double centerY = (pos.top + pos.height / 2) ;
         rectangle.setFill(Color.RED);
         containerPane.getChildren().add(rectangle);
-        Transition transition = buildCircleTransition(centerX,centerY,times,false);
+        Transition transition = buildCircleTransition(centerX,centerY,times,false,false);
         transition.statusProperty().addListener((observable, oldValue, newValue) -> {
             Log.debug(oldValue.toString()+" -> "+newValue.toString());
             if (Animation.Status.STOPPED.equals(newValue)){
@@ -272,15 +384,52 @@ public class DeviceView extends StackPane {
     }
 
     public Transition buildCircleTransition(double x, double y, int times){
-        return buildCircleTransition(x,y,times,true);
+        return buildCircleTransition(x,y,times,true, true);
     }
 
-    public Transition buildCircleTransition(double x, double y, int times, boolean addBorder){
-        Circle circle = new Circle(x*scaleRatio+(addBorder ? deviceImage.getLeftOffset()*scaleRatio : 0), y*scaleRatio+(addBorder ? deviceImage.getTopOffset() * scaleRatio : 0), wantedHeight / 12);
+    private final ConcurrentLinkedQueue<Transition> circlesAnimation = new ConcurrentLinkedQueue<>();
+    public void removeCircleAnimation(){
+        Log.debug("Clearing anims");
+        synchronized (circlesAnimation) {
+            for (Transition transition : circlesAnimation) {
+                Log.debug("Clearing trans: "+transition.toString());
+                transition.stop();
+            }
+            circlesAnimation.clear();
+        }
+    }
+
+    public Transition buildCircleTransition(double x, double y, int times, boolean addBorder, boolean unique){
+        if (!Platform.isFxApplicationThread()){
+            CompletableFuture<Transition> future = new CompletableFuture<>();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+
+
+                    future.complete(buildCircleTransition(x,y,times,addBorder, unique));
+                }
+            });
+            try {
+                return future.get();
+            } catch (InterruptedException e) {
+                removeCircleAnimation();
+                return null;
+            } catch (ExecutionException e) {
+                removeCircleAnimation();
+                return null;
+            }
+        }
+        if(unique){
+            removeCircleAnimation();
+        }
+        Circle circle = new Circle(x*scaleRatio+(addBorder ? deviceImage.getLeftOffset()*scaleRatio+imageOffsetX : 0), y*scaleRatio+(addBorder ? imageOffsetY+deviceImage.getTopOffset() * scaleRatio : 0), wantedHeight / 12);
         circle.setStroke(Color.RED);
+        circle.setStrokeWidth(3);
         circle.setFill(Color.TRANSPARENT);
         circle.setVisible(false);
         circle.setOpacity(0);
+        circle.setMouseTransparent(true);
 
         Transition transition = getCircleTransition(circle, times);
         containerPane.getChildren().add(circle);
@@ -290,13 +439,16 @@ public class DeviceView extends StackPane {
                 Log.debug(oldValue.toString()+" -> "+newValue.toString());
                 if (Animation.Status.STOPPED.equals(newValue)){
                     circle.setVisible(false);
-                    containerPane.getChildren().removeAll(circle);
+                    containerPane.getChildren().remove(circle);
                 } else if (Animation.Status.RUNNING.equals(newValue)){
                     circle.setVisible(true);
                 }
             }
         });
         transition.play();
+        synchronized (circlesAnimation){
+            this.circlesAnimation.add(transition);
+        }
         return transition;
     }
 

@@ -1,7 +1,9 @@
 package com.xiaomitool.v2.procedure.install;
 
+import com.xiaomitool.v2.adb.AdbCommunication;
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceAnswers;
+import com.xiaomitool.v2.adb.device.DeviceManager;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.engine.actions.ActionsDynamic;
@@ -16,6 +18,7 @@ import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.device.ManageDevice;
 import com.xiaomitool.v2.procedure.device.RebootDevice;
 import com.xiaomitool.v2.procedure.uistuff.ChooseProcedure;
+import com.xiaomitool.v2.procedure.uistuff.ConfirmationProcedure;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.chooser.InstallationRequirement;
 import com.xiaomitool.v2.tasks.UpdateListener;
@@ -32,6 +35,7 @@ import javafx.scene.text.TextAlignment;
 import org.apache.commons.io.FilenameUtils;
 
 import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.xiaomitool.v2.engine.CommonsMessages.NOOP;
 
@@ -117,6 +121,7 @@ public class GenericInstall {
         return RNode.sequence(RebootDevice.rebootNoWaitIfConnected(), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, InterruptedException {
+                DeviceManager.stopScanThreads();
                 DonationPane donationPane = new DonationPane();
                 WindowManager.setMainContent(donationPane);
                 int msg = NOOP;
@@ -173,7 +178,7 @@ public class GenericInstall {
                         ActionsDynamic.WAIT_USB_DEBUG_ENABLE(device).run();
                     }
                     try {
-                        ManageDevice.waitDevice(30).setFlag(RNode.FLAG_THROWRAWEXCEPTION, true).run(runner);
+                        ManageDevice.waitDevice(30, Device.Status.DEVICE).setFlag(RNode.FLAG_THROWRAWEXCEPTION, true).run(runner);
                     } catch (InstallException e){
                         Log.warn("Starting next requirement satisfaction without device active");
                     }
@@ -204,6 +209,34 @@ public class GenericInstall {
                 }
             }
         };
+    }
+
+    public static RInstall main(){
+        return RNode.sequence(RebootDevice.rebootNoWaitIfConnected(),
+                ChooseProcedure.chooseRomCategory(),
+                ChooseProcedure.chooseRom(),
+                RNode.sequence(ConfirmationProcedure.confirmInstallableProcedure(),
+                        ConfirmationProcedure.confirmInstallationStart(),
+                        RNode.sequence(ManageDevice.waitRequireAccessible(30, Device.Status.DEVICE),
+                                GenericInstall.satisfyAllRequirements(),
+                                GenericInstall.resourceFetchWait(),
+                                GenericInstall.runInstallProcedure(),
+                                GenericInstall.installationSuccess())));
+        /*RebootDevice.rebootNoWaitIfConnected().run(runner);
+        Log.debug("PRO0 CHOOSE CAT");
+        ChooseProcedure.chooseRomCategory().run(runner);
+        Log.debug("PRO0 CHOOSE ROM");
+        ChooseProcedure.chooseRom().run(runner);
+        Log.debug("PRO0 FETCH RESOURCE");
+        ConfirmationProcedure.confirmInstallableProcedure().run(runner);
+        ConfirmationProcedure.confirmInstallationStart().run(runner);
+        runner.text(LRes.WAITING_DEVICE_ACTIVE);
+        ManageDevice.waitDevice(60);
+        GenericInstall.satisfyAllRequirements().run(runner);
+        GenericInstall.resourceFetchWait().run(runner);
+        DeviceManager.refresh();
+        GenericInstall.runInstallProcedure().run(runner);
+        GenericInstall.installationSuccess().run(runner);*/
     }
 
 }

@@ -20,6 +20,8 @@ import com.xiaomitool.v2.utility.YesNoMaybe;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import javafx.application.Platform;
 
+import java.io.File;
+
 public class TwrpInstall  {
     public static RInstall flashTwrp(){
         //Log.printStackTrace(new Exception());
@@ -39,6 +41,8 @@ public class TwrpInstall  {
                     throw new InstallException(new AdbException("Fastboot flash recovery failed, output:" + StrUtils.str(flashOutput)));
                 }
                 FastbootCommons.boot(device.getSerial(),installable.getFinalFile());
+                Thread.sleep(1500);
+                device.setConnected(false);
             }
         }, GenericInstall.updateDeviceStatus(null,true,null));
     }
@@ -54,6 +58,7 @@ public class TwrpInstall  {
             }
         });
     }
+private static final String ERASE_DATA_KEY = "erase_the_data";
 
     @ExportFunction("install_zip_viatwrp")
     public static RInstall installZip(){
@@ -61,10 +66,12 @@ public class TwrpInstall  {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
-                String path = "/sdcard/xmt_push";
+                String path = "/sdcard/xmt_push/";
                 runner.text(LRes.CREATING_DEST_DIR);
                 if (!AdbCommons.fileExists(path, device.getSerial())){
-                    AdbCommons.command("mkdir "+path, device.getSerial());
+                    if (AdbCommons.adb_shellWithOr("mkdir "+path, device.getSerial(), 4) == null){
+                        path = "/sdcard/";
+                    }
                 }
                 runner.setContext(AdbInstall.DESTINATION_PATH, path);
             }
@@ -72,6 +79,13 @@ public class TwrpInstall  {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
+                Installable installable = Procedures.requireInstallable(runner);
+                File file = installable.getFinalFile();
+                boolean eraseData = true;
+                if (file != null && file.exists()){
+                    eraseData = file.length() > 300000000;
+                }
+                runner.setContext(ERASE_DATA_KEY, Boolean.valueOf(eraseData));
                 String outputPath = (String) runner.requireContext(AdbInstall.OUTPUT_DST_PATH);
                 //ProgressPane.DefProgressPane progressPane = new ProgressPane.DefProgressPane();
                 UpdateListener listener = new UpdateListener();
@@ -96,7 +110,22 @@ public class TwrpInstall  {
 
 
             }
-        }, wipeDataCacheOnTwrp());
+        }, RNode.conditional(ERASE_DATA_KEY, wipeDataCacheOnTwrp(), wipeCacheOnTwrp()));
+    }
+
+    public static RInstall wipeCacheOnTwrp(){
+        return RNode.sequence(RebootDevice.requireRecovery(), new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Device device = Procedures.requireDevice(runner);
+                boolean result = false;
+                result |= (AdbCommons.adb_shell("twrp wipe cache",device.getSerial(), 8) != null);
+               // result |= (AdbCommons.adb_shell("twrp wipe data", device.getSerial(), 10) != null);
+                if (!result){
+                    throw new InstallException("Failed to wipe cache: twrp command failed", InstallException.Code.WIPE_FAILED, true ) ;
+                }
+            }
+        });
     }
 
     public static RInstall wipeDataCacheOnTwrp(){

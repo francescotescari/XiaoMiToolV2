@@ -183,4 +183,15 @@ public class FastbootCommons {
         }
         return flash(serial,dummyPath.toFile(), "antirbpass");
     }
+    public static boolean oemRebootRecovery(String serial){
+        FastbootRunner runner = FastbootCommons.command_fast(serial,5,"oem","reboot-recovery");
+        if (runner == null || runner.getExitValue() != 0){
+            return false;
+        }
+        String out = runner.getOutputString();
+        if (out == null || out.toLowerCase().contains("fail")){
+            return false;
+        }
+        return true;
+    }
 }

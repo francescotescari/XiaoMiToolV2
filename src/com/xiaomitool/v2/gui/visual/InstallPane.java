@@ -1,6 +1,6 @@
 package com.xiaomitool.v2.gui.visual;
 
-import com.sun.glass.ui.Window;
+
 import com.xiaomitool.v2.engine.actions.ActionsStatic;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.language.LRes;
@@ -67,7 +67,7 @@ public class InstallPane extends StackPane {
                 stackTrace = StrUtils.firstNLines(stackTrace,5);
                 ErrorPane errorPane = new ErrorPane(LRes.CANCEL, LRes.STEP_BACK, LRes.TRY_AGAIN);
                 errorPane.setTitle(LRes.PROCEDURE_EXC_TITLE.toString(), Color.rgb(128,0,0));
-                errorPane.setText(LRes.PROCEDURE_EXC_TEXT.toString()+"\n\n"+LRes.PROCEDURE_EXC_DETAILS.toString(exception.getCode().toString()));
+                errorPane.setText(LRes.PROCEDURE_EXC_TEXT.toString(LRes.PROCEDURE_EXC_DETAILS.toString(exception.getCode().toString(), exception.getMessage())+"\n",LRes.TRY_AGAIN, LRes.STEP_BACK, LRes.CANCEL));
                 Text t2 = new Text(LRes.PROCEDURE_EXC_ADV_DETAILS.toString()+": "+exception.getMessage()+"\n"+stackTrace+(stackTrace.length() != len ? "\n..." : ""));
                 t2.setTextAlignment(TextAlignment.CENTER);
                 t2.setWrappingWidth(WindowManager.getContentWidth()-100);
@@ -83,16 +83,6 @@ public class InstallPane extends StackPane {
                 }
                 WindowManager.removeTopContent();
                 if (msg == 0){
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                ActionsStatic.MOD_CHOOSE_SCREEN().run();
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    }).start();
                     this.sendCommand(Command.ABORT);
                 } else if (msg == 1){
                     this.sendCommand(Command.UPLEVEL);

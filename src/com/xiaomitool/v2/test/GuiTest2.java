@@ -72,23 +72,26 @@ public class GuiTest2 extends Application{
                     }
                     if (device == null){
                         device = new Device("88eec8b5");
+                        DeviceManager.addDevice(device);
                     }
                     runner.init(null,device);
-                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODENAME, "whyred");
-                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.FULL_VERSION, "8.9.10");
-                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.X_SERIAL_NUMBER, 0);
-                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODEBASE, "8.1");
+                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODENAME, "cepheus");
+                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.FULL_VERSION, "9.3.9");
+                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.X_SERIAL_NUMBER, 1);
+                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODEBASE, "9.0");
                     //runner.setContext("prop_"+DeviceProperties.CODENAME,"whyred");
+                    GenericInstall.main().run(runner);
                     //FastbootFetch.findAllLatestFastboot().run(runner);
-                    ChooseProcedure.chooseRomCategory().run(runner);
+                    /*ChooseProcedure.chooseRomCategory().run(runner);
                     ChooseProcedure.chooseRom().run(runner);
                     ConfirmationProcedure.confirmInstallableProcedure().run(runner);
+                    ConfirmationProcedure.confirmInstallationStart().run(runner);
                     DeviceManager.initScanThreads();
                     GenericInstall.satisfyAllRequirements().run(runner);
                     GenericInstall.resourceFetchWait().run(runner);
                     DeviceManager.refresh();
                     GenericInstall.runInstallProcedure().run(runner);
-                    GenericInstall.installationSuccess().run(runner);
+                    GenericInstall.installationSuccess().run(runner);*/
                   //FastbootInstall.findBuildRunFlashAll().run(runner);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

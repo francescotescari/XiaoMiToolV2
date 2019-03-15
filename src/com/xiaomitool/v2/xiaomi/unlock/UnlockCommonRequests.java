@@ -1,6 +1,8 @@
 package com.xiaomitool.v2.xiaomi.unlock;
 
 import com.xiaomitool.v2.inet.CustomHttpException;
+import com.xiaomitool.v2.language.LRes;
+import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
@@ -10,8 +12,58 @@ import java.util.Base64;
 import java.util.HashMap;
 
 public class UnlockCommonRequests {
+    private static final HashMap<Integer, LRes> UNLOCK_CODE_MEANING = buildUnlockCodeMeaning();
+    public static String getUnlockCodeMeaning(int code, JSONObject object){
+        LRes languageResource =  UNLOCK_CODE_MEANING.get(code);
+        if (languageResource == null){
+            return LRes.UNL_UNKNOWN_ERROR.toString(code);
+        }
+        String toReturn;
+        if (code == 20036){
+            int hours = -1;{
+                try {
+                    hours = object.getJSONObject("data").getInt("waitHour");
+                } catch (Throwable t){
+                    Log.error("Failed to get waitHour for unlock");
+                }
+                if (hours >= 0){
+                    int days = hours/24;
+                    int leftHours = hours%24;
+                    toReturn = languageResource.toString(days, leftHours);
+                } else {
+                    toReturn = LRes.UNL_ERR_20036_NOHOURS.toString();
+                }
+            }
+        } else {
+            toReturn = languageResource.toString();
+        }
+        return toReturn;
+    }
+
+    private static HashMap<Integer, LRes> buildUnlockCodeMeaning(){
+        HashMap<Integer, LRes> map = new HashMap<>();
+        map.put(10000, LRes.UNL_ERR_10000);
+        map.put(10001, LRes.UNL_ERR_10001);
+        map.put(10002, LRes.UNL_ERR_10002);
+        map.put(10003, LRes.UNL_ERR_10003);
+        map.put(10004, LRes.UNL_ERR_10004);
+        map.put(10005, LRes.UNL_ERR_10005);
+        map.put(10006, LRes.UNL_ERR_10006);
+        map.put(20030, LRes.UNL_ERR_20030);
+        map.put(20031, LRes.UNL_ERR_20031);
+        map.put(20032, LRes.UNL_ERR_20032);
+        map.put(20033, LRes.UNL_ERR_20033);
+        map.put(20034, LRes.UNL_ERR_20034);
+        map.put(20035, LRes.UNL_ERR_20035);
+        map.put(20036, LRes.UNL_ERR_20036);
+        map.put(20037, LRes.UNL_ERR_20037);
+        map.put(20041, LRes.UNL_ERR_20037);
+        return map;
+    }
+
+
     private static final String SID = "miui_unlocktool_client";
-    private static final String CLIENT_VERSION = "3.3.525.23";
+    private static final String CLIENT_VERSION = "3.3.827.31";
     private static final String NONCEV2 = "/api/v2/nonce";
     private static final String USERINFOV3 = "/api/v3/unlock/userinfo";
     private static final String DEVICECLEARV3 = "/api/v2/unlock/device/clear";

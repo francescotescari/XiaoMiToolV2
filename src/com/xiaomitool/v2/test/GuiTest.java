@@ -1,29 +1,141 @@
 package com.xiaomitool.v2.test;
 
+import com.xiaomitool.v2.adb.device.Device;
+import com.xiaomitool.v2.engine.ToolManager;
+import com.xiaomitool.v2.engine.actions.ActionsDynamic;
 import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.WindowManager;
 
-import com.xiaomitool.v2.gui.visual.ChooserPane;
-import com.xiaomitool.v2.gui.visual.DragAndDropPane;
-import com.xiaomitool.v2.gui.visual.TextStackPane;
+import com.xiaomitool.v2.gui.deviceView.Animatable;
+import com.xiaomitool.v2.gui.deviceView.AnimatableDeviceView;
+import com.xiaomitool.v2.gui.deviceView.DeviceRecoveryView;
+import com.xiaomitool.v2.gui.deviceView.DeviceView;
+import com.xiaomitool.v2.gui.drawable.DrawableManager;
+import com.xiaomitool.v2.gui.visual.*;
+import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import javafx.animation.*;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.net.URL;
 
 public class GuiTest extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Pane pane = new StackPane();
+        ToolManager.init(primaryStage);
+        String[] texts = new String[]{"Prova1", "Prova2", "Prova3", "Prova4"};
+        URL[] imgs = new URL[]{DrawableManager.getPng("usbdbg1"),DrawableManager.getPng("usbdbg2"),DrawableManager.getPng("usbdbg3"),DrawableManager.getPng("usbdbg4")};
+        Image[] imgsfx = new Image[imgs.length];
+        for (int i = 0; i<imgs.length; ++i){
+            imgsfx[i] = new Image(imgs[i].toString(),false);
+        }
+
+        Platform.runLater(new Runnable() {
+                              @Override
+                              public void run() {
+                                 /* new Thread(new Runnable() {
+                                      @Override
+                                      public void run() {
+                                          try {
+                                              ActionsDynamic.HOW_TO_ENABLE_USB_DEBUGGING(null, false).run();
+                                          } catch (InterruptedException e) {
+                                              e.printStackTrace();
+                                          }
+                                      }
+                                  }).start();*/
+                                  Log.debug("CCASASAS");
+                                  /*DeviceRecoveryView deviceRecoveryView = new DeviceRecoveryView(DeviceView.DEVICE_18_9, 400);
+                                  WindowManager.setMainContent(deviceRecoveryView);
+                                  deviceRecoveryView.selectOption(2);
+                                  deviceRecoveryView.animateSelectThird(2000);*/
+                                  new Thread(new Runnable() {
+                                      @Override
+                                      public void run() {
+                                          try {
+                                              ActionsDynamic.HOWTO_GO_RECOVERY(null).run();
+                                          } catch (InterruptedException e) {
+                                              e.printStackTrace();
+                                          }
+                                      }
+                                  }).start();
+
+
+                                 /* DeviceImgInstructionPane imgInstructionPane = new DeviceImgInstructionPane(WindowManager.getContentHeight() + 30, WindowManager.getContentHeight() - 10, texts, imgsfx, null);
+                                  WindowManager.setMainContent(imgInstructionPane);
+                                  try {
+                                      imgInstructionPane.animate();
+                                  } catch (InterruptedException e) {
+                                      e.printStackTrace();
+                                  }
+                              }*/
+                              }
+                          });
+                /*SidePane sidePane = new SidePane();
+                ButtonPane buttonPane = new ButtonPane("Prev","Next");
+                AnimatableDeviceView deviceView = new AnimatableDeviceView(DeviceView.DEVICE_18_9, WindowManager.getContentHeight()+30) {
+                    @Override
+                    public boolean animate(int step) throws InterruptedException {
+                        switch (step){
+                            case 0:
+                                this.buildCircleTransition(666,1330,-1);
+                            default:
+                                return false;
+                        }
+
+                    }
+                };
+
+                sidePane.setRight(GuiUtils.center(DeviceView.crop(deviceView,WindowManager.getContentHeight()-10, 20)));
+                Text text = new Text(texts[0]);
+                text.setWrappingWidth(400);
+                text.setFont(Font.font(15));
+                text.setTextAlignment(TextAlignment.CENTER);
+                buttonPane.setContent(text);
+                StackPane stackPane = new StackPane(buttonPane);
+                stackPane.setPadding(new Insets(20,0,40,20));
+                sidePane.setLeft(stackPane);
+                deviceView.setContent(imgs[0]);
+                deviceView.setLenOverlay(WindowManager.requireOverlayPane(), 200, 0.5);
+                WindowManager.setMainContent(sidePane);
+                try {
+                    deviceView.animate(0);
+                }catch (Exception e){
+
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            int click = buttonPane.waitClick();
+                            if (click == 1){
+
+                            }
+
+                        } catch (Exception e){
+
+                        }
+                    }
+                })
+            }
+        });*/
+
+
+        /*Pane pane = new StackPane();
         pane.setBackground(WindowManager.DEFAULT_BACKGROUND);
         pane.setPrefSize(1000,700);
 
@@ -142,9 +254,9 @@ public class GuiTest extends Application {
             }
         }).start();*/
 
-        Scene scene = new Scene(pane);
+      /*  Scene scene = new Scene(pane);
         primaryStage.setScene(scene);
-        primaryStage.show();
+        primaryStage.show();*/
 
     }
 
