@@ -1,18 +1,18 @@
 package com.xiaomitool.v2.procedure.uistuff;
 
+import com.xiaomitool.v2.adb.device.Device;
+import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.procedure.*;
+import com.xiaomitool.v2.procedure.device.ManageDevice;
 import com.xiaomitool.v2.procedure.fetch.StockRecoveryFetch;
 import com.xiaomitool.v2.procedure.fetch.TwrpFetch;
 import com.xiaomitool.v2.procedure.install.FastbootInstall;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.procedure.install.TwrpInstall;
-import com.xiaomitool.v2.rom.Installable;
-import com.xiaomitool.v2.rom.MiuiTgzRom;
-import com.xiaomitool.v2.rom.MiuiZipRom;
-import com.xiaomitool.v2.rom.ZipRom;
+import com.xiaomitool.v2.rom.*;
 import com.xiaomitool.v2.utility.Choiceable;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
@@ -35,10 +35,12 @@ public abstract class ChoosableProcedure implements Choiceable, ProcedureBundled
                     RInstall toDoNext = null;
                     if (path == null){
                         throw new InstallException("File selected is null", InstallException.Code.FILE_NOT_FOUND, true);
-                    } else if (path.endsWith(".zip")){
+                    }
+                    String lowPath = path.toLowerCase();
+                    if (lowPath.endsWith(".zip")){
                         installable = new MiuiZipRom(file, true);
                         toDoNext = StockRecoveryFetch.createValidatedZipInstall();
-                    } else if (path.endsWith(".tgz") || path.endsWith(".tar.gz")){
+                    } else if (lowPath.endsWith(".tgz") || lowPath.endsWith(".tar.gz")){
                         installable = new MiuiTgzRom(file, true);
                     } else {
                         throw new InstallException("Unknown file extension: "+FilenameUtils.getExtension(path), InstallException.Code.FILE_NOT_FOUND, true);
@@ -71,14 +73,16 @@ public abstract class ChoosableProcedure implements Choiceable, ProcedureBundled
 
                     if (path == null){
                         throw new InstallException("File selected is null", InstallException.Code.FILE_NOT_FOUND, true);
-                    } else if (path.endsWith(".zip")){
+                    }
+                    String lowPath = path.toLowerCase();
+                    if (lowPath.endsWith(".zip")){
                         installable = new ZipRom(file) {
                             @Override
                             public ChooserPane.Choice getChoice() {
                                 return getChoiceInternal();
                             }
                         };
-                    } else if (path.endsWith(".tgz") || path.endsWith(".tar.gz")){
+                    } else if (lowPath.endsWith(".tgz") || lowPath.endsWith(".tar.gz")){
                         installable = new MiuiTgzRom(file, false);
                     } else {
                         throw new InstallException("Unknown file extension: "+FilenameUtils.getExtension(path), InstallException.Code.FILE_NOT_FOUND, true);
@@ -91,6 +95,42 @@ public abstract class ChoosableProcedure implements Choiceable, ProcedureBundled
         @Override
         public ChooserPane.Choice getChoiceInternal() {
             return new ChooserPane.Choice(LRes.ROM_LOCAL.toString(), LRes.ROM_LOCAL_TEXT.toString(), new Image(DrawableManager.getPng("localpc.png").toString()));
+        }
+    };
+
+
+    public static final ChoosableProcedure RECOVERY_IMAGE = new ChoosableProcedure() {
+        @Override
+        protected ChooserPane.Choice getChoiceInternal() {
+            return new ChooserPane.Choice(LRes.CUSTOM_RECOVERY.toString(), LRes.CUSTOM_RECOVERY_TEXT.toString(), new Image(DrawableManager.getPng("localpc.png").toString()));
+        }
+
+        @Override
+        public RInstall getProcedure() {
+            return new RInstall() {
+                @Override
+                public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                    File file = Procedures.selectFileFromPc(LRes.FILE_SELECT_TIT.toString(), LRes.FILE_SELECT_TEXT.toString(), new FileChooser.ExtensionFilter("Recovery image file or archive","*.img"));
+                    Installable installable = null;
+                    String path = file.getAbsolutePath();
+                    String codename = (String) Procedures.requireDevice(runner).getDeviceProperties().get(DeviceProperties.CODENAME);
+                    if (path == null){
+                        throw new InstallException("File selected is null", InstallException.Code.FILE_NOT_FOUND, true);
+                    }
+                    String lowPath = path.toLowerCase();
+                    if (lowPath.endsWith(".img")){
+                        installable = new TwrpFile(file, codename) {
+                            @Override
+                            public ChooserPane.Choice getChoice() {
+                                return getChoiceInternal();
+                            }
+                        };
+                    } else {
+                        throw new InstallException("Unknown file extension: "+FilenameUtils.getExtension(path), InstallException.Code.FILE_NOT_FOUND, true);
+                    }
+                    Procedures.setInstallable(runner,installable);
+                }
+            };
         }
     };
 
@@ -130,7 +170,7 @@ public abstract class ChoosableProcedure implements Choiceable, ProcedureBundled
     public static final ChoosableProcedure UNLOCK_DEVICE = new ChoosableProcedure() {
         @Override
         public RInstall getProcedure() {
-            return FastbootInstall.unlockBootloader();
+            return RNode.sequence(ManageDevice.waitRequireAccessible(30, Device.Status.DEVICE),FastbootInstall.unlockBootloader());
         }
 
         @Override
@@ -147,7 +187,12 @@ public abstract class ChoosableProcedure implements Choiceable, ProcedureBundled
 
         @Override
         public RInstall getProcedure() {
-            return RNode.sequence(ChooseProcedure.chooseRomCategory(), ChooseProcedure.chooseRom());
+            return RNode.sequence(new RInstall() {
+                @Override
+                public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                    Procedures.setInstallable(runner,null);
+                }
+            },ChooseProcedure.chooseRomCategory(), ChooseProcedure.chooseRom());
         }
     };
 

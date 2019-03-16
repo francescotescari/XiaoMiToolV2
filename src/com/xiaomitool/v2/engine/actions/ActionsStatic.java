@@ -163,7 +163,7 @@ public class ActionsStatic {
     public static RunnableMessage MAIN_RECOVER_DEVICE_TMP(){
         return  () -> {
             ButtonPane buttonPane = new ButtonPane(LRes.OK_UNDERSTAND);
-            Text instruction = new Text(LRes.RECOVERY_RECOVER_TMP.toString());
+            Text instruction = new Text(""/*LRes.RECOVERY_RECOVER_TMP.toString()*/);
             instruction.setFont(Font.font(15));
            // instruction.setTextAlignment(TextAlignment.CENTER);
             instruction.setWrappingWidth(WindowManager.getMainPane().getWidth()-180);

@@ -37,7 +37,7 @@ public enum  LRes  {
     SELECT("Select"),
     SELECTED_DEVICE("Selected device: %s"),
     TRY_AGAIN("Try again"),
-    DEVICE_NOT_CONNECTED("It seems your device is not connected. Please make sure your device is on, connected to your pc and with usb debugging enabled"),
+    DEVICE_NOT_CONNECTED("It seems your device is not connected. Please make sure your device is on, connected to your pc and with usb debugging enabled.\nIf it's rebooting then wait the boot completion"),
     AUTH_DEVICE_TEXT("Your device is offline or not authorized. Please authorize your device by clicking on the popup window that is displayed on its screen.\nIf the device is in recovery mode or doesn't have the popup, try unplugging and pluggin back in the cable"),
     YES("Yes"),
     NO("No"),
@@ -50,8 +50,8 @@ public enum  LRes  {
     BOOTLOADER_STATUS("Bootloader status"),
     FASTBOOT_PARSED("Complete fastboot information"),
     RECOVERY_PARSED("Complete recovery information"),
-    FINDING_INFO_TEXT("Collecting information from your device to establish what procedure can be applied.\nPlease wait for this operation to finish or messages from this tool.\nThe device will reboot a few times during this operation."),
-    RECOVERY_RECOVER_TMP("You are about to use an exclusive feature of this tool that should be used only in one of these scenarios:\n-Your device doesn't boot and goes to recovery menu with this message: \"This MIUI version can't be installed on this device\" or\n-Your device has locked bootloader and when you get to the region selection screen during first device configuration you can select only \"China\" and by pressing that your device reboots and goes into bootloop.\nYou should not use this feature if your device has not one of these problems, because it is a risky operation that could brick your device by leading to such problems or worse.\nThis feature is not official and depends on Xiaomi servers and Xiaomi recovery and thus could be disabled by Xiaomi in the future. Please make sure you are connected to Internet.\nThis procedure will wipe the device data."),
+    FINDING_INFO_TEXT("Collecting information from your device to determine which procedures can be executed.\nPlease wait for this operation to finish or any messages from this tool.\nThe device will reboot a few times during this operation."),
+    //RECOVERY_RECOVER_TMP("You are about to use an exclusive feature of this tool that should be used only in one of these scenarios:\n-Your device doesn't boot and goes to recovery menu with this message: \"This MIUI version can't be installed on this device\" or\n-Your device has locked bootloader and when you get to the region selection screen during first device configuration you can select only \"China\" and by pressing that your device reboots and goes into bootloop.\nYou should not use this feature if your device has not one of these problems, because it is a risky operation that could brick your device by leading to such problems or worse.\nThis feature is not official and depends on Xiaomi servers and Xiaomi recovery and thus could be disabled by Xiaomi in the future. Please make sure you are connected to Internet.\nThis procedure will wipe the device data."),
     NO_DEVICE_CONNECTED_RECOVERY("No devices in recovery mode found.\nPlease put your device in recovery mode and try again."),
     NO_DEVICE_CONNECTED_FASTBOOT("No devices in fastboot mode found.\nPlease put your device in fastboot mode and try again."),
     HT_GO_RECOVERY("How to enter recovery mode?"),
@@ -79,7 +79,7 @@ public enum  LRes  {
     FETCHING_RECOVERY_INFO("Retrieving recovery information"),
     DONATE("Make a donation"),
     DONATE_DONT("Make the dev bankrupt"),
-    DONATE_TEXT("This tool has been developed thanks to the users donations.\nThe developer of this tool isn't paid for his work and he is paying for services with his pocket money, leaving this tool free.\nIf you want to show your gratitude to him or support this project you can still offer him a beer by making a donation.\n\nWould you like to make a donation?"),
+    DONATE_TEXT("This tool was developed thanks to the users donations.\nThe developer of this tool isn't paid for his work and he is paying for services with his pocket money, leaving this tool free to use.\nIf you want to show your gratitude to him or support this project you can still offer him a beer by making a donation.\n\nWould you like to make a donation?"),
     INSTALL_SUCCESS("Installation completed succesfully!"),
     DOWNLOADING_ROM_FILE("Downloading rom file..."),
     EXIT_TOOL("Close the tool"),
@@ -224,7 +224,10 @@ public enum  LRes  {
     UNL_ERR_20041("Your account isn't associated with a phone number\nGo to account.xiaomi.com and associate it with your phone number"),
     UNLOCK_ERROR_TEXT("Failed to unlock your device, Xiaomi server returned error %d:\nError description: %s"),
     UNLOCK_CHECKING_ACCOUNT("Checking account unlock availability"),
-    UNLOCK_CHECKING_DEVICE("Checking device unlock capability")
+    UNLOCK_CHECKING_DEVICE("Checking device unlock capability"),
+    UNLOCK_REQUESTING_TOKEN("Requesting device unlock token"),
+    CUSTOM_RECOVERY("Custom recovery"),
+    CUSTOM_RECOVERY_TEXT("Install a custom local file recovery, such as TWRP recovery")
     ;
 
     private String text;

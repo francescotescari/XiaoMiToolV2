@@ -59,6 +59,7 @@ public class InstallPane extends StackPane {
             protected void onException(InstallException exception) {
                 Log.debug(StrUtils.exceptionToString(new Exception()));
                 Log.printStackTrace(exception);
+                exception.printStackTrace();
                 Log.debug("GUI LISTENER EXCEPTION:");
                 Log.debug(exception.getMessage());
                 Log.debug(exception.getCode().toString());

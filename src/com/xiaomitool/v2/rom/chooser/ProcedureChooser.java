@@ -11,7 +11,7 @@ public class ProcedureChooser extends SomethingChooser<ChoosableProcedure> {
         this.add(SomethingChooser.ID_UNLOCK_DEVICE, ChoosableProcedure.UNLOCK_DEVICE);
         this.add(SomethingChooser.ID_FAKE_UNOFFICIAL_ZIP, ChoosableProcedure.UNOFFICIAL_ROM_INSTALL);
         this.add(SomethingChooser.ID_FAKE_MOD_ZIP, ChoosableProcedure.GENERIC_MOD_ZIP);
+        this.add(SomethingChooser.ID_INSTALL_RECOVERY_IMAGE, ChoosableProcedure.RECOVERY_IMAGE);
         this.add(SomethingChooser.ID_BACK, ChoosableProcedure.BACK_TO_CATEGORIES);
-        //this.add(SomethingChooser.ID_INSTALL_TWRP, ChoosableProcedure.INSTALL_TWRP);
     }
 }

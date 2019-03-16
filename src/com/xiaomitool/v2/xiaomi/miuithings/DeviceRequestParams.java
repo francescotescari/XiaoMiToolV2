@@ -13,7 +13,14 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
     public DeviceRequestParams(String device, String version, String codebase, @Nullable Branch branch, String serialNumber, int zone){
         super(device,version,codebase,branch);
         super.serialNumber = serialNumber;
+        Log.debug("Devi4zone: "+zone);
         super.zone = zone;
+        Log.debug("Devi3zone: "+super.zone);
+        try {
+            Log.debug(this.buildJson());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -30,8 +37,12 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
         }
         String version = (String) properties.get(DeviceProperties.FULL_VERSION);
         String codebase = (String) properties.get(DeviceProperties.CODEBASE);
+        if (codebase!= null && codebase.length() == 1){
+            codebase = codebase+".0";
+        }
         Integer serialNumber = (Integer)  properties.get(DeviceProperties.X_SERIAL_NUMBER);
         String zone =  (String) properties.get(DeviceProperties.ROMZONE);
+        Log.debug("Device zone1: "+zone);
         if (requireOtaParameters) {
             try {
 
@@ -51,6 +62,7 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
         } catch (Throwable e){
             z = codename.endsWith("_global") ? 2 : 1;
         }
+        Log.debug("Device zone: "+z);
         if (zone == null || zone.isEmpty()){
             z = 0;
         }

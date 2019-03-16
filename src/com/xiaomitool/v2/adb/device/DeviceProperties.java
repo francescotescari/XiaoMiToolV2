@@ -302,6 +302,9 @@ public class DeviceProperties {
         if (x == null){
             x = fastbootProperties.get(key);
         }
+        if (x == null){
+            x = recoveryProperties.get(key);
+        }
         return x;
     }
 

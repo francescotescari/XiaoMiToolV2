@@ -36,7 +36,7 @@ public class Log {
 
     public static void debug(Object arg){
 
-        //log(PREFIX_DEBUG,arg);
+        log(PREFIX_DEBUG,arg);
     }
     public static void debugLine(){
         Log.debug("-----------------------------");

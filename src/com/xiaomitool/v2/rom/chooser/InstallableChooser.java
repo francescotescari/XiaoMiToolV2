@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.rom.chooser;
 
+import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.rom.*;
 
 import java.util.*;
@@ -33,8 +34,9 @@ public class InstallableChooser extends SomethingChooser<HashMap<Installable.Typ
         HashMap<Installable.Type, Installable> map = super.hashMap.get(id);
         if (map == null){
             map = new HashMap<>();
-            super.hashMap.put(id, map);
+            super.add(id, map);
         }
+        Log.debug("Add to installable chooser: "+id+", "+installable);
         map.put(installable.getType(), installable);
 
     }

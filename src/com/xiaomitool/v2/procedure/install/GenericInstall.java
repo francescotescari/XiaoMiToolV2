@@ -22,6 +22,7 @@ import com.xiaomitool.v2.procedure.uistuff.ConfirmationProcedure;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.chooser.InstallationRequirement;
 import com.xiaomitool.v2.tasks.UpdateListener;
+import com.xiaomitool.v2.utility.CommandClass;
 import com.xiaomitool.v2.utility.YesNoMaybe;
 import com.xiaomitool.v2.utility.utils.InetUtils;
 import com.xiaomitool.v2.utility.utils.StrUtils;
@@ -211,17 +212,44 @@ public class GenericInstall {
         };
     }
 
+    static final RInstall checkIfProcedureDone(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Installable installable = (Installable) runner.getContext(Procedures.INSTALLABLE);
+                Boolean isProcedure = (Boolean) runner.getContext(ChooseProcedure.IS_CHOOSEN_PROCEDURE);
+                Boolean skip = installable == null && isProcedure != null && isProcedure == true;
+                runner.setContext(KEY_BOOL_SHOULD_SKIP_INSTALL, skip);
+            }
+        };
+    }
+
+    private static final String KEY_BOOL_SHOULD_SKIP_INSTALL = "bool_should_skip_install";
+
+
+
     public static RInstall main(){
-        return RNode.sequence(RebootDevice.rebootNoWaitIfConnected(),
+        return RNode.sequence(
+                RebootDevice.rebootNoWaitIfConnected(),
                 ChooseProcedure.chooseRomCategory(),
                 ChooseProcedure.chooseRom(),
-                RNode.sequence(ConfirmationProcedure.confirmInstallableProcedure(),
-                        ConfirmationProcedure.confirmInstallationStart(),
-                        RNode.sequence(ManageDevice.waitRequireAccessible(30, Device.Status.DEVICE),
-                                GenericInstall.satisfyAllRequirements(),
-                                GenericInstall.resourceFetchWait(),
-                                GenericInstall.runInstallProcedure(),
-                                GenericInstall.installationSuccess())));
+                checkIfProcedureDone(),
+                RNode.conditional(KEY_BOOL_SHOULD_SKIP_INSTALL,
+                    Procedures.doNothing(),
+                    RNode.sequence(
+                            ConfirmationProcedure.confirmInstallableProcedure(),
+                            ConfirmationProcedure.confirmInstallationStart(),
+                            RNode.sequence(
+                                    ManageDevice.waitRequireAccessible(30, Device.Status.DEVICE),
+                                    RNode.sequence(
+                                            GenericInstall.satisfyAllRequirements(),
+                                            GenericInstall.resourceFetchWait(),
+                                            GenericInstall.runInstallProcedure())
+                                    )
+                            )
+                    ),
+                GenericInstall.installationSuccess()
+            );
         /*RebootDevice.rebootNoWaitIfConnected().run(runner);
         Log.debug("PRO0 CHOOSE CAT");
         ChooseProcedure.chooseRomCategory().run(runner);

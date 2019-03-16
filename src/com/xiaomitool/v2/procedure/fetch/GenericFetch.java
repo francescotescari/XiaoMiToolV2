@@ -91,6 +91,7 @@ public class GenericFetch {
                 Installable installable = Procedures.requireInstallable(runner);
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 chooser.add(InstallableChooser.ID_XIAOMIEU_STABLE, installable);
+                Procedures.setInstallable(runner,null);
             }
         }),RNode.sequence(GenericFetch.fetchXiaomieuRom(Branch.DEVELOPER), new RInstall() {
             @Override
@@ -98,6 +99,7 @@ public class GenericFetch {
                 Installable installable = Procedures.requireInstallable(runner);
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 chooser.add(InstallableChooser.ID_XIAOMIEU_DEV, installable);
+                Procedures.setInstallable(runner,null);
             }
         }));
     }
@@ -111,6 +113,7 @@ public class GenericFetch {
                 Installable installable = Procedures.requireInstallable(runner);
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 chooser.add(InstallableChooser.ID_INSTALL_TWRP,installable);
+                Procedures.setInstallable(runner,null);
                 Log.debug("Auto twrp added");
             }
         }), RNode.sequence(ModFetch.fetchMagiskStable(), new RInstall() {
@@ -119,6 +122,7 @@ public class GenericFetch {
                 Installable installable = Procedures.requireInstallable(runner);
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 chooser.add(InstallableChooser.ID_INSTALL_MAGISK,installable);
+                Procedures.setInstallable(runner,null);
             }
         }), Procedures.doNothing());
     }

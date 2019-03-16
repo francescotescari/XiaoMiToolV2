@@ -75,6 +75,7 @@ public class DefaultRequestParams extends RequestParams implements Cloneable {
             map.put("pkg",packageHash);
         }
         HashMap<String, Object> options = new HashMap<>();
+        Log.debug("Devi2 zone: "+zone);
         if (zone != 0) {
             options.put("zone", zone);
         }

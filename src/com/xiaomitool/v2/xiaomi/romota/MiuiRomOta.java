@@ -276,7 +276,10 @@ public class MiuiRomOta {
     public static MiuiZipRom latestRecovery_request(RequestParams params) throws XiaomiProcedureException, CustomHttpException {
         String salt = "ZmVjZTk0MzY0ZjY=";
         String device = params.getModDevice();
-        String codebase = params.getCodebase().toString().substring(0,3);
+        String codebase = params.getCodebase().toString();
+        if (codebase.length() > 3){
+            codebase = codebase.substring(0,3);
+        }
         Branch b = params.getBranch();
         b = b == null ? Branch.STABLE : b.getDual();
         String branch =  Branch.STABLE.equals(b) ? "1" : "0";

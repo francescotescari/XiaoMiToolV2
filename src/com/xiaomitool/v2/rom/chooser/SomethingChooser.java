@@ -1,19 +1,20 @@
 package com.xiaomitool.v2.rom.chooser;
 
+import com.xiaomitool.v2.logging.Log;
+
 import java.util.*;
 
 public abstract class SomethingChooser<T> {
-    public static final String ID_CHINA_STABLE = "cs";
-    public static final String ID_CHINA_DEVELOPER = "cd";
-    public static final String ID_GLOBAL_STABLE = "gs";
-    public static final String ID_GLOBAL_DEVELOPER = "gd";
-    public static final String ID_FAKE_OFFICIAL_ZIP = "oz";
-    public static final String ID_FAKE_UNOFFICIAL_ZIP = "uz";
+    public static final String ID_CHINA_STABLE = "csoff";
+    public static final String ID_CHINA_DEVELOPER = "cdoff";
+    public static final String ID_GLOBAL_STABLE = "gsoff";
+    public static final String ID_GLOBAL_DEVELOPER = "gdoff";
+    public static final String ID_FAKE_UNOFFICIAL_ZIP = "unoffzip";
     public static final String ID_FAKE_MOD_ZIP = "fmzip";
-    public static final String ID_FAKE_TGZ = "tgz";
     public static final String ID_FAKE_OFFICIAL = "official";
     public static final String ID_UNLOCK_DEVICE = "unlock";
     public static final String ID_INSTALL_TWRP = "itwrp";
+    public static final String ID_INSTALL_RECOVERY_IMAGE = "irecimage";
     public static final String ID_INSTALL_MAGISK = "imagisk";
     public static final String ID_XIAOMIEU_STABLE = "eusta";
     public static final String ID_XIAOMIEU_DEV = "eudev";
@@ -26,7 +27,7 @@ public abstract class SomethingChooser<T> {
         public static final IdGroup officialRom = new IdGroup(ID_CHINA_STABLE, ID_CHINA_DEVELOPER, ID_GLOBAL_DEVELOPER, ID_GLOBAL_STABLE, ID_FAKE_OFFICIAL, ID_BACK);
         public static final IdGroup unofficialRoms = new IdGroup(ID_XIAOMIEU_STABLE, ID_XIAOMIEU_DEV, ID_FAKE_UNOFFICIAL_ZIP, ID_BACK);
         public static final IdGroup xiaomiProcedures = new IdGroup(ID_UNLOCK_DEVICE, ID_BACK);
-        public static final IdGroup modsAndStuff = new IdGroup(ID_INSTALL_TWRP, ID_INSTALL_MAGISK, ID_FAKE_MOD_ZIP, ID_BACK);
+        public static final IdGroup modsAndStuff = new IdGroup(ID_INSTALL_TWRP, ID_INSTALL_MAGISK, ID_FAKE_MOD_ZIP, ID_INSTALL_RECOVERY_IMAGE, ID_BACK);
         public boolean hasId(String id){
             return this.contains(id);
         }
@@ -34,7 +35,10 @@ public abstract class SomethingChooser<T> {
     }
 
     protected LinkedHashMap<String, T> hashMap = new LinkedHashMap<>();
+
     public void add(String id, T obj){
+        Log.debug("Add to chooser");
+        Log.printStackTrace(new Exception());
         this.hashMap.put(id, obj);
     }
 

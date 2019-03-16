@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>XiaoMiTool.jar</jar>
+  <outfile>C:\Users\Franz\Documents\Java\XiaoMiTool\launch4j\XiaoMiTool.exe</outfile>
+  <errTitle>XiaoMiTool V2 launch error</errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>https://jdk.java.net/</downloadUrl>
+  <supportUrl>http://www.xiaomitool.com</supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest>C:\Users\Franz\Documents\Java\XiaoMiTool\launch4j\admin_priviledge.manifest</manifest>
+  <icon>C:\Users\Franz\Documents\Java\XiaoMiTool\launch4j\icon.ico</icon>
+  <jre>
+    <path>.</path>
+    <bundledJre64Bit>true</bundledJre64Bit>
+    <bundledJreAsFallback>false</bundledJreAsFallback>
+    <minVersion></minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <runtimeBits>64/32</runtimeBits>
+  </jre>
+</launch4jConfig>

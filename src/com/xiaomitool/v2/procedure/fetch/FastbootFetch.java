@@ -15,7 +15,6 @@ import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
 import com.xiaomitool.v2.xiaomi.miuithings.RequestParams;
 import com.xiaomitool.v2.xiaomi.romota.MiuiRomOta;
 
-import static com.xiaomitool.v2.rom.chooser.InstallableChooser.ID_FAKE_TGZ;
 import static com.xiaomitool.v2.rom.chooser.InstallableChooser.idBySpecie;
 
 public class FastbootFetch {
@@ -69,14 +68,6 @@ public class FastbootFetch {
     }
 
     public static RInstall findAllLatestFastboot(){
-        return RNode.setSkipOnException(RNode.sequence(findLatestFastboot(MiuiRom.Specie.CHINA_STABLE), findLatestFastboot(MiuiRom.Specie.CHINA_DEVELOPER), findLatestFastboot(MiuiRom.Specie.GLOBAL_STABLE), findLatestFastboot(MiuiRom.Specie.GLOBAL_DEVELOPER), new RInstall() {
-            @Override
-            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
-                Installable fakeTgz = new MiuiTgzRom(false);
-                chooser.add(ID_FAKE_TGZ, fakeTgz);
-
-            }
-        }));
+        return RNode.setSkipOnException(RNode.sequence(findLatestFastboot(MiuiRom.Specie.CHINA_STABLE), findLatestFastboot(MiuiRom.Specie.CHINA_DEVELOPER), findLatestFastboot(MiuiRom.Specie.GLOBAL_STABLE), findLatestFastboot(MiuiRom.Specie.GLOBAL_DEVELOPER)));
     }
 }

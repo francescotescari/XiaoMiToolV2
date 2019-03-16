@@ -36,7 +36,7 @@ public class ProcedureRunner extends GuiListener {
 
 
 
-    public Command run(RInstall runnable) throws InstallException {
+    public Command run(RInstall runnable) throws InstallException, RMessage {
 
         Command cmd = Command.NOCMD;
         try {
@@ -103,11 +103,15 @@ public class ProcedureRunner extends GuiListener {
         return Command.NOCMD;
     }
 
-    public Command handleException(InstallException exception, RInstall cause) throws InterruptedException, InstallException {
+    public Command handleException(InstallException exception, RInstall cause) throws InterruptedException, InstallException, RMessage {
         if (cause != null && cause.hasFlag(RNode.FLAG_THROWRAWEXCEPTION)){
             throw exception;
         }
-        return listener.exception(exception);
+        Command out = listener.exception(exception);
+        if (Command.ABORT.equals(out)){
+            throw new RMessage(out);
+        }
+        return out;
     }
 
 
@@ -136,6 +140,8 @@ public class ProcedureRunner extends GuiListener {
     protected void onException(InstallException exception) {
         listener.onException(exception);
     }
+
+
     private HashMap<String, Object> context = new HashMap<>();
     public void setContext(String key, Object value){
         context.put(key,value);
@@ -177,7 +183,7 @@ public class ProcedureRunner extends GuiListener {
         init(null);
     }
 
-    public void startProcedure(RInstall procedure) throws InterruptedException, InstallException {
+    public void startProcedure(RInstall procedure) throws InterruptedException, InstallException, RMessage {
         this.runnableInstall = procedure;
         run(procedure);
     }

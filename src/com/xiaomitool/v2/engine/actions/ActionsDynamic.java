@@ -289,7 +289,7 @@ public class ActionsDynamic {
         return () -> {
             ButtonPane pane = new ButtonPane(LRes.HT_ENABLE_USB_DEBUG, LRes.SEARCH_AGAIN);
             pane.setContentText(LRes.WAITING_USB_ENABLE.toString(LRes.SEARCH_AGAIN));
-            WindowManager.setMainContent(pane);
+            WindowManager.setMainContent(pane, false);
             IDClickReceiver receiver = pane.getIdClickReceiver();
             DeviceManager.addMessageReceiver(receiver);
             int message = NOOP;
@@ -319,6 +319,7 @@ public class ActionsDynamic {
                     message = NOOP;
 
             }
+            WindowManager.removeTopContent();
             DeviceManager.removeMessageReceiver(receiver);
             return  0;};
     }
@@ -409,7 +410,7 @@ public class ActionsDynamic {
                             if (!device.reboot(Device.Status.FASTBOOT)) {
                                 throw new Exception("Failed to reboot to fastboot");
                             } else {
-
+                                Thread.sleep(1000);
                                 ActionsUtil.setDevicePropertiesText(device, texts);
                             }
                         } catch (Exception e) {
@@ -430,7 +431,7 @@ public class ActionsDynamic {
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                        texts[9].setText(LRes.UNIMPORTANT.toString());
+                                        texts[9].setText(LRes.IRRELEVANT.toString());
                                     }
                                 });
 
@@ -440,6 +441,7 @@ public class ActionsDynamic {
                                 if (!result){
                                     throw new Exception("Failed to reboot to stock recovery");
                                 }
+                                Thread.sleep(1000);
                                 ActionsUtil.setDevicePropertiesText(device, texts);
 
                             }
@@ -456,7 +458,7 @@ public class ActionsDynamic {
                     }
 
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(1200);
                         ActionsDynamic.START_PROCEDURE(device).run();
                     } catch (InterruptedException e) {
 
@@ -585,7 +587,11 @@ public class ActionsDynamic {
                         main.run(runner);
 
                     } catch (Exception e) {
+                        e.printStackTrace();
                         try {
+                            if (e instanceof InstallException){
+                                throw (InstallException) e;
+                            }
                             runner.handleException(new InstallException(e.getMessage(), InstallException.Code.INTERNAL_ERROR, false), main);
                         } catch (InstallException e1) {
                             throw new RMessage(e1);

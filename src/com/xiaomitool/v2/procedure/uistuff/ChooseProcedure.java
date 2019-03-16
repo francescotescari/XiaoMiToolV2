@@ -45,10 +45,12 @@ public class ChooseProcedure {
                 InstallableChooser.IdGroup idGroup = (InstallableChooser.IdGroup) runner.requireContext(ROM_CATEGORY_ID);
                 Device device = Procedures.requireDevice(runner);
                 boolean unlocked = UnlockStatus.UNLOCKED.equals(device.getAnswers().getUnlockStatus());
+                Log.debug(chooser.entrySet());
                 for (Map.Entry<String, HashMap<Installable.Type, Installable>> entry : chooser.entrySet()){
                     if (!idGroup.hasId(entry.getKey())){
                         continue;
                     }
+                    Log.debug(entry.getKey()+" should be in "+idGroup.toString());
                     HashMap<Installable.Type, Installable> map = entry.getValue();
                     if (map == null || map.size() == 0){
                         continue;

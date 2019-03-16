@@ -30,7 +30,7 @@ public class ActionsUtil {
         codename = props.get(DeviceProperties.CODENAME, LRes.UNKNOWN).toString();
         model =  props.get(DeviceProperties.MODEL, LRes.UNKNOWN).toString();
         serial = device.getSerial();
-        UnlockStatus unlockStatus = (UnlockStatus) props.get(DeviceProperties.X_LOCKSTATUS);
+        UnlockStatus unlockStatus = device.getAnswers().getUnlockStatus();
         bootStatus = (UnlockStatus.UNLOCKED.equals(unlockStatus) ? LRes.UNLOCKED : (UnlockStatus.LOCKED.equals(unlockStatus) ? LRes.LOCKED : LRes.UNKNOWN)).toString();
         miuiVersion = props.get(DeviceProperties.FULL_VERSION, LRes.UNKNOWN).toString();
         androidVersion = props.get(DeviceProperties.CODEBASE, LRes.UNKNOWN).toString();

@@ -79,6 +79,7 @@ public class GuiTest2 extends Application{
                     device.getDeviceProperties().getAdbProperties().put(DeviceProperties.FULL_VERSION, "9.3.9");
                     device.getDeviceProperties().getAdbProperties().put(DeviceProperties.X_SERIAL_NUMBER, 1);
                     device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODEBASE, "9.0");
+                    device.getDeviceProperties().getSideloadProperties().put(DeviceProperties.ROMZONE,"1");
                     //runner.setContext("prop_"+DeviceProperties.CODENAME,"whyred");
                     GenericInstall.main().run(runner);
                     //FastbootFetch.findAllLatestFastboot().run(runner);

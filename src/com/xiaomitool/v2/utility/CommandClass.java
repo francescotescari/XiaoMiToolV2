@@ -6,7 +6,8 @@ public class CommandClass {
         ABORT,
         NOCMD,
         UPLEVEL ,
-        EXCEPTION;
+        EXCEPTION,
+        SINKED;
     }
     private WaitSemaphore semaphore = new WaitSemaphore();
     private Command command = null;

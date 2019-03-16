@@ -3,6 +3,7 @@ package com.xiaomitool.v2.procedure.retrive;
 import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.inet.EasyHttp;
 import com.xiaomitool.v2.inet.EasyResponse;
+import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.RomException;
 import com.xiaomitool.v2.rom.TwrpFile;
@@ -48,6 +49,7 @@ public class Twrp {
         String toFind = "twrp_"+codename;
         String betterFid = null;
         for (AfhRequest.AfhEntry entry : entries){
+            Log.debug("Looking afh entry: "+entry.getFilename());
             String name = entry.getFilename().toLowerCase();
             if (name.contains(toFind)){
                 betterFid = entry.getFid();

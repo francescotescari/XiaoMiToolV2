@@ -8,65 +8,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a152811c-83de-472b-b50e-ad836f02cbd2" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/com_mortennobel_java_image_scaling_0_8_6.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/AnimatableDeviceView.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/DeviceImgInstructionPane.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/utility/SilentCompleteFuture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/jMTPe.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/XiaoMiTool.iml" beforeDir="false" afterPath="$PROJECT_DIR$/XiaoMiTool.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proguard.conf" beforeDir="false" afterPath="$PROJECT_DIR$/proguard.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/AdbCommons.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/AdbCommons.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/AdbCommunication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/AdbCommunication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/FastbootCommons.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/FastbootCommons.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/Device.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/Device.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceAnswers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceAnswers.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceGroups.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceGroups.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/ToolManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/ToolManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceProperties.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceProperties.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsDynamic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsDynamic.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsStatic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsStatic.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/WindowManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/WindowManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/Animatable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/Animatable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/DeviceRecoveryView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/DeviceRecoveryView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/DeviceView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/DeviceView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/drawable/device_auth.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/drawable/device_auth.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/drawable/pcsuiteicon.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/drawable/pcsuiteicon.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/IDClickReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/IDClickReceiver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/InstallPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/InstallPane.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/language/LRes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/language/LRes.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/logging/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/logging/Log.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/ProcedureRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/ProcedureRunner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/RInstall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/RInstall.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/RNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/RNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/device/ManageDevice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/device/ManageDevice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/device/RebootDevice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/device/RebootDevice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/StockRecoveryFetch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/StockRecoveryFetch.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/AdbInstall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/AdbInstall.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/FastbootFetch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/FastbootFetch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/GenericFetch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/GenericFetch.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/FastbootInstall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/FastbootInstall.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/GenericInstall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/GenericInstall.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/StockRecoveryInstall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/StockRecoveryInstall.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/TwrpInstall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/TwrpInstall.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/retrive/Twrp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/retrive/Twrp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ChoosableProcedure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ChoosableProcedure.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ChooseProcedure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ChooseProcedure.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ConfirmationProcedure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ConfirmationProcedure.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/resources/ResourceImages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/resources/ResourceImages.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/Installable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/Installable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/MiuiRom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/MiuiRom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/MiuiTgzRom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/MiuiTgzRom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/ZipRom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/ZipRom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/InstallationRequirement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/InstallationRequirement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/tasks/AdbSideloadTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/tasks/AdbSideloadTask.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/test/GuiTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/test/GuiTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/InstallableChooser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/InstallableChooser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/ProcedureChooser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/ProcedureChooser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/SomethingChooser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/SomethingChooser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/test/GuiTest2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/test/GuiTest2.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/test/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/utility/utils/NumberUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/utility/utils/NumberUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/XiaomiUtilities.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/XiaomiUtilities.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/Branch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/Branch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/utility/CommandClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/utility/CommandClass.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/DefaultRequestParams.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/DefaultRequestParams.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/MiuiVersion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/MiuiVersion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/DeviceRequestParams.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/DeviceRequestParams.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/romota/MiuiRomOta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/romota/MiuiRomOta.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/unlock/UnlockCommonRequests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/unlock/UnlockCommonRequests.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -95,24 +60,77 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ActionsDynamic.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="LRes.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/language/LRes.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="370">
+              <caret line="203" column="18" lean-forward="true" selection-start-line="203" selection-start-column="18" selection-end-line="203" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ActionsStatic.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsStatic.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="227">
+              <caret line="212" column="65" lean-forward="true" selection-start-line="212" selection-start-column="60" selection-end-line="212" selection-end-column="70" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ToolManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/engine/ToolManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="23" column="25" selection-start-line="23" selection-start-column="25" selection-end-line="23" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FastbootInstall.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/FastbootInstall.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="167">
+              <caret line="248" column="64" selection-start-line="248" selection-start-column="64" selection-end-line="248" selection-end-column="64" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ActionsDynamic.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsDynamic.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="16" column="38" lean-forward="true" selection-start-line="16" selection-start-column="38" selection-end-line="16" selection-end-column="38" />
+            <state relative-caret-position="461">
+              <caret line="321" column="45" selection-start-line="321" selection-start-column="45" selection-end-line="321" selection-end-column="45" />
               <folding>
-                <element signature="e#26440#26441#0" expanded="true" />
-                <element signature="e#26493#26494#0" expanded="true" />
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Device.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/Device.java">
+      <file leaf-file-name="GuiTest2.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/test/GuiTest2.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-43">
-              <caret line="223" column="36" selection-start-line="223" selection-start-column="36" selection-end-line="223" selection-end-column="36" />
+            <state relative-caret-position="227">
+              <caret line="83" selection-start-line="83" selection-end-line="83" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RNode.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/RNode.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="46">
+              <caret line="147" selection-start-line="147" selection-end-line="147" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="InstallPane.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/InstallPane.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="239">
+              <caret line="90" column="34" selection-start-line="90" selection-start-column="34" selection-end-line="90" selection-end-column="34" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -123,84 +141,22 @@
       <file leaf-file-name="ProcedureRunner.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/ProcedureRunner.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="10" column="26" selection-start-line="10" selection-start-column="26" selection-end-line="10" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="InstallPane.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/InstallPane.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="13" column="27" selection-start-line="13" selection-start-column="27" selection-end-line="13" selection-end-column="27" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ChooseProcedure.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ChooseProcedure.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="26" selection-start-line="26" selection-end-line="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TwrpInstall.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/TwrpInstall.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="83" column="41" selection-start-line="83" selection-start-column="41" selection-end-line="83" selection-end-column="41" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DeviceView.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/DeviceView.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="171" column="78" lean-forward="true" selection-start-line="171" selection-start-column="78" selection-end-line="171" selection-end-column="78" />
-              <folding>
-                <element signature="e#4754#4755#0" expanded="true" />
-                <element signature="e#4793#4794#0" expanded="true" />
-                <element signature="e#4943#4944#0" expanded="true" />
-                <element signature="e#5002#5003#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="XiaomiUtilities.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/XiaomiUtilities.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="32" column="56" selection-start-line="32" selection-start-column="56" selection-end-line="32" selection-end-column="56" />
+            <state relative-caret-position="176">
+              <caret line="111" selection-start-line="111" selection-end-line="111" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#4090#4091#0" expanded="true" />
+                <element signature="e#4137#4138#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DeviceGroups.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceGroups.java">
+      <file leaf-file-name="DeviceProperties.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceProperties.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="453">
-              <caret line="173" column="10" selection-start-line="173" selection-start-column="10" selection-end-line="173" selection-end-column="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="NumberUtils.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/utility/utils/NumberUtils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="25" column="30" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
-              <folding>
-                <element signature="e#674#675#0" expanded="true" />
-                <element signature="e#726#727#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="329">
+              <caret line="305" column="44" selection-start-line="305" selection-start-column="44" selection-end-line="305" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -218,12 +174,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>rebooting_</find>
-      <find>abort</find>
-      <find>LATEST_ROM</find>
-      <find>update</find>
-      <find>parsing</find>
-      <find>shell</find>
       <find>stack</find>
       <find>enable us</find>
       <find>Proper</find>
@@ -248,6 +198,12 @@
       <find>content</find>
       <find>imageWr</find>
       <find>...</find>
+      <find>begin 0</find>
+      <find>9.0s</find>
+      <find>unlocked</find>
+      <find>cepheus</find>
+      <find>add to in</find>
+      <find>debuggi</find>
     </findStrings>
     <replaceStrings>
       <replace>protected</replace>
@@ -272,24 +228,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/Installable.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/ProcedureRunner.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/ZipRom.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/AdbCommunication.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/AnimatableDeviceView.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/ImgInstructionPane.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/Animatable.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsStatic.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/IDClickReceiver.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/DeviceImgInstructionPane.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/utility/SilentCompleteFuture.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/WindowManager.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/Branch.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/romota/MiuiRomOta.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/DefaultRequestParams.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/StockRecoveryFetch.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceManager.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/test/GuiTest2.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/RNode.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/RInstall.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/FastbootCommons.java" />
@@ -305,24 +245,40 @@
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/AdbCommons.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/AdbInstall.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/resources/ResourceImages.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/GenericInstall.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/device/ManageDevice.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/device/RebootDevice.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/ToolManager.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/FastbootInstall.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/language/LRes.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/test/GuiTest.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/DeviceRecoveryView.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsDynamic.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/logging/Log.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/InstallPane.java" />
-        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ChooseProcedure.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/TwrpInstall.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/utility/utils/NumberUtils.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/Device.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/DeviceView.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceGroups.java" />
         <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/XiaomiUtilities.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/logging/Log.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/InstallPane.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/romota/MiuiRomOta.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsUtil.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/utility/CommandClass.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/GenericInstall.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/FastbootFetch.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/ProcedureChooser.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/retrive/Twrp.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ChooseProcedure.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/SomethingChooser.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/InstallableChooser.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/GenericFetch.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ChoosableProcedure.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/DefaultRequestParams.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/DeviceRequestParams.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/test/GuiTest2.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceProperties.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/ProcedureRunner.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/FastbootInstall.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsStatic.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/language/LRes.java" />
+        <option value="$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsDynamic.java" />
       </list>
     </option>
   </component>
@@ -759,12 +715,15 @@
     <recent_temporary>
       <list>
         <item itemvalue="Application.MainWindow" />
+        <item itemvalue="Application.GuiTest2" />
         <item itemvalue="Application.GuiTest" />
         <item itemvalue="Application.Main" />
-        <item itemvalue="Application.GuiTest2" />
         <item itemvalue="Application.Main2" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value=",ALPHA_COMPARATOR" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -897,7 +856,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1191280000" />
+    <option name="totallyTimeSpent" value="1205367000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -913,7 +872,7 @@
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5198728" side_tool="true" visible="true" weight="0.32900432" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.15620032" side_tool="true" visible="true" weight="0.37337664" />
       <window_info anchor="right" id="Maven Projects" order="9" weight="0.08306836" />
       <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
       <window_info id="Capture Tool" order="1" />
@@ -924,24 +883,49 @@
       <window_info id="UI Designer" order="3" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39935064" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49920508" weight="0.32900432" />
-      <window_info anchor="bottom" id="Messages" order="11" sideWeight="0.4801272" weight="0.32575756" />
+      <window_info anchor="bottom" id="Messages" order="11" sideWeight="0.47893482" weight="0.32575756" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info id="Image Layers" order="4" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
       <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.845787" weight="0.37337664" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.8437997" visible="true" weight="0.37337664" />
       <window_info anchor="right" id="Graph Database" order="8" weight="0.3298887" />
       <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.39788732" visible="true" weight="0.13235295" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.39788732" visible="true" weight="0.13235295" />
       <window_info anchor="bottom" id="Graph Database Console" order="10" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49523053" weight="0.32900432" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49403816" weight="0.32900432" />
       <window_info anchor="right" id="Theme Preview" order="6" />
       <window_info id="Favorites" order="5" sideWeight="0.28697184" side_tool="true" weight="0.21025437" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.845787" weight="0.37337664" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5198728" side_tool="true" visible="true" weight="0.32900432" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.39788732" visible="true" weight="0.13235295" />
+      <window_info id="Favorites" order="5" sideWeight="0.28697184" side_tool="true" weight="0.21025437" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.11406995" />
+      <window_info anchor="right" id="Structure" order="10" sideWeight="0.50155765" side_tool="true" visible="true" weight="0.15023847" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Palette&#9;" order="7" />
+      <window_info anchor="right" id="Maven Projects" order="9" weight="0.08306836" />
+      <window_info anchor="bottom" id="Graph Database Console" order="10" />
+      <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" sideWeight="0.49844238" weight="0.25" />
+      <window_info id="Image Layers" order="4" />
+      <window_info anchor="right" id="Theme Preview" order="6" />
+      <window_info anchor="right" id="Database" order="4" weight="0.3298887" />
+      <window_info id="Capture Tool" order="1" />
+      <window_info anchor="right" id="Graph Database" order="8" weight="0.3298887" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="right" id="Capture Analysis" order="5" />
+      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49920508" weight="0.32900432" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49523053" weight="0.32900432" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info id="UI Designer" order="3" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39935064" />
+      <window_info anchor="bottom" id="Messages" order="11" sideWeight="0.4801272" weight="0.32575756" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info id="Designer" order="2" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -971,308 +955,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/Branch.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="16" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="16" />
-          <folding>
-            <element signature="e#344#345#0" expanded="true" />
-            <element signature="e#385#386#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/DefaultRequestParams.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="55" column="88" selection-start-line="55" selection-start-column="88" selection-end-line="55" selection-end-column="88" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/romota/MiuiRomOta.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1629">
-          <caret line="242" column="78" selection-start-line="242" selection-start-column="78" selection-end-line="242" selection-end-column="78" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="28" column="18" selection-start-line="28" selection-start-column="18" selection-end-line="28" selection-end-column="18" />
-          <folding>
-            <element signature="e#705#706#0" expanded="true" />
-            <element signature="e#763#764#0" expanded="true" />
-            <element signature="e#807#808#0" expanded="true" />
-            <element signature="e#867#868#0" expanded="true" />
-            <element signature="e#3952#3953#0" expanded="true" />
-            <element signature="e#3993#3994#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/ModFetch.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="34" column="61" selection-start-line="34" selection-start-column="61" selection-end-line="34" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/StockRecoveryFetch.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="94" column="8" selection-start-line="94" selection-start-column="8" selection-end-line="94" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/adb/FastbootCommons.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="194" column="20" selection-start-line="194" selection-start-column="20" selection-end-line="194" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/mortennobel/java-image-scaling/0.8.6/java-image-scaling-0.8.6.jar!/com/mortennobel/imagescaling/ResampleOp.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="25" column="11" selection-start-line="25" selection-start-column="11" selection-end-line="25" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/rom/MiuiZipRom.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="28">
-          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/MiuiVersion.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="17" column="24" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
-          <folding>
-            <element signature="e#801#802#0" expanded="true" />
-            <element signature="e#831#832#0" expanded="true" />
-            <element signature="e#2679#2680#0" expanded="true" />
-            <element signature="e#2708#2709#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/rom/MiuiRom.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="156" column="31" lean-forward="true" selection-start-line="156" selection-start-column="31" selection-end-line="156" selection-end-column="31" />
-          <folding>
-            <element signature="e#4597#4598#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceAnswers.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="419">
-          <caret line="118" column="63" selection-start-line="118" selection-start-column="63" selection-end-line="118" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/retrive/XiaomiEuRoms.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="41" column="48" lean-forward="true" selection-start-line="41" selection-start-column="48" selection-end-line="41" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/retrive/AfhRequest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-34">
-          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/InstallationRequirement.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="369">
-          <caret line="79" column="46" selection-start-line="79" selection-start-column="46" selection-end-line="79" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/unlock/UnlockCommonRequests.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-85">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/gui/controller/LoginController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-818">
-          <caret line="177" column="5" selection-start-line="177" selection-start-column="5" selection-end-line="177" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/tasks/AdbSideloadTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="28" column="37" selection-start-line="28" selection-start-column="37" selection-end-line="28" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/StockRecoveryInstall.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="131" column="21" lean-forward="true" selection-start-line="131" selection-start-column="21" selection-end-line="131" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsStatic.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="193" column="12" selection-start-line="193" selection-start-column="12" selection-end-line="193" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/adb/AdbCommons.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="91" column="5" lean-forward="true" selection-start-line="91" selection-start-column="5" selection-end-line="91" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/tasks/AdbPushTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="22" column="28" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/AdbInstall.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="569">
-          <caret line="67" column="61" selection-start-line="67" selection-start-column="61" selection-end-line="67" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ConfirmationProcedure.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1190">
-          <caret line="88" column="136" selection-start-line="88" selection-start-column="136" selection-end-line="88" selection-end-column="136" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#3592#4430#0" expanded="true" />
-            <element signature="e#4429#4430#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/resources/ResourceImages.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="4" selection-start-line="4" selection-end-line="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/GenericInstall.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="219" column="98" selection-start-line="219" selection-start-column="98" selection-end-line="219" selection-end-column="98" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/GuiListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="26" selection-start-line="26" selection-end-line="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/RNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
-          <caret line="78" selection-start-line="78" selection-end-line="78" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/device/ManageDevice.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="419">
-          <caret line="117" column="31" selection-start-line="117" selection-start-column="31" selection-end-line="117" selection-end-column="31" />
-          <folding>
-            <element signature="e#1678#2051#0" expanded="true" />
-            <element signature="e#2050#2051#0" expanded="true" />
-            <element signature="e#2919#2920#0" expanded="true" />
-            <element signature="e#2963#2964#0" expanded="true" />
-            <element signature="e#3741#4234#0" expanded="true" />
-            <element signature="e#4233#4234#0" expanded="true" />
-            <element signature="e#4466#4940#0" expanded="true" />
-            <element signature="e#4939#4940#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/device/RebootDevice.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="80" column="26" selection-start-line="80" selection-start-column="25" selection-end-line="80" selection-end-column="26" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1893#1894#0" expanded="true" />
-            <element signature="e#1945#1946#0" expanded="true" />
-            <element signature="e#3600#3920#0" expanded="true" />
-            <element signature="e#3919#3920#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/engine/ToolManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-170">
-          <caret line="19" column="47" selection-start-line="19" selection-start-column="47" selection-end-line="19" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/FastbootInstall.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="490">
-          <caret line="288" column="14" lean-forward="true" selection-start-line="288" selection-start-column="14" selection-end-line="288" selection-end-column="14" />
-          <folding>
-            <element signature="e#9464#15930#0" expanded="true" />
-            <element signature="e#15929#15930#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/AnimatableDeviceView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-50">
-          <caret line="4" column="22" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/RInstall.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="16" selection-start-line="16" selection-end-line="16" />
-          <folding>
-            <element signature="e#293#294#0" expanded="true" />
-            <element signature="e#366#367#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/test/GuiTest2.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1122">
-          <caret line="95" column="50" selection-start-line="95" selection-start-column="50" selection-end-line="95" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/test/GuiTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
@@ -1287,13 +969,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/logging/Log.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="38" column="10" selection-start-line="38" selection-start-column="10" selection-end-line="38" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/utility/utils/CookieUtils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
@@ -1301,38 +976,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/language/LRes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4148">
-          <caret line="250" column="36" selection-start-line="250" selection-start-column="33" selection-end-line="250" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/test/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="167">
-          <caret line="50" selection-start-line="50" selection-end-line="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/ProcedureRunner.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="26" selection-start-line="10" selection-start-column="26" selection-end-line="10" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/InstallPane.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="13" column="27" selection-start-line="13" selection-start-column="27" selection-end-line="13" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ChooseProcedure.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="26" selection-start-line="26" selection-end-line="26" />
+        <state relative-caret-position="507">
+          <caret line="204" column="13" selection-start-line="204" selection-start-column="13" selection-end-line="204" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -1354,17 +1001,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsDynamic.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="38" lean-forward="true" selection-start-line="16" selection-start-column="38" selection-end-line="16" selection-end-column="38" />
-          <folding>
-            <element signature="e#26440#26441#0" expanded="true" />
-            <element signature="e#26493#26494#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/Device.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-43">
@@ -1378,7 +1014,7 @@
     <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/gui/deviceView/DeviceView.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
-          <caret line="171" column="78" lean-forward="true" selection-start-line="171" selection-start-column="78" selection-end-line="171" selection-end-column="78" />
+          <caret line="171" column="78" selection-start-line="171" selection-start-column="78" selection-end-line="171" selection-end-column="78" />
           <folding>
             <element signature="e#4754#4755#0" expanded="true" />
             <element signature="e#4793#4794#0" expanded="true" />
@@ -1397,8 +1033,346 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/XiaomiUtilities.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
+        <state relative-caret-position="-1896">
           <caret line="32" column="56" selection-start-line="32" selection-start-column="56" selection-end-line="32" selection-end-column="56" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/logging/Log.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="38" column="8" selection-start-line="38" selection-start-column="8" selection-end-line="38" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/SmilePane.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="55" column="112" selection-start-line="55" selection-start-column="112" selection-end-line="55" selection-end-column="112" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/tasks/AdvancedUpdateListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="58" column="41" selection-start-line="58" selection-start-column="41" selection-end-line="58" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/utility/utils/StrUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="55" column="25" selection-start-line="55" selection-start-column="25" selection-end-line="55" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/tasks/UpdateListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="116" column="15" selection-start-line="116" selection-start-column="15" selection-end-line="116" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/GuiListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="181">
+          <caret line="26" selection-start-line="26" selection-end-line="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/romota/MiuiRomOta.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="280" column="47" selection-start-line="280" selection-start-column="47" selection-end-line="280" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="32" column="74" selection-start-line="32" selection-start-column="74" selection-end-line="32" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/utility/CommandClass.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="14" lean-forward="true" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/device/ManageDevice.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="227">
+          <caret line="94" column="27" selection-start-line="94" selection-start-column="27" selection-end-line="94" selection-end-column="27" />
+          <folding>
+            <element signature="e#3376#3937#0" expanded="true" />
+            <element signature="e#3936#3937#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ConfirmationProcedure.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="35">
+          <caret line="25" selection-start-line="25" selection-end-line="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/InstallException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/RInstall.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+          <folding>
+            <element signature="e#293#294#0" expanded="true" />
+            <element signature="e#366#367#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/GenericInstall.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="235" column="39" selection-start-line="235" selection-start-column="39" selection-end-line="235" selection-end-column="39" />
+          <folding>
+            <element signature="e#10705#11215#0" expanded="true" />
+            <element signature="e#11214#11215#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/ProcedureChooser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="12" column="87" selection-start-line="12" selection-start-column="87" selection-end-line="12" selection-end-column="87" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/TwrpFetch.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-187">
+          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/retrive/AfhRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-442">
+          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/retrive/Twrp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="51" column="44" selection-start-line="51" selection-start-column="44" selection-end-line="51" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/SomethingChooser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="39" column="33" selection-start-line="39" selection-start-column="33" selection-end-line="39" selection-end-column="33" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1697#1698#0" expanded="true" />
+            <element signature="e#1745#1746#0" expanded="true" />
+            <element signature="e#2028#2029#0" expanded="true" />
+            <element signature="e#2074#2075#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/rom/chooser/InstallableChooser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="38" column="68" selection-start-line="38" selection-start-column="68" selection-end-line="38" selection-end-column="68" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/ModFetch.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="22" column="27" selection-start-line="22" selection-start-column="27" selection-end-line="22" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/FastbootFetch.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="769">
+          <caret line="70" column="257" selection-start-line="70" selection-start-column="257" selection-end-line="70" selection-end-column="257" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/RomOtaFetch.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-101">
+          <caret line="18" column="13" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ChooseProcedure.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="47" column="44" selection-start-line="47" selection-start-column="44" selection-end-line="47" selection-end-column="44" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/uistuff/ChoosableProcedure.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="460">
+          <caret line="194" column="14" selection-start-line="194" selection-start-column="14" selection-end-line="194" selection-end-column="14" />
+          <folding>
+            <element signature="e#5274#6785#0" expanded="true" />
+            <element signature="e#6784#6785#0" expanded="true" />
+            <element signature="e#9637#9846#0" expanded="true" />
+            <element signature="e#9845#9846#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/DefaultRequestParams.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="77" column="37" selection-start-line="77" selection-start-column="37" selection-end-line="77" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/RequestParams.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="75" column="16" selection-start-line="75" selection-start-column="16" selection-end-line="75" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/StockRecoveryFetch.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="59" column="42" selection-start-line="59" selection-start-column="42" selection-end-line="59" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/xiaomi/miuithings/DeviceRequestParams.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="43" column="44" lean-forward="true" selection-start-line="43" selection-start-column="44" selection-end-line="43" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/fetch/GenericFetch.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-17">
+          <caret line="93" column="55" selection-start-line="93" selection-start-column="55" selection-end-line="93" selection-end-column="55" />
+          <folding>
+            <element signature="e#4656#5181#0" expanded="true" />
+            <element signature="e#5180#5181#0" expanded="true" />
+            <element signature="e#5229#5652#0" expanded="true" />
+            <element signature="e#5651#5652#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/Procedures.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="347">
+          <caret line="411" selection-start-line="411" selection-end-line="411" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/adb/device/DeviceProperties.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="305" column="44" selection-start-line="305" selection-start-column="44" selection-end-line="305" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/gui/visual/InstallPane.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="239">
+          <caret line="90" column="34" selection-start-line="90" selection-start-column="34" selection-end-line="90" selection-end-column="34" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/ProcedureRunner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="111" selection-start-line="111" selection-end-line="111" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4090#4091#0" expanded="true" />
+            <element signature="e#4137#4138#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/RNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="46">
+          <caret line="147" selection-start-line="147" selection-end-line="147" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsStatic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="227">
+          <caret line="212" column="65" lean-forward="true" selection-start-line="212" selection-start-column="60" selection-end-line="212" selection-end-column="70" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/engine/ToolManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="23" column="25" selection-start-line="23" selection-start-column="25" selection-end-line="23" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/test/GuiTest2.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="227">
+          <caret line="83" selection-start-line="83" selection-end-line="83" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/procedure/install/FastbootInstall.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="248" column="64" selection-start-line="248" selection-start-column="64" selection-end-line="248" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/language/LRes.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="370">
+          <caret line="203" column="18" lean-forward="true" selection-start-line="203" selection-start-column="18" selection-end-line="203" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/xiaomitool/v2/engine/actions/ActionsDynamic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="461">
+          <caret line="321" column="45" selection-start-line="321" selection-start-column="45" selection-end-line="321" selection-end-column="45" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
