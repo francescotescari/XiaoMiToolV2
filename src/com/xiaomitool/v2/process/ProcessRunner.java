@@ -9,6 +9,7 @@ import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.utility.utils.StreamUtils;
 import com.xiaomitool.v2.utility.utils.ThreadUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,6 +30,7 @@ public class ProcessRunner {
     //private Thread syncStdoutThread = null, syncStderrThread = null;
     protected List<String> outputBuffer = Collections.synchronizedList(new LinkedList<>());
     private final WaitSemaphore readFinishedSemaphore = new WaitSemaphore(0);
+    private File workingDir;
 
     public ProcessRunner(Path exe){
         this(exe, null);
@@ -47,6 +49,10 @@ public class ProcessRunner {
             this.arguments.addAll(Arrays.asList(arguments));
         }
 
+    }
+
+    public void setWorkingDir(File workingDir){
+        this.workingDir = workingDir;
     }
 
 
@@ -70,6 +76,9 @@ public class ProcessRunner {
         ProcessBuilder builder = new ProcessBuilder(args);
         builder.redirectErrorStream(true);
         builder.redirectOutput(ProcessBuilder.Redirect.PIPE);
+        if (this.workingDir != null) {
+            builder.directory(this.workingDir);
+        }
         Process proc = builder.start();
         IOThrower = new Thrower<>();
 

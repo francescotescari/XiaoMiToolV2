@@ -15,6 +15,9 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.device.RebootDevice;
 import com.xiaomitool.v2.process.ProcessRunner;
+import com.xiaomitool.v2.process.ShellRunner;
+import com.xiaomitool.v2.resources.ResourcesConst;
+import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.utility.Pointer;
 import com.xiaomitool.v2.utility.RunnableWithArg;
@@ -106,12 +109,16 @@ public class FastbootInstall {
                     throw new InstallException("Failed to read flash_all file",InstallException.Code.IO_ERROR, true);
                 }
                 String[] contentLines = content.split("\\n");
-                String outFile = SystemUtils.IS_OS_WINDOWS ? "flash_xiaomitool.bat" : "flash_xiaomitool.sh";
+                String outFile = ResourcesConst.isWindows() ? "flash_xiaomitool.bat" : "flash_xiaomitool.sh";
                 int lines = contentLines.length;
-                StringBuilder builder = new StringBuilder(SystemUtils.IS_OS_WINDOWS ? "@echo off"+System.lineSeparator() : "");
-
+                StringBuilder builder = new StringBuilder();
+                if (ResourcesConst.isWindows()){
+                    builder.append("@echo off").append(System.lineSeparator());
+                    builder.append("echo Current dir: %~dp0").append(System.lineSeparator());
+                }
                 Log.debug("Total lines: "+lines);
                 Pattern p = Pattern.compile("fastboot.+flash\\s+(\\w+)",Pattern.CASE_INSENSITIVE);
+                builder.append("echo Fastboot flash starting").append(System.lineSeparator());
                 for (String line : contentLines){
                     if(line.trim().toLowerCase().startsWith("pause")){
                         continue;
@@ -121,7 +128,7 @@ public class FastbootInstall {
                     if (m.find()){
                         builder.append("echo [Flashing ").append(m.group(1)).append("]").append(System.lineSeparator());
                     }
-                    builder.append(line).append('\n');
+                    builder.append(line).append(System.lineSeparator());
                 }
                 File flash_xiaomitool = new File(flash_all.getParentFile(),outFile);
                 try {
@@ -149,12 +156,19 @@ public class FastbootInstall {
             @Override
             public void run(ProcedureRunner procedureRunner) throws InstallException, InterruptedException, RMessage {
                 File flashAllFile = (File) procedureRunner.requireContext(FLASH_SCRIPT_FILE);
+                Path flash_all_dir = flashAllFile.getParentFile().toPath();
+                try {
+                    ResourcesManager.copyResourcesToDir(ResourcesManager.getFastbootFilesPath(), flash_all_dir);
+                } catch (Exception e){
+                    throw new InstallException("Failed to copy fastboot to flash_all dir: "+e.getMessage(), FASTBOOT_FLASH_FAILED, true);
+                }
                 Device device = Procedures.requireDevice(procedureRunner);
                 if (flashAllFile == null){
                     throw new InstallException("Null flash_all file",FILE_NOT_FOUND, false);
                 }
                 flashAllFile.setExecutable(true);
-                ProcessRunner runner = new ProcessRunner(flashAllFile.toPath());
+                ProcessRunner runner = new ShellRunner(flashAllFile.toPath().getFileName().toString());
+                runner.setWorkingDir(flash_all_dir.toFile());
                 runner.addArgument("-s");
                 runner.addArgument(device.getSerial());
                 //Procedures.requireAccessibile().run(procedureRunner);
@@ -187,7 +201,7 @@ public class FastbootInstall {
                 device.releaseAccess();
                 int exitCode = runner.getExitValue();
                 if (exitCode != 0){
-                    throw new InstallException("Fastboot flash all failed: "+lastLine.pointed, FASTBOOT_FLASH_FAILED, true);
+                    throw new InstallException("Fastboot flash all failed, exit code: "+exitCode+", output: "+lastLine.pointed, FASTBOOT_FLASH_FAILED, true);
                 }
             }
         };

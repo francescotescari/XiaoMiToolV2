@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.test;
 
+import com.xiaomitool.v2.adb.AdbCommunication;
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceManager;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
@@ -75,12 +76,14 @@ public class GuiTest2 extends Application{
                         DeviceManager.addDevice(device);
                     }
                     runner.init(null,device);
-                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODENAME, "cepheus");
+                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODENAME, "whyred");
                     device.getDeviceProperties().getAdbProperties().put(DeviceProperties.FULL_VERSION, "9.3.9");
                     device.getDeviceProperties().getAdbProperties().put(DeviceProperties.X_SERIAL_NUMBER, 1);
                     device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODEBASE, "9.0");
+
                     device.getDeviceProperties().getSideloadProperties().put(DeviceProperties.ROMZONE,"1");
                     //runner.setContext("prop_"+DeviceProperties.CODENAME,"whyred");
+                    AdbCommunication.registerAutoScanDevices();
                     GenericInstall.main().run(runner);
                     //FastbootFetch.findAllLatestFastboot().run(runner);
                     /*ChooseProcedure.chooseRomCategory().run(runner);

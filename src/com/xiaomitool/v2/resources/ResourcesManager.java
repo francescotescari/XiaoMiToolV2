@@ -9,9 +9,7 @@ import org.apache.commons.codec.binary.Base64InputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -28,6 +26,23 @@ public class ResourcesManager {
     private static final String ADB_EXE = "adb";
     private static final String FASTBOOT_EXE = "fastboot";
     private static final Path DEFAULT_DOWNLAOD_PATH = getResourcesPath().resolve("downloads");
+
+    private static final Path[] FASTBOOT_FILES_WIN = new Path[]{getToolPath("AdbWinApi.dll", false),getToolPath("AdbWinUsbApi.dll",false),getToolPath("fastboot.exe",true),getToolPath("libwinpthread-1.dll",false)};
+    public static Path[] getFastbootFilesPath(){
+        if (ResourcesConst.isWindows()){
+            return FASTBOOT_FILES_WIN;
+        } else {
+            //TODO MAC AND LINUX
+            return new Path[]{};
+        }
+    }
+
+    public static void copyResourcesToDir(Path[] resources, Path destinationDir) throws IOException {
+        for (Path res : resources){
+            Files.copy(res, destinationDir.resolve(res.getFileName()) , StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
 
     public static Path getSystemTmpPath(){
         if (tmpPath == null){
@@ -69,7 +84,16 @@ public class ResourcesManager {
     }
 
     public static Path getToolPath(String path, boolean isExe){
-        return getToolsPath().resolve(path+(isExe ? ResourcesConst.getOSExeExtension() : ""));
+        if (path == null){
+            return null;
+        }
+        if(isExe){
+            String extension = ResourcesConst.getOSExeExtension();
+            if  (!path.toLowerCase().endsWith(extension)){
+                path+=extension;
+            }
+        }
+        return getToolsPath().resolve(path);
     }
     public static Path getAdbPath(){
         return getToolPath(ADB_EXE,true);

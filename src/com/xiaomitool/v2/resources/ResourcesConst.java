@@ -19,11 +19,41 @@ public class ResourcesConst {
         }
     }
 
+    public static boolean isWindows(){
+        return SystemUtils.IS_OS_WINDOWS;
+    }
+    public static boolean isMac(){
+        return SystemUtils.IS_OS_MAC;
+    }
+    public static boolean isLinux(){
+        return SystemUtils.IS_OS_LINUX;
+    }
+
+
+
     public static String getOSExeExtension(){
         if (SystemUtils.IS_OS_WINDOWS){
             return ".exe";
         }
         return "";
+    }
+
+    public static String getShellPath(){
+        if (isWindows()){
+            return "cmd";
+        } else {
+            //TODO add linux and mac
+            return "";
+        }
+    }
+
+    public static String[] getShellArgs(){
+        if (isWindows()){
+            return new String[]{"/C"};
+        } else {
+            //TODO add linux and mac
+            return new String[]{};
+        }
     }
 
 

@@ -12,6 +12,7 @@ import com.xiaomitool.v2.procedure.Procedures;
 import com.xiaomitool.v2.procedure.fetch.AfhFetch;
 import com.xiaomitool.v2.process.LineScanner;
 import com.xiaomitool.v2.process.ProcessRunner;
+import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.utility.utils.InetUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
@@ -72,11 +73,7 @@ public class Main2 {
 
 
     public static void main(String[] args) throws IOException {
-        try {
-            throw new IOException("ciao");
-        } catch (Throwable t){
-            throw new IOException(t.getMessage()+" --- bello");
-        }
+        Log.debug(ResourcesManager.getFastbootPath().getFileName().toString());
     }
 
     private static void addParam(String key, String value){
