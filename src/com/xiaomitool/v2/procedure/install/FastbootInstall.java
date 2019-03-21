@@ -167,7 +167,11 @@ public class FastbootInstall {
                     throw new InstallException("Null flash_all file",FILE_NOT_FOUND, false);
                 }
                 flashAllFile.setExecutable(true);
-                ProcessRunner runner = new ShellRunner(flashAllFile.toPath().getFileName().toString());
+                String flashAllFileShell = flashAllFile.toPath().getFileName().toString();
+                if (!ResourcesConst.isWindows() && !flashAllFileShell.startsWith("/") && !flashAllFileShell.startsWith(".")){
+                    flashAllFileShell = "./"+flashAllFileShell;
+                }
+                ProcessRunner runner = new ShellRunner(flashAllFileShell);
                 runner.setWorkingDir(flash_all_dir.toFile());
                 runner.addArgument("-s");
                 runner.addArgument(device.getSerial());
