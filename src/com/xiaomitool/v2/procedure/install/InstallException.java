@@ -47,7 +47,8 @@ public class InstallException extends Exception {
         TWRP_INSTALL_FAILED,
         SIDELOAD_INSTALL_FAILED,
         WIPE_FAILED,
-        WAIT_DEVICE_TIMEOUT;
+        WAIT_DEVICE_TIMEOUT,
+        OS_NOT_SUPPORTED;
         private String key;
         Code(String key){
             this.key = key;

@@ -11,6 +11,7 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.device.RebootDevice;
 import com.xiaomitool.v2.process.AdbRunner;
+import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.tasks.AdbSideloadTask;
 import com.xiaomitool.v2.tasks.Task;
@@ -264,7 +265,14 @@ public class StockRecoveryInstall {
 
     @ExportFunction("mtp_stockrecovery_install")
     public static RInstall mtpFlashRom() {
-        return RNode.sequence(RebootDevice.requireStockRecovery(), enableMtp(), sendFileViaMTP(), installMtpFile(), formatData());
+        return RNode.sequence(new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                if (!ResourcesConst.isWindows()){
+                    throw new InstallException("This operation is not supported by this os", InstallException.Code.OS_NOT_SUPPORTED, false);
+                }
+            }
+        },RebootDevice.requireStockRecovery(), enableMtp(), sendFileViaMTP(), installMtpFile(), formatData());
     }
 
     public static RInstall getStockRecoveryInfo() {
@@ -310,7 +318,11 @@ public class StockRecoveryInstall {
 
     @ExportFunction("stockrecovery_install")
     public static RInstall stockRecoveryInstall() {
-        return RNode.fallback(sideloadFlash(), mtpFlashRom());
+        if (ResourcesConst.isWindows()){
+            return RNode.fallback(sideloadFlash(), mtpFlashRom());
+        } else {
+            return sideloadFlash();
+        }
     }
 
 
