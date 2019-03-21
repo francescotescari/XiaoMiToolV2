@@ -22,10 +22,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringBufferInputStream;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
+
 
 public class Main2 {
     private static final String APP_KEY = "eGlhb21pX3RoaXJkX3BhcnR5";

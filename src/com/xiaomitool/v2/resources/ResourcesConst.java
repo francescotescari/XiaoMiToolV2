@@ -42,8 +42,8 @@ public class ResourcesConst {
         if (isWindows()){
             return "cmd";
         } else {
-            //TODO add linux and mac
-            return "";
+            // add linux and mac
+            return "/bin/sh";
         }
     }
 
@@ -51,8 +51,8 @@ public class ResourcesConst {
         if (isWindows()){
             return new String[]{"/C"};
         } else {
-            //TODO add linux and mac
-            return new String[]{};
+            // add linux and mac
+            return new String[]{"-c"};
         }
     }
 

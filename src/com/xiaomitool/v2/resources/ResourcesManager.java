@@ -28,12 +28,13 @@ public class ResourcesManager {
     private static final Path DEFAULT_DOWNLAOD_PATH = getResourcesPath().resolve("downloads");
 
     private static final Path[] FASTBOOT_FILES_WIN = new Path[]{getToolPath("AdbWinApi.dll", false),getToolPath("AdbWinUsbApi.dll",false),getToolPath("fastboot.exe",true),getToolPath("libwinpthread-1.dll",false)};
+    private static final Path[] FASTBOOT_FILES_MAC_LIN = new Path[]{getToolPath("fastboot")};
     public static Path[] getFastbootFilesPath(){
         if (ResourcesConst.isWindows()){
             return FASTBOOT_FILES_WIN;
         } else {
-            //TODO MAC AND LINUX
-            return new Path[]{};
+            // MAC AND LINUX
+            return FASTBOOT_FILES_MAC_LIN;
         }
     }
 

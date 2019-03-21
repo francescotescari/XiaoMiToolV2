@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 
 public class Log {
 
-    public static final boolean ADVANCED_LOG  = true;
+    public static final boolean ADVANCED_LOG  = false;
     private static final String PREFIX_DEBUG = "DEBUG";
     private static final String PREFIX_INFO = "INFO";
     private static final String PREFIX_WARN = "WARN";
