@@ -1,18 +1,14 @@
 package com.xiaomitool.v2.process;
 
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.utility.ExceptionMessages;
 import com.xiaomitool.v2.utility.RunnableWithArg;
 import com.xiaomitool.v2.utility.Thrower;
 import com.xiaomitool.v2.utility.WaitSemaphore;
-import com.xiaomitool.v2.utility.utils.SettingsUtils;
-import com.xiaomitool.v2.utility.utils.StreamUtils;
-import com.xiaomitool.v2.utility.utils.ThreadUtils;
+
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -154,16 +150,23 @@ public class ProcessRunner {
 
 
         try {
-            process.waitFor(timeout, TimeUnit.SECONDS);
+            if(!process.waitFor(timeout, TimeUnit.SECONDS)){
+                throw new InterruptedException("Process didn't exited before timeout");
+            }
+            IOThrower.check();
+
+            setStatus(ProcessStatus.FINISHED);
+            this.exitValue = process.exitValue();
         } catch (InterruptedException e) {
-            Log.debug(ExceptionMessages.THREAD_INTERRUPTED);
+            Log.debug("Thread interruped while waiting process");
+
+
+            this.exitValue = -1;
+            setStatus(ProcessStatus.EXCEPTION);
         }
-        IOThrower.check();
         if(process.isAlive()){
-            process.destroy();
+            process.destroyForcibly();
         }
-        setStatus(ProcessStatus.FINISHED);
-        this.exitValue = process.exitValue();
         Log.debug("Processe ended with exit code "+this.exitValue);
         return this.exitValue;
     }
