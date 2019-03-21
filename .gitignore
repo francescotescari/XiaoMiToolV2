@@ -2,3 +2,11 @@ out/
 res/langa/
 res/tmp/
 XiaoMiTool\ V2-cache/
+.idea/workspace.xml
+_config.yml
+l4jtest.exe
+launch4j.log
+releases/
+src_release/
+test.bat
+test.xml
