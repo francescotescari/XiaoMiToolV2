@@ -70,7 +70,7 @@ public class Main2 {
 
 
     public static void main(String[] args) throws IOException {
-        Log.debug(ResourcesManager.getFastbootPath().getFileName().toString());
+        InetUtils.openUrlInBrowser("sddao");
     }
 
     private static void addParam(String key, String value){

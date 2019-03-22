@@ -42,33 +42,35 @@ public class InetUtils {
     }
 
     public static void openUrlInBrowser(String url){
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
 
-        if (Desktop.isDesktopSupported()){
-            Desktop desktop = Desktop.getDesktop();
-            try {
-                desktop.browse(new URI(url));
-                return;
-            } catch (IOException | URISyntaxException e) {
-                Log.error("Failed to open url "+url+" using java.awt.Desktop: "+e.getMessage());
-                Log.debug(e);
+                try {
+                    Desktop.getDesktop().browse(new URI(url));
+                    return;
+                } catch (Exception e) {
+                    Log.error("Failed to open url " + url + " using java.awt.Desktop: " + e.getMessage());
+                    Log.debug(e);
+                }
             }
-        }
-        String cmd = "";
-        if (SystemUtils.IS_OS_WINDOWS) {
-            cmd = "rundll32 url.dll,FileProtocolHandler " + url;
-        } else if (SystemUtils.IS_OS_MAC) {
-            cmd = "open " + url;
-        } else {
-            cmd = "xdg-open " + url;
-        }
-
+            String cmd = "";
+            if (SystemUtils.IS_OS_WINDOWS) {
+                cmd = "rundll32 url.dll,FileProtocolHandler " + url;
+            } else if (SystemUtils.IS_OS_MAC) {
+                cmd = "open " + url;
+            } else {
+                cmd = "xdg-open " + url;
+            }
             Runtime runtime = Runtime.getRuntime();
             try {
                 runtime.exec(cmd);
             } catch (IOException e) {
-                Log.error("Failed to open url "+url+" using runtime command: "+e.getMessage());
+                Log.error("Failed to open url " + url + " using runtime command: " + e.getMessage());
                 Log.debug(e);
             }
+        } catch (Throwable t){
+            Log.error("Failed to open url " + url + " : " + t.getMessage());
+        }
 
     }
     static boolean internetAvailable;
