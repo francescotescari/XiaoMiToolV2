@@ -227,9 +227,19 @@ public enum  LRes  {
     UNLOCK_CHECKING_DEVICE("Checking device unlock capability"),
     UNLOCK_REQUESTING_TOKEN("Requesting device unlock token"),
     CUSTOM_RECOVERY("Custom recovery"),
-    CUSTOM_RECOVERY_TEXT("Install a custom local file recovery, such as TWRP recovery")
+    CUSTOM_RECOVERY_TEXT("Install a custom local file recovery, such as TWRP recovery"),
+    SEND_FEEDBACK("Send feedback"),
+    INCLUDE_LOG_FILES("Include log file (recommended)"),
+    UPLOADING_FEEDBACK("Uplaoding feedback..."),
+    FEEDBACK_SENT("Feedback sent, thank you!"),
+    FEEDBACK_ERROR("Failed to send the feedback"),
+    PLEASE_WAIT_X_SECONDS("Please wait %d seconds"),
+    FEEDBACK_ASK_TO_LEAVE("It seems that your installation wasn't succesful :(\nFeedback is very important to the developer, feedback and logs help the developer to improve this tool.\nThis tool has a built-in function to leave a feedback, including log file.\nWould you like to leave a feedback?"),
+    INSTANCE_ID("Instance id"),
+    INSTANCE_ID_TIP("This is the ID that identifies this XiaoMiTool execution, your feedback and log files sent to the server\nYou have to communicate this to the developer if you want to be referenced to a particular feedback."),
+    COPIED_TO_CLIPBOARD("Copied to clipboard"),
+    FEEDBACK_ONLY_ONE("If you got the same error multiple times, please DO NOT send multiple feedback!")
     ;
-
     private String text;
 
     LRes(String defaultText){
@@ -240,10 +250,18 @@ public enum  LRes  {
         return this.name().toLowerCase();
     }
 
+    public String toEnglish(){
+        return text;
+    }
+
+    public String toEnglish(Object... args){
+        return String.format(text, args);
+    }
+
     public String toString(){
         //TODO remove only english
         if (true) {
-            return text;
+            return toEnglish();
         }
         try {
             return Lang.text(getKey());
@@ -254,7 +272,7 @@ public enum  LRes  {
     public String toString(Object... args){
         //TODO remove only english
         if (true) {
-            return String.format(this.text, args);
+            return toEnglish(args);
         }
         try {
             return Lang.text(getKey(),args);

@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.gui;
 
+import com.xiaomitool.v2.engine.actions.ActionsStatic;
 import com.xiaomitool.v2.gui.controller.*;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.fxml.FxmlManager;
@@ -9,6 +10,7 @@ import com.xiaomitool.v2.gui.visual.ToastPane;
 import com.xiaomitool.v2.gui.visual.VisiblePane;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.Pointer;
+import com.xiaomitool.v2.utility.RunnableMessage;
 import com.xiaomitool.v2.utility.SilentCompleteFuture;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -127,12 +129,36 @@ public class WindowManager {
     }
 
 
+
     public static Stage launchLogin(){
         return launchWindow(FRAME_LOGIN, new LoginController());
     }
+
+    private static RunnableMessage ASK_FEEDBACK = new RunnableMessage() {
+        @Override
+        public int run() throws InterruptedException {
+            WindowManager.setOnExitAskForFeedback(false);
+            ActionsStatic.ASK_FOR_FEEDBACK().run();
+            return 0;
+        }
+    };
+
+    public static void setOnExitAskForFeedback(boolean ask){
+        if (mainWindowController == null){
+            return;
+        }
+        if (ask){
+            mainWindowController.setOnBeforeClose(ASK_FEEDBACK);
+        } else {
+            mainWindowController.setOnBeforeClose(null);
+        }
+    }
+
+    private static MainWindowController mainWindowController = null;
     public static void launchMain(Stage primaryStage){
         mainStage = primaryStage;
-        launchWindow(FRAME_MAIN, new MainWindowController(),primaryStage);
+        mainWindowController = new MainWindowController();
+        launchWindow(FRAME_MAIN, mainWindowController,primaryStage);
         primaryStage.setOnCloseRequest(event -> {
             ToolManager.exit(0);
             // Save file
@@ -155,6 +181,7 @@ public class WindowManager {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+
                 Pointer pointer = new Pointer();
                 PopupController controller = new PopupController(popupWindow);
                 Stage stage = launchWindow(FRAME_POPUP,controller,null,pointer);

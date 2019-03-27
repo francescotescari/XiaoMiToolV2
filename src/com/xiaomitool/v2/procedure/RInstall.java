@@ -14,7 +14,15 @@ public abstract class RInstall {
 
      void runInternal(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
           Log.debug("Running now procedure: "+this.toString(2));
+          Log.info("Running now procedure: "+this.toString());
+          boolean pushStack = this instanceof RNode;
+          if (pushStack) {
+               runner.pushStackTrace("in:" + this.toString());
+          }
           run(runner);
+          if (pushStack) {
+               runner.pushStackTrace("out:" + this.toString());
+          }
      }
      protected int flags;
 
@@ -34,13 +42,23 @@ public abstract class RInstall {
           return RNode.sequence(this, Procedures.runStackedProcedures());
      }
 
+     private String name = null;
+
+     @Override
+     public String toString(){
+          if (name == null){
+               name = toString(1);
+          }
+          return name;
+     }
+
      public String toString(int stackElements){
           stackElements+=3;
          stackElements = Integer.min(stackElements, creationStack.length);
-         StringBuilder builder = new StringBuilder(creationStack[3].toString());
+         StringBuilder builder = new StringBuilder(creationStack[3].getMethodName());
          for (int i = 4; i< stackElements; ++i){
               builder.append(" -> ");
-               builder.append(creationStack[i].toString());
+               builder.append(creationStack[i].getMethodName());
          }
          return builder.toString();
      }

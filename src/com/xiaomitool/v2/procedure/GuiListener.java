@@ -2,17 +2,12 @@ package com.xiaomitool.v2.procedure;
 
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.utility.CommandClass;
 
 public abstract class GuiListener extends CommandClass {
-    public enum Event {
-        CLEAR,
-        WAITING_TASK,
-        STOCK_RECOVERY_REBOOTING,
-        DEVICE_UNAUTH_OFFLINE,
-        NEED_DEBUGGING_ACTIVE;
-    }
+
 
     public abstract void toast(String message);
     public  void toast(LRes msg){
@@ -22,17 +17,18 @@ public abstract class GuiListener extends CommandClass {
     public void text(LRes msg){
         text(msg.toString());
     }
-    public abstract void onEvent(Event event, Object subject);
-    public Command exception(InstallException exception) throws InterruptedException {
+
+    public Command exception(InstallException exception, Runnable beforeWaitCommand) throws InterruptedException {
         onException(exception);
+        if (beforeWaitCommand != null){
+            beforeWaitCommand.run();
+        }
         return this.waitCommand();
     }
 
 
     protected abstract void onException(InstallException exception);
-    public void clearEvent(){
-        onEvent(Event.CLEAR,null);
-    }
+
     public static class Debug extends GuiListener {
 
         @Override
@@ -45,10 +41,7 @@ public abstract class GuiListener extends CommandClass {
             Log.debug("[MESSAGE] "+message);
         }
 
-        @Override
-        public void onEvent(Event event, Object subject) {
-            Log.debug("[EVENT]["+event.toString()+"]"+(subject != null ? subject.toString() : "null"));
-        }
+
 
 
 

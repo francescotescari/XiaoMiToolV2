@@ -18,6 +18,7 @@ public class AfhRequest {
     private static final String AFH_CHECK = AFH_HOST+"/libs/otf/checks.otf.php";
     private static final String AFH_API = AFH_HOST+"/api/";
     public static String getDownloadLink(String fid) throws CustomHttpException, RomException {
+        Log.info("Searching download link of android file host file: "+fid);
         String url = AFH_HOST+"/?fid="+fid;
         EasyResponse response = new EasyHttp().url(url).referer(AFH_HOST).userAgent(EasyHttp.CHROME_USERAGENT).exec();
         if (!response.isAllRight()){
@@ -49,6 +50,7 @@ public class AfhRequest {
     }
 
     public static List<AfhEntry> listDirFiles(String dirId) throws CustomHttpException, RomException {
+        Log.info("Searching files in android file host directory: "+dirId);
         String url = AFH_API+"?action=folder&flid="+dirId;
         EasyResponse response = new EasyHttp().url(url).userAgent(EasyHttp.CHROME_USERAGENT).referer(AFH_HOST).exec();
         if (!response.isAllRight()){

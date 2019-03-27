@@ -1,6 +1,7 @@
 package com.xiaomitool.v2.gui.controller;
 
 import com.xiaomitool.v2.gui.PopupWindow;
+import com.xiaomitool.v2.gui.visual.OverlayPane;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -22,6 +23,7 @@ public class PopupController extends DefaultController {
 
     public PopupController(PopupWindow popupWindow) {
         this.popupWindow = popupWindow;
+        popupWindow.setController(this);
     }
 
     @Override
@@ -32,8 +34,13 @@ public class PopupController extends DefaultController {
        if (w > 0){
            HEADER_REGION.setPrefWidth(w);
        }
+       CONTENT_PANE.setPrefSize(popupWindow.getWidth(), popupWindow.getHeight());
+       OverlayPane overlayPane = new OverlayPane();
+
+       popupWindow.setOverlayPane(overlayPane);
        if (popupWindow.getContent() != null){
            CONTENT_PANE.getChildren().add(popupWindow.getContent());
        }
+        CONTENT_PANE.getChildren().add(overlayPane);
     }
 }

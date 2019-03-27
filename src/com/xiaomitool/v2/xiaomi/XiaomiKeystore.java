@@ -70,9 +70,7 @@ public class XiaomiKeystore {
         return this.getUserId() != null && this.getPassToken() != null;
     }
 
-    public String getHashedPcId(){
-        return Hash.sha1Hex(getPcId()).substring(20);
-    }
+
     public static XiaomiKeystore getInstance(){
         if (instance == null){
             instance = new XiaomiKeystore();

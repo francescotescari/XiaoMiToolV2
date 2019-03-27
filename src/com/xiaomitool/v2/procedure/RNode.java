@@ -81,6 +81,7 @@ public abstract class RNode extends RInstall {
                         } catch (InstallException e) {
                             Log.debug("PROCEDURE EXC: "+e.getMessage());
                             if (install.hasFlag(FLAG_SKIPONEXCEPTION)){
+                                Log.warn("Exception occurred, but skip on exception flag was enabled: "+e.toString());
                                 Log.debug("Skipped procedure: exception skipped: "+StrUtils.exceptionToString(e));
                                 break;
                             } else if (install.hasFlag(FLAG_THROWEXCEPTION)) {
@@ -135,6 +136,7 @@ public abstract class RNode extends RInstall {
                     allRight = true;
                 } catch (InstallException e){
                     exception = e;
+                    Log.warn("Fallback: skipping install exception: "+e.getCode()+" - "+e.getMessage());
                 } catch (RMessage e){
                     if (CommandClass.Command.EXCEPTION.equals(e.getCmd())){
                         exception = e.getInstallException();

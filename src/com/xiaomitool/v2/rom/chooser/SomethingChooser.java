@@ -21,16 +21,24 @@ public abstract class SomethingChooser<T> {
     public static final String ID_BACK = "back";
 
     public static class IdGroup extends ArrayList<String> {
-        public IdGroup(String... ids){
-            this.addAll(Arrays.asList(ids));
+        private String name;
+
+        public String getName() {
+            return name;
         }
-        public static final IdGroup officialRom = new IdGroup(ID_CHINA_STABLE, ID_CHINA_DEVELOPER, ID_GLOBAL_DEVELOPER, ID_GLOBAL_STABLE, ID_FAKE_OFFICIAL, ID_BACK);
-        public static final IdGroup unofficialRoms = new IdGroup(ID_XIAOMIEU_STABLE, ID_XIAOMIEU_DEV, ID_FAKE_UNOFFICIAL_ZIP, ID_BACK);
-        public static final IdGroup xiaomiProcedures = new IdGroup(ID_UNLOCK_DEVICE, ID_BACK);
-        public static final IdGroup modsAndStuff = new IdGroup(ID_INSTALL_TWRP, ID_INSTALL_MAGISK, ID_FAKE_MOD_ZIP, ID_INSTALL_RECOVERY_IMAGE, ID_BACK);
+
+        public IdGroup(String name, String... ids){
+            this.name = name; this.addAll(Arrays.asList(ids));
+        }
+        public static final IdGroup officialRom = new IdGroup("Official roms", ID_CHINA_STABLE, ID_CHINA_DEVELOPER, ID_GLOBAL_DEVELOPER, ID_GLOBAL_STABLE, ID_FAKE_OFFICIAL, ID_BACK);
+        public static final IdGroup unofficialRoms = new IdGroup("Unofficial roms", ID_XIAOMIEU_STABLE, ID_XIAOMIEU_DEV, ID_FAKE_UNOFFICIAL_ZIP, ID_BACK);
+        public static final IdGroup xiaomiProcedures = new IdGroup("Xiaomi Procedures", ID_UNLOCK_DEVICE, ID_BACK);
+        public static final IdGroup modsAndStuff = new IdGroup("Mods and stuff", ID_INSTALL_TWRP, ID_INSTALL_MAGISK, ID_FAKE_MOD_ZIP, ID_INSTALL_RECOVERY_IMAGE, ID_BACK);
         public boolean hasId(String id){
             return this.contains(id);
         }
+
+
 
     }
 

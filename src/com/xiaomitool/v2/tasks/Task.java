@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.tasks;
 
+import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.WaitSemaphore;
 
 import java.time.Duration;
@@ -36,6 +37,7 @@ public abstract class Task {
     }
 
      void restart() throws InterruptedException {
+         Log.info("Restarting task: "+this);
         if (runningThread != null){
             runningThread.join(2000);
             start(false);
@@ -52,11 +54,12 @@ public abstract class Task {
         status = STATUS.RUNNING;
         timeStart = LocalDateTime.now();
         timeLatestUpdate = LocalDateTime.now();
-         Runnable runnable = new Runnable() {
-             @Override
-             public void run() {
+        Log.info("Starting task: same thread: "+sameThread+" : "+this);
+         Runnable runnable = () -> {
+             try {
                  startInternal();
-
+             } catch (Exception e){
+                 error(e);
              }
          };
         if (sameThread){
@@ -77,6 +80,7 @@ public abstract class Task {
         return this.latestUpdate;
     }
     protected void finished(Object subject){
+        Log.info("Task finished: result: "+subject+" : "+this);
         update(totalSize);
         result = subject;
         this.status = STATUS.FINISHED;
@@ -87,18 +91,19 @@ public abstract class Task {
         }
     }
     protected void error(Exception e){
+        Log.error("Task error: exception: "+e.getMessage()+" : "+this);
         this.status = STATUS.ERROR;
         this.error = e;
         listener.onError(e);
         isNotRunning.increase();
     }
 
-    protected abstract void startInternal();
+    protected abstract void startInternal() throws Exception;
     protected void setTotalSize(long size){
         this.totalSize = size;
         listener.onStart(totalSize);
     }
-    protected long getTotalSize(){
+    public long getTotalSize(){
         return this.totalSize;
     }
 
@@ -107,6 +112,7 @@ public abstract class Task {
             return false;
         }
         if( pauseInternal()){
+            Log.info("Task paused: "+this);
             status = STATUS.PAUSED;
             return true;
         }
@@ -117,6 +123,7 @@ public abstract class Task {
             return false;
         }
         if(stopInternal()){
+            Log.info("Task aborted: "+this);
             status = STATUS.ABORTED;
             return true;
         }
@@ -157,6 +164,11 @@ public abstract class Task {
 
     void startSameThread(){
         start(true);
+    }
+
+    @Override
+    public String toString(){
+        return this.getClass().getSimpleName()+" -> status: "+this.status;
     }
 
 

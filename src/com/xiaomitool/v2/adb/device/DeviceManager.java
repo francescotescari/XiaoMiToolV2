@@ -45,11 +45,11 @@ public class DeviceManager {
         return selectedDevice;
     }
 
-    public static void refresh(){
+    public static synchronized void refresh(){
         updatingDevices = new HashMap<>();
         AdbCommunication.refreshDevices();
         for (Map.Entry<String, Device.Status> entry : updatingDevices.entrySet()){
-
+            Log.info("Connected device: "+entry.getKey()+" -> "+entry.getValue());
             Log.debug(entry.getKey() + " - "+entry.getValue());
         }
         for (Device d : deviceMap.values()){

@@ -17,6 +17,7 @@ import com.xiaomitool.v2.gui.other.DeviceTableEntry;
 import com.xiaomitool.v2.gui.visual.*;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.procedure.GuiListener;
 import com.xiaomitool.v2.procedure.ProcedureRunner;
 import com.xiaomitool.v2.procedure.RInstall;
@@ -48,6 +49,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -69,10 +71,12 @@ public class ActionsDynamic {
         };
     }
     public static RunnableMessage SEARCH_SELECT_DEVICES(@Nullable Device.Status wantedStatus){ return () -> {
+        Log.info("Searching at least one device");
         ActionsDynamic.MAIN_SCREEN_LOADING(LRes.SEARCHING_CONNECTED_DEVICES).run();
         DeviceManager.refresh();
         Thread.sleep(1000);
         int connectedDevices = DeviceManager.count(wantedStatus);
+        Log.info("Total connected device found: "+connectedDevices);
         RunnableMessage nextStep;
         if (connectedDevices == 0) {
             nextStep = NO_DEVICE_CONNECTED(wantedStatus);
@@ -83,6 +87,7 @@ public class ActionsDynamic {
     };}
 
     public static RunnableMessage NO_DEVICE_CONNECTED(@Nullable Device.Status wantedStatus) { return  () -> {
+        Log.info("Showing no devices visual");
         LRes msg, button;
         RunnableMessage howto = null;
         Device.Status wStatus = wantedStatus;
@@ -136,6 +141,7 @@ public class ActionsDynamic {
     };}
 
     public static RunnableMessage SELECT_DEVICE(@Nullable Device.Status wantedStatus) { return  () -> {
+        Log.info("Displaying found devices to choose");
         TableView<DeviceTableEntry> tableView = new TableView<DeviceTableEntry>(){
             public void requestFocus() { }
         };
@@ -155,6 +161,7 @@ public class ActionsDynamic {
             if (wantedStatus != null && !device.getStatus().equals(wantedStatus)){
                 continue;
             }
+            Log.debug("Displaying device "+device.getSerial()+", status: "+device.getStatus());
             DeviceTableEntry tableEntry = new DeviceTableEntry(device);
             observableList.add(tableEntry);
         }
@@ -226,6 +233,8 @@ public class ActionsDynamic {
 
     public static RunnableMessage REQUIRE_DEVICE_ON(Device device){
         return () -> {
+
+            Log.info("Rebooting and expecting device "+device.getSerial()+" turned on with usb debug enabled, auth and connected");
             if (!device.isTurnedOn()){
                 //Need to reboot to device
                 REBOOT_DEVICE(device, Device.Status.DEVICE, false).run();
@@ -239,9 +248,11 @@ public class ActionsDynamic {
 
     public static RunnableMessage REQUIRE_DEVICE_CONNECTED(Device device){
         return () -> {
+            Log.info("Expecting device connected to the pc");
             if (device.isConnected()){
                 return 0;
             }
+            Log.warn("It is not, please connect device to the pc");
             ButtonPane pane = new ButtonPane(LRes.TRY_AGAIN);
             ImageView no_connection = new ImageView(new Image(DrawableManager.getPng(DrawableManager.NO_CONNECTION).toString()));
             no_connection.setFitHeight(200);
@@ -287,6 +298,7 @@ public class ActionsDynamic {
 
     public static RunnableMessage WAIT_USB_DEBUG_ENABLE(Device device, String text){
         return () -> {
+            Log.info("Waiting for device usb connection");
             ButtonPane pane = new ButtonPane(LRes.HT_ENABLE_USB_DEBUG, LRes.SEARCH_AGAIN);
             pane.setContentText(LRes.WAITING_USB_ENABLE.toString(LRes.SEARCH_AGAIN));
             WindowManager.setMainContent(pane, false);
@@ -332,6 +344,7 @@ public class ActionsDynamic {
                 if (device == null){
                     return 0;
                 }
+                Log.info("Starting reboot to stock recovery visual procedure");
                 if (!force){
                     if (Device.Status.SIDELOAD.equals(device.getStatus())){
                         return 1;
@@ -372,6 +385,7 @@ public class ActionsDynamic {
 
     public static RunnableMessage FIND_DEVICE_INFO(Device device){
         return () -> {
+            Log.info("Starting find_device_info visual procedure");
             Text texts[] = new Text[10];
             Text ktexts[] = new Text[10];
             LRes kstring[] = new LRes[]{LRes.SERIAL, LRes.BRAND, LRes.MODEL, LRes.CODENAME, LRes.MIUI_VERSION, LRes.ANDROID_VERSION, LRes.SERIAL_NUMBER, LRes.BOOTLOADER_STATUS, LRes.FASTBOOT_PARSED, LRes.RECOVERY_PARSED};
@@ -405,15 +419,19 @@ public class ActionsDynamic {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    Log.info("Starting find_device_info reboot thread");
                     if (!device.getDeviceProperties().getFastbootProperties().isParsed()) {
+                        Log.info("Device fastboot properties are not parsed yet");
                         try {
                             if (!device.reboot(Device.Status.FASTBOOT)) {
                                 throw new Exception("Failed to reboot to fastboot");
                             } else {
+                                Log.info("Device rebooted to fastboot, parsing starting soon");
                                 Thread.sleep(1000);
                                 ActionsUtil.setDevicePropertiesText(device, texts);
                             }
                         } catch (Exception e) {
+                            Log.warn("Failed to reboot device to fastboot, skipping: "+e.getMessage());
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -422,12 +440,15 @@ public class ActionsDynamic {
                             });
                         }
                     } else {
+                        Log.info("Device fastboot properties already parsed, skipping");
                         ActionsUtil.setDevicePropertiesText(device, texts);
                     }
 
                     if (!device.getDeviceProperties().getSideloadProperties().isParsed() && !device.getDeviceProperties().getRecoveryProperties().isParsed()) {
                         try {
+                            Log.info("Device sideload and recovery properties are not parsed yet");
                             if (UnlockStatus.UNLOCKED.equals(device.getAnswers().getUnlockStatus())) {
+                                Log.info("Bootloader is unlocked, we dont care about recovery properties now");
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
@@ -436,16 +457,18 @@ public class ActionsDynamic {
                                 });
 
                             } else {
-
+                                Log.info("Bootloader il locked, we go to stock recovery now");
                                 boolean result = REBOOT_STOCK_RECOVERY(device, true).run() != 0;
                                 if (!result){
                                     throw new Exception("Failed to reboot to stock recovery");
                                 }
+                                Log.info("Device rebooted to stock recovery mode, parsing starting soon");
                                 Thread.sleep(1000);
                                 ActionsUtil.setDevicePropertiesText(device, texts);
 
                             }
                         } catch (Exception e) {
+                            Log.warn("Failed to reboot to recovery mode, skipping: "+e.getMessage());
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -454,6 +477,7 @@ public class ActionsDynamic {
                             });
                         }
                     } else {
+                        Log.info("Either stock recovery or custom recovery properties are already found, we dont need more fore now, skipping");
                         ActionsUtil.setDevicePropertiesText(device, texts);
                     }
 
@@ -478,9 +502,11 @@ public class ActionsDynamic {
 
     public static RunnableMessage REQUIRE_DEVICE_AUTH(Device device){
         return () -> {
+            Log.info("Expecting device authorized");
             if (!device.needAuthorization()){
                 return 0;
             }
+            Log.warn("It is not, please authorize it");
             ButtonPane pane = new ButtonPane( LRes.TRY_AGAIN);
 
             IDClickReceiver receiver = pane.getIdClickReceiver();
@@ -544,12 +570,14 @@ public class ActionsDynamic {
 
     public static RunnableMessage REBOOT_DEVICE(Device device, Device.Status status, boolean wait){
         return () -> {
+            Log.info("Rebooting device visual");
+            boolean res = false;
             try {
-                boolean res = wait ? device.reboot(status) : device.rebootNoWait(status);
+                res = wait ? device.reboot(status) : device.rebootNoWait(status);
             }  catch (AdbException e) {
-                e.printStackTrace();
+                Log.error("Failed to reboot the device: "+e.getMessage());
             }
-            return 0;
+            return res ? 1 : 0;
         };
     }
 
@@ -557,6 +585,21 @@ public class ActionsDynamic {
         return new RunnableMessage() {
             @Override
             public int run() throws InterruptedException {
+                try {
+                    DeviceProperties properties = device.getDeviceProperties();
+                    HashMap<String, String> logginProps = new HashMap<>();
+                    logginProps.put("d", String.valueOf(properties.get(DeviceProperties.CODENAME)));
+                    logginProps.put("c", String.valueOf(properties.get(DeviceProperties.CODEBASE)));
+                    logginProps.put("v", String.valueOf(properties.get(DeviceProperties.FULL_VERSION)));
+                    logginProps.put("bs", String.valueOf(device.getAnswers().getUnlockStatus()));
+                    logginProps.put("sn", String.valueOf(properties.get(DeviceProperties.X_SERIAL_NUMBER)));
+                    LiveFeedbackEasy.sendLog("DATA",new JSONObject(logginProps).toString());
+                } catch (Exception ignored){
+
+                }
+
+
+                Log.info("Starting installtion part main procedure");
                 InstallPane installPane = new InstallPane();
                 WindowManager.setMainContent(installPane);
                 ProcedureRunner runner = new ProcedureRunner(installPane.getListener());
@@ -584,6 +627,7 @@ public class ActionsDynamic {
                     DeviceManager.refresh();
                     GenericInstall.runInstallProcedure().run(runner);
                     GenericInstall.installationSuccess().run(runner);*/
+                   Log.info("Main procedure loaded, starting now");
                         main.run(runner);
 
                     } catch (Exception e) {
@@ -605,6 +649,7 @@ public class ActionsDynamic {
                             @Override
                             public void run() {
                                 try {
+                                    ActionsStatic.ASK_FOR_FEEDBACK().run();
                                     ActionsStatic.MOD_CHOOSE_SCREEN().run();
                                 } catch (InterruptedException e) {
                                     Log.debug(e.getMessage());
@@ -613,13 +658,11 @@ public class ActionsDynamic {
                         }).start();
                         return 0;
                     }
-                    Stage st = WindowManager.launchPopup(new PopupWindow.ImageTextPopup("A fatal error has occured: type: "+rMessage.getCmd()+"\nThe tool will now exit",PopupWindow.Icon.ERROR));
-                    if (st != null){
-                        while (st.isShowing()){
-                            Thread.sleep(100);
-                        }
-
-                    }
+                    Log.error("Fatal uncaught rmessage: "+rMessage.getCmd());
+                    PopupWindow popupWindow = new PopupWindow.ImageTextPopup("A fatal error has occured: type: "+rMessage.getCmd()+"\nThe tool will now exit",PopupWindow.Icon.ERROR);
+                     WindowManager.launchPopup(popupWindow);
+                     popupWindow.waitForClose();
+                    ActionsStatic.ASK_FOR_FEEDBACK().run();
                     ToolManager.exit(1);
                     System.exit(1);
                 }

@@ -4,6 +4,7 @@ import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
+import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.Installable;
@@ -24,6 +25,7 @@ public class FastbootFetch {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Searching latest fastboot rom: specie: "+specie);
                 MiuiRom.Specie sp = specie;
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 Device device = Procedures.requireDevice(runner);
@@ -50,11 +52,13 @@ public class FastbootFetch {
                             rom = MiuiRomOta.latestFastboot_request(params);
                         } catch (XiaomiProcedureException e) {
                             try {
+                                Log.info("Using fastboot fetch method 2");
                                 rom = MiuiRomOta.latestFastboot2_request(params);
                             } catch (XiaomiProcedureException e2) {
                                 throw new InstallException(e2);
                             }
                         }
+                        Log.info("Fastboot rom for specie "+specie+" found: "+rom);
                         chooser.add(id, rom);
                     }
                 } catch (CustomHttpException e) {

@@ -5,19 +5,26 @@ import com.xiaomitool.v2.adb.device.DeviceManager;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.gui.visual.InstallPane;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.logging.feedback.LiveFeedback;
+import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import javafx.scene.layout.Pane;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ProcedureRunner extends GuiListener {
     private InstallException exception;
     private GuiListener listener;
     private Pane afterExeptionPane;
     private RInstall runnableInstall;
+    private boolean sendFeedback = true;
+
+
 
     public ProcedureRunner(InstallPane installPane){
         this(installPane.getListener());
@@ -59,47 +66,6 @@ public class ProcedureRunner extends GuiListener {
                 throw new RuntimeException(e1);
             }
         }
-/*
-        if (runnable.isNode()){
-            RInstall[] children = runnable.getChildren();
-            switch (runnable.getNodeType()){
-                case SERIE:
-                    return runSerie(children);
-                case FALLBACK:
-                    return runFallback(children);
-            }
-        }
-        boolean repeat = true;
-        Command cmd;
-        while (repeat) {
-            repeat = false;
-            exception = null;
-            try {
-                runnable.run( this);
-            } catch (InstallException e) {
-                exception = e;
-            } catch (Throwable t){
-                exception = new InstallException("An unexpected exception reached outer level. Please report this error to the develoeper: "+StrUtils.exceptionToString(t),InstallException.Code.INTERNAL_ERROR, false);
-            }
-            if (exception != null) {
-                if (runnable.isThrowException()){
-                    return Command.EXCEPTION;
-                }
-                try {
-                    cmd = listener.exception(exception);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                switch (cmd) {
-                    case RETRY:
-                        repeat = true;
-                        break;
-                    case ABORT:
-                    case UPLEVEL:
-                        return cmd;
-                }
-            }
-        }*/
         return Command.NOCMD;
     }
 
@@ -107,11 +73,25 @@ public class ProcedureRunner extends GuiListener {
         if (cause != null && cause.hasFlag(RNode.FLAG_THROWRAWEXCEPTION)){
             throw exception;
         }
-        Command out = listener.exception(exception);
+        Command out;
+        if (sendFeedback) {
+            out = listener.exception(exception, () -> LiveFeedbackEasy.sendInstallException(exception, ProcedureRunner.this));
+        } else {
+            out = listener.exception(exception, null);
+        }
         if (Command.ABORT.equals(out)){
             throw new RMessage(out);
         }
         return out;
+    }
+
+    private final List<String> stackLog = new ArrayList<>();
+    void pushStackTrace(String stackLog){
+        this.stackLog.add(stackLog);
+    }
+
+    public  String getStackStrace(){
+        return String.join("\n",stackLog);
     }
 
 
@@ -129,11 +109,6 @@ public class ProcedureRunner extends GuiListener {
     @Override
     public void text(String message) {
         listener.text(message);
-    }
-
-    @Override
-    public void onEvent(Event event, Object subject) {
-        listener.onEvent(event,subject);
     }
 
     @Override

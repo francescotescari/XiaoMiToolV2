@@ -72,7 +72,9 @@ public class FastbootInstall {
                 Installable installable = Procedures.requireInstallable(procedureRunner);
                 File outputDirectory = installable.getFinalFile();
                 try {
+
                     String file = SystemUtils.IS_OS_WINDOWS ? "flash_all.bat" : "flash_all.sh";
+                    Log.info("Searching file "+file+" in the extracted directory");
                     Stream<Path> result = Files.find(outputDirectory.toPath(), 4, new BiPredicate<Path, BasicFileAttributes>() {
                         @Override
                         public boolean test(Path path, BasicFileAttributes basicFileAttributes) {
@@ -80,11 +82,13 @@ public class FastbootInstall {
                         }
                     });
                     List<Path> res = result.collect(Collectors.toList());
+                    Log.info("Possible flash_all files found: "+res);
                     if (res.size() == 0){
-                        throw new InstallException("File not found: "+file, FILE_NOT_FOUND, true);
+                        throw new InstallException("Flash all file not found in extracted dir: "+file, FILE_NOT_FOUND, true);
                     }
                     res.sort(Comparator.comparingInt(o -> o.toString().length()));
                     Path flashAllPath = res.get(0);
+                    Log.info("Choosen flash_all file: "+flashAllPath);
                     procedureRunner.setContext(FLASH_ALL_PATH, flashAllPath);
 
                 } catch (IOException e) {
@@ -102,12 +106,15 @@ public class FastbootInstall {
                     throw new InstallException("Failed to obtain flash_all file",FILE_NOT_FOUND, false);
                 }
                 String content;
+                Log.info("Building custom flash_all file");
                 File flash_all = flashAllFile.toFile();
                 try {
                     content= FileUtils.readAll(flash_all);
                 } catch (IOException e) {
                     throw new InstallException("Failed to read flash_all file",InstallException.Code.IO_ERROR, true);
                 }
+                Log.info("Original flash_all file: ");
+                Log.info(content);
                 String[] contentLines = content.split("\\n");
                 String outFile = ResourcesConst.isWindows() ? "flash_xiaomitool.bat" : "flash_xiaomitool.sh";
                 int lines = contentLines.length;
@@ -130,12 +137,17 @@ public class FastbootInstall {
                     }
                     builder.append(line).append(System.lineSeparator());
                 }
+                String outputContent = builder.toString();
                 File flash_xiaomitool = new File(flash_all.getParentFile(),outFile);
+                Log.info("Custom flash_all file: "+flash_xiaomitool);
+                Log.info("Custom flash_all file content: ");
+                Log.info(outputContent);
                 try {
-                    FileUtils.writeAll(flash_xiaomitool,builder.toString());
+                    FileUtils.writeAll(flash_xiaomitool,outputContent);
                 } catch (IOException e) {
                     throw new InstallException("Failed to write to flash_xiaomitool file: "+e.getMessage(),IO_ERROR, true);
                 }
+                Log.info("Flash_all file generated success");
                 procedureRunner.setContext(FLASH_SCRIPT_FILE, flash_xiaomitool);
             }
         };
@@ -157,7 +169,9 @@ public class FastbootInstall {
             public void run(ProcedureRunner procedureRunner) throws InstallException, InterruptedException, RMessage {
                 File flashAllFile = (File) procedureRunner.requireContext(FLASH_SCRIPT_FILE);
                 Path flash_all_dir = flashAllFile.getParentFile().toPath();
+                Log.info("Starting fastboot flash_all script: "+flashAllFile);
                 try {
+                    Log.info("Copying fastboot resources to flash_all file directory: "+flash_all_dir);
                     ResourcesManager.copyResourcesToDir(ResourcesManager.getFastbootFilesPath(), flash_all_dir);
                 } catch (Exception e){
                     throw new InstallException("Failed to copy fastboot to flash_all dir: "+e.getMessage(), FASTBOOT_FLASH_FAILED, true);
@@ -171,6 +185,7 @@ public class FastbootInstall {
                 if (!ResourcesConst.isWindows() && !flashAllFileShell.startsWith("/") && !flashAllFileShell.startsWith(".")){
                     flashAllFileShell = "./"+flashAllFileShell;
                 }
+                Log.info("Flash_all argument passed to shell: "+flashAllFileShell);
                 ProcessRunner runner = new ShellRunner(flashAllFileShell);
                 runner.setWorkingDir(flash_all_dir.toFile());
                 runner.addArgument("-s");
@@ -179,10 +194,12 @@ public class FastbootInstall {
                 Pattern p = Pattern.compile("\\[(Flashing \\w+)\\]",Pattern.CASE_INSENSITIVE);
                 Pointer lastLine = new Pointer();
                 lastLine.pointed = "";
+                ;
                 runner.addSyncCallback(new RunnableWithArg() {
                     @Override
                     public void run(Object arg) {
                         String line = (String) arg;
+                        Log.info(arg);
                         Matcher m = p.matcher(line);
                         if (m.find()){
                             String text = m.group(1);
@@ -196,8 +213,9 @@ public class FastbootInstall {
                     }
                 });
                 device.requireAccess();
+                Log.info("Starting flash_all fastboot process");
                 try {
-                    runner.runWait(1800);
+                    runner.runWait(3000);
                 } catch (IOException e) {
                     device.releaseAccess();
                     throw new InstallException("Failed to run flash_all file: "+e.getMessage(),IO_ERROR, true);
@@ -207,6 +225,7 @@ public class FastbootInstall {
                 if (exitCode != 0){
                     throw new InstallException("Fastboot flash all failed, exit code: "+exitCode+", output: "+lastLine.pointed, FASTBOOT_FLASH_FAILED, true);
                 }
+                Log.info("Flash_all script run success");
             }
         };
 
@@ -219,6 +238,7 @@ public class FastbootInstall {
         return RNode.sequence(RebootDevice.requireFastboot(), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Starting unlock procedure");
                 Device device = Procedures.requireDevice(runner);
                 XiaomiKeystore keystore = XiaomiKeystore.getInstance();
                 if (!keystore.isLogged()){
@@ -231,18 +251,21 @@ public class FastbootInstall {
                 if (token == null){
                     throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, true);
                 }
+                Log.info("First trial unlock token: "+token);
                 try {
                     runner.text(LRes.UNLOCK_CHECKING_ACCOUNT);
                     String info = UnlockCommonRequests.userInfo();
                     if (info != null){
                         //TODO
                         Log.debug(info);
+                        Log.info("Unlock request user info: "+info);
                     }
                     runner.text(LRes.UNLOCK_CHECKING_DEVICE);
                     String alert = UnlockCommonRequests.deviceClear((String) device.getDeviceProperties().get(DeviceProperties.CODENAME));
                     if (alert != null){
                         //TODO
                         Log.debug(alert);
+                        Log.info("Unlock request device clear: "+alert);
                     }
                 } catch (XiaomiProcedureException e) {
                     throw new InstallException(e);
@@ -257,11 +280,13 @@ public class FastbootInstall {
                 if (click != 0){
                     throw new InstallException("Unlock procedure aborted, cannot continue", InstallException.Code.ABORTED, true);
                 }
+                Log.info("Unlock request confirmation success");
                 while (true) {
-                    token = AdbUtils.parseFastbootVar("token", FastbootCommons.getvar("token", device.getSerial()));
+                    token = FastbootCommons.getvar("token", device.getSerial());
                     if (token == null) {
                         throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, true);
                     }
+                    Log.info("Unlock request token: "+token);
                     try {
                         String unlockData = null;
                         runner.text(LRes.UNLOCK_REQUESTING_TOKEN);
@@ -269,6 +294,7 @@ public class FastbootInstall {
                         if (unlockData == null) {
                             throw new InstallException("Failed to get the unlock data required", InstallException.Code.INFO_RETRIVE_FAILED, true);
                         }
+                        Log.info("Unlock request response: "+unlockData);
                         Log.debug(unlockData);
                         JSONObject json = new JSONObject(unlockData);
                         int code = json.optInt("code", -100);
@@ -298,17 +324,21 @@ public class FastbootInstall {
                         Thread.sleep(1000);
                         DeviceManager.refresh();
                         try {
-                            device.waitStatus(Device.Status.FASTBOOT, 4);
+                            device.waitStatus(Device.Status.FASTBOOT, 5);
                             Device.Status status = device.getStatus();
                             if (Device.Status.FASTBOOT.equals(status)) {
+                                Log.info("Device is back in fastboot mode: parsing properties");
                                 device.getDeviceProperties().getFastbootProperties().parse(true);
+                                Log.info("UnlockStatus: "+device.getAnswers().getUnlockStatus());
                             }
                             if (UnlockStatus.LOCKED.equals(device.getAnswers().getUnlockStatus())) {
                                 throw new InstallException("Failed to unlock the device, the procedure failed during the unlock command, the device doens't seem to be unlocked", UNLOCK_ERROR, true);
                             }
+                            Log.info("This is the strangest way to suppose that the device is unlocked :/");
                         } catch (AdbException e){
-                            //Device not in fastboot after 4 seconds = unlock success;
+                            //Device not in fastboot after 5 seconds = unlock success;
                             Log.debug("Successful unlock!");
+                            Log.info("The device is not in fastboot after 5 seconds -> should be unlocked");
                         }
                         break;
 

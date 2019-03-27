@@ -18,6 +18,7 @@ public class Twrp {
     private static final String TWRP_AFH_FID = "50678";
 
     public static TwrpFile latestTwrpMe(String codename) throws CustomHttpException, RomException {
+        Log.info("Searching latest TWRP for device: "+codename+" on twrp.me");
         String dlUrl = TWRP_DL_HOST+"/"+codename+"/dl.json";
         EasyResponse response = EasyHttp.get(dlUrl);
         if (!response.isAllRight()){
@@ -39,6 +40,7 @@ public class Twrp {
     }
 
     public static TwrpFile latestTwrpAfh(String codename) throws CustomHttpException, RomException {
+        Log.info("Searching latest TWRP for device: "+codename+" from android file host");
         List<AfhRequest.AfhEntry> entries = AfhRequest.listDirFiles(TWRP_AFH_FID);
         entries.sort(new Comparator<AfhRequest.AfhEntry>() {
             @Override

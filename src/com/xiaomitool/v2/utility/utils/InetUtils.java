@@ -83,14 +83,19 @@ public class InetUtils {
             try {
                 ++tried;
                 InetAddress xmt = InetAddress.getByName("www.xiaomitool.com");
-                if (xmt.isReachable(4000)){
+                if (xmt.isReachable(5000)){
+                    Log.info("xiaomitool.com is reachable");
                    internetAvailable = true;
                    waitSemaphore.increase();
+                   return;
+                } else {
+                    Log.warn("xiaomitool.com is not reachable");
                 }
             } catch (IOException e) {
                 Log.error("Failed to reach xmt host: "+e.getMessage());
             }
             if (tried >= 3){
+                Log.error("Tried to reach three host and no one was reachable");
                 waitSemaphore.increase();
             }
         }).start();
@@ -98,14 +103,19 @@ public class InetUtils {
             try {
                 ++tried;
                 InetAddress xmt = InetAddress.getByName("www.google.com");
-                if (xmt.isReachable(4000)){
+                if (xmt.isReachable(5000)){
+                    Log.info("google.com is reachable");
                     internetAvailable = true;
                     waitSemaphore.increase();
+                    return;
+                } else {
+                    Log.warn("google.com is not reachable");
                 }
             } catch (IOException e) {
                 Log.error("Failed to reach google host: "+e.getMessage());
             }
-            if (tried >= 3){
+            if (tried >= 3 ){
+                Log.error("Tried to reach three host and no one was reachable");
                 waitSemaphore.increase();
             }
         }).start();
@@ -113,14 +123,19 @@ public class InetUtils {
             try {
                 ++tried;
                 InetAddress xmt = InetAddress.getByName("www.miui.com");
-                if (xmt.isReachable(4000)){
+                if (xmt.isReachable(5000)){
+                    Log.info("miui.com is reachable");
                     internetAvailable = true;
                     waitSemaphore.increase();
+                    return;
+                } else {
+                    Log.warn("miui.com is not reachable");
                 }
             } catch (IOException e) {
                 Log.error("Failed to reach miui host: "+e.getMessage());
             }
             if (tried >= 3){
+                Log.error("Tried to reach three host and no one was reachable");
                 waitSemaphore.increase();
             }
         }).start();

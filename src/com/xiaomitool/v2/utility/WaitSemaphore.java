@@ -33,4 +33,7 @@ public class WaitSemaphore {
         semaphore.release(permits);
     }
 
+    public int getPermitNumber() {
+        return semaphore.availablePermits();
+    }
 }

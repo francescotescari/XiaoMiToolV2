@@ -6,6 +6,7 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.resources.ResourcesManager;
 
 import com.xiaomitool.v2.utility.NotNull;
+import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -108,6 +109,9 @@ public class SettingsUtils extends HashMap<String, String> {
         }
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, String> entry : instance.entrySet()){
+            if (entry.getKey().startsWith("_")){
+                continue;
+            }
             builder.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
         }
         String data = builder.toString().trim();
@@ -163,6 +167,21 @@ public class SettingsUtils extends HashMap<String, String> {
     public static Region getRegion(){
         //TODO: make it changable
         return Region.EU;
+    }
+
+    public static String requirePCId(){
+        String pcId = instance.get(PC_ID);
+        if (StrUtils.isNullOrEmpty(pcId) || "null".equals(pcId)){
+            pcId = XiaomiKeystore.getInstance().getPcId();
+            if (StrUtils.isNullOrEmpty(pcId)){
+                XiaomiKeystore.getInstance().setDeviceId(XiaomiKeystore.generateDeviceId());
+                pcId = XiaomiKeystore.getInstance().getPcId();
+            }
+        }
+        return pcId;
+    }
+    public static String requireHashedPCId(){
+        return Hash.sha1Hex(requirePCId()).substring(20);
     }
 
     public static boolean isGlobalRegion(){

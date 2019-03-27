@@ -1,17 +1,34 @@
 package com.xiaomitool.v2.gui.controller;
 
+import com.xiaomitool.v2.crypto.Hash;
+import com.xiaomitool.v2.engine.ToolManager;
+import com.xiaomitool.v2.gui.GuiUtils;
+import com.xiaomitool.v2.gui.PopupWindow;
 import com.xiaomitool.v2.gui.WindowManager;
+import com.xiaomitool.v2.gui.visual.CustomButton;
+import com.xiaomitool.v2.gui.visual.OverlayPane;
+import com.xiaomitool.v2.gui.visual.ToastPane;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.logging.feedback.LogSender;
+import com.xiaomitool.v2.utility.RunnableMessage;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
@@ -26,9 +43,18 @@ public class SettingsController extends DefaultController {
     @FXML
     private Label LABEL_DOWNLOAD, LABEL_EXTRACT, TEXT_DOWNLOAD, TEXT_EXTRACT;
     @FXML
-    private Button BUTTON_DOWNLOAD, BUTTON_EXTRACT, BUTTON_CLEAR, BUTTON_RESET;
+    private Button BUTTON_DOWNLOAD, BUTTON_EXTRACT, BUTTON_CLEAR, BUTTON_RESET, BUTTON_FEEDBACK;
     @FXML
     private CheckBox CHECK_SAVE_LOGIN;
+    @FXML
+    private StackPane WHOLE;
+    @FXML
+    private Text INSTANCE_ID;
+    @FXML
+    private TextField INSTANCE_VALUE;
+
+    private static final OverlayPane settingsOverlayPane = new OverlayPane();
+    private static final ToastPane settingsToastPane = new ToastPane(settingsOverlayPane);
 
     @Override
     protected void initialize() {
@@ -38,12 +64,35 @@ public class SettingsController extends DefaultController {
         initTexts();
         loadSettings();
         initOnClick();
+        WHOLE.getChildren().add(settingsOverlayPane);
     }
 
     private void initCss(){
         TEXT_EXTRACT.setStyle("-fx-text-overrun: leading-ellipsis;");
         TEXT_DOWNLOAD.setStyle("-fx-text-overrun: leading-ellipsis;");
+        INSTANCE_VALUE.setStyle("-fx-text-box-border: transparent; -fx-focus-color: transparent;");
+        INSTANCE_VALUE.setBackground(Background.EMPTY);
+        INSTANCE_VALUE.setAlignment(Pos.CENTER);
+        GuiUtils.tooltip(INSTANCE_ID, LRes.INSTANCE_ID_TIP);
+        GuiUtils.tooltip(INSTANCE_VALUE, LRes.INSTANCE_ID_TIP);
         BUTTON_CLEAR.setDisable(true);
+        INSTANCE_VALUE.setFocusTraversable(false);
+        INSTANCE_VALUE.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                WHOLE.requestFocus();
+            }
+        });
+        INSTANCE_VALUE.setCursor(Cursor.HAND);
+        INSTANCE_VALUE.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ClipboardContent content = new ClipboardContent();
+                content.putString(INSTANCE_VALUE.getText());
+                Clipboard.getSystemClipboard().setContent(content);
+                settingsToastPane.toast(LRes.COPIED_TO_CLIPBOARD.toString());
+            }
+        });
     }
     private void initTexts(){
         LABEL_DOWNLOAD.setText(LRes.SETTINGS_DOWNLOAD_DIR.toString());
@@ -52,6 +101,9 @@ public class SettingsController extends DefaultController {
         BUTTON_CLEAR.setText(LRes.SETTINGS_CLEAR.toString());
         BUTTON_EXTRACT.setText(LRes.CHOOSE.toString());
         CHECK_SAVE_LOGIN.setText(LRes.SETTINGS_SAVE_SESSION.toString());
+        BUTTON_FEEDBACK.setText(LRes.SEND_FEEDBACK.toString());
+        INSTANCE_ID.setText(LRes.INSTANCE_ID.toString()+": ");
+        INSTANCE_VALUE.setText(Hash.md5Hex(ToolManager.getRunningInstanceId()).substring(0,8));
     }
 
     private void loadSettings(){
@@ -122,6 +174,13 @@ public class SettingsController extends DefaultController {
                 SettingsUtils.saveOpt(SettingsUtils.PREF_SAVE_SESSION,val);
             }
         });
+        BUTTON_FEEDBACK.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+                WindowManager.launchPopup(getFeedbackPopupWindow());
+            }
+        });
 
         BUTTON_RESET.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -145,5 +204,84 @@ public class SettingsController extends DefaultController {
         });
 
 
+    }
+    private static PopupWindow feedbackPopup;
+
+
+    public static PopupWindow getFeedbackPopupWindow(){
+        if (feedbackPopup == null){
+            feedbackPopup = new PopupWindow(500, 400);
+            Text title = new Text(LRes.SEND_FEEDBACK.toString());
+            title.setFont(Font.font(20));
+            TextArea textArea = new TextArea();
+            textArea.setPrefHeight(180);
+            textArea.setFont(Font.font(14));
+            textArea.setPromptText("Please explain your problem here.\r\nWrite in English or leave blank if you just want to send the log.\r\n"+LRes.FEEDBACK_ONLY_ONE.toEnglish());
+            textArea.setTextFormatter(new TextFormatter<String>(change ->
+                    change.getControlNewText().length() <= 500 ? change : null));
+            CustomButton button = new CustomButton(LRes.SEND_FEEDBACK);
+            button.setFont(Font.font(15));
+            textArea.setFocusTraversable(false);
+            CheckBox checkBox = new CheckBox(LRes.INCLUDE_LOG_FILES.toString());
+            checkBox.setSelected(true);
+            checkBox.setFont(Font.font(15));
+            VBox vBox = new VBox(18, title, textArea, checkBox, button);
+            HBox hBox = new HBox(20, new Pane(),vBox, new Pane());
+            hBox.setAlignment(Pos.CENTER);
+            vBox.setAlignment(Pos.CENTER);
+            feedbackPopup.setContent(hBox);
+
+            button.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    feedbackPopup.getController().setOnBeforeClose(new RunnableMessage() {
+                        @Override
+                        public int run() throws InterruptedException {
+                            Log.debug("Closing");
+                            textArea.setText("");
+                            return 0;
+                        }
+                    });
+                    String text = textArea.getText();
+
+                    boolean sendLogFile = checkBox.isSelected();
+                    if ((text == null || text.isEmpty()) && !sendLogFile){
+                        textArea.setText("");
+                        textArea.setPromptText("You have to either send a text log or include the log file or both");
+                    } else {
+                        button.setDisable(true);
+                        button.setText(LRes.UPLOADING_FEEDBACK.toString());
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastPane feedbackToast = feedbackPopup.getToastPane();
+                                ToastPane settingsToast = settingsToastPane;
+                                try {
+                                    if (!LogSender.uploadFeedback(text, sendLogFile)){
+                                        throw new Exception("Failed to uplaod the feedback, check the log file");
+                                    }
+
+                                        WindowManager.setOnExitAskForFeedback(false);
+                                        feedbackPopup.getController().closeWindow();
+                                        Platform.runLater(() -> settingsToast.toast(LRes.FEEDBACK_SENT.toString()));
+
+
+                                } catch (Exception e) {
+                                    Log.error("Failed to send the feedback: "+e.getMessage());
+                                    Log.exc(e);
+                                    if (feedbackToast != null) {
+                                        Platform.runLater(() -> feedbackToast.toast(LRes.FEEDBACK_ERROR.toString()));
+                                    }
+                                }
+                                LogSender.cooldownCounter(button);
+
+                            }
+                        }).start();
+                    }
+                }
+            });
+        }
+
+        return feedbackPopup;
     }
 }

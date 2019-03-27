@@ -2,12 +2,13 @@ package com.xiaomitool.v2.procedure.install;
 
 import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.inet.CustomHttpException;
+import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.rom.RomException;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
 
 public class InstallException extends Exception {
 
-    public static final InstallException ABORT_EXCEPTION = new InstallException("The installation was aborted byt the user", Code.ABORTED, false);
+    public static final InstallException ABORT_EXCEPTION = new InstallException("The installation was aborted by the user", Code.ABORTED, false);
 
 
     public InstallException(InterruptedException e) {
@@ -75,9 +76,14 @@ public class InstallException extends Exception {
 
     public InstallException(String message, Code code,boolean waitCommand, Object... otherParams){
         super(message);
+        Log.warn("InstallException created: "+code+" - "+message);
         this.code = code;
         this.waitCommand = waitCommand;
         this.params = otherParams;
+    }
+    @Override
+    public String toString(){
+        return this.getClass().getSimpleName()+" - "+this.getCode()+" - "+this.getMessage();
     }
 
     public boolean isWaitCommand() {

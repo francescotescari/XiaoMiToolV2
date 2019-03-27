@@ -3,6 +3,10 @@ package com.xiaomitool.v2.gui.controller;
 import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.engine.ToolManager;
+import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.utility.RunnableMessage;
+import com.xiaomitool.v2.utility.WaitSemaphore;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
@@ -11,6 +15,12 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public abstract class DefaultController {
+    private WaitSemaphore waitCloseSemaphre = new WaitSemaphore(0);
+
+    public WaitSemaphore getWaitCloseSemaphre(){
+        return waitCloseSemaphre;
+    }
+
     public DefaultController(){}
     public DefaultController(Stage primaryStage){
       this.primaryStage = primaryStage;
@@ -40,17 +50,55 @@ public abstract class DefaultController {
         this.primaryStage = primaryStage;
     }
 
+    private RunnableMessage onBeforeClose = null;
+
+    public void setOnBeforeClose(RunnableMessage onBeforeClose) {
+        this.onBeforeClose = onBeforeClose;
+    }
+    public void closeWindow(){
+        closeWindow(false);
+    }
+    public void closeWindow(boolean exit){
+        Runnable close = new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    if (onBeforeClose != null){
+                        int run = onBeforeClose.run();
+                        if (run != 0){
+                            return;
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    Log.warn("Interrupted exception: "+e.getMessage());
+                }
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        waitCloseSemaphre.increase();
+                        if (exit) {
+                            ToolManager.exit(0);
+                        } else {
+                            ToolManager.closeStage(primaryStage);
+                        }
+                    }
+                });
+            }
+        };
+        if (Platform.isFxApplicationThread()){
+            new Thread(close).start();
+        } else {
+            close.run();
+        }
+    }
+
     protected void setCloseImage(ImageView IMG_CLOSE){
         setCloseImage(IMG_CLOSE, false);
     }
     protected void setCloseImage(ImageView IMG_CLOSE, boolean exit){
         IMG_CLOSE.setOnMouseClicked(event -> {
-            if (exit) {
-                ToolManager.exit(0);
-            } else {
-                ToolManager.closeStage(primaryStage);
-            }
-
+            closeWindow(exit);
         });
         GuiUtils.tooltip(IMG_CLOSE, LRes.TIP_WINDOW_CLOSE);
         GuiUtils.setViewportChange(IMG_CLOSE, new GuiUtils.GetViewport() {

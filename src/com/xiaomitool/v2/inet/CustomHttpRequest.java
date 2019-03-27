@@ -12,15 +12,21 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.HttpEntityWrapper;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 public class CustomHttpRequest {
+
+
     public enum Type {
         GET("GET"),
         POST("POST"),
@@ -41,6 +47,8 @@ public class CustomHttpRequest {
     private String url;
     private HttpResponse response;
     private HttpRequest request;
+    private byte[] postData;
+    private InputStream postInputStream;
     public CustomHttpRequest(){
         this(null);
     }
@@ -71,6 +79,14 @@ public class CustomHttpRequest {
         makeItPost();
         this.postParams.putAll(params);
     }
+    public void setPostData(byte[] data){
+        makeItPost();
+        this.postData = data;
+    }
+    public void setPostData(InputStream inputStream) {
+        makeItPost();
+        this.postInputStream = inputStream;
+    }
 
     private void makeItPost(){
         if (this.requestType.equals(Type.POST)){
@@ -100,14 +116,20 @@ public class CustomHttpRequest {
             this.request = request;
             request.setConfig(config);
             makeHeaders(request);
-            List<BasicNameValuePair> postData = new LinkedList<>();
-            for (Map.Entry<String, Object> entry : postParams.entrySet()){
-                postData.add(new BasicNameValuePair(entry.getKey(),entry.getValue().toString()));
-            }
-            try {
-                request.setEntity(new UrlEncodedFormEntity(postData));
-            } catch (UnsupportedEncodingException e) {
-                throw new CustomHttpException("Failed to encode post data");
+            if (this.postData != null) {
+                request.setEntity(new ByteArrayEntity(postData));
+            } else if (this.postInputStream != null) {
+                request.setEntity(new InputStreamEntity(this.postInputStream));
+            } else {
+                List<BasicNameValuePair> basicNameValuePairs = new LinkedList<>();
+                for (Map.Entry<String, Object> entry : postParams.entrySet()) {
+                    basicNameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));
+                }
+                try {
+                    request.setEntity(new UrlEncodedFormEntity(basicNameValuePairs));
+                } catch (UnsupportedEncodingException e) {
+                    throw new CustomHttpException("Failed to encode post data");
+                }
             }
             try {
                 response = client.execute(request);

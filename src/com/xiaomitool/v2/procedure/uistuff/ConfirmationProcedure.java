@@ -28,11 +28,13 @@ public class ConfirmationProcedure {
                 List<InstallationRequirement> requirements = InstallationRequirement.getAllInstallableRequirements(installable,device);
                 runner.setContext(KEY_BOOL_CONFIRM_STEPS, Boolean.TRUE);
                 if (requirements.isEmpty()){
+                    Log.info("No additional requirements are needed for this installation");
                     Log.debug("No requirements for this installation");
                     return;
                 }
                 StringBuilder text = new StringBuilder(LRes.CONFIRM_REQUIREMENTS_TEXT.toString(LRes.CONTINUE.toString(), LRes.CANCEL.toString()));
                 for (InstallationRequirement requirement : requirements){
+                    Log.info("Showing requirement: "+requirement.toString());
                     text.append("- ").append(requirement.getHumanName(device)).append("\n");
                 }
                 ButtonPane buttonPane = new ButtonPane(LRes.CONTINUE, LRes.CANCEL);
@@ -41,7 +43,10 @@ public class ConfirmationProcedure {
                 int click = buttonPane.waitClick();
                 WindowManager.removeTopContent();
                 if (click != 0){
+
                     runner.setContext(KEY_BOOL_CONFIRM_STEPS, Boolean.FALSE);
+                } else {
+                    Log.info("Installation procedure confirmed");
                 }
 
             }
@@ -56,6 +61,7 @@ public class ConfirmationProcedure {
                     runner.setContext(keyWasSkipped, Boolean.FALSE);
                     return;
                 }
+                Log.warn("Internet connection is not available, suggest to enable that");
                 ButtonPane buttonPane = new ButtonPane(LRes.SKIP, LRes.TRY_AGAIN);
                 buttonPane.setContentText(message);
                 WindowManager.setMainContent(buttonPane,false);
@@ -84,7 +90,10 @@ public class ConfirmationProcedure {
                 WindowManager.removeTopContent();
                 if (click != 0){
                     runner.setContext(KEY_BOOL_CONFIRM_INSTALL, Boolean.FALSE);
+                } else {
+                    Log.info("Installation confrimation accepted");
                 }
+
             }
         }, RNode.conditional(KEY_BOOL_CONFIRM_INSTALL, null, RNode.sequence(ChooseProcedure.chooseRom(), confirmInstallableProcedure(), Procedures.runSavedProcedure("confirmInstallationStart"))));
     }

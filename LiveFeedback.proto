@@ -1,0 +1,28 @@
+syntax = "proto2";
+
+package feedback;
+
+option java_package = "com.xiaomitool.v2.logging.feedback";
+option java_outer_classname = "LiveFeedback";
+
+enum FeedbackType {
+    ERROR = 0;
+    SUCCESS = 1;
+    LOG = 2;
+	OPEN = 3;
+	CLOSE = 4;
+  }
+
+message Feedback {
+  required FeedbackType type = 1;
+  required int64 time = 2;
+  optional string quickMessage = 3;
+  optional string longMessage = 4;
+ 
+}
+
+message MultiFeedback {
+	repeated Feedback feedbacks = 1;
+	required string istanceId = 2;
+}
+

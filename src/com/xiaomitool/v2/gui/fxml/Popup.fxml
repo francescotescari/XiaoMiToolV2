@@ -46,7 +46,7 @@
                   <Insets left="12.0" right="12.0" />
                </padding>
             </HBox>
-            <StackPane fx:id="CONTENT_PANE" prefHeight="150.0" prefWidth="200.0" />
+            <StackPane fx:id="CONTENT_PANE" />
          </children>
       </VBox>
    </children>

@@ -310,7 +310,7 @@ public class DeviceProperties {
 
 
 
-    private Properties adbProperties, fastbootProperties, sideloadProperties, recoveryProperties;
+    private final Properties adbProperties, fastbootProperties, sideloadProperties, recoveryProperties;
     private String serial;
     private Device device;
 

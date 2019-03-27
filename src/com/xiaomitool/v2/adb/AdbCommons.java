@@ -51,9 +51,13 @@ public class AdbCommons {
 
     private static AdbRunner adb_command(String cmd, String device, int timeout) {
         //Log.debug("Input: adb "+cmd);
+
         AdbRunner runner =  new AdbRunner();
         if (device != null){
             runner.setDeviceSerial(device);
+        }
+        if (!"devices".equals(cmd)){
+            runner.setFeedback(true);
         }
 
         List<String> list = new ArrayList<String>();

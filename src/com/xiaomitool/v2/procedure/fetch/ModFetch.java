@@ -25,11 +25,13 @@ public class ModFetch {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 try {
+                    Log.info("Fetching latest magisk stable");
                     runner.text(LRes.SEARCHING_LATEST_MAGISK);
                     EasyResponse response = EasyHttp.get(MAGISK_UPDATE_URL);
                     if (!response.isAllRight()){
                         throw new InstallException("Failed to get latest stable magisk data from static url", InstallException.Code.INFO_RETRIVE_FAILED, true);
                     }
+                    Log.info("Magisk latest response: "+response.getBody());
                     JSONObject jsonObject = new JSONObject(response.getBody());
                     JSONObject magiskObj = jsonObject.getJSONObject("magisk");
                     String url = magiskObj.getString("link");

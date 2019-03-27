@@ -27,7 +27,6 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.util.LinkedList;
 
-import static com.xiaomitool.v2.procedure.GuiListener.Event;
 import static com.xiaomitool.v2.procedure.install.InstallException.Code.*;
 
 public class Procedures {
@@ -42,226 +41,9 @@ public class Procedures {
     private static final String INSTALLABLE_CHOOSER = "installable_chooser";
     private static final String PROCEDURE_CHOOSER = "procedure_chooser";
 
-    public static RInstall rebootNoWait(Device.Status toStatus){
-        return new RInstall() {
-            @Override
-            public void run(ProcedureRunner procedureRunner) throws InstallException, InterruptedException {
-                Device device = (Device) procedureRunner.requireContext(SELECTED_DEVICE);
-                try {
-                    device.rebootNoWait(toStatus);
-                    procedureRunner.text(LRes.REBOOTING_TO_MODE.toString(toStatus.toString()));
-                } catch (AdbException e) {
-                    throw e.toInstallException(true);
-                }
-            }
-        };
-    }
-
-    public static RInstall rebootIfYouCan(Device.Status toStatus){
-        return new RInstall() {
-            @Override
-            public void run(ProcedureRunner procedureRunner) throws InstallException, InterruptedException, RMessage {
-                try {
-                    rebootNoWait(toStatus).run(procedureRunner);
-                } catch (InstallException e){
-                    if (!InstallException.Code.INTERNAL_ERROR.equals(e.getCode())){
-                        Log.error("Failed to reboot device: "+e.getCode()+", "+e.getMessage());
-                    } else {
-                        throw e;
-                    }
-                }
-            }
-        };
-
-    }
-
-    public static RInstall reboot(Device.Status toStatus){
-        return new RInstall() {
-            @Override
-            public void run(ProcedureRunner procedureRunner) throws InstallException, InterruptedException {
-                Device device = (Device) procedureRunner.requireContext(SELECTED_DEVICE);
-                procedureRunner.text("Rebooting device to "+toStatus.toString()+" mode");
-                boolean result = false;
-                try {
-                    result = device.reboot(toStatus);
-                } catch (AdbException e) {
-                    e.printStackTrace();
-                }
-                if (!result){
-                    while (Device.Status.UNAUTHORIZED.equals(device.getStatus()) || Device.Status.OFFLINE.equals(device.getStatus())){
-                        procedureRunner.onEvent(Event.DEVICE_UNAUTH_OFFLINE,null);
-                        if (CommandClass.Command.ABORT.equals(procedureRunner.waitCommand())){
-                            throw new InstallException("Procedure aborted", InstallException.Code.ABORTED, false);
-                        }
-                    }
-                }
-                result = toStatus.equals(device.getStatus());
-                if (!result){
-                    throw new InstallException("Cannot reboot device to "+toStatus.toString(),REBOOT_FAILED,true);
-                }
-            }
-        };
-    }
-    public static RInstall checkTwrp(){
-        return new RInstall() {
-            @Override
-            public void run( ProcedureRunner procedureRunner) throws InstallException, InterruptedException {
-                Device device = (Device) procedureRunner.requireContext(SELECTED_DEVICE);
-                if (YesNoMaybe.NO.equals(device.getAnswers().isInTwrpRecovery())){
-                    throw new InstallException("The device is not in twrp", NOT_IN_VALID_TWRP, true);
-                }
-            }
-        };
-    }
-    public static RInstall rebootTwrp(){
-        return RNode.sequence(requireAccessibile(),reboot(Device.Status.RECOVERY),checkTwrp());
-    }
-    public static RInstall fetchResources(){
-        return new RInstall() {
-            @Override
-            public void run( ProcedureRunner procedureRunner) throws InstallException, InterruptedException {
-                Installable installable = (Installable) procedureRunner.requireContext(INSTALLABLE);
-                ProgressPane.DefProgressPane progressPane = new ProgressPane.DefProgressPane();
-                UpdateListener downloadListener = progressPane.getUpdateListener(1000);
-                downloadListener.addOnStart(new UpdateListener.OnStart() {
-                    @Override
-                    public void run(long totalSize) {
-                        progressPane.setContentText(LRes.DOWNLOADING_ROM_FILE);
-                    }
-                });
-                downloadListener.addOnError(new UpdateListener.OnError() {
-                    @Override
-                    public void run(Exception e) {
-                        Log.error("Download rom task failed: "+e.getMessage());
-                        installable.sendCommand(CommandClass.Command.ABORT);
-                    }
-                });
-                UpdateListener extractListener = progressPane.getUpdateListener(500);
-                extractListener.addOnStart(new UpdateListener.OnStart() {
-                    @Override
-                    public void run(long totalSize) {
-                        progressPane.setContentText("Extracting rom file...");
-                    }
-                });
-                extractListener.addOnError(new UpdateListener.OnError() {
-                    @Override
-                    public void run(Exception e) {
-                        Log.error("Extract rom task failed: "+e.getMessage());
-                    }
-                });
-                WindowManager.setMainContent(progressPane,false);
-                installable.fetchResources(downloadListener, extractListener);
-
-            }
-        };
-    }
-
-    public static RInstall fetchWaitResources(){
-        return new RInstall() {
-            @Override
-            public void run(ProcedureRunner procedureRunner) throws InstallException, InterruptedException, RMessage {
-                fetchResources().run(procedureRunner);
-                waitResources().run(procedureRunner);
-            }
-        };
-    }
-    public static RInstall waitResources(){
-        return new RInstall() {
-            @Override
-            public void run( ProcedureRunner procedureRunner) throws InstallException, InterruptedException {
-                Installable installable = (Installable) procedureRunner.requireContext(INSTALLABLE);
-                try {
-                    Log.debug("Waiting resources");
-                    installable.waitReourcesReady();
-                    Log.debug("Resources ready");
-                } catch (Exception e) {
-                    Log.debug("Failed to get resources");
-                    throw new InstallException("Failed to get required resources: "+e.getMessage(),RESOURCE_FETCH_FAILED, true);
-                } finally {
-                    WindowManager.removeTopContent();
-                }
-
-            }
-        };
-    }
-    public static RInstall requireAccessibile(){
-        return new RInstall() {
-            @Override
-            public void run( ProcedureRunner procedureRunner) throws InstallException, InterruptedException {
-                Device device = (Device) procedureRunner.requireContext(SELECTED_DEVICE);
-                if (device == null){
-                    throw new InstallException("Device object is null", INTERNAL_ERROR, false);
-                }
-                try {
-                    device.requireAccessibile();
-                } catch (AdbException e) {
-                    throw e.toInstallException(true);
-                }
-            }
-        };
-    }
-    public static RInstall rebootStockRecovery(){
-        return new RInstall() {
-            @Override
-            public void run( ProcedureRunner procedureRunner) throws InstallException, InterruptedException, RMessage {
-                Device device = (Device) procedureRunner.requireContext(SELECTED_DEVICE);
-                procedureRunner.onEvent(Event.STOCK_RECOVERY_REBOOTING,device);
-                try {
-                    Procedures.reboot(Device.Status.RECOVERY).run(procedureRunner);
-                } catch (InstallException e){
-                    if (!Device.Status.SIDELOAD.equals(device.getStatus())){
-                        throw e;
-                    }
-                } finally {
-                    procedureRunner.clearEvent();
-                }
-            }
-        };
-    }
-    public static RInstall rebootNeedDeviceOn(Device device){
-        return new RInstall() {
-            @Override
-            public void run( ProcedureRunner procedureRunner) throws InstallException, InterruptedException, RMessage {
-                procedureRunner.onEvent(Event.NEED_DEBUGGING_ACTIVE,device);
-                Procedures.reboot( Device.Status.DEVICE).run(procedureRunner);
-                procedureRunner.clearEvent();
-            }
-        };
-    }
-
-    public static RInstall findAllDeviceInfo(Device device){
-        return RNode.sequence(rebootNeedDeviceOn(device),new RInstall() {
-            @Override
-            public void run( ProcedureRunner procedureRunner) throws InstallException, InterruptedException, RMessage {
-                sleep(2000);
-                boolean needRecovery = !device.getDeviceProperties().getSideloadProperties().isParsed() && !UnlockStatus.UNLOCKED.equals(device.getAnswers().getUnlockStatus());
-                boolean needFastboot = !device.getDeviceProperties().getFastbootProperties().isParsed();
-                if (needRecovery) {
-                    Procedures.rebootStockRecovery().run(procedureRunner);
-                    sleep(2000);
-                    needRecovery = false;
-                }
-                if (needFastboot){
-                    Procedures.reboot( Device.Status.FASTBOOT).run(procedureRunner);
-                    needFastboot = false;
-                    sleep(2000);
-                    needRecovery  = !UnlockStatus.UNLOCKED.equals(device.getAnswers().getUnlockStatus());
-                }
-                if (needRecovery) {
-                    Procedures.rebootStockRecovery().run(procedureRunner);
-                    sleep(2000);
-                    needRecovery = false;
-                }
-            }
-        });
-    }
 
 
 
-
-    private static void sleep(int millis) throws InterruptedException {
-        Thread.sleep(millis);
-    }
 
 
     public static String getDeviceProperty(ProcedureRunner runner, String property) throws InstallException {
@@ -411,7 +193,7 @@ public class Procedures {
     public static RInstall doNothing(){
         return new RInstall() {
             @Override
-            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+            public void run(ProcedureRunner runner) {
 
             }
         };

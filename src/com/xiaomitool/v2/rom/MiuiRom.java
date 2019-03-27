@@ -45,7 +45,13 @@ public abstract class MiuiRom extends Installable {
         CHINA_STABLE(0),
         CHINA_DEVELOPER(1),
         GLOBAL_STABLE(2),
-        GLOBAL_DEVELOPER(3);
+        GLOBAL_DEVELOPER(3),
+        EUROPEAN_STABLE(4),
+        EUROPEAN_DEVELOPER(5),
+        INDIA_STABLE(6),
+        INDIA_DEVELOPER(7),
+        RUSSIA_STABLE(8),
+        RUSSIA_DEVELOPER(9);
         private final int code;
         private Branch branch;
         Specie(int code){

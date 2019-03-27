@@ -2,16 +2,24 @@ package com.xiaomitool.v2.adb.device;
 
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.RunnableWithArg;
+import com.xiaomitool.v2.utility.WaitSemaphore;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 
 public abstract class Properties {
     private int failedParsingAttempts = 0;
     private final ConcurrentHashMap<String, Object> propertiesMap = new ConcurrentHashMap<String, Object>();
+    private final WaitSemaphore parsingSemaphore;
     private RunnableWithArg onFailedAttemptThree = null;
     private boolean parsed = false, failed = false;
+
+    public Properties(){
+        parsingSemaphore = new WaitSemaphore(1);
+        Log.debug("Properties created: "+this.getClass().getSimpleName()+"::"+this.hashCode()+" -> sem = "+parsingSemaphore.toString());
+    }
 
     public boolean isFailed() {
         return !parsed && failed;
@@ -21,20 +29,45 @@ public abstract class Properties {
         return parse(false);
     }
     public boolean parse(boolean force){
-
-        boolean res = parse(force, true);
-        Log.debug("Parsing finished");
+        boolean res =false;
+        synchronized (parsingSemaphore) {
+            Log.debug(this.hashCode());
+            try {
+                //Log.debug("Parsing semaphore permits A");
+                Log.debug(parsingSemaphore.getPermitNumber());
+                parsingSemaphore.decrease();
+                parsingSemaphore.setPermits(0);
+                //Log.debug("Parsing semaphore permits B");
+                Log.debug(parsingSemaphore.getPermitNumber());
+                res = parse(force, true);
+                //Log.debug("Parsing finished");
+            } catch (Exception e) {
+                Log.error("Failed waiting for parsing");
+            } finally {
+                parsingSemaphore.setPermits(1);
+            }
+        }
         return res;
+
+
     }
     public boolean parse(boolean force, boolean internal){
+
         synchronized (propertiesMap) {
-            Log.debug("Starting parsing");
+            Log.debug("Starting parsing: force: "+force+", class: "+this.getClass().getSimpleName());
             if (parsed && !force) {
+                Log.debug("Already parsed, returning");
                 return true;
+
             }
+
             parsed = true;
+            Log.debug("Parsing should be disabled");
+
             if (parseInternal()) {
                 Log.debug(this.toString());
+                Log.info("Properties parsed");
+                //Log.info(this.propertiesMap);
                 failedParsingAttempts = 0;
                 return true;
             }

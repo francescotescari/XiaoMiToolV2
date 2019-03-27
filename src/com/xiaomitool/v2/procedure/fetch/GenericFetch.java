@@ -18,6 +18,7 @@ import com.xiaomitool.v2.xiaomi.miuithings.Branch;
 import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -38,13 +39,15 @@ public class GenericFetch {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+
                 File file = (File) runner.requireContext(SELECTED_FILE);
+                Log.info("Computing MD5 hash of file: "+file);
                 if (!file.exists()){
                     throw new InstallException("File not found: "+file.toString(), InstallException.Code.FILE_NOT_FOUND, false);
                 }
                 String md5 = "";
                 runner.text(LRes.CALCULATING_MD5);
-                try (FileInputStream in = new FileInputStream(file)) {
+                try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                     md5 = DigestUtils.md5Hex(in);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -61,6 +64,7 @@ public class GenericFetch {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Fetching latest xiaomi.eu rom: branch: "+branch);
                 Device device = Procedures.requireDevice(runner);
                 try {
                     DeviceRequestParams requestParams = DeviceRequestParams.readFromDevice(device, false);

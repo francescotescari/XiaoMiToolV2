@@ -7,6 +7,7 @@ import com.xiaomitool.v2.engine.CommonsMessages;
 import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.PopupWindow;
 import com.xiaomitool.v2.gui.WindowManager;
+import com.xiaomitool.v2.gui.controller.SettingsController;
 import com.xiaomitool.v2.gui.deviceView.DeviceRecoveryView;
 import com.xiaomitool.v2.gui.deviceView.DeviceView;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
@@ -16,11 +17,16 @@ import com.xiaomitool.v2.gui.raw.RawManager;
 import com.xiaomitool.v2.gui.visual.*;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.logging.feedback.LiveFeedback;
+import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.procedure.install.StockRecoveryInstall;
+import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.utility.DriverUtils;
 import com.xiaomitool.v2.utility.RunnableMessage;
+import com.xiaomitool.v2.utility.WaitSemaphore;
 import com.xiaomitool.v2.utility.utils.InetUtils;
+import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -52,6 +58,8 @@ public class ActionsStatic {
             if (message != 1) {
                 ToolManager.exit(0);
             }
+            LiveFeedbackEasy.sendOpen(ResourcesConst.getOSLogString(), null);
+            Log.info("Discalimer accepted");
             CHECK_FOR_UPDATES().run();
             INSTALL_DRIVERS().run();
             return MOD_CHOOSE_SCREEN().run();
@@ -80,6 +88,7 @@ public class ActionsStatic {
             if (!SystemUtils.IS_OS_WINDOWS){
                 return 0;
             }
+            Log.debug("Installing drivers");
             AdbCommunication.killServer();
             List<Path> driverPath;
             try {
@@ -99,10 +108,17 @@ public class ActionsStatic {
             for (Path inf : driverPath){
                 String fn = FilenameUtils.getName(inf.toString());
                 loadingAnimation.setText(LRes.DRIVER_INSTALLING.toString(fn)+" ("+i+"/"+totalFiles+")");
-                DriverUtils.installDriver(inf);
+                Log.info("Installing driver: "+inf);
+                boolean result = DriverUtils.installDriver(inf);
+                if (result){
+                    Log.info("Install driver success");
+                } else  {
+                    Log.warn("Failed to install driver");
+                }
                 ++i;
             }
-            Thread.sleep(1000);
+            Thread.sleep(1500);
+            Log.info("Refreshing connected devices");
             DriverUtils.refresh();
             WindowManager.removeTopContent();
 
@@ -143,6 +159,7 @@ public class ActionsStatic {
 
     public static RunnableMessage RESTART_ADB_SERVER(){
         return () -> {
+            Log.info("Restarting adb server");
             ActionsDynamic.MAIN_SCREEN_LOADING(LRes.LOADING).run();
             AdbCommunication.restartServer();
             DeviceManager.refresh();
@@ -187,6 +204,7 @@ public class ActionsStatic {
     public static RunnableMessage REQUIRE_INTERNET_CONNECTION(){
         return () -> {
             ActionsDynamic.MAIN_SCREEN_LOADING(LRes.LOADING).run();
+            Log.info("Checking internet connection");
             boolean connected = InetUtils.isInternetAvailable();
             if (connected){
                 return NOOP;
@@ -210,7 +228,7 @@ public class ActionsStatic {
     public static RunnableMessage CHECK_FOR_UPDATES(){
         return () -> {
             ActionsStatic.REQUIRE_INTERNET_CONNECTION().run();
-            int res = InetUtils.checkForUpdates(ToolManager.URL_UPDATE, ToolManager.TOOL_VERSION, XiaomiKeystore.getInstance().getHashedPcId());
+            int res = InetUtils.checkForUpdates(ToolManager.URL_UPDATE, ToolManager.TOOL_VERSION, SettingsUtils.requireHashedPCId());
             if (res == 0){
                 Log.info("Tool is updated, check version: "+ToolManager.TOOL_VERSION);
                 return 0;
@@ -285,6 +303,27 @@ public class ActionsStatic {
         });
         return idClickReceiver.waitClick()%2;
     };}
+
+    public static RunnableMessage ASK_FOR_FEEDBACK(){
+        return new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+                ButtonPane buttonPane = new ButtonPane(LRes.YES, LRes.NO);
+                buttonPane.setContentText(LRes.FEEDBACK_ASK_TO_LEAVE);
+                WindowManager.setMainContent(buttonPane, false);
+                int click = buttonPane.waitClick();
+                if (click != 0){
+                    WindowManager.removeTopContent();
+                    return 0;
+                }
+                PopupWindow window = SettingsController.getFeedbackPopupWindow();
+                WindowManager.launchPopup(window);
+                window.waitForClose();
+                WindowManager.removeTopContent();
+                return 1;
+            }
+        };
+    }
 
 
 }

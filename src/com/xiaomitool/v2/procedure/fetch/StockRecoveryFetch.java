@@ -44,6 +44,7 @@ public class StockRecoveryFetch {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Basic ota request starting");
                 Device device = Procedures.requireDevice(runner);
                 DeviceRequestParams params = null;
                 try {
@@ -53,6 +54,7 @@ public class StockRecoveryFetch {
                     throw new InstallException(e);
                 }
                 params.setSpecie(specie);
+
                 MiuiZipRom installable;
                 HashMap<MiuiRom.Kind, MiuiZipRom> rom ;
                 runner.text(LRes.SEARCHING_LATEST_RECOVERY_ROM.toString(params.getSpecie().toString()));
@@ -63,6 +65,8 @@ public class StockRecoveryFetch {
                 } catch (CustomHttpException e) {
                     throw new InstallException(e);
                 }
+                Log.info("Basic ota request found "+rom.size()+" valid roms");
+                Log.info(rom);
                 installable = rom.get(MiuiRom.Kind.PACKAGE);
                 if (installable == null){
                     installable = rom.get(MiuiRom.Kind.LATEST);
@@ -73,6 +77,7 @@ public class StockRecoveryFetch {
                 if (installable == null){
                     installable = rom.get(MiuiRom.Kind.INCREMENTAL);
                 }
+                Log.info("Choosen preferred rom: "+installable);
                 if (installable == null || (!installable.hasInstallToken() && !UnlockStatus.UNLOCKED.equals(Procedures.requireDevice(runner).getAnswers().getUnlockStatus()))){
                     throw new InstallException("Ota response doesn't contain an installable rom data", InstallException.Code.MISSING_PROPERTY, true);
                 }
@@ -99,6 +104,7 @@ public class StockRecoveryFetch {
         return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Validating pacakge rom: "+runner.getContext(GenericFetch.FILE_MD5));
                 runner.text(LRes.VALIDATING_PKG_ROM);
             }
         },RNode.fallback(otaPkgRom(MiuiRom.Specie.GLOBAL_STABLE),otaPkgRom(MiuiRom.Specie.GLOBAL_DEVELOPER), otaPkgRom(MiuiRom.Specie.CHINA_STABLE), otaPkgRom(MiuiRom.Specie.CHINA_DEVELOPER)));
@@ -111,6 +117,7 @@ public class StockRecoveryFetch {
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 String md5 = (String) runner.requireContext(GenericFetch.FILE_MD5);
                 Device device = Procedures.requireDevice(runner);
+                Log.info("Starting ota request with pkg: "+md5);
                 DeviceRequestParams params;
                 try {
                     params = DeviceRequestParams.readFromDevice(device, true);
@@ -129,6 +136,7 @@ public class StockRecoveryFetch {
                     throw new InstallException(e);
                 }
                 Installable installable = rom.get(MiuiRom.Kind.PACKAGE);
+                Log.info("Found pkg rom: "+installable);
                 if (installable == null){
                     throw new InstallException("Failed to validate rom pkg. Xiaomi server doesn't allow installation", InstallException.Code.MISSING_PROPERTY, true);
                 }
@@ -163,6 +171,7 @@ public class StockRecoveryFetch {
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
                 if (UnlockStatus.UNLOCKED.equals(device.getAnswers().getUnlockStatus())){
+                    Log.info("The device is unlocked, fetching only if no fastboot rom available");
                     fetchOnlyIfNoFastboot(specie, toRun).run(runner);
                 } else {
                     toRun.run(runner);
@@ -177,7 +186,7 @@ public class StockRecoveryFetch {
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 //new Exception().printStackTrace();
                 MiuiRom.Specie sp = specie;
-
+                Log.info("Looking for latest recovery rom of specie :"+specie);
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 Device device = Procedures.requireDevice(runner);
                 DeviceRequestParams params;
@@ -213,6 +222,7 @@ public class StockRecoveryFetch {
                      }
                 }
                 if (version == null){
+                    Log.warn("No version available to request ota, using apis to get latest rom");
                     findLatestRecovery(sp).run(runner);
                     installable = Procedures.requireInstallable(runner);
                     version = installable.getMiuiVersion();
@@ -226,6 +236,7 @@ public class StockRecoveryFetch {
                     params.setPkg(md5);
                 }
                 HashMap<MiuiRom.Kind, MiuiZipRom> rom ;
+                Log.info("Performing latest ota search request");
                 runner.text(LRes.SEARCHING_LATEST_OTA_ROM.toString(params.getSpecie().toString()));
                         try {
                             rom = MiuiRomOta.otaV3_request(params);
@@ -234,6 +245,7 @@ public class StockRecoveryFetch {
                         } catch (CustomHttpException e) {
                             throw new InstallException(e);
                         }
+                Log.info("Found latest possible roms number: "+rom.size());
                 installable = rom.get(MiuiRom.Kind.PACKAGE);
                 if (installable == null){
                     installable = rom.get(MiuiRom.Kind.LATEST);
@@ -244,6 +256,7 @@ public class StockRecoveryFetch {
                 if (installable == null){
                     installable = rom.get(MiuiRom.Kind.INCREMENTAL);
                 }
+                Log.info("Preffered latest rom choosen: "+installable);
                 if (installable == null){
                     throw new InstallException("Ota response doesn't contain an installable rom data", InstallException.Code.MISSING_PROPERTY, true);
                 }
@@ -267,6 +280,7 @@ public class StockRecoveryFetch {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Looking for latest recovery rom version using apis");
                 MiuiRom.Specie sp = specie;
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 Device device = Procedures.requireDevice(runner);
@@ -307,8 +321,10 @@ public class StockRecoveryFetch {
         return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+
                 Installable installable = Procedures.requireInstallable(runner);
                 File file = Procedures.getInstallableFile(installable);
+                Log.info("Trying to validate file for stock recovery installation: "+file);
                 runner.setContext(GenericFetch.SELECTED_FILE, file);
             }
         }, GenericFetch.computeMD5File(), validatePkgRom());

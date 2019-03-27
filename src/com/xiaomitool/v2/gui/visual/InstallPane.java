@@ -51,15 +51,14 @@ public class InstallPane extends StackPane {
             }
 
             @Override
-            public void onEvent(Event event, Object subject) {
-
-            }
-
-            @Override
             protected void onException(InstallException exception) {
+                WindowManager.setOnExitAskForFeedback(true);
+                Log.log("FATAL",exception.toString(),true);
+                Log.exc(exception);
+                Log.exc(new Exception("TraceBackException"));
                 Log.debug(StrUtils.exceptionToString(new Exception()));
                 Log.printStackTrace(exception);
-                exception.printStackTrace();
+                //exception.printStackTrace();
                 Log.debug("GUI LISTENER EXCEPTION:");
                 Log.debug(exception.getMessage());
                 Log.debug(exception.getCode().toString());

@@ -38,9 +38,11 @@ public class Main {
 
 
         XiaomiKeystore keystore = XiaomiKeystore.getInstance();
-        keystore.setCredentials(gv[1], gv[0]);
+       // keystore.setCredentials(gv[1], gv[0]);
         //*keystore.requireServiceKeyAndToken("miuiromota");
-        RequestParams params = new DeviceRequestParams("jason_global","V10.1.2.0.NCHMIFI","7.1",Branch.STABLE,"0xb7f63ec7",2);
+        RequestParams params = new DeviceRequestParams("dipper","9.3.7","9.0",Branch.DEVELOPER,"0xb7f63ec7",3);
+        //params.setPkg("3acee2689def952a29dc70978c9f63fa");
+        Log.debug(MiuiRomOta.otaV3_request(params));
         /*params.setPkg("d8f3965aebf2dbfb0291fb21be6cff1b");
         MiuiRomOta.otaV3_request(params);
         if (true){
@@ -50,7 +52,7 @@ public class Main {
         //Log.debug(UnlockCommonRequests.test());VQEBIQEQdAsBSujVP9OjWVoBu7zFTwMHY2VwaGV1cwIEQXtF7A==
 
         //Log.debug(UnlockCommonRequests.ahaUnlock("VQEBMwEgdAsBSujVP9OjWVoBu7zFT3QLAUro1T/To1laAbu8xU8DCWJlcnlsbGl1bQIEQXtF7A==","dipper","","",""));
-        Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIQEQRbgeQ5xHgGiytTxvaushBQMHZGF2aW5jaQIENrrqAw==","scorpio","","","")); //Please unlock 49 hours later
+        //Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIQEQRbgeQ5xHgGiytTxvaushBQMHZGF2aW5jaQIENrrqAw==","scorpio","","","")); //Please unlock 49 hours later
         //Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIAEQdAsBSujVP9OjWVoBu7zFTwMGZGlwcGVyAgRBe0Xs","dipper","","",""));//Please unlock 337 hours later
 
         if (true){

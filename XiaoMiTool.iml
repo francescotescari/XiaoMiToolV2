@@ -25,5 +25,6 @@
     </orderEntry>
     <orderEntry type="library" name="com.mortennobel:java-image-scaling:0.8.6" level="project" />
     <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="com.google.protobuf:protobuf-java:3.7.0" level="project" />
   </component>
 </module>

@@ -56,6 +56,7 @@ public class GuiTest2 extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception {
         ToolManager.init(primaryStage);
+        WindowManager.setOnExitAskForFeedback(true);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -206,7 +207,7 @@ public class GuiTest2 extends Application{
                             // = new MiuiZipRom("miui_MI8_8.8.31_b99e4f5263_8.1.zip", new MiuiVersion("8.8.31"), Branch.DEVELOPER, new Codebase("8.1"), "", "ciao", MiuiRom.Kind.LATEST, "");
                             //runner.init(installable);
 
-                            runner.run(StockRecoveryInstall.recoverStuckDevice());
+                            //runner.run(StockRecoveryInstall.recoverStuckDevice());
                             //runner.run(StockRecoveryInstall.sendFileViaMTP(Paths.get("F:\\Download\\sdattest\\whyred_images_8.9.6_20180906.0000.00_8.1_cn_efc57c7ee22\\whyred_images_8.9.6_20180906.0000.00_8.1_cn\\images\\system.img")));
                             Log.debug(runner.getContext(StockRecoveryInstall.SELECTED_MTP_DEVICE));
                         } catch (Throwable t){

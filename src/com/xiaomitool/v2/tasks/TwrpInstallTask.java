@@ -21,30 +21,25 @@ public class TwrpInstallTask extends Task {
         this.outputRunable = onOutputCatch;
     }
     @Override
-    protected void startInternal() {
+    protected void startInternal() throws Exception {
         if (this.outputRunable != null) {
             adbRunner.addSyncCallback(this.outputRunable);
         }
-        try {
-            adbRunner.runWait();
-        } catch (IOException e) {
-            error(e);
-            return;
-        }
+
+            adbRunner.runWait(3600);
+
         if (adbRunner.getExitValue() != 0){
-            error(new AdbException("Return code of adb install is not zero"));
-            return;
+           throw  new AdbException("Return code of adb install is not zero");
         }
+
         String output = adbRunner.getOutputString();
         if (output == null){
-            error(new AdbException("Failed to get output of twrp install"));
-            return;
+            throw  new AdbException("Failed to get output of twrp install");
         }
         output = output.toLowerCase();
         for (String errorStr : TWRP_ERROR){
             if (output.contains(errorStr.toLowerCase())){
-                error(new AdbException("Failed to install zip: "+errorStr));
-                return;
+                throw new AdbException("Failed to install zip: "+errorStr);
             }
         }
         finished(adbRunner.getOutputString());

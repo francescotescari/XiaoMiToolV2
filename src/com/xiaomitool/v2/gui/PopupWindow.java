@@ -1,8 +1,12 @@
 package com.xiaomitool.v2.gui;
 
+import com.xiaomitool.v2.gui.controller.PopupController;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 
+import com.xiaomitool.v2.gui.visual.OverlayPane;
+import com.xiaomitool.v2.gui.visual.ToastPane;
 import com.xiaomitool.v2.utility.Nullable;
+import com.xiaomitool.v2.utility.WaitSemaphore;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -19,6 +23,8 @@ import java.net.URL;
 public class PopupWindow {
     private double width, height;
     private Node content;
+    private OverlayPane overlayPane;
+    private ToastPane toastPane;
     public PopupWindow(){
         this(200,100);
     }
@@ -50,6 +56,37 @@ public class PopupWindow {
 
     public double getHeight() {
         return height;
+    }
+
+    public void setOverlayPane(OverlayPane overlayPane) {
+        this.overlayPane = overlayPane;
+    }
+
+    public OverlayPane getOverlayPane(){
+        return this.overlayPane;
+    }
+    public ToastPane getToastPane(){
+       if (toastPane == null){
+           OverlayPane overlayPane = getOverlayPane();
+           if (overlayPane != null) {
+               toastPane = new ToastPane(overlayPane);
+           }
+       }
+       return toastPane;
+    }
+    private PopupController controller;
+    public PopupController getController(){
+        return this.controller;
+    }
+    public void setController(PopupController controller){
+        this.controller = controller;
+    }
+
+    public void waitForClose() throws InterruptedException {
+        if (this.controller == null){
+            return;
+        }
+        controller.getWaitCloseSemaphre().waitOnce();
     }
 
     public static class ImageTextPopup extends PopupWindow {

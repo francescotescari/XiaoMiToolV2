@@ -49,7 +49,14 @@ public class MiuiRomOta {
                 Log.debug("Need login");
             }
         }
-        String url = SettingsUtils.isGlobalRegion() ? "https://update.intl.miui.com/updates/miotaV3.php" : "https://update.miui.com/updates/miotaV3.php";
+        String device = params.getModDevice();
+        boolean international = false;
+        if (device == null){
+            international = params.isInternational();
+        } else {
+            international = device.contains("_global");//TODO make it beauty with new species
+        }
+        String url = international ? "https://update.intl.miui.com/updates/miotaV3.php" : "https://update.miui.com/updates/miotaV3.php";
 
 
 
@@ -74,6 +81,7 @@ public class MiuiRomOta {
         } catch (Exception e) {
             throw new XiaomiProcedureException(e.getMessage());
         }
+        Log.info("OTAV3 request: "+json);
         try {
             postData = XiaomiCrypto.cloudService_encrypt(json,key);
 
@@ -97,6 +105,7 @@ public class MiuiRomOta {
             throw  new XiaomiProcedureException("[otaV3_request] Response is invalid: decryption failed: "+e.getMessage());
         }
         Log.debug(decrypted);
+        Log.info("OTAV3 response: "+decrypted);
         JSONObject jsonData;
         try {
              jsonData = new JSONObject(decrypted);
@@ -248,7 +257,7 @@ public class MiuiRomOta {
         String result;
             result = EasyHttp.get(url).getBody();
             Log.debug(result);
-
+        Log.info("OTA Fastboot response: "+result);
         JSONObject json, jsonrom;
         MiuiTgzRom rom;
         try {
@@ -291,6 +300,7 @@ public class MiuiRomOta {
 
             response = new MiuiSaltedRequest(salt).url(url).field("sid","miassistant").field("d",device).field("c",codebase).field("f",branch).exec();
         String body = response.getBody();
+        Log.info("OTA Recovery response: "+body);
         Log.debug(body);
         JSONObject obj;
         try {
@@ -326,7 +336,7 @@ public class MiuiRomOta {
         String url = String.format("https://update.miui.com/updates/v1/fullromdownload.php?d=%s&b=%s&r=%s&n=%s", device, branch.getCode(), region, n), dl;
 
             dl = InetUtils.getRedirectUrl(url,"http://en.miui.com/a-234.html");
-
+        Log.info("OTA Fastboot2 response: "+dl);
         if (dl == null){
             throw new XiaomiProcedureException("[latestFastboot2_request] Null redirect url for "+url);
         }

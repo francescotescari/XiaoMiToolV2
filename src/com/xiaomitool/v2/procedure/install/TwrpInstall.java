@@ -31,15 +31,20 @@ public class TwrpInstall  {
                 Installable installable =  Procedures.requireInstallable(runner);
                 Device device = Procedures.requireDevice(runner);
                 runner.text(LRes.FLASHING_STUFF.toString(LRes.TWRP_RECOVERY.toString()));
+                Log.info("Flashing recovery via fastboot, file: "+installable.getFinalFile());
                 String flashOutput = FastbootCommons.flash(device.getSerial(),installable.getFinalFile(),"recovery");
                 if ("err:anti-rollback".equals(flashOutput)){
+                    Log.warn("Anti rollback protection detected, flashing dummy");
                     FastbootCommons.flashDummy(device.getSerial());
                     flashOutput = FastbootCommons.flash(device.getSerial(),installable.getFinalFile(),"recovery");
                 }
-                runner.text(LRes.BOOTING_STUFF.toString(LRes.TWRP_RECOVERY.toString()));
+
+
                 if (flashOutput == null || flashOutput.startsWith("err:")){
                     throw new InstallException(new AdbException("Fastboot flash recovery failed, output:" + StrUtils.str(flashOutput)));
                 }
+                runner.text(LRes.BOOTING_STUFF.toString(LRes.TWRP_RECOVERY.toString()));
+                Log.info("Booting bootable via fastboot, file: "+installable.getFinalFile());
                 FastbootCommons.boot(device.getSerial(),installable.getFinalFile());
                 Thread.sleep(1500);
                 device.setConnected(false);
@@ -52,6 +57,7 @@ public class TwrpInstall  {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
+                Log.info("Checking if device is in TWRP recovery");
                 if (YesNoMaybe.NO.equals(device.getAnswers().isInTwrpRecovery())){
                     throw new InstallException("Failed to get twrp commands running, are you in twrp?", InstallException.Code.TWRP_INSTALL_FAILED, true);
                 }
@@ -69,8 +75,11 @@ private static final String ERASE_DATA_KEY = "erase_the_data";
                 String path = "/sdcard/xmt_push/";
                 runner.text(LRes.CREATING_DEST_DIR);
                 if (!AdbCommons.fileExists(path, device.getSerial())){
+                    Log.warn("Device destination directory doesn't exists, creating: "+path);
                     if (AdbCommons.adb_shellWithOr("mkdir "+path, device.getSerial(), 4) == null){
+
                         path = "/sdcard/";
+                        Log.warn("Failed to create destination dir, switching to: "+path);
                     }
                 }
                 runner.setContext(AdbInstall.DESTINATION_PATH, path);
@@ -84,6 +93,11 @@ private static final String ERASE_DATA_KEY = "erase_the_data";
                 boolean eraseData = true;
                 if (file != null && file.exists()){
                     eraseData = file.length() > 300000000;
+                }
+                if (eraseData){
+                    Log.warn("The file to install is a large zip file, likely a zip rom, we must erase data after that");
+                } else {
+                    Log.info("The file to install is a small zip file, likely a mod zip, we don't have to erase data after that");
                 }
                 runner.setContext(ERASE_DATA_KEY, Boolean.valueOf(eraseData));
                 String outputPath = (String) runner.requireContext(AdbInstall.OUTPUT_DST_PATH);

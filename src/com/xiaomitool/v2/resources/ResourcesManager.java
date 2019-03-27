@@ -139,4 +139,7 @@ public class ResourcesManager {
         return new Image(new Base64InputStream(new ByteArrayInputStream(base64encoded),false));
     }
 
+    public static Path getLogPath() {
+        return getTmpPath().resolve("logs");
+    }
 }

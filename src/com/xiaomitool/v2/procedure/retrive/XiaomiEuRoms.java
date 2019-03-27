@@ -6,6 +6,7 @@ import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.inet.EasyHttp;
 import com.xiaomitool.v2.inet.EasyResponse;
 import com.xiaomitool.v2.language.LRes;
+import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.rom.RomException;
 import com.xiaomitool.v2.rom.ZipRom;
 import com.xiaomitool.v2.utility.utils.NumberUtils;
@@ -23,6 +24,7 @@ public class XiaomiEuRoms {
     public static ZipRom latest(RequestParams params) throws CustomHttpException, RomException {
         String device = params.getDevice();
         final Branch branch = params.getBranch().getDual();
+        Log.info("Searching latest ota xiaomi.eu rom for device: "+device+", branch: "+branch);
         String latest = Branch.STABLE.equals(branch) ? "getversion-stables" : "getversion";
         String url = EU_HOST+"/"+latest+"/"+device+".txt";
         EasyResponse response = EasyHttp.get(url);
@@ -30,6 +32,7 @@ public class XiaomiEuRoms {
             throw new RomException("Failed to retrive xiaomi.eu rom data");
         }
         String body = response.getBody();
+        Log.info("Xiaomi.eu ota response: "+body);
         String[] parts = body.split("_");
         if (parts.length < 5){
             throw new RomException("Failed to parse request output on xiaomi.eu request");

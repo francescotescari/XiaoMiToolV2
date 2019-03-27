@@ -18,6 +18,7 @@ public class RebootDevice {
         return RNode.sequence(ManageDevice.requireAccessible(),new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Rebooting to device mode: wait: "+wait+", force: "+force);
                 Device device = Procedures.requireDevice(runner);
                 boolean result = false;
                 runner.text(LRes.REBOOTING_TO_MODE.toString(Device.Status.DEVICE.toString()));
@@ -45,6 +46,7 @@ public class RebootDevice {
         return RNode.sequence(ManageDevice.requireAccessible(),rebootDeviceIfNoAdbAccessible(),new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Rebooting to recovery mode: wait: "+wait+", force: "+force);
                 Device device = Procedures.requireDevice(runner);
                 boolean result = false;
                 runner.text(LRes.REBOOTING_TO_MODE.toString(Device.Status.RECOVERY.toString()));
@@ -76,6 +78,7 @@ public class RebootDevice {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Rebooting to device mode if connected wait: false");
                 Device device = Procedures.requireDevice(runner);
                 try {
                     device.rebootNoWait(Device.Status.DEVICE,false);
@@ -90,6 +93,7 @@ public class RebootDevice {
         return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Requiring device recovery mode");
                 Device device = Procedures.requireDevice(runner);
                 ManageDevice.refreshDevices().run(runner);
                 if (Device.Status.RECOVERY.equals(device.getStatus()) && device.isConnected()){
@@ -149,6 +153,7 @@ public class RebootDevice {
         return RNode.sequence(ManageDevice.requireAccessible(),new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Rebooting to bootloader mode: wait: "+wait+", force: "+force);
                 Device device = Procedures.requireDevice(runner);
                 boolean result = false;
                 runner.text(LRes.REBOOTING_TO_MODE.toString(Device.Status.FASTBOOT.toString()));
@@ -173,6 +178,7 @@ public class RebootDevice {
         return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Requiring device fastboot status");
                 Device device = Procedures.requireDevice(runner);
                 ManageDevice.refreshDevices().run(runner);
                 if ((Device.Status.FASTBOOT.equals(device.getStatus()) && device.isConnected())){
@@ -226,6 +232,7 @@ public class RebootDevice {
         return RNode.sequence(ManageDevice.requireAccessible(),rebootDeviceIfNoAdbAccessible(),new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Rebooting to stock recovery mode: wait: true, force: "+force);
                 Device device = Procedures.requireDevice(runner);
                 boolean result = ActionsDynamic.REBOOT_STOCK_RECOVERY(device,force).run() != 0;
                 if (!result){
@@ -242,6 +249,7 @@ public class RebootDevice {
                 Device device = Procedures.requireDevice(runner);
                 Device.Status status = device.getStatus();
                 if (!Device.Status.DEVICE.equals(status) && !Device.Status.SIDELOAD.equals(status) && !Device.Status.RECOVERY.equals(status)){
+                    Log.info("The device has no adb available, should reboot");
                     rebootDevice(true,false).run(runner);
                 }
 
@@ -253,6 +261,7 @@ public class RebootDevice {
         return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Requiring stock recovery mode");
                 Device device = Procedures.requireDevice(runner);
                 ManageDevice.refreshDevices().run(runner);
                 if ((Device.Status.SIDELOAD.equals(device.getStatus()) && device.isConnected())){

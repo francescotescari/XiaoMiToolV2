@@ -22,7 +22,7 @@ public class ProcessRunner {
     private Process runningProcess = null;
     private int exitValue = 0;
     private ProcessStatus status = ProcessStatus.READY;
-    private InputStream stdout, stderr;
+    private boolean isFeedback = false;
     //private Thread syncStdoutThread = null, syncStderrThread = null;
     protected List<String> outputBuffer = Collections.synchronizedList(new LinkedList<>());
     private final WaitSemaphore readFinishedSemaphore = new WaitSemaphore(0);
@@ -37,6 +37,8 @@ public class ProcessRunner {
     public ProcessRunner(String pathExe){
         this(Paths.get(pathExe));
     }
+
+
 
     public ProcessRunner(Path exe, String[] arguments){
         this.executable = exe;
@@ -66,8 +68,14 @@ public class ProcessRunner {
     private Thrower<IOException> IOThrower;
 
 
+
     private Process start() throws IOException {
         List<String> args = buildFinalArgumentsList();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String arg: args){
+            stringBuilder.append(" ").append('"').append(arg).append('"');
+        }
+        Log.log("PSTA", "Start process:"+stringBuilder.toString(), true);
         Log.debug("Process args: ["+String.join(" ",args)+"]");
         ProcessBuilder builder = new ProcessBuilder(args);
         builder.redirectErrorStream(true);
@@ -98,7 +106,12 @@ public class ProcessRunner {
                             continue;
                         }
                         outputBuffer.add(data);
-                        Log.debug(data);
+                        String log = "Process output: " + data;
+                        if (isFeedback) {
+                            Log.info(log);
+                        } else {
+                            Log.process(log);
+                        }
                         for (RunnableWithArg toDo : syncCallbacks) {
                             toDo.run(data);
                         }
@@ -116,11 +129,16 @@ public class ProcessRunner {
         return runningProcess = proc;
     }
 
+    public void setFeedback(boolean feedback) {
+        isFeedback = feedback;
+    }
+
     protected List<String> buildFinalArgumentsList(){
         LinkedList<String> list = new LinkedList<>();
         list.add(executable.toString());
         list.addAll(arguments);
         Log.debug("New process: "+list.toString());
+
         return list;
     }
 

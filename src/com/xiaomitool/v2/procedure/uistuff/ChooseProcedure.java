@@ -43,6 +43,7 @@ public class ChooseProcedure {
                 LinkedList<ChoosableProcedure> optionsProc = new LinkedList<>();
                 LinkedList<ChooserPane.Choice> choices = new LinkedList<>();
                 InstallableChooser.IdGroup idGroup = (InstallableChooser.IdGroup) runner.requireContext(ROM_CATEGORY_ID);
+                Log.info("Showing rom options to user");
                 Device device = Procedures.requireDevice(runner);
                 boolean unlocked = UnlockStatus.UNLOCKED.equals(device.getAnswers().getUnlockStatus());
                 Log.debug(chooser.entrySet());
@@ -51,6 +52,7 @@ public class ChooseProcedure {
                         continue;
                     }
                     Log.debug(entry.getKey()+" should be in "+idGroup.toString());
+
                     HashMap<Installable.Type, Installable> map = entry.getValue();
                     if (map == null || map.size() == 0){
                         continue;
@@ -61,6 +63,7 @@ public class ChooseProcedure {
                     } else {
                          installable = map.values().iterator().next();
                     }
+                    Log.info("Showing installable: "+installable.getChoice().toString());
 
 
                     optionsInstallable.add(installable);
@@ -73,6 +76,7 @@ public class ChooseProcedure {
                     }
                     ChoosableProcedure procedure = entry.getValue();
                     Log.debug("OptionPROC: "+procedure.getChoice().toString());
+                    Log.info("Showing procedure: "+procedure.getChoice().toString());
                     optionsProc.add(procedure);
                     choices.add(procedure.getChoice());
 
@@ -92,6 +96,7 @@ public class ChooseProcedure {
 
                 if (i >= installableLimit){
                     ChoosableProcedure proc = optionsProc.get(i-installableLimit);
+                    Log.info("The user has choosen this procedure: "+proc.getChoice().toString());
                     RInstall toDoNext = proc.getProcedure();
                     Procedures.pushRInstallOnStack(runner,toDoNext);
                     runner.setContext(IS_CHOOSEN_PROCEDURE, Boolean.TRUE);
@@ -100,6 +105,7 @@ public class ChooseProcedure {
                     Log.debug("Choosen installable: "+choosenIntallable.toLogString());
                     Procedures.setInstallable(runner, choosenIntallable);
                     Log.debug("CHOOSEN INSTALLABLE: "+choosenIntallable);
+                    Log.info("The user has choosen this installable: "+choosenIntallable.getChoice().toString());
                     runner.setContext(IS_CHOOSEN_PROCEDURE, Boolean.FALSE);
                 }
 
@@ -113,6 +119,7 @@ public class ChooseProcedure {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.info("Choosing rom category");
                 ChooserPane.Choice[] choices = new ChooserPane.Choice[]{
                         new ChooserPane.Choice(LRes.CHOOSE_XIAOMI_TITLE.toString(), LRes.CHOOSE_XIAOMI_SUB.toString(), new Image(DrawableManager.getPng("milogo.png").toString())),
                         new ChooserPane.Choice(LRes.CHOOSE_CUSTOM_TITLE.toString(), LRes.CHOOSE_CUSTOM_SUB.toString(), new Image(DrawableManager.getPng("lineage.png").toString())),
@@ -152,6 +159,7 @@ public class ChooseProcedure {
                         idGroup = InstallableChooser.IdGroup.xiaomiProcedures;
                         break;
                 }
+                Log.info("Category choosen: "+i+", group: "+idGroup.getName());
                 runner.setContext(ROM_CATEGORY_ID, idGroup);
                 Procedures.pushRInstallOnStack(runner, toDoNext);
             }
