@@ -106,7 +106,9 @@ public class UpdateListener {
     public static class Debug extends AdvancedUpdateListener {
         public Debug() {
             super(750);
-            addOnAdvancedUpdate((downloaded, totalSize, currentSpeed, averageSpeed, missingTime) -> Log.debug("["+downloaded+"/"+totalSize+"] ("+(100*downloaded/totalSize)+"%) "+currentSpeed.toString()+" - "+averageSpeed.toString()+", missing "+missingTime.getQuantity()+" "+missingTime.getUnit().toString()));
+            addOnAdvancedUpdate((downloaded, totalSize, currentSpeed, averageSpeed, missingTime) -> {
+                Log.debug("["+downloaded+"/"+totalSize+"] ("+(100*downloaded/totalSize)+"%) "+currentSpeed.toString()+" - "+averageSpeed.toString()+", missing "+missingTime.getQuantity()+" "+missingTime.getUnit().toString());
+            });
             addOnStart(new OnStart() {
                 @Override
                 public void run(long totalSize) {
