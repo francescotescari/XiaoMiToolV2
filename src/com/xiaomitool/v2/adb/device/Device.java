@@ -226,7 +226,7 @@ public class Device {
             case DEVICE:
                 return waitStatus(status, 80);
             case FASTBOOT:
-                return waitStatus(status, 10);
+                return waitStatus(status, 13);
             case SIDELOAD:
                 return waitStatus(status, 40);
             case RECOVERY:

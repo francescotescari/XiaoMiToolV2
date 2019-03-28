@@ -23,6 +23,12 @@ public abstract class MiuiRom extends Installable {
     protected Mirrors mirrors = new Mirrors();
     protected Branch branch;
     protected  String filename, descriptionUrl;
+    private static final HashSet<Specie> NOT_EXISTING_SPECIES = new HashSet<>();
+    static {
+        NOT_EXISTING_SPECIES.add(Specie.EUROPEAN_DEVELOPER);
+        NOT_EXISTING_SPECIES.add(Specie.RUSSIA_DEVELOPER);
+        NOT_EXISTING_SPECIES.add(Specie.INDIA_DEVELOPER);
+    }
 
     public MiuiRom(Type type, boolean isOfficial, String unique, boolean needDownload, boolean needExtraction) {
         super(type, isOfficial, unique, needDownload, needExtraction);
@@ -138,6 +144,7 @@ public abstract class MiuiRom extends Installable {
                 species.add(EUROPEAN_STABLE);
                 species.add(EUROPEAN_DEVELOPER);
             }
+            species.removeAll(NOT_EXISTING_SPECIES);
             return species;
         }
 
