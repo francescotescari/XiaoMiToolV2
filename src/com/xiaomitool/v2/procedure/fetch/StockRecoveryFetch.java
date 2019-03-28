@@ -11,6 +11,7 @@ import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.rom.MiuiZipRom;
 import com.xiaomitool.v2.rom.chooser.InstallableChooser;
+import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
 import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
@@ -20,6 +21,8 @@ import com.xiaomitool.v2.xiaomi.romota.MiuiRomOta;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 
 import static com.xiaomitool.v2.rom.chooser.InstallableChooser.idBySpecie;
@@ -57,7 +60,7 @@ public class StockRecoveryFetch {
 
                 MiuiZipRom installable;
                 HashMap<MiuiRom.Kind, MiuiZipRom> rom ;
-                runner.text(LRes.SEARCHING_LATEST_RECOVERY_ROM.toString(params.getSpecie().toString()));
+                runner.text(LRes.SEARCHING_LATEST_RECOVERY_ROM.toString(params.getSpecie().toHuman()));
                 try {
                     rom = MiuiRomOta.otaV3_request(params);
                 } catch (XiaomiProcedureException e) {
@@ -82,7 +85,7 @@ public class StockRecoveryFetch {
                     throw new InstallException("Ota response doesn't contain an installable rom data", InstallException.Code.MISSING_PROPERTY, true);
                 }
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
-                MiuiRom.Specie romSpecie = MiuiRom.Specie.fromStringBranch(specie.getSuffix(), installable.getBranch());
+                MiuiRom.Specie romSpecie = specie.toBranch(installable.getBranch());
                 String id = idBySpecie(romSpecie == null ? specie : romSpecie);
                 chooser.add(id, installable);
                 Procedures.setInstallable(runner,installable);
@@ -91,13 +94,13 @@ public class StockRecoveryFetch {
         };
     }
 
-    public static RInstall allLatestOta(){
-        return RNode.skipOnException(
-                fetchOnlyIfDeviceLockedOrNoFastboot(MiuiRom.Specie.CHINA_STABLE, findInstallWay(MiuiRom.Specie.CHINA_STABLE)),
-                fetchOnlyIfDeviceLockedOrNoFastboot(MiuiRom.Specie.CHINA_DEVELOPER,findInstallWay(MiuiRom.Specie.CHINA_DEVELOPER)),
-                fetchOnlyIfDeviceLockedOrNoFastboot(MiuiRom.Specie.GLOBAL_STABLE,findInstallWay(MiuiRom.Specie.GLOBAL_STABLE)),
-                fetchOnlyIfDeviceLockedOrNoFastboot(MiuiRom.Specie.GLOBAL_DEVELOPER,findInstallWay(MiuiRom.Specie.GLOBAL_DEVELOPER))
-        );
+    public static RInstall allLatestOta(Set<MiuiRom.Specie> speciesToSearch){
+        RInstall[] procedures = new RInstall[speciesToSearch.size()];
+        int i = 0;
+        for (MiuiRom.Specie specie : speciesToSearch){
+            procedures[i++] = fetchOnlyIfDeviceLockedOrNoFastboot(specie, findInstallWay(specie));
+        }
+        return RNode.skipOnException(procedures);
     }
 
     public static RInstall validatePkgRom(){
@@ -127,7 +130,7 @@ public class StockRecoveryFetch {
                 }
                 params.setPkg(md5);
                 HashMap<MiuiRom.Kind, MiuiZipRom> rom ;
-                runner.text(LRes.REQUEST_OTA_INSTALLATION_TOKEN.toString(specie.toString()));
+                runner.text(LRes.REQUEST_OTA_INSTALLATION_TOKEN.toString(specie.toHuman()));
                 try {
                     rom = MiuiRomOta.otaV3_request(params);
                 } catch (XiaomiProcedureException e) {
@@ -237,7 +240,7 @@ public class StockRecoveryFetch {
                 }
                 HashMap<MiuiRom.Kind, MiuiZipRom> rom ;
                 Log.info("Performing latest ota search request");
-                runner.text(LRes.SEARCHING_LATEST_OTA_ROM.toString(params.getSpecie().toString()));
+                runner.text(LRes.SEARCHING_LATEST_OTA_ROM.toString(params.getSpecie().toHuman()));
                         try {
                             rom = MiuiRomOta.otaV3_request(params);
                         } catch (XiaomiProcedureException e) {

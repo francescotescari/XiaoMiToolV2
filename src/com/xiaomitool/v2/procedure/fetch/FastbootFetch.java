@@ -16,6 +16,8 @@ import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
 import com.xiaomitool.v2.xiaomi.miuithings.RequestParams;
 import com.xiaomitool.v2.xiaomi.romota.MiuiRomOta;
 
+import java.util.Set;
+
 import static com.xiaomitool.v2.rom.chooser.InstallableChooser.idBySpecie;
 
 public class FastbootFetch {
@@ -48,7 +50,7 @@ public class FastbootFetch {
                 try {
                     if (rom == null) {
                         try {
-                            runner.text(LRes.SEARCHING_LATEST_FASTBOOT.toString(params.getSpecie().toString()));
+                            runner.text(LRes.SEARCHING_LATEST_FASTBOOT.toString(params.getSpecie().toHuman()));
                             rom = MiuiRomOta.latestFastboot_request(params);
                         } catch (XiaomiProcedureException e) {
                             try {
@@ -71,7 +73,12 @@ public class FastbootFetch {
 
     }
 
-    public static RInstall findAllLatestFastboot(){
-        return RNode.setSkipOnException(RNode.sequence(findLatestFastboot(MiuiRom.Specie.CHINA_STABLE), findLatestFastboot(MiuiRom.Specie.CHINA_DEVELOPER), findLatestFastboot(MiuiRom.Specie.GLOBAL_STABLE), findLatestFastboot(MiuiRom.Specie.GLOBAL_DEVELOPER)));
+    public static RInstall findAllLatestFastboot(Set<MiuiRom.Specie> speciesToSearch){
+        RInstall[] procedures = new RInstall[speciesToSearch.size()];
+        int i = 0;
+        for (MiuiRom.Specie specie : speciesToSearch){
+            procedures[i++] =findLatestFastboot(specie);
+        }
+        return RNode.skipOnException(procedures);
     }
 }

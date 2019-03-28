@@ -33,6 +33,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -60,7 +61,9 @@ public class ActionsStatic {
             }
             LiveFeedbackEasy.sendOpen(ResourcesConst.getOSLogString(), null);
             Log.info("Discalimer accepted");
+
             CHECK_FOR_UPDATES().run();
+            REQUIRE_REGION().run();
             INSTALL_DRIVERS().run();
             return MOD_CHOOSE_SCREEN().run();
         };
@@ -246,6 +249,58 @@ public class ActionsStatic {
             }
             WindowManager.removeTopContent();
             return 0;
+        };
+    }
+
+
+    public static RunnableMessage REQUIRE_REGION(){
+        return new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+
+                SettingsUtils.Region region = SettingsUtils.getRegion();
+
+                if (region != null){
+
+                    return 0;
+                }
+                //Log.debug("GET REGION: a");
+                SettingsUtils.Region[] regions = SettingsUtils.Region.values();
+                ChooserPane.Choice[] choices = new ChooserPane.Choice[regions.length];
+                //Log.debug("GET REGION: b");
+                for (int i = 0; i<regions.length; ++i){
+                    //Log.debug("GET REGION: c");
+                    region = regions[i];
+                    String hum = region.toHuman(), t = LRes.SELECT_IF_YOURE_FROM.toString(hum);
+                    if (SettingsUtils.Region.GLOBAL.equals(region)){
+                        t = t.toLowerCase();
+                    }
+                    //Log.debug("GET REGION: d");
+                    Image img = DrawableManager.getResourceImage(region.getDrawable());
+                    //Log.debug("GET REGION: e");
+                    choices[i] = new ChooserPane.Choice(hum, t, img);
+                }
+                Text title = new Text(LRes.PLEASE_SELECT_REGION.toString());
+                title.setFont(Font.font(20));
+                title.setTextAlignment(TextAlignment.CENTER);
+                title.setWrappingWidth(WindowManager.getContentWidth()-100);
+                Text text = new Text(LRes.PLEASE_SELECT_REGION_TEXT.toString());
+                text.setFont(Font.font(16));
+                text.setTextAlignment(TextAlignment.CENTER);
+                text.setWrappingWidth(WindowManager.getContentWidth()-100);
+                //Log.debug("GET REGION: 4");
+                ChooserPane chooserPane = new ChooserPane(choices);
+                VBox vBox = new VBox(20, title, text, chooserPane);
+                vBox.setAlignment(Pos.CENTER);
+                WindowManager.setMainContent(vBox, false);
+                //Log.debug("GET REGION: 5");
+                int choice = chooserPane.getIdClickReceiver().waitClick();
+                WindowManager.removeTopContent();
+                region = regions[choice];
+                Log.info("Selected region: "+region.toString());
+                SettingsUtils.setRegion(region);
+                return 0;
+            }
         };
     }
 

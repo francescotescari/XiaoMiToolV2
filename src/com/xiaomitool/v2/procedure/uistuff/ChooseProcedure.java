@@ -127,6 +127,7 @@ public class ChooseProcedure {
                         new ChooserPane.Choice(LRes.CHOOSE_UNLOCK_TITLE.toString(), LRes.CHOOSE_UNLOCK_SUB.toString(), new Image(DrawableManager.getPng("locker.png").toString()))
                 };
                 InstallableChooser.IdGroup idGroup = null;
+                Device device = Procedures.requireDevice(runner);
                 ChooserPane chooserPane = new ChooserPane(choices);
                 Text title = new Text(LRes.CHOOSE_PROCEDURE_CATEGORY.toString());
                 title.setFont(Font.font(20));
@@ -143,7 +144,7 @@ public class ChooseProcedure {
                 String keySkip = "key_skip_no_int";
                 switch (i){
                     case 0:
-                        toDoNext = RNode.sequence(ConfirmationProcedure.suggestInternetIfMissing(noInternetMsg, keySkip), RNode.conditional(keySkip, null, GenericFetch.fetchAllOfficial().next()));
+                        toDoNext = RNode.sequence(ConfirmationProcedure.suggestInternetIfMissing(noInternetMsg, keySkip), RNode.conditional(keySkip, null, GenericFetch.fetchAllOfficial(device).next()));
                         idGroup = InstallableChooser.IdGroup.officialRom;
                         break;
                     case 1:

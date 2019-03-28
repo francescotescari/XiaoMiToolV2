@@ -16,6 +16,7 @@ import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableListBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -29,7 +30,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
+import javafx.util.Callback;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +55,8 @@ public class SettingsController extends DefaultController {
     private Text INSTANCE_ID;
     @FXML
     private TextField INSTANCE_VALUE;
+    @FXML
+    private ComboBox<String> REGION_COMBO;
 
     private static final OverlayPane settingsOverlayPane = new OverlayPane();
     private static final ToastPane settingsToastPane = new ToastPane(settingsOverlayPane);
@@ -93,6 +98,41 @@ public class SettingsController extends DefaultController {
                 settingsToastPane.toast(LRes.COPIED_TO_CLIPBOARD.toString());
             }
         });
+
+        REGION_COMBO.setButtonCell(new ListCell<String>() {
+            @Override
+            public void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item != null) {
+                    setText(LRes.SELECTED_REGION.toString(item));
+                    setAlignment(Pos.CENTER_LEFT);
+
+                    setFont(Font.font(this.getFont().getName(), 14));
+                }
+            }
+        });
+        REGION_COMBO.setCellFactory(
+                new Callback<ListView<String>, ListCell<String>>() {
+                    @Override
+                    public ListCell<String> call(ListView<String> param) {
+                        return new ListCell<String>() {
+                            @Override
+                            public void updateItem(String item,
+                                                   boolean empty) {
+                                super.updateItem(item, empty);
+                                if (item != null) {
+                                    setText(item);
+                                    setFont(Font.font(this.getFont().getName(), 14));
+                                    setTextAlignment(TextAlignment.CENTER);
+                                    setAlignment(Pos.CENTER);
+                                } else {
+                                    setText(null);
+                                }
+                            }
+                        };
+                    }
+
+                });
     }
     private void initTexts(){
         LABEL_DOWNLOAD.setText(LRes.SETTINGS_DOWNLOAD_DIR.toString());
@@ -104,6 +144,21 @@ public class SettingsController extends DefaultController {
         BUTTON_FEEDBACK.setText(LRes.SEND_FEEDBACK.toString());
         INSTANCE_ID.setText(LRes.INSTANCE_ID.toString()+": ");
         INSTANCE_VALUE.setText(Hash.md5Hex(ToolManager.getRunningInstanceId()).substring(0,8));
+        REGION_COMBO.setPromptText(LRes.PLEASE_SELECT_REGION.toString());
+        REGION_COMBO.setItems(new ObservableListBase<String>() {
+            @Override
+            public int size() {
+                return SettingsUtils.Region.values().length;
+            }
+
+            @Override
+            public String get(int index) {
+                return SettingsUtils.Region.values()[index].toHuman();
+            }
+        });
+
+
+
     }
 
     private void loadSettings(){
@@ -129,6 +184,27 @@ public class SettingsController extends DefaultController {
     }
 
     private void initOnClick(){
+        SettingsUtils.Region region = SettingsUtils.getRegion();
+        if (region != null) {
+            int i = 0;
+            for (SettingsUtils.Region r : SettingsUtils.Region.values()) {
+                if (region.equals(r)){
+                    REGION_COMBO.getSelectionModel().select(i);
+                }
+                ++i;
+            }
+        }
+        REGION_COMBO.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                SettingsUtils.Region[] regions = SettingsUtils.Region.values();
+                int index = REGION_COMBO.getSelectionModel().getSelectedIndex();
+                SettingsUtils.Region region = regions[index];
+                Log.info("Selected region: "+region);
+                SettingsUtils.setRegion(region);
+            }
+        });
+
         BUTTON_EXTRACT.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {

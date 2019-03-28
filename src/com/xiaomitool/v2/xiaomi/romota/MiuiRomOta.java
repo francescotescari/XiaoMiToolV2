@@ -49,13 +49,12 @@ public class MiuiRomOta {
                 Log.debug("Need login");
             }
         }
-        String device = params.getModDevice();
-        boolean international = false;
-        if (device == null){
-            international = params.isInternational();
-        } else {
-            international = device.contains("_global");//TODO make it beauty with new species
+        MiuiRom.Specie specie = params.getSpecie();
+        boolean international = !SettingsUtils.Region.CN.equals(SettingsUtils.getRegion());
+        if (international && specie != null){
+            international = !specie.isChinese();
         }
+
         String url = international ? "https://update.intl.miui.com/updates/miotaV3.php" : "https://update.miui.com/updates/miotaV3.php";
 
 
@@ -178,7 +177,7 @@ public class MiuiRomOta {
     public static void latestTest(RequestParams params) throws XiaomiProcedureException, CustomHttpException {
         String device = params.getModDevice();
         Branch branch = params.getBranch();
-        String region = params.isInternational() ? "global" : "cn";
+        String region = params.getRequestRegion();
         String n = params.getCarrier();
         String lang = params.getLanguage();
         HashMap<String, String> map = new HashMap<>();
@@ -246,13 +245,9 @@ public class MiuiRomOta {
     public static MiuiTgzRom latestFastboot_request(RequestParams params) throws XiaomiProcedureException, CustomHttpException {
         String device = params.getModDevice();
         Branch branch = params.getBranch();
-        String region = params.isInternational() ? "global" : "cn";
+        String region = params.getRequestRegion();
         String n = params.getCarrier();
         String lang = params.getLanguage();
-        if (DeviceGroups.hasEEARegion(device) && params.isInternational() && !Branch.isDev(branch)){
-            region = "eea"; //TODO should be in specie
-            device = device.replace("_global","_eea_global");
-        }
         String url = String.format("http://update.miui.com/updates/miota-fullrom.php?d=%s&b=%s&r=%s&n=%s&l=%s", device, branch.getCode(), region, n, lang);
         String result;
             result = EasyHttp.get(url).getBody();
@@ -292,13 +287,9 @@ public class MiuiRomOta {
         Branch b = params.getBranch();
         b = b == null ? Branch.STABLE : b.getDual();
         String branch =  Branch.STABLE.equals(b) ? "1" : "0";
-        if (DeviceGroups.hasEEARegion(device) && params.isInternational()  && !Branch.isDev(b)){
-            device = device.replace("_global","_eea_global"); //TODO should be in specie
-        }
        String url = "https://update.miui.com/updates/v1/latestverinfo.php";
        EasyResponse response;
-
-            response = new MiuiSaltedRequest(salt).url(url).field("sid","miassistant").field("d",device).field("c",codebase).field("f",branch).exec();
+        response = new MiuiSaltedRequest(salt).url(url).field("sid","miassistant").field("d",device).field("c",codebase).field("f",branch).exec();
         String body = response.getBody();
         Log.info("OTA Recovery response: "+body);
         Log.debug(body);
@@ -327,11 +318,7 @@ public class MiuiRomOta {
         String device = params.getModDevice();
         Branch branch = params.getBranch();
 
-        String region = params.isInternational() ? "global" : "cn";
-        if (DeviceGroups.hasEEARegion(device) && params.isInternational() && !Branch.isDev(branch)){
-            region = "eea"; //TODO should be in specie
-            device = device.replace("_global","_eea_global");
-        }
+        String region = params.getRequestRegion();
         String n = params.getCarrier();
         String url = String.format("https://update.miui.com/updates/v1/fullromdownload.php?d=%s&b=%s&r=%s&n=%s", device, branch.getCode(), region, n), dl;
 

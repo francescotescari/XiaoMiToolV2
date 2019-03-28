@@ -92,6 +92,12 @@ public enum  LRes  {
     GLOBAL_DEVELOPER("Global developer"),
     CHINA_STABLE("Chinese stable"),
     CHINA_DEVELOPER("Chinese developer"),
+    EUROPE_STABLE("European stable"),
+    EUROPE_DEVELOPER("European developer"),
+    RUSSIA_STABLE("Russian stable"),
+    RUSSIA_DEVELOPER("Russian developer"),
+    INDIA_STABLE("Indian stable"),
+    INDIA_DEVELOPER("Indian developer"),
     ROM_SELECTED_ROM("Rom selected: %s"),
     INET_CHECKING_CONNECTION("Checking internet connection"),
     INET_CONNECTION_ERROR_TEXT("Internet connection failed.\nInternet connection is required for the proper use of this tool.\n\nPlease connect your pc to Internet and try again"),
@@ -187,7 +193,7 @@ public enum  LRes  {
     EXTRACTING_ROM_FILE("Extracting rom file..."),
     CHOOSE_PROCEDURE_CATEGORY("Please choose procedure category"),
     CHOOSE_PROCEDURE("Please choose which rom/procedure you want"),
-    ENTER_STOCK_RECOVERY_MODE("Your device is rebooting to stock recovery mode.\nYou should see this menu in a few seconds.\nPlease use the volume down button to move to the third option and then the power button to select it.\nThis will enable the required adb connection between the device and this pc."),
+    ENTER_STOCK_RECOVERY_MODE("Your device is rebooting to stock recovery mode.\nYou should see this menu in a few seconds.\nPlease use the volume down button to move to the third option and then the power button to select it.\nThis will enable the required adb connection between the device and this pc.\n\nIf you don't see this menu, just reboot the device and press \"%s\""),
     SKIP("Skip"),
     NO_INTERNET_BEFORE_FETCH("No internet connection found!\n\nThis tool uses Internet connection to find automaticcaly the latest roms and mods that you can install on your device.\nWithout internet connection this feature will not work.\nYou should enable your internet connection to get the best experience out of this tool.\nChoose if you want to skip this feature or enable internet connection and press try again"),
     CONFIRM_INSTALLATION_START("You are about to start the installation procedure!\nThis is the last confirmation request before XiaoMiTool will do all of its things and manage your device with advanced procedures\n\nYou are going to lose all (or some part) of the personal data (photos, files, applications) on your device, so DO A BACKUP if you want to save them.\nBy pressing \"%s\" you are responsible of lost data, bricked devices and all the possible outcomes of the procedure\n"),
@@ -238,7 +244,17 @@ public enum  LRes  {
     INSTANCE_ID("Instance id"),
     INSTANCE_ID_TIP("This is the ID that identifies this XiaoMiTool execution, your feedback and log files sent to the server\nYou have to communicate this to the developer if you want to be referenced to a particular feedback."),
     COPIED_TO_CLIPBOARD("Copied to clipboard"),
-    FEEDBACK_ONLY_ONE("If you got the same error multiple times, please DO NOT send multiple feedback!")
+    FEEDBACK_ONLY_ONE("If you got the same error multiple times, please DO NOT send multiple feedbacks!"),
+    REG_RUSSIA("Russia"),
+    REG_CHINA("China"),
+    REG_EUROPE("Europe"),
+    REG_INDIA("India"),
+    REG_OTHER("Other regions"),
+    PLEASE_SELECT_REGION("Please select your region"),
+    PLEASE_SELECT_REGION_TEXT("Depending on your region, specific official roms for selected region will be searched\nand specific MIUI servers will be used.\nPlease select the region you are from"),
+    SELECT_IF_YOURE_FROM("Select this if you are from %s"),
+    SELECTED_REGION("Selected region: %s");
+
     ;
     private String text;
 

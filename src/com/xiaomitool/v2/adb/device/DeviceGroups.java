@@ -7,6 +7,12 @@ public class DeviceGroups {
     private static final HashSet<String> EEA_REGION_DEVICES = getEeaRegionDevices();
     private static final HashSet<String> ANDROID_ONE_DEVICES = getAndroidOneDevices();
     private static final HashSet<String> RECOVERY_SAFE = removeUnsafeDevices(getCurrentDevices());
+    private static final HashSet<String> BIREGION_DEVICES = removeMultiRegionDevice(getCurrentDevices());
+
+    public static boolean isMultiRegionDevice(String codename){
+        codename = stripCodename(codename);
+        return !BIREGION_DEVICES.contains(codename);
+    }
 
     public static boolean isSafeToChangeRecoveryLocked(String codename){
         codename = stripCodename(codename);
@@ -16,6 +22,27 @@ public class DeviceGroups {
             }
         }
         return false;
+    }
+
+    private static final HashSet<String> removeMultiRegionDevice(HashSet<String> toRemove){
+        toRemove.remove("cepheus");
+        toRemove.remove("onc");
+        toRemove.remove("onclite");
+        toRemove.remove("lavender");
+        toRemove.remove("grus");
+        toRemove.remove("violet");
+        toRemove.remove("davinci");
+        toRemove.remove("raphael");
+        toRemove.remove("dipper");
+        toRemove.remove("platina");
+        toRemove.remove("polaris");
+        toRemove.remove("ysl");
+        toRemove.remove("whyred");
+        toRemove.remove("rosy");
+        toRemove.remove("cactus");
+        toRemove.remove("cereus");
+        toRemove.remove("sakura");
+        return toRemove;
     }
 
     private static final HashSet<String> removeUnsafeDevices(HashSet<String> toRemove){
@@ -175,7 +202,7 @@ public class DeviceGroups {
         if (codename == null){
             return "";
         }
-        return codename.replace("_global","").replace("_eea","").replace("_alpha","").replace("_ru","");
+        return codename.replace("_eea_global","").replace("_ru_global","").replace("_india_global","").replace("_global","").replace("_alpha","");
     }
 
     public static boolean hasUnlockedBootloader(String codename){

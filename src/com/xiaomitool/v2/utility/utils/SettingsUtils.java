@@ -2,6 +2,7 @@ package com.xiaomitool.v2.utility.utils;
 
 import com.xiaomitool.v2.crypto.AES;
 import com.xiaomitool.v2.crypto.Hash;
+import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.resources.ResourcesManager;
 
@@ -26,6 +27,7 @@ public class SettingsUtils extends HashMap<String, String> {
     public static final String PREF_SAVE_SESSION = "pref_save_session";
     public static final String SESSION_TOKEN = "session_token";
     public static final String PC_ID = "pcId";
+    public static final String REGION = "region";
     private static final Path settingsPath = ResourcesManager.getTmpPath().resolve("settings.app");
     private static boolean loaded = false, toSave = false;
     private static final SettingsUtils instance = new SettingsUtils();
@@ -158,15 +160,54 @@ public class SettingsUtils extends HashMap<String, String> {
         return decrypted;
     }
     public static enum Region {
-        EU,
-        CN,
-        GLOBAL,
-        RUSSIA,
-        INDIA
+        EU(LRes.REG_EUROPE,"eu","reg_europe.png"),
+        INDIA(LRes.REG_INDIA,"india","reg_india.png"),
+        CN(LRes.REG_CHINA,"cn","reg_china.png"),
+        RUSSIA(LRes.REG_RUSSIA,"russia","reg_russia.png"),
+        GLOBAL(LRes.REG_OTHER,"global","reg_global.png");
+        private LRes lRes;
+        private String toString, drawRes;
+        private Region(LRes lRes, String toString, String drawRes){
+            this.lRes = lRes;
+            this.toString = toString;
+            this.drawRes = drawRes;
+        }
+        public String toHuman(){
+            return lRes.toString();
+        }
+        @Override
+        public String toString(){
+            return toString;
+        }
+        public static Region fromString(String code){
+            for (Region region : Region.values()){
+                if (region.toString().equals(code)){
+                    return region;
+                }
+            }
+            return null;
+        }
+
+        public String getDrawable() {
+            return drawRes;
+        }
     }
+
+    private static Region selectedRegion = null;
     public static Region getRegion(){
-        //TODO: make it changable
-        return Region.EU;
+        if (selectedRegion == null){
+            String code = instance.get(REGION);
+            if (code != null){
+                Region region = Region.fromString(code);
+                selectedRegion = region;
+            }
+        }
+        return selectedRegion;
+    }
+
+    public static void setRegion(Region region){
+        selectedRegion = region;
+        instance.put(REGION, region.toString());
     }
 
     public static String requirePCId(){

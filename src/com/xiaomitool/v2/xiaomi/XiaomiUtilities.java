@@ -26,7 +26,7 @@ public class XiaomiUtilities {
         return String.format("0x%08x",serialNumber);
     }
     public static String stripCodename(String codename){
-        return codename.replace("_global","").replace("_alpha","");
+        return DeviceGroups.stripCodename(codename);
     }
     
     public static  String deviceToXiaomiEuName(@NotNull String codename) {

@@ -66,9 +66,6 @@ public abstract class RequestParams implements Cloneable {
     }
 
     public abstract String buildJson() throws Exception;
-    public boolean isInternational() {
-        return specie != null && specie.isInternational();
-    }
     public void setId(String id){
         this.id = id;
     }
@@ -102,7 +99,27 @@ public abstract class RequestParams implements Cloneable {
         this.packageHash = pkgMd5;
     }
     public String getModDevice(){
-        return device+(Branch.ALPHA.equals(this.branch) ? "_alpha" : "")+(this.isInternational() ? "_global" : "");
+        return this.specie.buildModDevice(this.device);
+    }
+
+    public boolean isInternational(){
+        if (this.specie == null){
+            return isInternationalBadMethod();
+        }
+        return !specie.isChinese();
+    }
+
+    public String getRequestRegion(){
+        return specie == null ? (isInternationalBadMethod() ? "global" : "cn") : specie.getRequestRegion();
+    }
+
+
+
+    private boolean isInternationalBadMethod(){
+        if (this.device == null){
+            return false;
+        }
+        return device.contains("_global");
     }
 
     public void setZone(int zone) {

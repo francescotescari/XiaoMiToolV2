@@ -23,7 +23,7 @@ public class DefaultRequestParams extends RequestParams implements Cloneable {
         super.codebase = new Codebase(codebase);
         super.branch =  (branch == null ? super.version.getBranch() : branch);
         super.specie = MiuiRom.Specie.fromStringBranch(device, super.branch);
-        super.zone = isInternational() ? 2 : 1;
+        super.zone = specie.getZone();
 
         androidHash = "00000000000000000000000000000000";
         language = "en_US";
@@ -53,7 +53,7 @@ public class DefaultRequestParams extends RequestParams implements Cloneable {
         map.put("v","MIUI-"+version.toString());
         map.put("bv",version.getBigVersion());
         map.put("c",codebase.toString());
-        map.put("d",device+((DeviceGroups.hasEEARegion(device) && isInternational() && !Branch.isDev(branch)) ? "_eea" : "")+specie.getSuffix()); //TODO fix this mess with specie
+        map.put("d",specie.buildModDevice(device));
         map.put("g",androidHash);
         if (!isInternational()){
             map.put("i",imeiHash);

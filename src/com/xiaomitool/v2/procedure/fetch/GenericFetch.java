@@ -2,6 +2,7 @@ package com.xiaomitool.v2.procedure.fetch;
 
 import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.device.Device;
+import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
@@ -13,6 +14,7 @@ import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.rom.RomException;
 import com.xiaomitool.v2.rom.ZipRom;
 import com.xiaomitool.v2.rom.chooser.InstallableChooser;
+import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.miuithings.Branch;
 import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
@@ -22,6 +24,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.LinkedHashSet;
 
 public class GenericFetch {
 
@@ -31,8 +34,11 @@ public class GenericFetch {
 
 
 
-    public static RInstall fetchAllOfficial(){
-        return RNode.sequence(FastbootFetch.findAllLatestFastboot(),StockRecoveryFetch.allLatestOta());
+    public static RInstall fetchAllOfficial(Device device){
+        SettingsUtils.Region region = SettingsUtils.getRegion();
+        String codename = (String) device.getDeviceProperties().get(DeviceProperties.CODENAME);
+        LinkedHashSet<MiuiRom.Specie> speciesToSearch = MiuiRom.Specie.listToSearchSpecies(region,codename);
+        return RNode.sequence(FastbootFetch.findAllLatestFastboot(speciesToSearch),StockRecoveryFetch.allLatestOta(speciesToSearch));
     }
 
     public static RInstall computeMD5File() {

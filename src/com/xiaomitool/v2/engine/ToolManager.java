@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ToolManager {
-    public static String TOOL_VERSION = "9.3.18";
-    public static String URL_DONATION = "https://xiaomitool.page.link/donate";
+    public static String TOOL_VERSION = "9.3.28";
+    public static String URL_DONATION = "https://www.xiaomitool.com/V2/donate";
     public static String TOOL_VERSION_EX = "alpha";
-    public static String XMT_HOST = "http://localhost/V2";
+    public static String XMT_HOST = "https://www.xiaomitool.com/V2";
     public static String URL_UPDATE = XMT_HOST+"/update.php";
     public static String URL_LATEST = XMT_HOST+"/latest";
     private static boolean exiting = false;

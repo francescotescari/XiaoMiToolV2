@@ -32,6 +32,7 @@ import com.xiaomitool.v2.utility.CommandClass;
 import com.xiaomitool.v2.utility.Nullable;
 import com.xiaomitool.v2.utility.RunnableMessage;
 
+import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import javafx.animation.Animation;
 import javafx.application.Platform;
@@ -593,6 +594,7 @@ public class ActionsDynamic {
                     logginProps.put("v", String.valueOf(properties.get(DeviceProperties.FULL_VERSION)));
                     logginProps.put("bs", String.valueOf(device.getAnswers().getUnlockStatus()));
                     logginProps.put("sn", String.valueOf(properties.get(DeviceProperties.X_SERIAL_NUMBER)));
+                    logginProps.put("rg",String.valueOf(SettingsUtils.getRegion()));
                     LiveFeedbackEasy.sendLog("DATA",new JSONObject(logginProps).toString());
                 } catch (Exception ignored){
 
@@ -684,7 +686,7 @@ public class ActionsDynamic {
             if (!rebootingText){
                 nText = "1) "+LRes.BTN_VOLUP_POW.toString()+"\n2) "+LRes.HT_RECOVERY_TEXT_1.toString();
             } else {
-                nText = LRes.ENTER_STOCK_RECOVERY_MODE.toString();
+                nText = LRes.ENTER_STOCK_RECOVERY_MODE.toString(LRes.OK_FINISHED.toString());
             }
             Text t = new Text(nText);
 

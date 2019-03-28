@@ -12,17 +12,7 @@ public class InstallableChooser extends SomethingChooser<HashMap<Installable.Typ
 
     public static String idBySpecie(MiuiRom.Specie specie){
         if (specie == null){return "null";}
-        switch (specie){
-            case CHINA_STABLE:
-                return SomethingChooser.ID_CHINA_STABLE;
-            case GLOBAL_STABLE:
-                return SomethingChooser.ID_GLOBAL_STABLE;
-            case CHINA_DEVELOPER:
-                return SomethingChooser.ID_CHINA_DEVELOPER;
-            case GLOBAL_DEVELOPER:
-                return SomethingChooser.ID_GLOBAL_DEVELOPER;
-        }
-        return specie.toString();
+        return "id_specie_"+specie.toString();
     }
 
 
