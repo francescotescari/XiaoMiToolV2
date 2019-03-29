@@ -30,8 +30,6 @@ import javafx.stage.StageStyle;
 
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
 
 public class WindowManager {
     public static final Color XIAOMI_COLOR = Color.rgb(255,103, 0);
@@ -45,7 +43,7 @@ public class WindowManager {
     private static final String DEFAULT_TITLE = "XiaoMiTool V2";
     public static final double PREF_WIN_WIDTH = 860;
     public static final double PREF_WIN_HEIGHT = 860;
-    private static final URL iconUri = DrawableManager.getPng("icon.png");
+    private static final Image ICON_IMAGE = DrawableManager.getResourceImage("icon.png");
     private static Stage mainStage;
     private static ToastPane toastPane;
     private static OverlayPane mainOverlay;
@@ -186,7 +184,6 @@ public class WindowManager {
                 PopupController controller = new PopupController(popupWindow);
                 Stage stage = launchWindow(FRAME_POPUP,controller,null,pointer);
                 Parent p = stage.getScene().getRoot();
-                StackPane mainPane = (StackPane) p;
                 ((Pane) pointer.pointed).setMinSize(popupWindow.getWidth(),popupWindow.getHeight());
 
                 stage.setTitle(DEFAULT_TITLE);
@@ -228,7 +225,7 @@ public class WindowManager {
         controller.setPrimaryStage(primaryStage);
         loader.setController(controller);
         Parent root = null;
-        Object realRoot = null;
+        Parent realRoot = null;
         try {
             root = loader.load();
         } catch (IOException e) {
@@ -255,7 +252,7 @@ public class WindowManager {
             background = null;
         }
         Scene scene;
-        realRoot = (Parent) root;
+        realRoot = root;
         if (background != null) {
             Log.debug("Dropping shadow on: "+root);
             StackPane pane = new StackPane(root);
@@ -270,8 +267,10 @@ public class WindowManager {
             realRoot = pane;
         }
 
-        scene = new Scene((Parent) realRoot);
-        primaryStage.getIcons().add(new Image(iconUri.toString()));
+        scene = new Scene(realRoot);
+        if (ICON_IMAGE != null) {
+            primaryStage.getIcons().add(ICON_IMAGE);
+        }
         primaryStage.setTitle(DEFAULT_TITLE);
 
         scene.setFill(Color.TRANSPARENT);

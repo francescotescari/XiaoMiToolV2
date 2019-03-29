@@ -14,15 +14,6 @@
     <orderEntry type="library" name="commons-logging:commons-logging:1.2" level="project" />
     <orderEntry type="library" name="commons-io:commons-io:2.6" level="project" />
     <orderEntry type="library" name="org.apache.commons:commons-compress:1.17" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$APPLICATION_HOME_DIR$/redist/annotations-java8.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="com.mortennobel:java-image-scaling:0.8.6" level="project" />
     <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="com.google.protobuf:protobuf-java:3.7.0" level="project" />

@@ -17,6 +17,7 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/mortennobel/java-image-scaling/0.8.6/java-image-scaling-0.8.6.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/jhlabs/filters/2.0.235/filters-2.0.235.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.11/commons-codec-1.11.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/protobuf/protobuf-java/3.7.0/protobuf-java-3.7.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

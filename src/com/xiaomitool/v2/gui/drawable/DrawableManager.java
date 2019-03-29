@@ -12,7 +12,7 @@ public class DrawableManager {
     public static String DEVICE_AUTH = "device_auth.png";
     public static String ERROR = "error.png";
     public static URL getResource(String name){
-        URL resourcePath = DrawableManager.class.getResource("./"+name);
+        URL resourcePath = DrawableManager.class.getResource(name);
         Log.debug("Resource: "+resourcePath);
         return resourcePath;
     }
