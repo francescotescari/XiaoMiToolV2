@@ -49,7 +49,8 @@ public class InstallException extends Exception {
         SIDELOAD_INSTALL_FAILED,
         WIPE_FAILED,
         WAIT_DEVICE_TIMEOUT,
-        OS_NOT_SUPPORTED;
+        OS_NOT_SUPPORTED,
+        CANNOT_INSTALL;
         private String key;
         Code(String key){
             this.key = key;

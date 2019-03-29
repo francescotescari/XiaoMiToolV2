@@ -37,9 +37,10 @@ public abstract class ChoosableProcedure implements Choiceable, ProcedureBundled
                         throw new InstallException("File selected is null", InstallException.Code.FILE_NOT_FOUND, true);
                     }
                     String lowPath = path.toLowerCase();
+                    Device device = Procedures.requireDevice(runner);
                     if (lowPath.endsWith(".zip")){
                         installable = new MiuiZipRom(file, true);
-                        toDoNext = StockRecoveryFetch.createValidatedZipInstall();
+                        toDoNext = StockRecoveryFetch.createValidatedZipInstall(device);
                     } else if (lowPath.endsWith(".tgz") || lowPath.endsWith(".tar.gz")){
                         installable = new MiuiTgzRom(file, true);
                     } else {

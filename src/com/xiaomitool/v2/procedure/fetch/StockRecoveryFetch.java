@@ -2,6 +2,7 @@ package com.xiaomitool.v2.procedure.fetch;
 
 import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.device.Device;
+import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
@@ -103,14 +104,26 @@ public class StockRecoveryFetch {
         return RNode.skipOnException(procedures);
     }
 
-    public static RInstall validatePkgRom(){
+    public static RInstall validatePkgRom(Device device){
+        Set<MiuiRom.Specie> speciesToSearch = MiuiRom.Specie.listToSearchSpecies(SettingsUtils.getRegion(),(String) device.getDeviceProperties().get(DeviceProperties.CODENAME));
+        RInstall[] procedures = new RInstall[speciesToSearch.size()];
+        int i = 0;
+        for (MiuiRom.Specie specie : speciesToSearch){
+            procedures[i++] = otaPkgRom(specie);
+        }
         return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Log.info("Validating pacakge rom: "+runner.getContext(GenericFetch.FILE_MD5));
                 runner.text(LRes.VALIDATING_PKG_ROM);
             }
-        },RNode.fallback(otaPkgRom(MiuiRom.Specie.GLOBAL_STABLE),otaPkgRom(MiuiRom.Specie.GLOBAL_DEVELOPER), otaPkgRom(MiuiRom.Specie.CHINA_STABLE), otaPkgRom(MiuiRom.Specie.CHINA_DEVELOPER)));
+        },RNode.fallback(RNode.fallback(procedures), new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Device device1 = Procedures.requireDevice(runner);
+                throw new InstallException("This rom cannot be installed on your device using stock recovery", InstallException.Code.CANNOT_INSTALL, true); //TODO how to treat zip rom when install not available?
+            }
+        }));
     }
 
     public static RInstall otaPkgRom(MiuiRom.Specie specie){
@@ -320,7 +333,7 @@ public class StockRecoveryFetch {
         };
     }
 
-    public static RInstall createValidatedZipInstall() {
+    public static RInstall createValidatedZipInstall(Device device) {
         return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -330,7 +343,7 @@ public class StockRecoveryFetch {
                 Log.info("Trying to validate file for stock recovery installation: "+file);
                 runner.setContext(GenericFetch.SELECTED_FILE, file);
             }
-        }, GenericFetch.computeMD5File(), validatePkgRom());
+        }, GenericFetch.computeMD5File(), validatePkgRom(device));
     }
 
 
