@@ -75,6 +75,26 @@ public class InetUtils {
     }
     static boolean internetAvailable;
     static int tried = 0;
+
+
+    private static boolean isReachable(String addr){
+        return isReachable(addr, 80, 5000);
+    }
+
+    private static boolean isReachable(String addr, int openPort, int timeOutMillis) {
+        // Any Open port on other machine
+        // openPort =  22 - ssh, 80 or 443 - webserver, 25 - mailserver etc.
+        try {
+            try (Socket soc = new Socket()) {
+                soc.connect(new InetSocketAddress(addr, openPort), timeOutMillis);
+            }
+            return true;
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+
     public static synchronized boolean isInternetAvailable(){
         internetAvailable = false;
         tried = 0;
@@ -93,6 +113,12 @@ public class InetUtils {
                 }
             } catch (IOException e) {
                 Log.error("Failed to reach xmt host: "+e.getMessage());
+            }
+            if (isReachable("www.xiaomitool.com")){
+                Log.info("but it is reachable on port 80");
+                internetAvailable = true;
+                waitSemaphore.increase();
+                return;
             }
             if (tried >= 3){
                 Log.error("Tried to reach three host and no one was reachable");
@@ -114,6 +140,12 @@ public class InetUtils {
             } catch (IOException e) {
                 Log.error("Failed to reach google host: "+e.getMessage());
             }
+            if (isReachable("www.google.com")){
+                Log.info("but it is reachable on port 80");
+                internetAvailable = true;
+                waitSemaphore.increase();
+                return;
+            }
             if (tried >= 3 ){
                 Log.error("Tried to reach three host and no one was reachable");
                 waitSemaphore.increase();
@@ -133,6 +165,12 @@ public class InetUtils {
                 }
             } catch (IOException e) {
                 Log.error("Failed to reach miui host: "+e.getMessage());
+            }
+            if (isReachable("www.miui.com")){
+                Log.info("but it is reachable on port 80");
+                internetAvailable = true;
+                waitSemaphore.increase();
+                return;
             }
             if (tried >= 3){
                 Log.error("Tried to reach three host and no one was reachable");
