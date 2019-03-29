@@ -97,4 +97,8 @@ public class DefaultRequestParams extends RequestParams implements Cloneable {
         return clone;
 
     }
+
+    public void setSerialNumber(String sn) {
+        this.serialNumber = sn;
+    }
 }

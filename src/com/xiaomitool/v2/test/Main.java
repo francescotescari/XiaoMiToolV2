@@ -11,8 +11,6 @@ import com.xiaomitool.v2.xiaomi.miuithings.DefaultRequestParams;
 import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
 import com.xiaomitool.v2.xiaomi.miuithings.RequestParams;
 import com.xiaomitool.v2.xiaomi.romota.MiuiRomOta;
-import com.xiaomitool.v2.xiaomi.unlock.UnlockCommonRequests;
-import com.xiaomitool.v2.xiaomi.unlock.UnlockRequest;
 
 
 import java.io.BufferedReader;
@@ -31,15 +29,25 @@ public class Main {
             System.err.println("Usage: MiOtaUpdates.jar passToken userId");
             System.exit(1);
         }*/
-        String aargv[] = new String[]{"V1:isBbO7qT2fhtbwL9sYAWOw1F/3NxY9rEGd/Rpl90v+8g3MPwBcGj+LhM7gm2KKdML2d2Z/ubuxQVmZzlyNSjzunw7/coc/ayIf3HCqBZ9Dxg5EURCySg6KexJHox4JTkNOfLrsKEAIue8xdbjH+d5srzS7oSw1feUoLmo89t9WPye0e2w2UG/MJs+YxW+tBTLOhgbnVz0H9nXBcWQayyZwwuNOiB5HPbfjBX2kM6IBxuHA7cdDRWjSDkDMfVwvch", "513820086"};
+        //String aargv[] = new String[]{"V1:isBbO7qT2fhtbwL9sYAWOw1F/3NxY9rEGd/Rpl90v+8g3MPwBcGj+LhM7gm2KKdML2d2Z/ubuxQVmZzlyNSjzunw7/coc/ayIf3HCqBZ9Dxg5EURCySg6KexJHox4JTkNOfLrsKEAIue8xdbjH+d5srzS7oSw1feUoLmo89t9WPye0e2w2UG/MJs+YxW+tBTLOhgbnVz0H9nXBcWQayyZwwuNOiB5HPbfjBX2kM6IBxuHA7cdDRWjSDkDMfVwvch", "513820086"};
         //String aar
         //String gv[] = new String[]{"V1:sYLMdrtmr68+XYlt3KEGMvIK33el49rcewgc/Aj2eDbhlxtUYYoC403jFphGxbILHMBOxCZ8jb09lYio/ueuyNEA2FG5GGTYdcWWcK09ydkY/wBzMoVhriDnVRguxt7Qj+Xn52Lo2RbErRDknI35gYeIN4gWRpDGwDeL9qTo8ODgyOftZSYklvth66lqzghIiGBiLUu+suwcbaQ/wh+sZostweENZGAfGkRGNF8FsD0VgBHsi+X5xKFoh+FndaZ1", "1606054557"};
         //gv = new String[]{"V1:UzVU8KYgKUF+aP6f4QkYe4nJRAa4IB4o9a7MjeCocT+PwZw8pVAI1B0a8atv9RktplQq+EFYLvU+swKN2705sjUXC3nGlb2blWkFgUYFtqrWhxPaM2NLUysFwD5fakuzmDKQAREQK5KrtLVt0nSBRrOi1gkqUyOwn42Pe/TsY6R1oEKqMjtB+0gQJvXe67kECSWaGRM6YLO3SrHIZwfxyViNMLihMppHznq9yWQJfE8bAk96Tsk5N6uZMk69BeVs","1606054557"};
 
 
         XiaomiKeystore keystore = XiaomiKeystore.getInstance();
-        keystore.setCredentials(aargv[1],aargv[0]);
-        keystore.requireServiceKeyAndToken("miuibbs");
+        //keystore.setCredentials(gv[1],gv[0]);
+        //keystore.requireServiceKeyAndToken("miuibbs");
+        /*Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIAEQUWfXYPsAAAAAAAAAAAAAAAMGZGlwcGVyAgS9bC/5","whyred","","",""));
+        if (true){
+            return;
+        }*/
+
+        DefaultRequestParams params3 = new DefaultRequestParams("cepheus_global","V10.2.15.0.PFAEUXM","9.0",Branch.STABLE);
+        params3.setZone(2);
+        params3.setSerialNumber("0x78133f93");
+        params3.setPkg("e3aaed0507a830eaaf503dcc7c1977e0");
+        Log.debug(MiuiRomOta.otaV3_request(params3));
         if (true){
             return;
         }

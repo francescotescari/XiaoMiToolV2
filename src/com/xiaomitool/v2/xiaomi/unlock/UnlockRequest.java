@@ -34,6 +34,7 @@ public class UnlockRequest {
         params.put("sign",signHmac);
         String key = keyToken[0];
         String serviceToken = keyToken[1];
+        Log.info("Unlock request params: "+params);
         try {
             XiaomiCrypto.cloudService_encryptRequestParams(params,key);
         } catch (Exception e) {
