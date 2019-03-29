@@ -1,5 +1,7 @@
 package com.xiaomitool.v2.utility;
 
+import com.xiaomitool.v2.logging.Log;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -38,12 +40,15 @@ public class FeedbackOutputStream extends OutputStream {
             currentOutputStream.write(data, offset, len);
         }
     }
-    public void setUserMessage(String message) throws IOException {
-        if (userMessage != null) {
+    public void setUserMessage(String message) {
+        Log.debug("Usermessage pre: "+this.userMessage);
+        Log.debug("Usermessage change: "+message);
+        if (message != null) {
             this.userMessage = new FeedbackChunck(message, FLAG_USERMESSAGE);
         } else {
             this.userMessage = null;
         }
+        Log.debug("Usermessage post: "+this.userMessage);
     }
 
 
@@ -73,7 +78,7 @@ public class FeedbackOutputStream extends OutputStream {
                 flushChuck(flagOnClose);
                 flagOnClose = null;
             } else {
-                throw new IOException("Chunk not flashed yet, please close it");
+                throw new IOException("Chunk not flushed yet, please flush it first");
             }
         }
 
@@ -93,6 +98,7 @@ public class FeedbackOutputStream extends OutputStream {
     public InputStream getReadInputStream(){
         List<InputStream> streamList = new ArrayList<>();
         if (userMessage != null){
+            Log.debug("Adding usermessage to chucks");
             streamList.add(new FeedbackChunckInputStream(userMessage));
         }
         for (FeedbackChunck dataChunk : dataChunks){
