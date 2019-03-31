@@ -121,7 +121,7 @@ public class StockRecoveryFetch {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device1 = Procedures.requireDevice(runner);
-                throw new InstallException("This rom cannot be installed on your device using stock recovery", InstallException.Code.CANNOT_INSTALL, true); //TODO how to treat zip rom when install not available?
+                throw new InstallException("This rom cannot be installed on your device without unlocking bootloader", InstallException.Code.CANNOT_INSTALL, true); //TODO how to treat zip rom when install not available?
             }
         }));
     }

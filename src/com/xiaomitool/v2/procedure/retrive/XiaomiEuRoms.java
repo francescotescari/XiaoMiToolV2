@@ -17,9 +17,12 @@ import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
 import com.xiaomitool.v2.xiaomi.miuithings.RequestParams;
 import javafx.scene.image.Image;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class XiaomiEuRoms {
     public static final String[] SOURCEFORGE_MIRRORS = new String[]{"master"};//"astuteinternet","ayera","cfhcable","cytranet","datapacket","excellmedia","freefr","iweb","jaist","kent","liquidtelecom","netcologne","netix","newcontinuum","phoenixnap","razaoinfo","superb-dca2","superb-sea2","svwh","tenet","ufpr","vorboss"};
-    
+    private static final Pattern BIG_VERSION_PATTERN = Pattern.compile("^([vV]\\d{1,2})");
     private static final String EU_HOST = "https://basketbuild.com/uploads/devs/ZduneX25";
     public static ZipRom latest(RequestParams params) throws CustomHttpException, RomException {
         String device = params.getDevice();
@@ -41,7 +44,24 @@ public class XiaomiEuRoms {
         String md5 = parts[1];
         String codebase = parts[4];
         String mirror = SOURCEFORGE_MIRRORS[NumberUtils.getRandom(0,SOURCEFORGE_MIRRORS.length-1)];
-        String format, shortVersion = Branch.STABLE.equals(branch) ? version.substring(0,4).toLowerCase() : version;
+        String format, shortVersion;
+        if (version.length() < 4){
+            throw new RomException("Invalid miui rom: "+version);
+        }
+        if(Branch.STABLE.equals(branch)){
+            Matcher bvM = BIG_VERSION_PATTERN.matcher(version);
+            if (!bvM.find()){
+                throw new RomException("Cannot find big version of rom");
+            }
+            String bigVersion = bvM.group(1);
+            if (bigVersion.length() > 2){
+                shortVersion = bigVersion;
+            } else {
+                shortVersion = version.substring(0,4);
+            }
+        } else {
+           shortVersion = version;
+        }
         String name = XiaomiUtilities.deviceToXiaomiEuName(device);
         MiuiVersion miuiVersion = new MiuiVersion(version);
         int bigVersion = miuiVersion.getBigVersionNumber();
