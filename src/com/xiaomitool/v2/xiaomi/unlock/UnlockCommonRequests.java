@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class UnlockCommonRequests {
     private static final HashMap<Integer, LRes> UNLOCK_CODE_MEANING = buildUnlockCodeMeaning();
@@ -83,14 +84,14 @@ public class UnlockCommonRequests {
         XiaomiKeystore keystore = XiaomiKeystore.getInstance();
         UnlockRequest request = new UnlockRequest(USERINFOV3);
 
-        HashMap<String, String> pp = new HashMap<>();
+        HashMap<String, String> pp = new LinkedHashMap<>();
         pp.put("clientId","1");
         pp.put("clientVersion", CLIENT_VERSION);
         pp.put("language","en");
         pp.put("pcId",keystore.getPcId());
         pp.put("region","");
         pp.put("uid",keystore.getUserId());
-        String data = new JSONObject(pp).toString();
+        String data = new JSONObject(pp).toString(3);
         data = Base64.getEncoder().encodeToString(data.getBytes());
         request.addParam("data",data);
         request.addNonce();
@@ -103,14 +104,14 @@ public class UnlockCommonRequests {
     public static String deviceClear(String product) throws XiaomiProcedureException, CustomHttpException {
         XiaomiKeystore keystore = XiaomiKeystore.getInstance();
         UnlockRequest request = new UnlockRequest(DEVICECLEARV3);
-        HashMap<String, String> pp = new HashMap<>();
+        HashMap<String, String> pp = new LinkedHashMap<>();
         pp.put("clientId","1");
         pp.put("clientVersion", CLIENT_VERSION);
         pp.put("language","en");
         pp.put("pcId",keystore.getPcId());
         pp.put("product",product);
         pp.put("region","");
-        String data = new JSONObject(pp).toString();
+        String data = new JSONObject(pp).toString(3);
         data = Base64.getEncoder().encodeToString(data.getBytes());
         request.addParam("appId","1");
         request.addParam("data",data);
@@ -179,29 +180,35 @@ public class UnlockCommonRequests {
     }
 
     public static String ahaUnlock(String token, String product, String boardVersion, String deviceName, String socId) throws XiaomiProcedureException, CustomHttpException {
+        if (StrUtils.isNullOrEmpty(product)){
+            throw new XiaomiProcedureException("Invalid input argument: null product");
+        }
         XiaomiKeystore keystore = XiaomiKeystore.getInstance();
         UnlockRequest request = new UnlockRequest(AHAUNLOCKV3);
-        HashMap<String, String> p2 = new HashMap<>();
+        HashMap<String, String> p2 = new LinkedHashMap<>();
         p2.put("boardVersion",boardVersion);
         p2.put("deviceName",deviceName);
         p2.put("product",product);
         p2.put("socId",socId);
-        HashMap<String, String> pp = new HashMap<>();
+        //JSONObject object = new JSONObject(p2);
+        HashMap<String, Object> pp = new LinkedHashMap<>();
         pp.put("clientId","2");
         pp.put("clientVersion",CLIENT_VERSION);
+        pp.put("deviceInfo",p2);
         pp.put("deviceToken",token);
         pp.put("language","en");
         pp.put("operate","unlock");
         pp.put("pcId",keystore.getPcId());
         pp.put("region","");
         pp.put("uid",keystore.getUserId());
-        JSONObject object = new JSONObject(p2);
-        JSONObject obj = new JSONObject(pp);
-        obj.put("deviceInfo",object);
-        String data = obj.toString();
+
+
+
+        String data = StrUtils.map2json(pp, 3);
         data = Base64.getEncoder().encodeToString(data.getBytes());
         request.addParam("appId","1");
         request.addParam("data",data);
+        request.setHeader("expect", "100-continue");
         request.addNonce();
         request.addParam("sid",SID);
         return request.exec();

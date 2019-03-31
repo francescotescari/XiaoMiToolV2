@@ -4,6 +4,7 @@ import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.rom.MiuiZipRom;
+import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
 import com.xiaomitool.v2.xiaomi.miuithings.Branch;
@@ -11,12 +12,15 @@ import com.xiaomitool.v2.xiaomi.miuithings.DefaultRequestParams;
 import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
 import com.xiaomitool.v2.xiaomi.miuithings.RequestParams;
 import com.xiaomitool.v2.xiaomi.romota.MiuiRomOta;
+import com.xiaomitool.v2.xiaomi.unlock.UnlockCommonRequests;
+import org.json.JSONObject;
 
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Main {
    //public static final int Start = 3428000;
@@ -31,12 +35,27 @@ public class Main {
         }*/
         //String aargv[] = new String[]{"V1:isBbO7qT2fhtbwL9sYAWOw1F/3NxY9rEGd/Rpl90v+8g3MPwBcGj+LhM7gm2KKdML2d2Z/ubuxQVmZzlyNSjzunw7/coc/ayIf3HCqBZ9Dxg5EURCySg6KexJHox4JTkNOfLrsKEAIue8xdbjH+d5srzS7oSw1feUoLmo89t9WPye0e2w2UG/MJs+YxW+tBTLOhgbnVz0H9nXBcWQayyZwwuNOiB5HPbfjBX2kM6IBxuHA7cdDRWjSDkDMfVwvch", "513820086"};
         //String aar
-        //String gv[] = new String[]{"V1:sYLMdrtmr68+XYlt3KEGMvIK33el49rcewgc/Aj2eDbhlxtUYYoC403jFphGxbILHMBOxCZ8jb09lYio/ueuyNEA2FG5GGTYdcWWcK09ydkY/wBzMoVhriDnVRguxt7Qj+Xn52Lo2RbErRDknI35gYeIN4gWRpDGwDeL9qTo8ODgyOftZSYklvth66lqzghIiGBiLUu+suwcbaQ/wh+sZostweENZGAfGkRGNF8FsD0VgBHsi+X5xKFoh+FndaZ1", "1606054557"};
+        String gv[] = new String[]{"V1:sYLMdrtmr68+XYlt3KEGMvIK33el49rcewgc/Aj2eDbhlxtUYYoC403jFphGxbILHMBOxCZ8jb09lYio/ueuyNEA2FG5GGTYdcWWcK09ydkY/wBzMoVhriDnVRguxt7Qj+Xn52Lo2RbErRDknI35gYeIN4gWRpDGwDeL9qTo8ODgyOftZSYklvth66lqzghIiGBiLUu+suwcbaQ/wh+sZostweENZGAfGkRGNF8FsD0VgBHsi+X5xKFoh+FndaZ1", "1606054557"};
         //gv = new String[]{"V1:UzVU8KYgKUF+aP6f4QkYe4nJRAa4IB4o9a7MjeCocT+PwZw8pVAI1B0a8atv9RktplQq+EFYLvU+swKN2705sjUXC3nGlb2blWkFgUYFtqrWhxPaM2NLUysFwD5fakuzmDKQAREQK5KrtLVt0nSBRrOi1gkqUyOwn42Pe/TsY6R1oEKqMjtB+0gQJvXe67kECSWaGRM6YLO3SrHIZwfxyViNMLihMppHznq9yWQJfE8bAk96Tsk5N6uZMk69BeVs","1606054557"};
 
 
         XiaomiKeystore keystore = XiaomiKeystore.getInstance();
-        //keystore.setCredentials(gv[1],gv[0]);
+        keystore.setCredentials(gv[1],gv[0]);
+        HashMap<String, Object> pp = new LinkedHashMap<>();
+        pp.put("clientId","2");
+        pp.put("clientVersion",3);
+        pp.put("deviceInfo","t");
+        pp.put("deviceToken",2);
+        pp.put("language","en");
+        pp.put("operate","unlock");
+        pp.put("pcId",keystore.getPcId());
+        pp.put("region","");
+        pp.put("uid",keystore.getUserId());
+
+        //Log.debug(StrUtils.map2json(pp, 3));
+
+
+        Log.debug(UnlockCommonRequests.ahaUnlock("VQEBMwEgdAsBSujVP9OjWVoBu7zFT3QLAUro1T/To1laAbu8xU8DCWJlcnlsbGl1bQIEQXtF7A==","dipper","","",""));
         //keystore.requireServiceKeyAndToken("miuibbs");
         /*Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIAEQUWfXYPsAAAAAAAAAAAAAAAMGZGlwcGVyAgS9bC/5","whyred","","",""));
         if (true){
@@ -47,7 +66,7 @@ public class Main {
         params3.setZone(2);
         params3.setSerialNumber("0x78133f93");
         params3.setPkg("e3aaed0507a830eaaf503dcc7c1977e0");
-        Log.debug(MiuiRomOta.otaV3_request(params3));
+        //Log.debug(MiuiRomOta.otaV3_request(params3));
         if (true){
             return;
         }
@@ -64,7 +83,7 @@ public class Main {
         scarto = 0;
         //Log.debug(UnlockCommonRequests.test());VQEBIQEQdAsBSujVP9OjWVoBu7zFTwMHY2VwaGV1cwIEQXtF7A==
 
-        //Log.debug(UnlockCommonRequests.ahaUnlock("VQEBMwEgdAsBSujVP9OjWVoBu7zFT3QLAUro1T/To1laAbu8xU8DCWJlcnlsbGl1bQIEQXtF7A==","dipper","","",""));
+
         //Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIQEQRbgeQ5xHgGiytTxvaushBQMHZGF2aW5jaQIENrrqAw==","scorpio","","","")); //Please unlock 49 hours later
         //Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIAEQdAsBSujVP9OjWVoBu7zFTwMGZGlwcGVyAgRBe0Xs","dipper","","",""));//Please unlock 337 hours later
 

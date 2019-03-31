@@ -12,6 +12,7 @@ import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
 import org.json.JSONObject;
 
 import java.util.Base64;
+import java.util.HashMap;
 
 public class UnlockRequest {
     private static final String SERVICE_NAME = "unlockApi";
@@ -21,6 +22,7 @@ public class UnlockRequest {
 
     private HttpQuery params = new HttpQuery();
     private String signHmac, signSha;
+    private final HashMap<String, String> headers = new HashMap<>();
 
     public UnlockRequest(String path){
         this.path = path;
@@ -34,7 +36,7 @@ public class UnlockRequest {
         params.put("sign",signHmac);
         String key = keyToken[0];
         String serviceToken = keyToken[1];
-        Log.info("Unlock request params: "+params);
+        Log.info("Unlock request ("+this.path+") params: "+params);
         try {
             XiaomiCrypto.cloudService_encryptRequestParams(params,key);
         } catch (Exception e) {
@@ -44,11 +46,12 @@ public class UnlockRequest {
         params.put("signature",signSha);
         String host = SettingsUtils.isGlobalRegion() ? HOST_INTL : HOST;
         Log.debug("Unlock request on "+host+path);
-        EasyResponse response = new EasyHttp().url(HOST+path).fields(params).userAgent("XiaomiPCSuite").cookies(XiaomiKeystore.getInstance().requireServiceCookies(SERVICE_NAME)).exec();
+        EasyResponse response = new EasyHttp().url(host+path).fields(params).headers(headers).userAgent("XiaomiPCSuite").cookies(XiaomiKeystore.getInstance().requireServiceCookies(SERVICE_NAME)).exec();
         if (!response.isAllRight()){
             throw new XiaomiProcedureException("[UnlockRequest.exec] Invalid server respose: code: "+response.getCode()+", lenght: "+response.getBody().length() );
         }
         String body  =response.getBody();
+
 
         try {
             body = XiaomiCrypto.cloudService_decrypt(body, key);
@@ -61,6 +64,7 @@ public class UnlockRequest {
             Log.debug("Response body is not base64 encoded");
 
         }
+        Log.info("Unlock request ("+this.path+") response: "+body);
         return body;
     }
 
@@ -73,7 +77,7 @@ public class UnlockRequest {
             JSONObject obj = new JSONObject(json);
             int code = obj.getInt("code");
             if (code != 0){
-                throw new XiaomiProcedureException("[UnlockRequest.addNonce] Response code of nonce request is not zero");
+                throw new XiaomiProcedureException("[UnlockRequest.addNonce] Response code of nonce request is not zero: "+code);
             }
             String nonce = obj.getString("nonce");
             params.put("nonce",nonce);
@@ -81,5 +85,9 @@ public class UnlockRequest {
             throw new XiaomiProcedureException("[UnlockRequest.addNonce] Exception while parsing nonce response: "+e.getMessage());
         }
 
+    }
+
+    public void setHeader(String name, String value) {
+        this.headers.put(name, value);
     }
 }

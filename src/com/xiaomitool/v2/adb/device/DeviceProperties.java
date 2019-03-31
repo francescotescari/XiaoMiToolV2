@@ -28,7 +28,7 @@ public class DeviceProperties {
     public static final String CODEBASE = "ro.build.version.release";
     public static final String BRAND = "ro.product.brand";
     public static final String MODEL = "ro.product.model";
-
+    public static final String FASTBOOT_PRODUCT = "product";
 
 
     class AdbProperties extends Properties {

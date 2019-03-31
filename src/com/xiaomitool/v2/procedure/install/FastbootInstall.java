@@ -290,7 +290,7 @@ public class FastbootInstall {
                     try {
                         String unlockData = null;
                         runner.text(LRes.UNLOCK_REQUESTING_TOKEN);
-                        unlockData = UnlockCommonRequests.ahaUnlock(token, (String) device.getDeviceProperties().get(DeviceProperties.CODENAME), "", "", "");
+                        unlockData = UnlockCommonRequests.ahaUnlock(token, (String) device.getDeviceProperties().getFastbootProperties().get(DeviceProperties.FASTBOOT_PRODUCT), "", "", "");
                         if (unlockData == null) {
                             throw new InstallException("Failed to get the unlock data required", InstallException.Code.INFO_RETRIVE_FAILED, true);
                         }
