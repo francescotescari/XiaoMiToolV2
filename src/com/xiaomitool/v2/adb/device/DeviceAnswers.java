@@ -29,7 +29,7 @@ public class DeviceAnswers {
      }
 
     private YesNoMaybe isInTwrpRecoveryInternal(){
-        if (!Device.Status.RECOVERY.equals(device.getStatus())){
+        if (!Device.Status.RECOVERY.equals(device.getStatus()) || !device.isConnected()){
             return YesNoMaybe.NO;
         }
         String random = StrUtils.randomWord(8).toLowerCase();
@@ -44,6 +44,7 @@ public class DeviceAnswers {
             return YesNoMaybe.NO;
         }
         if (output.toLowerCase().contains("twrp does not appear to be running")){
+            Log.warn("Twrp does not appear to be running");
             return YesNoMaybe.MAYBE;
         }
         runner = AdbCommons.runner("shell twrp get "+key_test,device.getSerial(),6);
@@ -70,15 +71,17 @@ public class DeviceAnswers {
     }
     private  YesNoMaybe isInTwrpRecovery(int trials){
         YesNoMaybe result = isInTwrpRecoveryInternal();
-        while (YesNoMaybe.MAYBE.equals(result) && trials > 0){
-            --trials;
+        while (YesNoMaybe.MAYBE.equals(result) && --trials > 0){
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1500);
+                DeviceManager.refresh();
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 Log.debug(e);
             }
             result = isInTwrpRecoveryInternal();
         }
+        Log.info("IsInTwrp recovery result: "+result);
         if (YesNoMaybe.YES.equals(result)){
             setAnswer(HAS_TWRP, YesNoMaybe.YES);
         }

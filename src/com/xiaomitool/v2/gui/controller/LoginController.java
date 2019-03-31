@@ -140,6 +140,7 @@ public class LoginController extends DefaultController {
 
     private void loginDone(){
         Log.debug("Login done succesfully");
+        Log.info("Logged in succesfulyl: "+userId);
         XiaomiKeystore.getInstance().setCredentials(userId,passToken,deviceId);
         Platform.runLater(new Runnable() {
             @Override
@@ -225,17 +226,21 @@ public class LoginController extends DefaultController {
                     });
                     return;
                 }
-                WaitSemaphore semaphore = new WaitSemaphore();
+                WaitSemaphore semaphore = new WaitSemaphore(0);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        Stage stage = WindowManager.launchLogin();
-                        stage.setOnHidden(new EventHandler<WindowEvent>() {
-                            @Override
-                            public void handle(WindowEvent event) {
-                                semaphore.increase();
-                            }
-                        });
+                        try {
+                            Stage stage = WindowManager.launchLogin();
+                            stage.setOnHidden(new EventHandler<WindowEvent>() {
+                                @Override
+                                public void handle(WindowEvent event) {
+                                    semaphore.increase();
+                                }
+                            });
+                        } catch (Exception e){
+                            semaphore.increase();
+                        }
                     }
                 });
                 try {
