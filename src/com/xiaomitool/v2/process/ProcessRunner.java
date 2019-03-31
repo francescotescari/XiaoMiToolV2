@@ -4,6 +4,7 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.RunnableWithArg;
 import com.xiaomitool.v2.utility.Thrower;
 import com.xiaomitool.v2.utility.WaitSemaphore;
+import com.xiaomitool.v2.utility.utils.StrUtils;
 
 
 import java.io.File;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class ProcessRunner {
+    private static int processNumber = 0;
     protected Path executable;
     protected LinkedList<String> arguments;
     private int secondsTimeout = 1800;
@@ -27,6 +29,7 @@ public class ProcessRunner {
     protected List<String> outputBuffer = Collections.synchronizedList(new LinkedList<>());
     private final WaitSemaphore readFinishedSemaphore = new WaitSemaphore(0);
     private File workingDir;
+    private int pNum = -1;
 
     public ProcessRunner(Path exe){
         this(exe, null);
@@ -75,7 +78,9 @@ public class ProcessRunner {
         for (String arg: args){
             stringBuilder.append(" ").append('"').append(arg).append('"');
         }
-        Log.log("PSTA", "Start process:"+stringBuilder.toString(), true);
+        processNumber++;
+        pNum = processNumber;
+        Log.log("PSTA", "Start process ("+processNumber+"):"+stringBuilder.toString(), true);
         Log.debug("Process args: ["+String.join(" ",args)+"]");
         ProcessBuilder builder = new ProcessBuilder(args);
         builder.redirectErrorStream(true);
@@ -106,7 +111,7 @@ public class ProcessRunner {
                             continue;
                         }
                         outputBuffer.add(data);
-                        String log = "Process output: " + data;
+                        String log = "Process ("+pNum+") output: " + data;
                         if (isFeedback) {
                             Log.info(log);
                         } else {
@@ -169,6 +174,7 @@ public class ProcessRunner {
 
         try {
             if(!process.waitFor(timeout, TimeUnit.SECONDS)){
+
                 throw new InterruptedException("Process didn't exited before timeout");
             }
             IOThrower.check();
@@ -177,7 +183,7 @@ public class ProcessRunner {
             this.exitValue = process.exitValue();
         } catch (InterruptedException e) {
             Log.debug("Thread interruped while waiting process");
-
+            Log.error("Process ("+pNum+") wait timeout ("+timeout+") or interrupted: "+e.getMessage());
 
             this.exitValue = -1;
             setStatus(ProcessStatus.EXCEPTION);
@@ -185,6 +191,7 @@ public class ProcessRunner {
         if(process.isAlive()){
             process.destroyForcibly();
         }
+        Log.info("Process ("+pNum+") ended with exit code: "+exitValue+", output len: "+ StrUtils.lenght(this.getOutputString()));
         Log.debug("Processe ended with exit code "+this.exitValue);
         return this.exitValue;
     }
@@ -215,7 +222,7 @@ public class ProcessRunner {
     }
     private boolean waitOutputReadFinished(){
         try {
-            readFinishedSemaphore.waitOnce(2);
+            readFinishedSemaphore.waitOnce(4);
             return true;
         } catch (InterruptedException e) {
             return false;

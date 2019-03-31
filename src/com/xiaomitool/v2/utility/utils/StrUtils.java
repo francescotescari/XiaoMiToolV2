@@ -81,4 +81,8 @@ public class StrUtils {
         }
         return o.toString();
     }
+
+    public static int lenght(String outputString) {
+        return outputString == null ? -1 : outputString.length();
+    }
 }
