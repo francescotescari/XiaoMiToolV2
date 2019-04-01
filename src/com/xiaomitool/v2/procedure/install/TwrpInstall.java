@@ -9,6 +9,8 @@ import com.xiaomitool.v2.gui.visual.ProgressPane;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.*;
+import com.xiaomitool.v2.procedure.device.ManageDevice;
+import com.xiaomitool.v2.procedure.device.OtherProcedures;
 import com.xiaomitool.v2.procedure.device.RebootDevice;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.tasks.TaskManager;
@@ -46,14 +48,14 @@ public class TwrpInstall  {
                 runner.text(LRes.BOOTING_STUFF.toString(LRes.TWRP_RECOVERY.toString()));
                 Log.info("Booting bootable via fastboot, file: "+installable.getFinalFile());
                 FastbootCommons.boot(device.getSerial(),installable.getFinalFile());
-                Thread.sleep(1500);
+                Thread.sleep(3000);
                 device.setConnected(false);
             }
         }, GenericInstall.updateDeviceStatus(null,true,null));
     }
 
     public static RInstall checkIfIsInTwrp() {
-        return RNode.sequence(RebootDevice.requireRecovery(), new RInstall() {
+        return RNode.sequence(RebootDevice.requireRecovery(), OtherProcedures.sleep(2000), ManageDevice.requireAccessible(true),  new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);

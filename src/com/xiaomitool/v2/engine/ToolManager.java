@@ -22,7 +22,7 @@ public class ToolManager {
     public static final String TOOL_VERSION = "9.3.29";
     public static final String URL_DONATION = "https://www.xiaomitool.com/V2/donate";
     public static final String TOOL_VERSION_EX = "alpha";
-    public static final String XMT_HOST = "http://192.168.31.204/V2";
+    public static final String XMT_HOST = "https://www.xiaomitool.com/V2";
   //  public static final String URL_UPDATE = XMT_HOST+"/update.php";
     public static final String URL_UPDATE_V2 = XMT_HOST+"/updateV2.php";;
     public static final String URL_LATEST = XMT_HOST+"/latest";
