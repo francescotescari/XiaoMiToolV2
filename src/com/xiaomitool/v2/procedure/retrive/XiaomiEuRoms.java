@@ -62,6 +62,7 @@ public class XiaomiEuRoms {
         } else {
            shortVersion = version;
         }
+        shortVersion = shortVersion.toLowerCase();
         String name = XiaomiUtilities.deviceToXiaomiEuName(device);
         MiuiVersion miuiVersion = new MiuiVersion(version);
         int bigVersion = miuiVersion.getBigVersionNumber();
