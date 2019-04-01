@@ -42,8 +42,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -364,6 +366,9 @@ public class ActionsStatic {
                         IOUtils.copy(inputStream, outputStream);
                         inputStream.close();
                         outputStream.close();
+                        if (downloadedFile.exists()) {
+                            downloadedFile.delete();
+                        }
                     } else {
                         extractedFile = downloadedFile.toPath();
                     }
@@ -372,7 +377,7 @@ public class ActionsStatic {
                     if (Files.exists(dstFile)){
                         Files.delete(dstFile);
                     }
-                    Files.copy(extractedFile, dstFile);
+                    Files.move(extractedFile, dstFile, StandardCopyOption.REPLACE_EXISTING);
                     Thread.sleep(500);
                     if (!UpdateUtils.checkIfAlive(ResourcesManager.getJavaLaunchExe(),dstFile)){
                         throw new Exception("Failed to start new jar file: not alive");
