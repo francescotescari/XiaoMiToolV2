@@ -20,6 +20,11 @@ public class Log {
 
     public static void init(){
         logOutput = Debugger.defaultDebugger();
+        if (!ToolManager.DEBUG_MODE){
+            PrintStream nullPrint = new PrintStream(new NullOutputStream());
+            System.setOut(nullPrint);
+            System.setErr(nullPrint);
+        }
     }
 
 
