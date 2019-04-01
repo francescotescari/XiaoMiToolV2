@@ -123,4 +123,16 @@ public class MutexUtils {
 
     }
 
+    public static boolean waitUnlock(int seconds) throws InterruptedException {
+        boolean res = false;
+        for (int i = 0; i<seconds; ++i){
+            if (!lock()){
+                Thread.sleep(1000);
+            } else {
+                res = true;
+                break;
+            }
+        }
+        return res || unlock();
+    }
 }

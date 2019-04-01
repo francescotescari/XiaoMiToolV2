@@ -37,7 +37,7 @@ import java.net.URL;
 public class GuiTest extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        ToolManager.init(primaryStage);
+        ToolManager.init(primaryStage, new String[]{});
         String[] texts = new String[]{"Prova1", "Prova2", "Prova3", "Prova4"};
         URL[] imgs = new URL[]{DrawableManager.getPng("usbdbg1"),DrawableManager.getPng("usbdbg2"),DrawableManager.getPng("usbdbg3"),DrawableManager.getPng("usbdbg4")};
         Image[] imgsfx = new Image[imgs.length];

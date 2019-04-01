@@ -5,20 +5,19 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.MultiMap;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -55,6 +54,19 @@ public class CustomHttpRequest {
     public CustomHttpRequest(String url){
         this.url = url;
         headers = new LinkedHashMap<>();
+    }
+
+    public static final SSLContext TLS12;
+
+    static {
+        SSLContext c;
+        try {
+            c = SSLContextBuilder.create().setProtocol("TLSv1.2").build();
+        } catch (Exception e) {
+            c = null;
+
+        }
+        TLS12 = c;
     }
 
     public void setUrl(String url) {
@@ -101,7 +113,7 @@ public class CustomHttpRequest {
             throw new CustomHttpException("Missing request url");
         }
         Log.debug("Http request on url: "+url);
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClientBuilder client = HttpClientBuilder.create();
         RequestConfig.Builder configBuilder = RequestConfig.custom();
         if (proxyPort > -1){
             HttpHost proxy = new HttpHost(proxyHost, proxyPort);
@@ -110,57 +122,56 @@ public class CustomHttpRequest {
         configBuilder.setRedirectsEnabled(false);
         RequestConfig config = configBuilder.build();
 
-
+        HttpRequestBase request;
         if (requestType.equals(Type.POST)){
-            HttpPost request = new HttpPost(url);
-            this.request = request;
-            request.setConfig(config);
-            makeHeaders(request);
+            request = new HttpPost(url);
             if (this.postData != null) {
-                request.setEntity(new ByteArrayEntity(postData));
+                ((HttpPost) request).setEntity(new ByteArrayEntity(postData));
             } else if (this.postInputStream != null) {
-                request.setEntity(new InputStreamEntity(this.postInputStream));
+                ((HttpPost) request).setEntity(new InputStreamEntity(this.postInputStream));
             } else {
                 List<BasicNameValuePair> basicNameValuePairs = new LinkedList<>();
                 for (Map.Entry<String, Object> entry : postParams.entrySet()) {
                     basicNameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));
                 }
                 try {
-                    request.setEntity(new UrlEncodedFormEntity(basicNameValuePairs));
+                    ((HttpPost) request).setEntity(new UrlEncodedFormEntity(basicNameValuePairs));
                 } catch (UnsupportedEncodingException e) {
-                    throw new CustomHttpException("Failed to encode post data");
+                    throw new CustomHttpException("Failed to encode post data",e);
                 }
             }
-            try {
-                response = client.execute(request);
-            } catch (ClientProtocolException e) {
-                throw new CustomHttpException("ClientProtocolException: "+e.getMessage());
-            } catch (IOException e) {
-                throw new CustomHttpException("IOException: "+e.getMessage());
-            }
+
         } else if (requestType.equals(Type.GET)){
-            HttpGet request = new HttpGet(url);
-            request.setConfig(config);
-            this.request = request;
-            makeHeaders(request);
-            try {
-                response = client.execute(request);
-            } catch (ClientProtocolException e) {
-                throw new CustomHttpException("ClientProtocolException: "+e.getMessage());
-            } catch (IOException e) {
-                throw new CustomHttpException("IOException: "+e.getMessage());
-            }
+            request = new HttpGet(url);
+
         } else if (requestType.equals(Type.HEAD)){
-            HttpHead request = new HttpHead(url);
-            this.request = request;
-            request.setConfig(config);
-            makeHeaders(request);
-            try {
-                response = client.execute(request);
-            } catch (ClientProtocolException e) {
-                throw new CustomHttpException("ClientProtocolException: "+e.getMessage());
-            } catch (IOException e) {
-                throw new CustomHttpException("IOException: "+e.getMessage());
+            request = new HttpHead(url);
+        } else {
+            throw new CustomHttpException("Unknown request type: "+requestType);
+        }
+        this.request = request;
+        request.setConfig(config);
+        makeHeaders(request);
+        response = execRequest(client, request);
+    }
+
+    private static HttpResponse execRequest(HttpClientBuilder client, HttpUriRequest request) throws CustomHttpException {
+        return execRequest(client, request, false);
+    }
+    private static HttpResponse execRequest(HttpClientBuilder client, HttpUriRequest request, boolean useTLS12) throws CustomHttpException {
+        if (useTLS12 && TLS12 != null){
+            client.setSSLContext(TLS12);
+        }
+        try {
+            return client.build().execute(request);
+        } catch (ClientProtocolException e) {
+            throw new CustomHttpException("ClientProtocolException: "+e.getMessage(), e);
+        } catch (IOException e) {
+            if (useTLS12 || !(e instanceof SSLHandshakeException)) {
+                throw new CustomHttpException("IOException: " + e.getMessage(), e);
+            } else {
+                Log.debug("HandshakeException, retrying with new ssl context");
+                return execRequest(client, request, true);
             }
         }
     }

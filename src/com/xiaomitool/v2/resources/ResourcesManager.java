@@ -2,6 +2,7 @@ package com.xiaomitool.v2.resources;
 
 
 
+import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import javafx.scene.image.Image;
@@ -141,5 +142,71 @@ public class ResourcesManager {
 
     public static Path getLogPath() {
         return getTmpPath().resolve("logs");
+    }
+
+    private static Path currentJarDirPath;
+    public static Path getCurrentJarDirPath(){
+        if (currentJarDirPath == null) {
+            try {
+                Path jarPath = getCurrentJarPath();
+                if (Files.exists(jarPath.getParent())){
+                    currentJarDirPath = jarPath.getParent();
+                }
+                Log.info("Current jar dir path: "+ currentJarDirPath);
+            } catch (Exception e) {
+                Log.error("Failed to find current jar dir path: "+e.getMessage());
+            }
+        }
+        return currentJarDirPath;
+    }
+    private static Path currentJarPath;
+    public static Path getCurrentJarPath(){
+        if (currentJarPath == null) {
+            try {
+                Path jarPath = Paths.get(ResourcesManager.class.getProtectionDomain().getCodeSource().getLocation()
+                        .toURI());
+                if (Files.exists(jarPath)){
+                    currentJarPath = jarPath;
+                }
+                Log.info("Current jar path: "+ currentJarPath);
+            } catch (Exception e) {
+                Log.error("Failed to find current jar path: "+e.getMessage());
+            }
+        }
+        return currentJarPath;
+    }
+
+
+    public static boolean isQuickUpdatedSupported() {
+        return getCurrentJarDirPath() != null && getJavaLaunchExe() != null;
+    }
+
+    private static Path javaLaunchExe = null;
+    public static Path getJavaLaunchExe(){
+        if (javaLaunchExe == null){
+            try {
+                Path currentJarPath = getCurrentJarDirPath();
+                if (currentJarPath != null) {
+                    Path binPath = currentJarPath.resolve("bin").resolve(ResourcesConst.isWindows() ? "javaw.exe" : "java");
+                    if (Files.exists(binPath)) {
+                        javaLaunchExe = binPath;
+                    } else {
+                        Log.warn("Java launch path not existing: "+binPath);
+                        if (ToolManager.DEBUG_MODE) {
+                            binPath = currentJarPath.getParent().getParent().getParent().resolve("bin").resolve(ResourcesConst.isWindows() ? "javaw.exe" : "java");
+                            if (Files.exists(binPath)) {
+                                javaLaunchExe = binPath;
+                            } else {
+                                Log.warn("Java launch path not existing: " + binPath);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ignored){
+                Log.debug(ignored);
+            }
+            Log.info("Java launch path: "+javaLaunchExe);
+        }
+        return javaLaunchExe;
     }
 }

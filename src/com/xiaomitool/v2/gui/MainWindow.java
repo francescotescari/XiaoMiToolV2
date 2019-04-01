@@ -8,11 +8,17 @@ import javafx.stage.Stage;
 public class MainWindow extends Application {
     private static final String FXML_FILE = "MainFrame.fxml";
 
+    private static String[] arguments;
+    public static void main(String[] args){
+        arguments = args;
+        launch(args);
+    }
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        ToolManager.init(primaryStage);
+        ToolManager.init(primaryStage, arguments);
 /*
         FXMLLoader loader = new FXMLLoader(FxmlManager.getFxml(FXML_FILE));
         loader.setController(new MainWindowController(primaryStage));

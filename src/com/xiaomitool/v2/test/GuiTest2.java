@@ -55,7 +55,7 @@ public class GuiTest2 extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        ToolManager.init(primaryStage);
+        ToolManager.init(primaryStage, new String[]{});
         WindowManager.setOnExitAskForFeedback(true);
         new Thread(new Runnable() {
             @Override

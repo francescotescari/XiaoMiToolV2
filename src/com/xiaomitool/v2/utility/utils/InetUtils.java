@@ -6,8 +6,10 @@ import com.xiaomitool.v2.inet.CustomHttpRequest;
 import com.xiaomitool.v2.inet.EasyHttp;
 import com.xiaomitool.v2.inet.EasyResponse;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.utility.WaitSemaphore;
 import org.apache.commons.lang3.SystemUtils;
+import org.json.JSONObject;
 
 import java.awt.*;
 import java.io.IOException;
@@ -221,5 +223,9 @@ public class InetUtils {
         Log.error("Unknown response from update request: "+body);
         return -5;
     }
+
+
+
+
 
 }

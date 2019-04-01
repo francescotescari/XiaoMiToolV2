@@ -7,10 +7,7 @@ import com.xiaomitool.v2.language.Lang;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.resources.ResourcesConst;
-import com.xiaomitool.v2.utility.utils.MutexUtils;
-import com.xiaomitool.v2.utility.utils.NumberUtils;
-import com.xiaomitool.v2.utility.utils.SettingsUtils;
-import com.xiaomitool.v2.utility.utils.StrUtils;
+import com.xiaomitool.v2.utility.utils.*;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -21,12 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ToolManager {
-    public static String TOOL_VERSION = "9.3.29";
-    public static String URL_DONATION = "https://www.xiaomitool.com/V2/donate";
-    public static String TOOL_VERSION_EX = "alpha";
-    public static String XMT_HOST = "https://www.xiaomitool.com/V2";
-    public static String URL_UPDATE = XMT_HOST+"/update.php";
-    public static String URL_LATEST = XMT_HOST+"/latest";
+
+    public static final String TOOL_VERSION = "9.3.29";
+    public static final String URL_DONATION = "https://www.xiaomitool.com/V2/donate";
+    public static final String TOOL_VERSION_EX = "alpha";
+    public static final String XMT_HOST = "http://192.168.31.204/V2";
+  //  public static final String URL_UPDATE = XMT_HOST+"/update.php";
+    public static final String URL_UPDATE_V2 = XMT_HOST+"/updateV2.php";;
+    public static final String URL_LATEST = XMT_HOST+"/latest";
+    public static final boolean DEBUG_MODE = true;
     private static boolean exiting = false;
 
 
@@ -38,7 +38,12 @@ public class ToolManager {
 
 
     private static List<Stage> activeStages = new ArrayList<>();
-    public static void init(Stage primaryStage) throws Exception {
+    public static void init(Stage primaryStage, String[] args) throws Exception {
+        if (UpdateUtils.checkUpdateKillMe(args)){
+            System.exit(0);
+            return;
+        }
+        Log.init();
         boolean isSingleInstance = MutexUtils.lock();
         if (!isSingleInstance){
             ToolManager.exit(1);

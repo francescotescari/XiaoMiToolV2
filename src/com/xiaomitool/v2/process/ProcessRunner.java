@@ -72,7 +72,7 @@ public class ProcessRunner {
 
 
 
-    private Process start() throws IOException {
+    public Process start() throws IOException {
         List<String> args = buildFinalArgumentsList();
         StringBuilder stringBuilder = new StringBuilder();
         for (String arg: args){

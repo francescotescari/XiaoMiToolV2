@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.utility.utils;
 
+import com.xiaomitool.v2.logging.Log;
 import netscape.javascript.JSObject;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -134,5 +135,22 @@ public class StrUtils {
         }
         return new String(ic);
 
+    }
+
+    public static int compareVersion(String thisVersion, String ofThisVersion){
+        String[] parts1 = thisVersion.split("\\.");
+        String[] parts2 = ofThisVersion.split("\\.");
+        //Log.debug(Integer.min(parts1.length, parts2.length));
+        for (int i = 0; i<Integer.min(parts1.length, parts2.length); ++i){
+            int i1 = Integer.parseInt(parts1[i]);
+            int i2 = Integer.parseInt(parts2[i]);
+            //Log.debug("i1: "+i1+", i2: "+i2);
+            if (i1 < i2){
+                return -1;
+            } else if (i1 > i2){
+                return 1;
+            }
+        }
+        return parts1.length - parts2.length;
     }
 }

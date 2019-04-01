@@ -3,12 +3,10 @@ package com.xiaomitool.v2.engine.actions;
 import com.xiaomitool.v2.adb.AdbCommunication;
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceManager;
-import com.xiaomitool.v2.engine.CommonsMessages;
 import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.PopupWindow;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.controller.SettingsController;
-import com.xiaomitool.v2.gui.deviceView.DeviceRecoveryView;
 import com.xiaomitool.v2.gui.deviceView.DeviceView;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 
@@ -17,17 +15,17 @@ import com.xiaomitool.v2.gui.raw.RawManager;
 import com.xiaomitool.v2.gui.visual.*;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.logging.feedback.LiveFeedback;
 import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
-import com.xiaomitool.v2.procedure.install.StockRecoveryInstall;
 import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
+import com.xiaomitool.v2.tasks.DownloadTask;
+import com.xiaomitool.v2.tasks.TaskManager;
+import com.xiaomitool.v2.tasks.UpdateListener;
 import com.xiaomitool.v2.utility.DriverUtils;
 import com.xiaomitool.v2.utility.RunnableMessage;
-import com.xiaomitool.v2.utility.WaitSemaphore;
 import com.xiaomitool.v2.utility.utils.InetUtils;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
-import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
+import com.xiaomitool.v2.utility.utils.UpdateUtils;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -40,15 +38,17 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import static com.xiaomitool.v2.engine.CommonsMessages.NOOP;
 import static com.xiaomitool.v2.engine.actions.ActionsDynamic.SEARCH_SELECT_DEVICES;
-import static com.xiaomitool.v2.engine.actions.ActionsDynamic.START_PROCEDURE;
 
 
 public class ActionsStatic {
@@ -62,7 +62,7 @@ public class ActionsStatic {
             LiveFeedbackEasy.sendOpen(ResourcesConst.getOSLogString(), null);
             Log.info("Discalimer accepted");
 
-            CHECK_FOR_UPDATES().run();
+            CHECK_FOR_UPDATES_V2().run();
             REQUIRE_REGION().run();
             INSTALL_DRIVERS().run();
             return MOD_CHOOSE_SCREEN().run();
@@ -228,7 +228,7 @@ public class ActionsStatic {
             return NOOP;
         };
     }
-    public static RunnableMessage CHECK_FOR_UPDATES(){
+    /*public static RunnableMessage CHECK_FOR_UPDATES(){
         return () -> {
             ActionsStatic.REQUIRE_INTERNET_CONNECTION().run();
             int res = InetUtils.checkForUpdates(ToolManager.URL_UPDATE, ToolManager.TOOL_VERSION, SettingsUtils.requireHashedPCId());
@@ -249,6 +249,158 @@ public class ActionsStatic {
             }
             WindowManager.removeTopContent();
             return 0;
+        };
+    }*/
+
+    public static RunnableMessage CHECK_FOR_UPDATES_V2(){
+        return () -> {
+            Log.info("Action check for updates v2");
+            ActionsStatic.REQUIRE_INTERNET_CONNECTION().run();
+            UpdateUtils.UpdateStatus updateStatus;
+            try {
+                updateStatus = UpdateUtils.checkForUpdatesV2(ToolManager.URL_UPDATE_V2, ToolManager.TOOL_VERSION, SettingsUtils.requireHashedPCId());
+            } catch (Exception e) {
+                Log.error("Failed to check for updates: "+e.getMessage());
+                return 1;
+            }
+            Log.info("Update status: "+updateStatus);
+            if (UpdateUtils.UpdateStatus.UPDATED.equals(updateStatus)){
+                Log.info("Tool is updated");
+                return 0;
+            }
+            boolean isFullUpdate = UpdateUtils.UpdateStatus.FULL_UPDATE.equals(updateStatus);
+            if (UpdateUtils.UpdateStatus.QUICK_UPDATE.equals(updateStatus)){
+                Log.info("Quick update available: "+updateStatus.getLatestVersion()+" - "+updateStatus.getQuickUrl());
+                if (!ResourcesManager.isQuickUpdatedSupported()) {
+                    isFullUpdate = true;
+                } else {
+                    return DOWNLOAD_INSTALL_QUICK_UPDATE(updateStatus.getQuickUrl(), updateStatus.getLatestVersion(), updateStatus.getQuickSize()).run();
+                }
+            }
+            if (isFullUpdate){
+                return SHOW_UPDATE_AVAILABLE(LRes.UPDATE_AVAILABLE_TEXT.toString(LRes.UPDATE_FULL_UP_AVAIL, updateStatus.getLatestVersion()), true).run();
+            }
+            if (UpdateUtils.UpdateStatus.BLOCK.equals(updateStatus)){
+                ToolManager.exit(1);
+                return -1;
+            }
+            Log.warn("Unknown update status: "+updateStatus);
+            return 2;
+
+        };
+    }
+
+    private static RunnableMessage SHOW_UPDATE_AVAILABLE(String message, boolean fullUpdate){
+        return new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+                ButtonPane buttonPane = new ButtonPane(LRes.IGNORE, LRes.UPDATE_WILL_UPDATE);
+                buttonPane.setContentText(message);
+                WindowManager.setMainContent(buttonPane,false);
+                int msg = buttonPane.waitClick();
+
+                WindowManager.removeTopContent();
+                if (msg != 1){
+                    Log.warn("Update ignored");
+                } else if (fullUpdate) {
+                    Log.info("Opening url for full update");
+                    InetUtils.openUrlInBrowser(ToolManager.URL_LATEST+"?p="+ResourcesConst.getOSName());
+                    ToolManager.exit(0);
+                    return -1;
+                }
+                return msg;
+            }
+        };
+    }
+
+
+    public static final String XMT_UPDATE_FILENAME = "XiaoMiTool_update.jar";
+    private static RunnableMessage DOWNLOAD_INSTALL_QUICK_UPDATE(String downloadUrl, String version, String size){
+        return new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+
+                Log.info("Showing quick update prompt");
+                final String failedMessage = LRes.UPDATE_QUICK_UP_FAILED.toString();
+                try {
+                    if (!ResourcesManager.isQuickUpdatedSupported()){
+                        throw new Exception("Quick update not supported");
+                    }
+                    int click = SHOW_UPDATE_AVAILABLE(LRes.UPDATE_AVAILABLE_TEXT.toString(LRes.UPDATE_QUICK_UP_AVAIL.toString(size), version), false).run();
+                    if (click != 1) {
+                        return 0;
+                    }
+                    ProgressPane.DefProgressPane defProgressPane = new ProgressPane.DefProgressPane();
+                    defProgressPane.setContentText(LRes.DOWNLOADING_UPDATE.toString("XiaoMiTool V2", '(' + version + ')'));
+                    UpdateListener listener = defProgressPane.getUpdateListener(500);
+                    String fn = XMT_UPDATE_FILENAME;
+                    if (downloadUrl.endsWith(".gz")){
+                        fn+=".gz";
+                    }
+                    DownloadTask downloadTask = new DownloadTask(listener, downloadUrl, SettingsUtils.getDownloadFile(fn));
+                    WindowManager.setMainContent(defProgressPane, false);
+                    TaskManager.getInstance().startSameThread(downloadTask);
+                    WindowManager.removeTopContent();
+                    if (downloadTask.getError() != null) {
+                        throw downloadTask.getError();
+                    }
+                    File downloadedFile = (File) downloadTask.getResult();
+                    if (downloadedFile == null) {
+                        throw new Exception("Null file object");
+                    }
+                    boolean isCompressed = downloadedFile.toString().endsWith(".gz");
+                    ActionsDynamic.MAIN_SCREEN_LOADING(LRes.INSTALLING_UPDATED).run();
+                    Path extractedFile;
+                    if (isCompressed) {
+                        GZIPInputStream inputStream = new GZIPInputStream(new BufferedInputStream(new FileInputStream(downloadedFile)));
+                        Path dlPath = downloadedFile.toPath();
+                        extractedFile = dlPath.getParent();
+                        if (extractedFile == null){
+                            throw new Exception("Failed to get downlaod file dir");
+                        }
+                        String ffn = FilenameUtils.getName(dlPath.toString().replace(".gz",""));
+                        extractedFile = extractedFile.resolve(ffn);
+                        OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(extractedFile.toFile()));
+                        IOUtils.copy(inputStream, outputStream);
+                        inputStream.close();
+                        outputStream.close();
+                    } else {
+                        extractedFile = downloadedFile.toPath();
+                    }
+                    Path installDir = ResourcesManager.getCurrentJarDirPath();
+                    Path dstFile = installDir.resolve(XMT_UPDATE_FILENAME);
+                    if (Files.exists(dstFile)){
+                        Files.delete(dstFile);
+                    }
+                    Files.copy(extractedFile, dstFile);
+                    Thread.sleep(500);
+                    if (!UpdateUtils.checkIfAlive(ResourcesManager.getJavaLaunchExe(),dstFile)){
+                        throw new Exception("Failed to start new jar file: not alive");
+                    }
+                    if (!UpdateUtils.startUpdateProcess(ResourcesManager.getJavaLaunchExe(), dstFile, true)){
+                        throw new Exception("Failed to start new jar file: update process fail");
+                    }
+                    ToolManager.exit(0);
+                    return 0;
+
+
+                } catch (Exception e){
+                    Log.error("Failed to download install quick update: "+e.getMessage());
+                    Log.printStackTrace(e);
+                    return QUICK_UPDATE_FAILED(failedMessage).run();
+                }
+
+            }
+        };
+
+    }
+
+    private static RunnableMessage QUICK_UPDATE_FAILED(String message){
+        return new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+                return SHOW_UPDATE_AVAILABLE(message,true).run();
+            }
         };
     }
 

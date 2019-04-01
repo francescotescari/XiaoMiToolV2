@@ -1,26 +1,31 @@
 package com.xiaomitool.v2.logging;
 
+import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
+import org.apache.commons.io.output.NullOutputStream;
 
 import java.io.*;
 
 
 public class Log {
 
-    public static final boolean ADVANCED_LOG  = true;
+    public static final boolean ADVANCED_LOG  = false;
     private static final String PREFIX_DEBUG = "DEBUG";
     private static final String PREFIX_INFO = "INFO";
     private static final String PREFIX_WARN = "WARN";
     private static String PREFIX_ERROR = "ERROR";
-    private static Debugger logOutput = Debugger.defaultDebugger();
+    private static Debugger logOutput = Debugger.fromOutputStream(NullOutputStream.NULL_OUTPUT_STREAM);
     private static boolean LIVE_LOG = true;
 
 
+    public static void init(){
+        logOutput = Debugger.defaultDebugger();
+    }
 
 
 
     public static void debug(Object arg){
-        if (ADVANCED_LOG) {
+        if (ADVANCED_LOG || ToolManager.DEBUG_MODE) {
             log(PREFIX_DEBUG, arg, false);
         }
     }

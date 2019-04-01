@@ -2,6 +2,7 @@ package com.xiaomitool.v2.test;
 
 import com.xiaomitool.v2.adb.AdbCommons;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
+import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.language.Lang;
@@ -14,6 +15,7 @@ import com.xiaomitool.v2.process.LineScanner;
 import com.xiaomitool.v2.process.ProcessRunner;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.utility.utils.InetUtils;
+import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
 import com.xiaomitool.v2.xiaomi.unlock.UnlockCommonRequests;
@@ -70,7 +72,7 @@ public class Main2 {
 
 
     public static void main(String[] args) throws IOException {
-        InetUtils.openUrlInBrowser("sddao");
+       Log.debug(StrUtils.compareVersion("9.4.1",ToolManager.TOOL_VERSION));
     }
 
     private static void addParam(String key, String value){
