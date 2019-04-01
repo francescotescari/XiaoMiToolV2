@@ -168,11 +168,9 @@ public class DeviceProperties {
                 if (out.isEmpty()){
                     continue;
                 }
-                String value = AdbUtils.parseFastbootVar(var, out);
-                if (value != null){
-                    this.put(var, value);
+                    this.put(var, out);
                     result = true;
-                }
+
             }
             return result;
         }

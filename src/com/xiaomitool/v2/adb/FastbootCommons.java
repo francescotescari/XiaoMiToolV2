@@ -91,7 +91,7 @@ public class FastbootCommons {
         if (runner.getExitValue() != 0){
             return "";
         }
-        return runner.getOutputString();
+        return AdbUtils.parseFastbootVar(var, runner.getOutputString());
     }
     public static List<String> oemDeviceInfo(String device){
         return command_list("oem device-info",device);

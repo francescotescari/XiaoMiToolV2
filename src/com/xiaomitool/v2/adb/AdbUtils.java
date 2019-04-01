@@ -121,7 +121,7 @@ public class AdbUtils {
         return map;
     }
     public static String parseFastbootVar(String var, String output){
-        if (output == null){
+        if (output == null || var == null){
             return null;
         }
         Pattern pattern = Pattern.compile("\\s*"+var+"\\s*:\\s*([^\\n]+)");
