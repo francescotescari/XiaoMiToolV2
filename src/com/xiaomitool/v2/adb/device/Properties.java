@@ -123,4 +123,10 @@ public abstract class Properties {
         }
         return builder.toString();
     }
+
+    public synchronized void reset() {
+        synchronized (propertiesMap) {
+            this.parsed = false;
+        }
+    }
 }

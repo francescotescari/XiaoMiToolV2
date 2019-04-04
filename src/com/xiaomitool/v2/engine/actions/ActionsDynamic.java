@@ -2,6 +2,7 @@ package com.xiaomitool.v2.engine.actions;
 
 import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.device.Device;
+import com.xiaomitool.v2.adb.device.DeviceAnswers;
 import com.xiaomitool.v2.adb.device.DeviceManager;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.engine.CommonsMessages;
@@ -32,6 +33,7 @@ import com.xiaomitool.v2.utility.CommandClass;
 import com.xiaomitool.v2.utility.Nullable;
 import com.xiaomitool.v2.utility.RunnableMessage;
 
+import com.xiaomitool.v2.utility.YesNoMaybe;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import javafx.animation.Animation;
@@ -386,10 +388,12 @@ public class ActionsDynamic {
 
     public static RunnableMessage FIND_DEVICE_INFO(Device device){
         return () -> {
+            device.getAnswers().setAnswer(DeviceAnswers.HAS_TWRP, YesNoMaybe.MAYBE);
+            device.getDeviceProperties().getRecoveryProperties().reset();
             Log.info("Starting find_device_info visual procedure");
-            Text texts[] = new Text[10];
-            Text ktexts[] = new Text[10];
-            LRes kstring[] = new LRes[]{LRes.SERIAL, LRes.BRAND, LRes.MODEL, LRes.CODENAME, LRes.MIUI_VERSION, LRes.ANDROID_VERSION, LRes.SERIAL_NUMBER, LRes.BOOTLOADER_STATUS, LRes.FASTBOOT_PARSED, LRes.RECOVERY_PARSED};
+            Text[] texts = new Text[10];
+            Text[] ktexts = new Text[10];
+            LRes[] kstring = new LRes[]{LRes.SERIAL, LRes.BRAND, LRes.MODEL, LRes.CODENAME, LRes.MIUI_VERSION, LRes.ANDROID_VERSION, LRes.SERIAL_NUMBER, LRes.BOOTLOADER_STATUS, LRes.FASTBOOT_PARSED, LRes.RECOVERY_PARSED};
             for (int i = 0; i<kstring.length; ++i){
                 texts[i] = new Text();
                 ktexts[i] = new Text();
