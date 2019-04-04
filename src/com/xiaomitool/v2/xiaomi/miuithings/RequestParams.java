@@ -116,10 +116,7 @@ public abstract class RequestParams implements Cloneable {
 
 
     private boolean isInternationalBadMethod(){
-        if (this.device == null){
-            return false;
-        }
-        return device.contains("_global");
+        return MiuiRom.Specie.getZone(this.device) != 1;
     }
 
     public void setZone(int zone) {

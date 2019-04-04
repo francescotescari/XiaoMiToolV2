@@ -13,6 +13,7 @@ import com.xiaomitool.v2.procedure.device.RebootDevice;
 import com.xiaomitool.v2.process.AdbRunner;
 import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.rom.Installable;
+import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.tasks.AdbSideloadTask;
 import com.xiaomitool.v2.tasks.Task;
 import com.xiaomitool.v2.tasks.TaskManager;
@@ -317,13 +318,17 @@ public class StockRecoveryInstall {
                     throw new InstallException("Failed to retrieve recovery information: null param", InstallException.Code.INFO_RETRIVE_FAILED, true);
                 }
                 int z;
-                try {
-                    z = Integer.parseInt(zone);
-                    if (z != 1 && z != 2) {
-                        throw new Exception();
+                if (zone == null){
+                    z = 0;
+                } else {
+                    try {
+                        z = Integer.parseInt(zone);
+                        if (z != 1 && z != 2) {
+                            throw new Exception();
+                        }
+                    } catch (Throwable t) {
+                        z = MiuiRom.Specie.getZone(dev);
                     }
-                } catch (Throwable t) {
-                    z = dev.contains("_global") ? 2 : 1;
                 }
                 DeviceRequestParams deviceRequestParams = new DeviceRequestParams(dev, version, codebase, null, sn, z);
                 procedureRunner.setContext(Procedures.REQUEST_PARAMS, deviceRequestParams);

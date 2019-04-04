@@ -232,6 +232,13 @@ public abstract class MiuiRom extends Installable {
         public int getZone() {
             return isChinese() ?  1 : 2;
         }
+        public static int getZone(String codename){
+            if (codename == null){
+                return 0;
+            }
+            Specie specie = fromStringBranch(codename, Branch.STABLE);
+            return specie.getZone();
+        }
 
 
     }

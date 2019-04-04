@@ -4,6 +4,7 @@ import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.utility.Nullable;
 import com.xiaomitool.v2.utility.utils.ObjUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiUtilities;
@@ -31,7 +32,7 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
     public static DeviceRequestParams readFromDevice(Device device, boolean requireOtaParameters) throws AdbException {
         DeviceProperties properties = device.getDeviceProperties();
 
-        String codename =  properties.getCodename(true);
+        String codename =  properties.getCodename(false);
         if (codename == null){
             throw new AdbException("Missing device codename in device properties");
         }
@@ -49,7 +50,6 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
         Log.debug("Device zone1: "+zone);
         if (requireOtaParameters) {
             try {
-
                 ObjUtils.checkNotNull(version, "version");
                 ObjUtils.checkNotNull(codebase, "codebase");
                 ObjUtils.checkNotNull(serialNumber, "serialNumber");
@@ -61,16 +61,18 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
             }
         }
         int z;
-        try {
-            z = Integer.parseInt(zone.trim());
-        } catch (Throwable e){
-            String cn = properties.getCodename(false);
-            z = cn == null ? 0 : (cn.endsWith("_global") ? 2 : 1);
-        }
-        Log.debug("Device zone: "+z);
         if (zone == null || zone.isEmpty()){
             z = 0;
+        } else {
+            try {
+                z = Integer.parseInt(zone.trim());
+            } catch (Throwable e) {
+                //String cn = properties.getCodename(false);
+                z = MiuiRom.Specie.getZone(codename);
+            }
         }
+        Log.debug("Device zone: "+z);
+
         MiuiVersion miuiVersion = new MiuiVersion(version);
         Branch branch = (Branch) properties.get(DeviceProperties.X_BRANCH);
         if (branch == null){
