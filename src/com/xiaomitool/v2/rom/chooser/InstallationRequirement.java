@@ -100,7 +100,7 @@ public abstract class   InstallationRequirement {
 
         @Override
         public String getHumanName(Device device) {
-            return DeviceGroups.isAndroidOneDevice((String) device.getDeviceProperties().get(DeviceProperties.CODENAME)) ? LRes.REQ_BOOTLOADER_UNLOCKED.toString() : LRes.REQ_BOOTLOADER_UNLOCKED_MIUI.toString();
+            return DeviceGroups.isAndroidOneDevice(device.getDeviceProperties().getCodename(true)) ? LRes.REQ_BOOTLOADER_UNLOCKED.toString() : LRes.REQ_BOOTLOADER_UNLOCKED_MIUI.toString();
         }
     };
     public static final InstallationRequirement TWRP_INSTALLED = new InstallationRequirement("twrp install", UNLOCKED_BOOTLOADER, CHECK_IF_TWRP_INSTALLED) {
@@ -201,7 +201,7 @@ public abstract class   InstallationRequirement {
                     MiuiRom.Specie currentSpecie = device.getAnswers().getCurrentSpecie();
                     if (currentSpecie.getZone() != wantToInstallSpecie.getZone()){
                         Log.debug("Different rom zone installation, this might be an unsafe cross region installation");
-                        String product = (String) device.getDeviceProperties().get(DeviceProperties.CODENAME);
+                        String product = device.getDeviceProperties().getCodename(true);
                         isUnsafeCrossRegionInstallation = !DeviceGroups.isSafeToChangeRecoveryLocked(product);
                     }
                 }

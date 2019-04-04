@@ -105,7 +105,7 @@ public class StockRecoveryFetch {
     }
 
     public static RInstall validatePkgRom(Device device){
-        Set<MiuiRom.Specie> speciesToSearch = MiuiRom.Specie.listToSearchSpecies(SettingsUtils.getRegion(),(String) device.getDeviceProperties().get(DeviceProperties.CODENAME));
+        Set<MiuiRom.Specie> speciesToSearch = MiuiRom.Specie.listToSearchSpecies(SettingsUtils.getRegion(),device.getDeviceProperties().getCodename(false));
         RInstall[] procedures = new RInstall[speciesToSearch.size()];
         int i = 0;
         for (MiuiRom.Specie specie : speciesToSearch){

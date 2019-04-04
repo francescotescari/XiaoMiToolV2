@@ -27,7 +27,8 @@ public class ActionsUtil {
         DeviceProperties props = device.getDeviceProperties();
         String brand, codename, model, serial, bootStatus, miuiVersion, androidVersion, recoveryAvailable, fastbootAvailable, serialNumber;
         brand = props.get(DeviceProperties.BRAND, LRes.UNKNOWN).toString();
-        codename = props.get(DeviceProperties.CODENAME, LRes.UNKNOWN).toString();
+        codename = props.getCodename(true);
+        if (codename == null){codename = LRes.UNKNOWN.toString();}
         model =  props.get(DeviceProperties.MODEL, LRes.UNKNOWN).toString();
         serial = device.getSerial();
         UnlockStatus unlockStatus = device.getAnswers().getUnlockStatus();

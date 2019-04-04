@@ -114,7 +114,7 @@ public abstract class ChoosableProcedure implements Choiceable, ProcedureBundled
                     File file = Procedures.selectFileFromPc(LRes.FILE_SELECT_TIT.toString(), LRes.FILE_SELECT_TEXT.toString(), new FileChooser.ExtensionFilter("Recovery image file or archive","*.img"));
                     Installable installable = null;
                     String path = file.getAbsolutePath();
-                    String codename = (String) Procedures.requireDevice(runner).getDeviceProperties().get(DeviceProperties.CODENAME);
+                    String codename = Procedures.requireDevice(runner).getDeviceProperties().getCodename(true);
                     if (path == null){
                         throw new InstallException("File selected is null", InstallException.Code.FILE_NOT_FOUND, true);
                     }

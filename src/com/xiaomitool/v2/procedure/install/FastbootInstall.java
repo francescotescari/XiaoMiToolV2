@@ -252,6 +252,10 @@ public class FastbootInstall {
                     throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, true);
                 }
                 Log.info("First trial unlock token: "+token);
+                String product = (String) device.getDeviceProperties().getFastbootProperties().get(DeviceProperties.FASTBOOT_PRODUCT);
+                if (product == null){
+                    product = FastbootCommons.getvar("product", device.getSerial());
+                }
                 try {
                     runner.text(LRes.UNLOCK_CHECKING_ACCOUNT);
                     String info = UnlockCommonRequests.userInfo();
@@ -261,7 +265,7 @@ public class FastbootInstall {
                         Log.info("Unlock request user info: "+info);
                     }
                     runner.text(LRes.UNLOCK_CHECKING_DEVICE);
-                    String alert = UnlockCommonRequests.deviceClear((String) device.getDeviceProperties().get(DeviceProperties.CODENAME));
+                    String alert = UnlockCommonRequests.deviceClear(product);
                     if (alert != null){
                         //TODO
                         Log.debug(alert);
@@ -290,7 +294,7 @@ public class FastbootInstall {
                     try {
                         String unlockData = null;
                         runner.text(LRes.UNLOCK_REQUESTING_TOKEN);
-                        unlockData = UnlockCommonRequests.ahaUnlock(token, (String) device.getDeviceProperties().getFastbootProperties().get(DeviceProperties.FASTBOOT_PRODUCT), "", "", "");
+                        unlockData = UnlockCommonRequests.ahaUnlock(token, product, "", "", "");
                         if (unlockData == null) {
                             throw new InstallException("Failed to get the unlock data required", InstallException.Code.INFO_RETRIVE_FAILED, true);
                         }

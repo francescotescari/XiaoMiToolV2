@@ -19,7 +19,7 @@ public class TwrpFetch {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                String codename = Procedures.requireDeviceProperty(runner, DeviceProperties.CODENAME);
+                String codename = Procedures.requireDevice(runner).getDeviceProperties().getCodename(true);
                 if ("sirius".equals(codename.toLowerCase())){
                     codename = "aNotExistingDevice";
                 }
@@ -44,7 +44,7 @@ public class TwrpFetch {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Log.info("Searching TWRP on android file host");
-                String codename = Procedures.requireDeviceProperty(runner, DeviceProperties.CODENAME);
+                String codename = Procedures.requireDevice(runner).getDeviceProperties().getCodename(true);
                 TwrpFile file;
                 runner.text(LRes.TWRP_SEARCHING_FROM.toString(codename, "AndroidFileHost"));
                 try {
@@ -65,7 +65,7 @@ public class TwrpFetch {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Log.info("Selecting twrp from PC");
-                String codename = Procedures.requireDeviceProperty(runner, DeviceProperties.CODENAME);
+                String codename = Procedures.requireDevice(runner).getDeviceProperties().getCodename(true);
                 File file = Procedures.selectFileFromPc(LRes.TWRP_SELECT_FILE.toString(), LRes.TWRP_SELECT_FILE_EXP.toString("sirius".equals(codename.toLowerCase()) ? (codename+" xiaomi") : codename), new FileChooser.ExtensionFilter("Generic TWRP file","*.img","*.zip"),new FileChooser.ExtensionFilter("Image file", "*.img"), new FileChooser.ExtensionFilter("Compressed image file", "*.zip"));
                 TwrpFile twrpFile = new TwrpFile(file,codename);
                 runner.setContext(Procedures.INSTALLABLE, twrpFile);

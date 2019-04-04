@@ -29,7 +29,7 @@ public class DeviceTableEntry {
         this(device.getSerial(), device.isConnected() ? device.getStatus() : null, device.getDeviceProperties());
     }
     public DeviceTableEntry(String serial, Device.Status deviceStatus, DeviceProperties deviceProperties){
-        this(serial,(String) deviceProperties.get(DeviceProperties.CODENAME), deviceStatus == null ? "disconnected" : deviceStatus.toString(), (String) deviceProperties.get(DeviceProperties.BRAND), (String) deviceProperties.get(DeviceProperties.MODEL));
+        this(serial,deviceProperties.getCodename(true), deviceStatus == null ? "disconnected" : deviceStatus.toString(), (String) deviceProperties.get(DeviceProperties.BRAND), (String) deviceProperties.get(DeviceProperties.MODEL));
     }
 
     public void setBrand(String brand) {

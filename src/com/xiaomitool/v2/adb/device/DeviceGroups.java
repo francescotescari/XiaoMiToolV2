@@ -1,6 +1,10 @@
 package com.xiaomitool.v2.adb.device;
 
+import com.xiaomitool.v2.logging.Log;
+
 import java.util.HashSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DeviceGroups {
     private static final HashSet<String> ALWAYS_UNLOCKED_DEVICES = getAlwaysUnlockedSet();
@@ -198,9 +202,26 @@ public class DeviceGroups {
         return set;
 
     }
+    private static final Pattern CODENAME_STRIPPER = Pattern.compile("^([a-z]+(_xhdpi|_sprout)?)((_[a-z]+)*_global)*$", Pattern.CASE_INSENSITIVE);
+    private static String stripCodenamePro(String codename){
+        if (codename == null){
+            return null;
+        }
+        codename = codename.replace("_alpha","");
+        Matcher matcher =  CODENAME_STRIPPER.matcher(codename);
+        if (!matcher.matches()){
+            return null;
+        }
+        return matcher.group(1);
+    }
+
     public static String stripCodename(String codename){
         if (codename == null){
-            return "";
+            return null;
+        }
+        String cn = stripCodenamePro(codename);
+        if (cn != null){
+            return cn;
         }
         return codename.replace("_eea_global","").replace("_ru_global","").replace("_india_global","").replace("_global","").replace("_alpha","");
     }

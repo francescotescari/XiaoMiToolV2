@@ -31,14 +31,18 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
     public static DeviceRequestParams readFromDevice(Device device, boolean requireOtaParameters) throws AdbException {
         DeviceProperties properties = device.getDeviceProperties();
 
-        String codename = (String) properties.get(DeviceProperties.CODENAME);
+        String codename =  properties.getCodename(true);
         if (codename == null){
             throw new AdbException("Missing device codename in device properties");
         }
         String version = (String) properties.get(DeviceProperties.FULL_VERSION);
         String codebase = (String) properties.get(DeviceProperties.CODEBASE);
-        if (codebase!= null && codebase.length() == 1){
-            codebase = codebase+".0";
+        if (codebase!= null){
+            if (codebase.length() == 1) {
+                codebase = codebase + ".0";
+            } else if (codebase.endsWith(".")){
+                codebase+="0";
+            }
         }
         Integer serialNumber = (Integer)  properties.get(DeviceProperties.X_SERIAL_NUMBER);
         String zone =  (String) properties.get(DeviceProperties.ROMZONE);
@@ -60,7 +64,8 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
         try {
             z = Integer.parseInt(zone.trim());
         } catch (Throwable e){
-            z = codename.endsWith("_global") ? 2 : 1;
+            String cn = properties.getCodename(false);
+            z = cn == null ? 0 : (cn.endsWith("_global") ? 2 : 1);
         }
         Log.debug("Device zone: "+z);
         if (zone == null || zone.isEmpty()){

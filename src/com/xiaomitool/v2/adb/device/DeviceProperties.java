@@ -6,6 +6,7 @@ import com.xiaomitool.v2.adb.FastbootCommons;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.YesNoMaybe;
 import com.xiaomitool.v2.utility.utils.ThreadUtils;
+import com.xiaomitool.v2.xiaomi.XiaomiUtilities;
 import com.xiaomitool.v2.xiaomi.miuithings.Branch;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 
@@ -79,7 +80,7 @@ public class DeviceProperties {
         }
         private void findUnlockStatusDevice(){
 
-            this.put(X_LOCKSTATUS,DeviceGroups.hasUnlockedBootloader(this.get(CODENAME,"").toString()) ? UnlockStatus.UNLOCKED : UnlockStatus.fromString((String) this.get("ro.secureboot.lockstate")));
+            this.put(X_LOCKSTATUS,DeviceGroups.hasUnlockedBootloader(getCodename(true)) ? UnlockStatus.UNLOCKED : UnlockStatus.fromString((String) this.get("ro.secureboot.lockstate")));
         }
         private boolean findFeatures(String product, boolean usePull){
             if (product.contains(" ")) {
@@ -190,7 +191,7 @@ public class DeviceProperties {
 
         private boolean findUnlockState(){
             try {
-                if (DeviceGroups.hasUnlockedBootloader(device.getDeviceProperties().getAdbProperties().get(CODENAME,"").toString()) || DeviceGroups.hasUnlockedBootloader(device.getDeviceProperties().getSideloadProperties().get(CODENAME,"").toString())){
+                if (DeviceGroups.hasUnlockedBootloader(getCodename(true))){
                     this.put(X_LOCKSTATUS, UnlockStatus.UNLOCKED);
                     return true;
                 }
@@ -231,12 +232,12 @@ public class DeviceProperties {
             String value;
             value = AdbCommons.raw(serial, "getdevice:");
             if (value != null) {
-                this.put(CODENAME, value.replace("_global",""));
+                this.put(CODENAME, value.trim());
             }
             ThreadUtils.sleepSilently(30);
             value = AdbCommons.raw(serial, "getversion:");
             if (value != null) {
-                this.put(FULL_VERSION, value);
+                this.put(FULL_VERSION, value.trim());
             }
             ThreadUtils.sleepSilently(30);
             value = AdbCommons.raw(serial, "getsn:");
@@ -246,27 +247,27 @@ public class DeviceProperties {
             ThreadUtils.sleepSilently(30);
             value = AdbCommons.raw(serial, "getcodebase:");
             if (value != null) {
-                this.put(CODEBASE, value);
+                this.put(CODEBASE, value.trim());
             }
             ThreadUtils.sleepSilently(30);
             value = AdbCommons.raw(serial, "getbranch:");
             if (value != null) {
-                this.put(X_BRANCH, Branch.fromCode(value));
+                this.put(X_BRANCH, Branch.fromCode(value.trim()));
             }
             ThreadUtils.sleepSilently(30);
             value = AdbCommons.raw(serial, "getlanguage:");
             if (value != null) {
-                this.put(LANGUAGE, value);
+                this.put(LANGUAGE, value.trim());
             }
             ThreadUtils.sleepSilently(30);
             value = AdbCommons.raw(serial, "getregion:");
             if (value != null) {
-                this.put(REGION, value);
+                this.put(REGION, value.trim());
             }
             ThreadUtils.sleepSilently(30);
             value = AdbCommons.raw(serial, "getromzone:");
             if (value != null) {
-                this.put(ROMZONE,value);
+                this.put(ROMZONE,value.trim());
             }
             return true;
         }
@@ -335,5 +336,10 @@ public class DeviceProperties {
 
     public Properties getRecoveryProperties() {
         return recoveryProperties;
+    }
+
+    public String getCodename(boolean stripped){
+        String codename = (String) this.get(CODENAME);
+        return stripped ? XiaomiUtilities.stripCodename(codename) : codename;
     }
 }

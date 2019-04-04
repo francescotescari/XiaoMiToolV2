@@ -1,6 +1,7 @@
 package com.xiaomitool.v2.test;
 
 import com.xiaomitool.v2.adb.AdbCommons;
+import com.xiaomitool.v2.adb.device.DeviceGroups;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.inet.CustomHttpException;
@@ -10,7 +11,7 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.GuiListener;
 import com.xiaomitool.v2.procedure.ProcedureRunner;
 import com.xiaomitool.v2.procedure.Procedures;
-import com.xiaomitool.v2.procedure.fetch.AfhFetch;
+
 import com.xiaomitool.v2.process.LineScanner;
 import com.xiaomitool.v2.process.ProcessRunner;
 import com.xiaomitool.v2.resources.ResourcesManager;
@@ -72,7 +73,7 @@ public class Main2 {
 
 
     public static void main(String[] args) throws IOException {
-       Log.debug(StrUtils.compareVersion("9.4.1",ToolManager.TOOL_VERSION));
+       Log.debug(DeviceGroups.stripCodename("dipper_sprout_vf_ru_global_alpha"));
     }
 
     private static void addParam(String key, String value){

@@ -36,7 +36,7 @@ public class Procedures {
     public static final String REQUEST_PARAMS = "request_params";
     public static final String REQUEST_RESULT = "request_result";
     public static final String DOWNLOAD_URL = "download_url";
-    public static final String DEVICE_CODENAME = "device_codename";
+
     private static final String TO_DO_STACK = "to_do_stack";
     private static final String INSTALLABLE_CHOOSER = "installable_chooser";
     private static final String PROCEDURE_CHOOSER = "procedure_chooser";

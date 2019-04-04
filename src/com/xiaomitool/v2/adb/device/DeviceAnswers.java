@@ -89,7 +89,7 @@ public class DeviceAnswers {
 
     }
     public UnlockStatus getUnlockStatus() {
-        String product = (String) device.getDeviceProperties().get(DeviceProperties.CODENAME);
+        String product = device.getDeviceProperties().getCodename(true);
         if (DeviceGroups.hasUnlockedBootloader(product)) {
             return UnlockStatus.UNLOCKED;
         }
@@ -115,7 +115,7 @@ public class DeviceAnswers {
     }
 
     public MiuiRom.Specie getCurrentSpecie() {
-        String product = (String) device.getDeviceProperties().get(DeviceProperties.CODENAME);
+        String product =  device.getDeviceProperties().getCodename(false);
         MiuiVersion version = MiuiVersion.fromObject(device.getDeviceProperties().get(DeviceProperties.FULL_VERSION));
         Branch branch = version == null ? Branch.DEVELOPER : version.getBranch();
         branch = branch == null ? Branch.DEVELOPER : branch;

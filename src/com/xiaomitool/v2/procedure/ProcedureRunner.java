@@ -150,8 +150,8 @@ public class ProcedureRunner extends GuiListener {
         }
         if (device != null) {
             setContext(Procedures.SELECTED_DEVICE, device);
-            Object codename = device.getDeviceProperties().get(DeviceProperties.CODENAME);
-            setContext(Procedures.DEVICE_CODENAME, codename);
+            //Object codename = device.getDeviceProperties().get(DeviceProperties.CODENAME);
+            //setContext(Procedures.DEVICE_CODENAME, device.getDeviceProperties().getCodename(true));
         }
     }
     public void init(){

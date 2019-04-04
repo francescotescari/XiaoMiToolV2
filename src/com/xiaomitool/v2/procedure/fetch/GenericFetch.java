@@ -36,7 +36,7 @@ public class GenericFetch {
 
     public static RInstall fetchAllOfficial(Device device){
         SettingsUtils.Region region = SettingsUtils.getRegion();
-        String codename = (String) device.getDeviceProperties().get(DeviceProperties.CODENAME);
+        String codename = device.getDeviceProperties().getCodename(false);
         LinkedHashSet<MiuiRom.Specie> speciesToSearch = MiuiRom.Specie.listToSearchSpecies(region,codename);
         return RNode.sequence(FastbootFetch.findAllLatestFastboot(speciesToSearch),StockRecoveryFetch.allLatestOta(speciesToSearch));
     }

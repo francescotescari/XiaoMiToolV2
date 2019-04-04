@@ -589,7 +589,7 @@ public class ActionsDynamic {
                 try {
                     DeviceProperties properties = device.getDeviceProperties();
                     HashMap<String, String> logginProps = new HashMap<>();
-                    logginProps.put("d", String.valueOf(properties.get(DeviceProperties.CODENAME)));
+                    logginProps.put("d", String.valueOf(properties.getCodename(false)));
                     logginProps.put("c", String.valueOf(properties.get(DeviceProperties.CODEBASE)));
                     logginProps.put("v", String.valueOf(properties.get(DeviceProperties.FULL_VERSION)));
                     logginProps.put("bs", String.valueOf(device.getAnswers().getUnlockStatus()));
