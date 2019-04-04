@@ -56,9 +56,7 @@ public class AdbCommons {
         if (device != null){
             runner.setDeviceSerial(device);
         }
-        if (!"devices".equals(cmd)){
-            runner.setFeedback(true);
-        }
+
 
         List<String> list = new ArrayList<String>();
         Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(cmd);
@@ -95,7 +93,15 @@ public class AdbCommons {
         return output != null;
     }
     public static String adb_shell(String cmd, String device, int timeout){
-        AdbRunner runner = adb_command("shell -x \""+cmd+"\"",device,timeout);
+        AdbRunner runner = new AdbRunner("shell", "-x", cmd);
+        runner.setDeviceSerial(device);
+        try {
+            if (runner.runWait(timeout) != 0){
+                Log.error("Adb shell command returned "+runner.getExitValue());
+            }
+        } catch (IOException e) {
+            runner = null;
+        }
         if (runner == null || runner.getExitValue() != 0){
             return null;
         }

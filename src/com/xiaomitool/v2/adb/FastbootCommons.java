@@ -49,9 +49,6 @@ public class FastbootCommons {
         if (device != null){
             runner.setDeviceSerial(device);
         }
-        if (!"devices".equals(cmd)){
-            runner.setFeedback(true);
-        }
 
         List<String> list = new ArrayList<String>();
         Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(cmd);

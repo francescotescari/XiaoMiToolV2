@@ -7,6 +7,7 @@ import java.util.List;
 
 public class FastbootRunner extends ProcessRunner {
     private String deviceSerial = null;
+    private static long feedbackDisabled = 0;
     public FastbootRunner() {
         super(ResourcesManager.getFastbootPath());
     }
@@ -20,6 +21,10 @@ public class FastbootRunner extends ProcessRunner {
         if (deviceSerial != null){
             list.add("-s");
             list.add(deviceSerial);
+        }
+        isFeedback = !arguments.contains("devices");
+        if (!isFeedback){
+            isFeedback = feedbackDisabled++ % 10 == 0;
         }
         list.addAll(arguments);
         return list;

@@ -10,6 +10,7 @@ import java.util.List;
 
 public class AdbRunner extends ProcessRunner {
     private String deviceSerial = null;
+    private static long feedbackDisabled = 0;
     public AdbRunner() {
         super(ResourcesManager.getAdbPath());
     }
@@ -21,13 +22,19 @@ public class AdbRunner extends ProcessRunner {
     public void setDeviceSerial(String deviceSerial) {
         this.deviceSerial = deviceSerial;
     }
+
     @Override
     protected List<String> buildFinalArgumentsList(){
         LinkedList<String> list = new LinkedList<>();
         list.add(executable.toString());
+
         if (deviceSerial != null){
             list.add("-s");
             list.add(deviceSerial);
+        }
+        isFeedback = !arguments.contains("devices");
+        if (!isFeedback){
+            isFeedback = feedbackDisabled++ % 10 == 0;
         }
         list.addAll(arguments);
         return list;

@@ -24,7 +24,7 @@ public class ProcessRunner {
     private Process runningProcess = null;
     private int exitValue = 0;
     private ProcessStatus status = ProcessStatus.READY;
-    private boolean isFeedback = false;
+    protected boolean isFeedback = true;
     //private Thread syncStdoutThread = null, syncStderrThread = null;
     protected List<String> outputBuffer = Collections.synchronizedList(new LinkedList<>());
     private final WaitSemaphore readFinishedSemaphore = new WaitSemaphore(0);
@@ -134,9 +134,6 @@ public class ProcessRunner {
         return runningProcess = proc;
     }
 
-    public void setFeedback(boolean feedback) {
-        isFeedback = feedback;
-    }
 
     protected List<String> buildFinalArgumentsList(){
         LinkedList<String> list = new LinkedList<>();
