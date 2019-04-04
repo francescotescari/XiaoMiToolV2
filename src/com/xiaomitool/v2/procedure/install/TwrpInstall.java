@@ -121,7 +121,7 @@ private static final String ERASE_DATA_KEY = "erase_the_data";
                 task.waitFinished();
                 WindowManager.removeTopContent();
                 if (task.getError() != null || !task.isFinished()){
-                    throw new InstallException("Failed to install the zip file on the device: task failed: "+((task.getResult() != null) ? task.getError().getMessage() : "not finished"), InstallException.Code.TWRP_INSTALL_FAILED, true);
+                    throw new InstallException("Failed to install the zip file on the device: task failed: "+((task.getError() != null) ? task.getError().getMessage() : "not finished"), InstallException.Code.TWRP_INSTALL_FAILED, true);
                 }
 
 

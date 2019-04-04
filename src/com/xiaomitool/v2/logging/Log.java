@@ -55,8 +55,8 @@ public class Log {
         Log.debug(sStackTrace);
     }
 
-    public static void process(Object arg){
-        log("PROC",arg, false);
+    public static void process(Object arg, boolean isFeedback){
+        log("PROC",arg, isFeedback);
     }
 
     public static void log(String prefix, Object arg, boolean isFeedback){

@@ -112,11 +112,9 @@ public class ProcessRunner {
                         }
                         outputBuffer.add(data);
                         String log = "Process ("+pNum+") output: " + data;
-                        if (isFeedback) {
-                            Log.info(log);
-                        } else {
-                            Log.process(log);
-                        }
+
+                            Log.process(log, isFeedback);
+
                         for (RunnableWithArg toDo : syncCallbacks) {
                             toDo.run(data);
                         }

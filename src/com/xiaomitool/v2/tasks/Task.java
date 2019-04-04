@@ -59,6 +59,7 @@ public abstract class Task {
              try {
                  startInternal();
              } catch (Exception e){
+
                  error(e);
              }
          };
@@ -69,7 +70,16 @@ public abstract class Task {
             runningThread.start();
         }
     }
+    private int nextLogStep = 0;
+
     protected void update(long done){
+        if (done >=0 || totalSize > 0){
+            long percent = done/totalSize;
+            if (percent>= nextLogStep){
+                Log.info("Task completed at "+percent+"%");
+                nextLogStep+=10;
+            }
+        }
         this.latestUpdate = done;
         Duration durationLatest = Duration.between(timeLatestUpdate, LocalDateTime.now());
         timeLatestUpdate = (LocalDateTime) durationLatest.addTo(timeLatestUpdate);
