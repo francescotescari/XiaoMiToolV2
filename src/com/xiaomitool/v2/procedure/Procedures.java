@@ -31,11 +31,8 @@ import static com.xiaomitool.v2.procedure.install.InstallException.Code.*;
 
 public class Procedures {
     public static final String SELECTED_DEVICE = "selected_device";
-    public static final String INSTALL_FILE_PATH = "install_file_path";
     public static final String INSTALLABLE = "installable";
     public static final String REQUEST_PARAMS = "request_params";
-    public static final String REQUEST_RESULT = "request_result";
-    public static final String DOWNLOAD_URL = "download_url";
 
     private static final String TO_DO_STACK = "to_do_stack";
     private static final String INSTALLABLE_CHOOSER = "installable_chooser";

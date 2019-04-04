@@ -30,9 +30,11 @@ import com.xiaomitool.v2.rom.MiuiRom.Kind;
 
 public class MiuiRomOta {
 
-
-
     public static @NotNull HashMap<Kind, MiuiZipRom> otaV3_request(RequestParams params) throws XiaomiProcedureException, CustomHttpException {
+        return otaV3_request(params, false);
+    }
+
+    public static @NotNull HashMap<Kind, MiuiZipRom> otaV3_request(RequestParams params, boolean throwOnCode) throws XiaomiProcedureException, CustomHttpException {
 
         String key = XiaomiKeystore.KEY_MIOTAV3;
         String serviceToken = "";
@@ -95,7 +97,13 @@ public class MiuiRomOta {
              response = request.exec();
 
         if (!response.isAllRight()){
-            throw new XiaomiProcedureException("[otaV3_request] Request response is not good: code = "+response.getCode()+" and body size = "+response.getBody().length());
+            String message = "Ota request response is invalid: ";
+            if (response.isCodeRight()){
+                message+="empty response";
+            } else {
+                message+="http code: "+response.getCode();
+            }
+            throw new XiaomiProcedureException("[otaV3_request] "+message);
         }
         String decrypted;
         try {
@@ -111,6 +119,7 @@ public class MiuiRomOta {
         } catch (JSONException e){
             throw new XiaomiProcedureException("[otaV3_request] Json parse failed: "+e.getMessage());
         }
+
         Kind[] entries = new Kind[]{Kind.LATEST, Kind.CURRENT, Kind.INCREMENTAL, Kind.PACKAGE};
         HashMap<Kind, MiuiZipRom> map = new HashMap<>();
         JSONArray array = jsonData.optJSONArray(Mirrors.DEFAULT_MIRROR_ENTRY);
@@ -134,6 +143,26 @@ public class MiuiRomOta {
             }
 
         }
+        if (throwOnCode){
+            try {
+                JSONObject res = jsonData.getJSONObject("Code");
+                int code = res.getInt("code");
+                String message = res.getString("message");
+                if (code != 2000){
+                    throw new XiaomiProcedureException("Ota response code is "+code+", description: "+message, XiaomiProcedureException.ExceptionCode.NOT_ALLOWED, message);
+                }
+            } catch (Throwable t){
+                if (t instanceof XiaomiProcedureException){
+                    throw (XiaomiProcedureException) t;
+                }
+                Log.error("Should have check ota response code, but parsing failed: "+t.getMessage());
+                if (map.isEmpty() || (params.getPkg() != null && !params.getPkg().isEmpty() && !map.containsKey(Kind.PACKAGE))){
+                    throw new XiaomiProcedureException("Failed to get response code: "+t.getMessage(), XiaomiProcedureException.ExceptionCode.NOT_ALLOWED, "Cannot get ota response code");
+                }
+            }
+
+        }
+
         return map;
 
     }

@@ -605,7 +605,7 @@ public class ActionsDynamic {
                 }
 
 
-                Log.info("Starting installtion part main procedure");
+                Log.info("Starting installation part main procedure");
                 InstallPane installPane = new InstallPane();
                 WindowManager.setMainContent(installPane);
                 ProcedureRunner runner = new ProcedureRunner(installPane.getListener());

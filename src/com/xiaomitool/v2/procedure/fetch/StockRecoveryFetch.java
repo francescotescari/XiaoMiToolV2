@@ -7,6 +7,7 @@ import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.*;
+import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.MiuiRom;
@@ -21,9 +22,7 @@ import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import com.xiaomitool.v2.xiaomi.romota.MiuiRomOta;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 
 import static com.xiaomitool.v2.rom.chooser.InstallableChooser.idBySpecie;
@@ -104,12 +103,16 @@ public class StockRecoveryFetch {
         return RNode.skipOnException(procedures);
     }
 
-    public static RInstall validatePkgRom(Device device){
+    private static final String ROM_LOG_SB = "rom_log_sb";
+    public static RInstall validatePkgRom(ProcedureRunner runner) throws InstallException {
+        Device device = Procedures.requireDevice(runner);
+        List<String> logStringList = new ArrayList<>();
+        runner.setContext(ROM_LOG_SB, logStringList);
         Set<MiuiRom.Specie> speciesToSearch = MiuiRom.Specie.listToSearchSpecies(SettingsUtils.getRegion(),device.getDeviceProperties().getCodename(false));
         RInstall[] procedures = new RInstall[speciesToSearch.size()];
         int i = 0;
         for (MiuiRom.Specie specie : speciesToSearch){
-            procedures[i++] = otaPkgRom(specie);
+            procedures[i++] = otaPkgRom(specie, logStringList);
         }
         return RNode.sequence(new RInstall() {
             @Override
@@ -120,13 +123,29 @@ public class StockRecoveryFetch {
         },RNode.fallback(RNode.fallback(procedures), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Device device1 = Procedures.requireDevice(runner);
-                throw new InstallException("This rom cannot be installed on your device without unlocking bootloader", InstallException.Code.CANNOT_INSTALL, true); //TODO how to treat zip rom when install not available?
+                List logServer = (List) runner.getContext(ROM_LOG_SB);
+                String output;
+                if (logServer == null){
+                    output = "Missing server log";
+                } else {
+                    StringBuilder builder = new StringBuilder();
+                    int i = 0;
+                    for (Object o : logServer){
+                        builder.append(++i).append(") ").append(o.toString()).append('\n');
+                    }
+                    output = builder.toString();
+                }
+                logServer.clear();
+                GenericInstall.showUserAndRestart(LRes.ROM_INSTALL_NOT_ALLOWED_EXP.toString(output), true).run(runner);
             }
         }));
     }
 
     public static RInstall otaPkgRom(MiuiRom.Specie specie){
+        return otaPkgRom(specie, null);
+    }
+
+    public static RInstall otaPkgRom(MiuiRom.Specie specie, List<String> showLog){
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -145,8 +164,13 @@ public class StockRecoveryFetch {
                 HashMap<MiuiRom.Kind, MiuiZipRom> rom ;
                 runner.text(LRes.REQUEST_OTA_INSTALLATION_TOKEN.toString(specie.toHuman()));
                 try {
-                    rom = MiuiRomOta.otaV3_request(params);
+                    rom = MiuiRomOta.otaV3_request(params, showLog != null);
                 } catch (XiaomiProcedureException e) {
+                    if (showLog != null && XiaomiProcedureException.ExceptionCode.NOT_ALLOWED.equals(e.getCode())){
+                        String msg = e.getAdditional();
+                        runner.text(LRes.ROM_INSTALL_NOT_ALLOWED.toString(msg));
+                        showLog.add(msg);
+                    }
                     throw new InstallException(e);
                 } catch (CustomHttpException e) {
                     throw new InstallException(e);
@@ -154,7 +178,7 @@ public class StockRecoveryFetch {
                 Installable installable = rom.get(MiuiRom.Kind.PACKAGE);
                 Log.info("Found pkg rom: "+installable);
                 if (installable == null){
-                    throw new InstallException("Failed to validate rom pkg. Xiaomi server doesn't allow installation", InstallException.Code.MISSING_PROPERTY, true);
+                    throw new InstallException("Failed to validate rom pkg. Xiaomi server doesn't allow installation", InstallException.Code.CANNOT_INSTALL, true);
                 }
                 String id = idBySpecie(specie);
                 chooser.add(id, installable);
@@ -333,7 +357,7 @@ public class StockRecoveryFetch {
         };
     }
 
-    public static RInstall createValidatedZipInstall(Device device) {
+    public static RInstall createValidatedZipInstall(ProcedureRunner runner) throws InstallException {
         return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -343,7 +367,7 @@ public class StockRecoveryFetch {
                 Log.info("Trying to validate file for stock recovery installation: "+file);
                 runner.setContext(GenericFetch.SELECTED_FILE, file);
             }
-        }, GenericFetch.computeMD5File(), validatePkgRom(device));
+        }, GenericFetch.computeMD5File(), validatePkgRom(runner));
     }
 
 

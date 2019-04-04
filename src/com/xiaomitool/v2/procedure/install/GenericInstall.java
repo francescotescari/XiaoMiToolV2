@@ -249,7 +249,49 @@ public class GenericInstall {
 
     private static final String KEY_BOOL_SHOULD_SKIP_INSTALL = "bool_should_skip_install";
 
+    public static RInstall restartMain(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                final Device device = Procedures.requireDevice(runner);
+                final Thread lastThread = Thread.currentThread();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ActionsDynamic.MAIN_SCREEN_LOADING(LRes.LOADING).run();
+                            lastThread.interrupt();
+                            ActionsDynamic.START_PROCEDURE(device).run();
+                        } catch (InterruptedException e) {
+                            Log.error("Main thread interrupted: "+e.getMessage());
+                        }
+                    }
+                }).start();
+                try {
+                    Thread.sleep(1000*3600*24);
+                } catch (Throwable t){
+                    Log.info("Before thread restart successfully interrupted: "+t.getMessage());
+                }
+            }
+        };
+    }
 
+    public static RInstall showUserAndRestart(String message, boolean throwUplevel){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                ButtonPane buttonPane = new ButtonPane(throwUplevel ? new LRes[]{LRes.OK_UNDERSTAND, LRes.TRY_AGAIN} : new LRes[]{LRes.OK_UNDERSTAND} );
+                buttonPane.setContentText(message);
+                WindowManager.setMainContent(buttonPane, false);
+                int click = buttonPane.waitClick();
+                WindowManager.removeTopContent();
+                if (click != 0){
+                    throw new RMessage(CommandClass.Command.UPLEVEL);
+                }
+                restartMain().run(runner);
+            }
+        };
+    }
 
     public static RInstall main(){
         return RNode.sequence(

@@ -126,4 +126,8 @@ public abstract class RequestParams implements Cloneable {
     public String getSerialNumber() {
         return serialNumber;
     }
+
+    public String getPkg() {
+        return this.packageHash;
+    }
 }

@@ -40,7 +40,7 @@ public abstract class ChoosableProcedure implements Choiceable, ProcedureBundled
                     Device device = Procedures.requireDevice(runner);
                     if (lowPath.endsWith(".zip")){
                         installable = new MiuiZipRom(file, true);
-                        toDoNext = StockRecoveryFetch.createValidatedZipInstall(device);
+                        toDoNext = StockRecoveryFetch.createValidatedZipInstall(runner);
                     } else if (lowPath.endsWith(".tgz") || lowPath.endsWith(".tar.gz")){
                         installable = new MiuiTgzRom(file, true);
                     } else {

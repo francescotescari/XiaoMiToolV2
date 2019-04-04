@@ -320,6 +320,7 @@ public class FastbootInstall {
                         } else {
                             UNLOCK_TOKEN_CACHE.put(token, encryptData);
                         }
+                        runner.text(LRes.UNLOCK_UNLOCKING_DEVICE);
                         YesNoMaybe unlocked = FastbootCommons.oemUnlock(device.getSerial(), encryptData);
                         if (YesNoMaybe.NO.equals(unlocked)) {
                             throw new InstallException("Failed to unlock the device, fastboot exit with status non zero or internal error", InstallException.Code.UNLOCK_ERROR, true);

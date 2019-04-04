@@ -124,6 +124,9 @@ public abstract class RNode extends RInstall {
         public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
             InstallException exception = null;
             boolean allRight = false;
+            if (chidren == null || chidren.length == 0){
+                return;
+            }
             RInstall cause = null;
             for (RInstall install : chidren){
                 exception = null;
@@ -146,8 +149,7 @@ public abstract class RNode extends RInstall {
                 }
             }
             if (!allRight){
-                CommandClass.Command cmd = runner.handleException(exception,cause );
-                throw new RMessage(cmd);
+                throw exception;
             }
         }
     }
