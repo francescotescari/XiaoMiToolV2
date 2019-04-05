@@ -9,7 +9,7 @@ import java.io.*;
 
 public class Log {
 
-    public static final boolean ADVANCED_LOG  = false;
+    public static final boolean ADVANCED_LOG  = true;
     private static final String PREFIX_DEBUG = "DEBUG";
     private static final String PREFIX_INFO = "INFO";
     private static final String PREFIX_WARN = "WARN";
@@ -68,7 +68,7 @@ public class Log {
             callerClass = index > -1 ? callerClass.substring(index+1) : callerClass;
             classLog = "["+callerClass+"::"+stackTraceElements[3].getMethodName()+"]";
         }
-        String out = String.format("%s[%-6s]%s %s",LogUtils.getTimeStamp(),prefix,classLog,arg == null ? "null" : arg.toString());
+        String out = String.format("%s[%-6s][%06x]%s %s",LogUtils.getTimeStamp(),prefix,Thread.currentThread().hashCode(),classLog,arg == null ? "null" : arg.toString());
 
         if (Log.ADVANCED_LOG || LIVE_LOG) {
             System.out.println(out);

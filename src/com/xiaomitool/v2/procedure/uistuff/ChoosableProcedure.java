@@ -1,17 +1,15 @@
 package com.xiaomitool.v2.procedure.uistuff;
 
 import com.xiaomitool.v2.adb.device.Device;
-import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.device.ManageDevice;
 import com.xiaomitool.v2.procedure.fetch.StockRecoveryFetch;
-import com.xiaomitool.v2.procedure.fetch.TwrpFetch;
 import com.xiaomitool.v2.procedure.install.FastbootInstall;
+import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.procedure.install.InstallException;
-import com.xiaomitool.v2.procedure.install.TwrpInstall;
 import com.xiaomitool.v2.rom.*;
 import com.xiaomitool.v2.utility.Choiceable;
 import javafx.scene.image.Image;
@@ -30,6 +28,10 @@ public abstract class ChoosableProcedure implements Choiceable, ProcedureBundled
                 @Override
                 public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                     File file = Procedures.selectFileFromPc(LRes.FILE_SELECT_OFFICIAL_TIT.toString(), LRes.FILE_SELECT_OFFICIAL_TEXT.toString(), new FileChooser.ExtensionFilter("MIUI file","*.tgz","*.zip","*.tar.gz"));
+                    if (file == null){
+                        GenericInstall.restartMain(GenericInstall.selectRomAndGo()).run(runner);
+                        return;
+                    }
                     Installable installable = null;
                     String path = file.getAbsolutePath();
                     RInstall toDoNext = null;
@@ -69,6 +71,10 @@ public abstract class ChoosableProcedure implements Choiceable, ProcedureBundled
                 @Override
                 public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                     File file = Procedures.selectFileFromPc(LRes.FILE_SELECT_TIT.toString(), LRes.FILE_SELECT_TEXT.toString(), new FileChooser.ExtensionFilter("Rom file","*.tgz","*.zip","*.tar.gz"));
+                    if (file == null){
+                        GenericInstall.restartMain(GenericInstall.selectRomAndGo()).run(runner);
+                        return;
+                    }
                     Installable installable = null;
                     String path = file.getAbsolutePath();
 
@@ -111,7 +117,11 @@ public abstract class ChoosableProcedure implements Choiceable, ProcedureBundled
             return new RInstall() {
                 @Override
                 public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                    File file = Procedures.selectFileFromPc(LRes.FILE_SELECT_TIT.toString(), LRes.FILE_SELECT_TEXT.toString(), new FileChooser.ExtensionFilter("Recovery image file or archive","*.img"));
+                    File file = Procedures.selectFileFromPc(LRes.FILE_SELECT_TIT.toString(), LRes.FILE_SELECT_TEXT.toString(), new FileChooser.ExtensionFilter("Recovery image file","*.img"));
+                    if (file == null){
+                        GenericInstall.restartMain(GenericInstall.selectRomAndGo()).run(runner);
+                        return;
+                    }
                     Installable installable = null;
                     String path = file.getAbsolutePath();
                     String codename = Procedures.requireDevice(runner).getDeviceProperties().getCodename(true);
@@ -142,6 +152,10 @@ public abstract class ChoosableProcedure implements Choiceable, ProcedureBundled
                 @Override
                 public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                     File file = Procedures.selectFileFromPc(LRes.FILE_SELECT_TIT.toString(), LRes.FILE_SELECT_TEXT.toString(), new FileChooser.ExtensionFilter("Mod file","*.zip"));
+                    if (file == null){
+                        GenericInstall.restartMain(GenericInstall.selectRomAndGo()).run(runner);
+                        return;
+                    }
                     Installable installable = null;
                     String path = file.getAbsolutePath();
 

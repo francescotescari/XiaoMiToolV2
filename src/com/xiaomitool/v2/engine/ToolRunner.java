@@ -45,7 +45,7 @@ public class ToolRunner {
             try {
                 ActionsStatic.MAIN().run();
             } catch (InterruptedException e) {
-                Log.error("Main tool runner thread interrutped :(");
+                Log.warn("Main tool runner thread interrutped: "+e.getMessage());
             }
         });
 

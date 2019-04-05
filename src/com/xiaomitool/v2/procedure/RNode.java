@@ -6,6 +6,8 @@ import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.utility.CommandClass;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 
+import java.util.Arrays;
+
 public abstract class RNode extends RInstall {
     private static final int FLAG_THROWEXCEPTION = 0x00000001;
     private static final int FLAG_SORTRANDOM = 0x00000002;
@@ -72,6 +74,7 @@ public abstract class RNode extends RInstall {
 
         @Override
         public void run(ProcedureRunner runner) throws RMessage, InstallException, InterruptedException {
+            Log.debug("Running sequence of procs: "+ Arrays.toString(chidren));
             CommandClass.Command cmd = null;
                 for (RInstall install : chidren) {
                     do {
@@ -122,6 +125,7 @@ public abstract class RNode extends RInstall {
 
         @Override
         public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+            Log.debug("Running fallback of procs: "+ Arrays.toString(chidren));
             InstallException exception = null;
             boolean allRight = false;
             if (chidren == null || chidren.length == 0){

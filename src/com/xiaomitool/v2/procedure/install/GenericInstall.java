@@ -1,6 +1,5 @@
 package com.xiaomitool.v2.procedure.install;
 
-import com.xiaomitool.v2.adb.AdbCommunication;
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceAnswers;
 import com.xiaomitool.v2.adb.device.DeviceManager;
@@ -37,7 +36,6 @@ import javafx.scene.text.TextAlignment;
 import org.apache.commons.io.FilenameUtils;
 
 import java.util.Objects;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.xiaomitool.v2.engine.CommonsMessages.NOOP;
 
@@ -249,7 +247,7 @@ public class GenericInstall {
 
     private static final String KEY_BOOL_SHOULD_SKIP_INSTALL = "bool_should_skip_install";
 
-    public static RInstall restartMain(){
+    public static RInstall restartMain(RInstall startFromHere){
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -261,17 +259,14 @@ public class GenericInstall {
                         try {
                             ActionsDynamic.MAIN_SCREEN_LOADING(LRes.LOADING).run();
                             lastThread.interrupt();
-                            ActionsDynamic.START_PROCEDURE(device).run();
+                            ActionsDynamic.START_PROCEDURE(device, startFromHere, runner).run();
                         } catch (InterruptedException e) {
-                            Log.error("Main thread interrupted: "+e.getMessage());
+                            Log.warn("Main tool runner thread interrutped: "+e.getMessage());
                         }
                     }
                 }).start();
-                try {
-                    Thread.sleep(1000*3600*24);
-                } catch (Throwable t){
-                    Log.info("Before thread restart successfully interrupted: "+t.getMessage());
-                }
+                Thread.sleep(1000*3600*24);
+                Log.error("Not interrupted :(");
             }
         };
     }
@@ -288,7 +283,7 @@ public class GenericInstall {
                 if (click != 0){
                     throw new RMessage(CommandClass.Command.UPLEVEL);
                 }
-                restartMain().run(runner);
+                restartMain(null).run(runner);
             }
         };
     }
@@ -297,23 +292,7 @@ public class GenericInstall {
         return RNode.sequence(
                 RebootDevice.rebootNoWaitIfConnected(),
                 ChooseProcedure.chooseRomCategory(),
-                ChooseProcedure.chooseRom(),
-                checkIfProcedureDone(),
-                RNode.conditional(KEY_BOOL_SHOULD_SKIP_INSTALL,
-                    Procedures.doNothing(),
-                    RNode.sequence(
-                            ConfirmationProcedure.confirmInstallableProcedure(),
-                            ConfirmationProcedure.confirmInstallationStart(),
-                            RNode.sequence(
-                                    ManageDevice.waitRequireAccessible(30, Device.Status.DEVICE),
-                                    RNode.sequence(
-                                            GenericInstall.satisfyAllRequirements(),
-                                            GenericInstall.resourceFetchWait(),
-                                            GenericInstall.runInstallProcedure())
-                                    )
-                            )
-                    ),
-                GenericInstall.installationSuccess()
+                selectRomAndGo()
             );
         /*RebootDevice.rebootNoWaitIfConnected().run(runner);
         Log.debug("PRO0 CHOOSE CAT");
@@ -332,4 +311,24 @@ public class GenericInstall {
         GenericInstall.installationSuccess().run(runner);*/
     }
 
+    public static RInstall selectRomAndGo() {
+        return RNode.sequence(
+                ChooseProcedure.chooseRom(),
+                checkIfProcedureDone(),
+                RNode.conditional(KEY_BOOL_SHOULD_SKIP_INSTALL,
+                        Procedures.doNothing(),
+                        RNode.sequence(
+                                ConfirmationProcedure.confirmInstallableProcedure(),
+                                ConfirmationProcedure.confirmInstallationStart(),
+                                RNode.sequence(
+                                        ManageDevice.waitRequireAccessible(30, Device.Status.DEVICE),
+                                        RNode.sequence(
+                                                GenericInstall.satisfyAllRequirements(),
+                                                GenericInstall.resourceFetchWait(),
+                                                GenericInstall.runInstallProcedure())
+                                )
+                        )
+                ),
+                GenericInstall.installationSuccess());
+    }
 }

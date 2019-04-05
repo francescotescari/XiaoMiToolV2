@@ -23,19 +23,16 @@ public class ProcedureRunner extends GuiListener {
     private Pane afterExeptionPane;
     private RInstall runnableInstall;
     private boolean sendFeedback = true;
-
+    private final HashMap<String, Object> stashedValues = new HashMap<>();
 
 
     public ProcedureRunner(InstallPane installPane){
-        this(installPane.getListener());
-        setAfterExceptionPane(installPane);
+        setInstallPane(installPane);
+
     }
 
     public ProcedureRunner(GuiListener listener){
-        this.listener = listener;
-        if (listener == null){
-            this.listener = new GuiListener.Debug();
-        }
+        setListener(listener);
     }
     public void setAfterExceptionPane(Pane pane){
         this.afterExeptionPane = pane;
@@ -123,6 +120,16 @@ public class ProcedureRunner extends GuiListener {
         Log.debug("Context var set: "+key+" -> "+StrUtils.str(value));
     }
 
+    public void stashContext(String key, Object newValue){
+        this.stashedValues.put(key, getContext(key));
+        this.setContext(key, newValue);
+    }
+    public Object unstashContext(String key){
+        Object res = stashedValues.get(key);
+        this.setContext(key, res);
+        return res;
+    }
+
     public Object getContext(String key){
 
         Object res = context.get(key);
@@ -166,5 +173,27 @@ public class ProcedureRunner extends GuiListener {
         init(romToInstall, DeviceManager.getSelectedDevice());
     }
 
+    private InstallPane installPane;
+    public InstallPane getInstallPane() {
+        return this.installPane;
+    }
 
+    public void setInstallPane(InstallPane installPane){
+        this.installPane = installPane;
+        if (installPane != null) {
+            setListener(installPane.getListener());
+        } else {
+            setListener(null);
+        }
+        setAfterExceptionPane(installPane);
+    }
+
+    private void setListener(GuiListener listener){
+
+        if (listener == null){
+            this.listener = new GuiListener.Debug();
+        } else {
+            this.listener = listener;
+        }
+    }
 }

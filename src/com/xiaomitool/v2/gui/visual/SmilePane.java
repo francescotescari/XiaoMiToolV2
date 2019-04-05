@@ -53,7 +53,7 @@ public class SmilePane extends StackPane {
         double angle = sad ? 30 : 210;
         double add = sad ? startHeight : ((((100-percent)/75)+(1d/3))*startHeight);
         double h = (Math.abs(percent-50)/50)*startHeight+1;
-        Log.debug("p: "+percent+", add: "+add+", h: "+h+"; v1: "+(((100-percent)/150)) +", v2: "+(2d/3)+", tot: "+(((100-percent)/150))+(2d/3));
+        //Log.debug("p: "+percent+", add: "+add+", h: "+h+"; v1: "+(((100-percent)/150)) +", v2: "+(2d/3)+", tot: "+(((100-percent)/150))+(2d/3));
         Runnable runnable = new Runnable() {
             @Override
             public void run() {

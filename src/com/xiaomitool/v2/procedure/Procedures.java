@@ -77,13 +77,13 @@ public class Procedures {
         VBox vBox = new VBox(tit,t,GuiUtils.center(dragAndDropPane));
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(10);
-        ButtonPane buttonPane = new ButtonPane(LRes.CONTINUE, LRes.ABORT);
+        ButtonPane buttonPane = new ButtonPane(LRes.CONTINUE, LRes.CANCEL);
         buttonPane.setContent(vBox);
         WindowManager.setMainContent(buttonPane,false);
         File file = null;
         while (file == null) {
             if (buttonPane.waitClick() == 1){
-                throw InstallException.ABORT_EXCEPTION;
+                return null;
             }
             file = dragAndDropPane.getSelectedFile();
             if (file == null){

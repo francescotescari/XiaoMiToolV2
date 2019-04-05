@@ -57,6 +57,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import static com.xiaomitool.v2.engine.CommonsMessages.NOOP;
+import static com.xiaomitool.v2.procedure.install.GenericInstall.main;
 
 
 public class ActionsDynamic {
@@ -585,37 +586,53 @@ public class ActionsDynamic {
             return res ? 1 : 0;
         };
     }
-
     public static RunnableMessage START_PROCEDURE(Device device){
+        return START_PROCEDURE(device, null,null);
+    }
+
+    public static RunnableMessage START_PROCEDURE(Device device, RInstall startFromHere, ProcedureRunner runner){
         return new RunnableMessage() {
             @Override
             public int run() throws InterruptedException {
-                try {
-                    DeviceProperties properties = device.getDeviceProperties();
-                    HashMap<String, String> logginProps = new HashMap<>();
-                    logginProps.put("d", String.valueOf(properties.getCodename(false)));
-                    logginProps.put("c", String.valueOf(properties.get(DeviceProperties.CODEBASE)));
-                    logginProps.put("v", String.valueOf(properties.get(DeviceProperties.FULL_VERSION)));
-                    logginProps.put("bs", String.valueOf(device.getAnswers().getUnlockStatus()));
-                    logginProps.put("sn", String.valueOf(properties.get(DeviceProperties.X_SERIAL_NUMBER)));
-                    logginProps.put("rg",String.valueOf(SettingsUtils.getRegion()));
-                    LiveFeedbackEasy.sendLog("DATA",new JSONObject(logginProps).toString());
-                } catch (Exception ignored){
+                if (startFromHere == null) {
+                    try {
+                        DeviceProperties properties = device.getDeviceProperties();
+                        HashMap<String, String> logginProps = new HashMap<>();
+                        logginProps.put("d", String.valueOf(properties.getCodename(false)));
+                        logginProps.put("c", String.valueOf(properties.get(DeviceProperties.CODEBASE)));
+                        logginProps.put("v", String.valueOf(properties.get(DeviceProperties.FULL_VERSION)));
+                        logginProps.put("bs", String.valueOf(device.getAnswers().getUnlockStatus()));
+                        logginProps.put("sn", String.valueOf(properties.get(DeviceProperties.X_SERIAL_NUMBER)));
+                        logginProps.put("rg", String.valueOf(SettingsUtils.getRegion()));
+                        LiveFeedbackEasy.sendLog("DATA", new JSONObject(logginProps).toString());
+                    } catch (Exception ignored) {
 
+                    }
                 }
 
 
                 Log.info("Starting installation part main procedure");
-                InstallPane installPane = new InstallPane();
+                InstallPane installPane;
+                ProcedureRunner thisRunner;
+                if (runner == null){
+                    installPane  = new InstallPane();
+                    thisRunner = new ProcedureRunner(installPane.getListener());
+                } else {
+                    installPane = runner.getInstallPane();
+                    if (installPane == null){
+                        installPane = new InstallPane();
+                        runner.setInstallPane(installPane);
+                    }
+                    thisRunner = runner;
+                }
                 WindowManager.setMainContent(installPane);
-                ProcedureRunner runner = new ProcedureRunner(installPane.getListener());
 
-
-                runner.init(null,device);
+                RInstall thisRun = startFromHere != null ? startFromHere : main();
+                thisRunner.init(null,device);
 
                 //runner.setContext("prop_"+DeviceProperties.CODENAME,"whyred");
                 //FastbootFetch.findAllLatestFastboot().run(runner);
-                RInstall main = GenericInstall.main();
+                RInstall main = main();
                 try {
                     try {
                    /* RebootDevice.rebootNoWaitIfConnected().run(runner);
@@ -634,15 +651,17 @@ public class ActionsDynamic {
                     GenericInstall.runInstallProcedure().run(runner);
                     GenericInstall.installationSuccess().run(runner);*/
                    Log.info("Main procedure loaded, starting now");
-                        main.run(runner);
+                        thisRun.run(thisRunner);
 
                     } catch (Exception e) {
                         e.printStackTrace();
                         try {
-                            if (e instanceof InstallException){
+                            if (e instanceof InstallException ){
                                 throw (InstallException) e;
+                            } else if (e instanceof  InterruptedException){
+                                throw (InterruptedException) e;
                             }
-                            runner.handleException(new InstallException(e.getMessage(), InstallException.Code.INTERNAL_ERROR, false), main);
+                            thisRunner.handleException(new InstallException(e.getMessage(), InstallException.Code.INTERNAL_ERROR, false), main);
                         } catch (InstallException e1) {
                             throw new RMessage(e1);
                         }

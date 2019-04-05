@@ -69,7 +69,7 @@ public class DonationPane extends ButtonPane {
                     smilePane.setHappiness(75+((Math.pow(Math.abs(distanceFromDont-7),1.2)-Math.pow(Math.abs(distanceFromDona-7),1.2)))*(3200/Math.pow(distanceFromDona+distanceFromDont-70,1.9)));
 
 
-                Log.debug(distanceFromDona+" - "+distanceFromDont);
+                //Log.debug(distanceFromDona+" - "+distanceFromDont);
 
             }
         });

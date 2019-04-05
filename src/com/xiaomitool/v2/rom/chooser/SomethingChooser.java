@@ -56,7 +56,7 @@ public abstract class SomethingChooser<T> {
 
     public void add(String id, T obj){
         Log.debug("Add to chooser");
-        Log.printStackTrace(new Exception());
+       // Log.printStackTrace(new Exception());
         this.hashMap.put(id, obj);
     }
 

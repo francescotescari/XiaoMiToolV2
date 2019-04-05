@@ -37,6 +37,7 @@ public class ChooseProcedure {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Log.debug("ENTERING CHOOSE ROM");
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 ProcedureChooser pchooser = Procedures.requireProcedureChooser(runner);
                 LinkedList<Installable> optionsInstallable = new LinkedList<>();
@@ -108,6 +109,7 @@ public class ChooseProcedure {
                     Log.info("The user has choosen this installable: "+choosenIntallable.getChoice().toString());
                     runner.setContext(IS_CHOOSEN_PROCEDURE, Boolean.FALSE);
                 }
+                Log.debug("EXITING CHOOSE ROM");
 
             }
         }.next();
