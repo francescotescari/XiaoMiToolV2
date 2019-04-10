@@ -63,7 +63,7 @@ public class UpdateUtils {
             updateStatus = UpdateStatus.BLOCK;
         } else if (StrUtils.compareVersion(latestVersion, toolVersion) <= 0){
             updateStatus = UpdateStatus.UPDATED;
-        } else if (StrUtils.compareVersion(latestFullVersion, toolVersion) < 0){
+        } else if (StrUtils.compareVersion(latestFullVersion, toolVersion) > 0){
             updateStatus = UpdateStatus.FULL_UPDATE;
         } else {
             updateStatus = UpdateStatus.QUICK_UPDATE;
