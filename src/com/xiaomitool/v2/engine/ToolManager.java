@@ -7,6 +7,7 @@ import com.xiaomitool.v2.language.Lang;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.resources.ResourcesConst;
+import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.utility.utils.*;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import javafx.application.Platform;
@@ -42,6 +43,9 @@ public class ToolManager {
         if (UpdateUtils.checkUpdateKillMe(args)){
             System.exit(0);
             return;
+        }
+        if (!ResourcesManager.init()){
+            Log.error("Failed to init resources dir");
         }
         Log.init();
         boolean isSingleInstance = MutexUtils.lock();

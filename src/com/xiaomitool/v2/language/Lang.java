@@ -109,7 +109,7 @@ public class Lang {
             if (id == null || value == null){
                 continue;
             }
-            Log.debug("New lang value: ["+id+"] = ["+value+"]");
+           // Log.debug("New lang value: ["+id+"] = ["+value+"]");
             value = value.replaceAll("\\\\n","\n");
             dictionary.put(id,value);
         }

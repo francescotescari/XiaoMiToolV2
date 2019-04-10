@@ -55,31 +55,31 @@ public class Main {
         //Log.debug(StrUtils.map2json(pp, 3));
 
 
-        Log.debug(UnlockCommonRequests.ahaUnlock("VQEBMwEgdAsBSujVP9OjWVoBu7zFT3QLAUro1T/To1laAbu8xU8DCWJlcnlsbGl1bQIEQXtF7A==","dipper","","",""));
+       // Log.debug(UnlockCommonRequests.ahaUnlock("VQEBMwEgdAsBSujVP9OjWVoBu7zFT3QLAUro1T/To1laAbu8xU8DCWJlcnlsbGl1bQIEQXtF7A==","dipper","","",""));
         //keystore.requireServiceKeyAndToken("miuibbs");
         /*Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIAEQUWfXYPsAAAAAAAAAAAAAAAMGZGlwcGVyAgS9bC/5","whyred","","",""));
         if (true){
             return;
         }*/
 
-        DefaultRequestParams params3 = new DefaultRequestParams("cepheus_global","V10.2.15.0.PFAEUXM","9.0",Branch.STABLE);
+        DefaultRequestParams params3 = new DefaultRequestParams("cepheus_eea_global","V10.2.15.0.PFAEUXM","9.0",Branch.STABLE);
         params3.setZone(2);
-        params3.setSerialNumber("0x78133f93");
-        params3.setPkg("e3aaed0507a830eaaf503dcc7c1977e0");
-        //Log.debug(MiuiRomOta.otaV3_request(params3));
+        params3.setSerialNumber("AAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABB");
+        //params3.setPkg("e3aaed0507a830eaaf503dcc7c1977e0");
+        Log.debug(MiuiRomOta.otaV3_request(params3));
         if (true){
             return;
         }
-       // keystore.setCredentials(gv[1], gv[0]);
+       // keytore.setCredentials(gv[1], gv[0]);
         //*keystore.requireServiceKeyAndToken("miuiromota");
         RequestParams params = new DeviceRequestParams("dipper","9.3.7","9.0",Branch.DEVELOPER,"0xb7f63ec7",3);
         //params.setPkg("3acee2689def952a29dc70978c9f63fa");
         Log.debug(MiuiRomOta.otaV3_request(params));
-        /*params.setPkg("d8f3965aebf2dbfb0291fb21be6cff1b");
+        /*params.setPkg("d8f3965aebf2dbfb0291fb21be6cff1b");*/
         MiuiRomOta.otaV3_request(params);
         if (true){
             return;
-        }*/
+        }//*/
         scarto = 0;
         //Log.debug(UnlockCommonRequests.test());VQEBIQEQdAsBSujVP9OjWVoBu7zFTwMHY2VwaGV1cwIEQXtF7A==
 

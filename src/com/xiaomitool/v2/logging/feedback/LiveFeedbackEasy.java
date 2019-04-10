@@ -78,39 +78,43 @@ public class LiveFeedbackEasy {
     }
 
     private static synchronized void send(String quickMessage, String additionalInfo, LiveFeedback.FeedbackType type) {
-        if (!isOpen){
-            return;
-        }
-        feedbackSent.setPermits(0);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    LiveFeedback.MultiFeedback multiFeedback;
-                    synchronized (QUEUED_FEEDBACKS) {
-                        QUEUED_FEEDBACKS.add(newMessage(quickMessage, additionalInfo, type));
-                        boolean shouldSendNow = LiveFeedback.FeedbackType.CLOSE.equals(type) || lastFeedbackInstant == null;
-                        if (!shouldSendNow) {
-                            Duration duration = Duration.between(lastFeedbackInstant, Instant.now());
-                            if (duration.getSeconds() > 60) {
-                                shouldSendNow = true;
-                            }
-                        }
-                        if (!shouldSendNow) {
-                            return;
-                        }
-                        multiFeedback = LiveFeedback.MultiFeedback.newBuilder().addAllFeedbacks(QUEUED_FEEDBACKS).setIstanceId(ToolManager.getRunningInstanceId()).build();
-                        QUEUED_FEEDBACKS.clear();
-                    }
-                    final byte[] dataToSend = getsendableMessage(multiFeedback.toByteArray());
-                    LogSender.sendSingleLog(dataToSend);
-                } catch (Exception e) {
-                    Log.log("LOG","Failed to send single log: "+e.getMessage(), false);
-                } finally {
-                    feedbackSent.increase();
-                }
+        try {
+            if (!isOpen) {
+                return;
             }
-        }).start();
+            feedbackSent.setPermits(0);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        LiveFeedback.MultiFeedback multiFeedback;
+                        synchronized (QUEUED_FEEDBACKS) {
+                            QUEUED_FEEDBACKS.add(newMessage(quickMessage, additionalInfo, type));
+                            boolean shouldSendNow = LiveFeedback.FeedbackType.CLOSE.equals(type) || lastFeedbackInstant == null;
+                            if (!shouldSendNow) {
+                                Duration duration = Duration.between(lastFeedbackInstant, Instant.now());
+                                if (duration.getSeconds() > 60) {
+                                    shouldSendNow = true;
+                                }
+                            }
+                            if (!shouldSendNow) {
+                                return;
+                            }
+                            multiFeedback = LiveFeedback.MultiFeedback.newBuilder().addAllFeedbacks(QUEUED_FEEDBACKS).setIstanceId(ToolManager.getRunningInstanceId()).build();
+                            QUEUED_FEEDBACKS.clear();
+                        }
+                        final byte[] dataToSend = getsendableMessage(multiFeedback.toByteArray());
+                        LogSender.sendSingleLog(dataToSend);
+                    } catch (Exception e) {
+                        Log.log("LOG", "Failed to send single log: " + e.getMessage(), false);
+                    } finally {
+                        feedbackSent.increase();
+                    }
+                }
+            }).start();
+        } catch (Throwable t){
+            Log.warn("Failed to send live feedback: "+t.getMessage());
+        }
 
     }
 

@@ -86,6 +86,7 @@ public class GuiTest2 extends Application{
                     //runner.setContext("prop_"+DeviceProperties.CODENAME,"whyred");
                     AdbCommunication.registerAutoScanDevices();
                     GenericInstall.main().run(runner);
+
                     //FastbootFetch.findAllLatestFastboot().run(runner);
                     /*ChooseProcedure.chooseRomCategory().run(runner);
                     ChooseProcedure.chooseRom().run(runner);

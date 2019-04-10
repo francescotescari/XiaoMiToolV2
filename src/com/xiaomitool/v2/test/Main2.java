@@ -25,6 +25,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.util.List;
 
 
 public class Main2 {
@@ -73,7 +76,8 @@ public class Main2 {
 
 
     public static void main(String[] args) throws IOException {
-       Log.debug(DeviceGroups.stripCodename("dipper_sprout_vf_ru_global_alpha"));
+        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+
     }
 
     private static void addParam(String key, String value){

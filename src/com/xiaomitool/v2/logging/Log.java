@@ -1,7 +1,6 @@
 package com.xiaomitool.v2.logging;
 
 import com.xiaomitool.v2.engine.ToolManager;
-import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import org.apache.commons.io.output.NullOutputStream;
 
 import java.io.*;
@@ -9,7 +8,7 @@ import java.io.*;
 
 public class Log {
 
-    public static final boolean ADVANCED_LOG  = true;
+    public static final boolean ADVANCED_LOG  = false;
     private static final String PREFIX_DEBUG = "DEBUG";
     private static final String PREFIX_INFO = "INFO";
     private static final String PREFIX_WARN = "WARN";
@@ -47,7 +46,7 @@ public class Log {
     public static void error(Object arg){
         log(PREFIX_ERROR, arg, true);
     }
-    public static void printStackTrace(Exception e){
+    public static void printStackTrace(Throwable e){
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);

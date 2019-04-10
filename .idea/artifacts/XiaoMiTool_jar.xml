@@ -8,7 +8,6 @@
       <element id="file-copy" path="$APPLICATION_HOME_DIR$/redist/annotations-java8.jar" />
       <element id="library" level="project" name="org.json:json:20180130" />
       <element id="library" level="project" name="commons-io:commons-io:2.6" />
-      <element id="library" level="module" name="openJFX11" module-name="XiaoMiTool" />
       <element id="library" level="project" name="commons-codec:commons-codec:1.11" />
       <element id="library" level="project" name="org.apache.commons:commons-lang3:3.7" />
       <element id="library" level="project" name="org.apache.httpcomponents:httpclient:4.5.5" />

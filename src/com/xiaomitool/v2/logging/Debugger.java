@@ -29,7 +29,7 @@ public class Debugger extends BufferedOutputStream {
     private static final int MAX_FEEDBACK_PAYLOAD_SIZE = 30000000;
 
     private static Debugger defaultDebugger;
-    private static final Path defaultDebugPath = ResourcesManager.getLogPath().resolve(LOG_FN+System.currentTimeMillis()+".txt");
+
     private final FeedbackOutputStream feedbackOutputStream = new FeedbackOutputStream();
 
 
@@ -52,7 +52,8 @@ public class Debugger extends BufferedOutputStream {
         }
         if (defaultDebugger == null){
             try {
-                createDefaultPath();
+                Path defaultDebugPath = ResourcesManager.getLogPath().resolve(LOG_FN+System.currentTimeMillis()+".txt");
+                createDefaultPath(defaultDebugPath);
                 defaultDebugger = fromOutputStream(new FileOutputStream(defaultDebugPath.toFile()));
             } catch (Exception e) {
                 Log.error("Failed to create debug output stream: "+e.getMessage());
@@ -70,7 +71,7 @@ public class Debugger extends BufferedOutputStream {
         return gzipOutputStream;
     }
 
-    private static void createDefaultPath() throws IOException {
+    private static void createDefaultPath(Path defaultDebugPath) throws IOException {
         if (!Files.exists(defaultDebugPath.getParent())){
             Files.createDirectories(defaultDebugPath.getParent());
         }

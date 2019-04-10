@@ -7,6 +7,12 @@ import javafx.stage.FileChooser;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FileUtils {
     private static final int FILE_READ_BUFFER_SIZE = 1024*512;
@@ -39,4 +45,29 @@ public class FileUtils {
         }
         return fileChooser.showOpenDialog(WindowManager.mainWindow());
     }
+
+    public static Path searchFile(Path directory, String filename, boolean caseSensitive, int maxDepth) throws IOException {
+        if (filename == null) {
+            return null;
+        }
+        try (Stream<Path> files = Files.walk(directory,maxDepth)) {
+            return files
+                    .filter(path -> {
+                        String fn = path.getFileName().toString().toLowerCase();
+                        return caseSensitive ? filename.equals(fn) : filename.equalsIgnoreCase(fn);
+                    }).findFirst().orElse(null);
+
+
+        }
+    }
+
+    public static Path toCanonical(Path p){
+        try {
+            return p.normalize().toFile().getCanonicalFile().toPath();
+        } catch (Throwable e) {
+            return null;
+        }
+    }
+
+
 }
