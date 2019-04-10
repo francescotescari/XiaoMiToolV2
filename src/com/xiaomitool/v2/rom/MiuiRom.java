@@ -10,7 +10,9 @@ import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.utility.utils.SettingsUtils.Region;
 import com.xiaomitool.v2.xiaomi.XiaomiUtilities;
 import com.xiaomitool.v2.xiaomi.miuithings.Branch;
+import com.xiaomitool.v2.xiaomi.miuithings.Codebase;
 import com.xiaomitool.v2.xiaomi.miuithings.Mirrors;
+import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
 import javafx.scene.image.Image;
 
 
@@ -37,6 +39,8 @@ public abstract class MiuiRom extends Installable {
     public Branch getBranch() {
         return this.branch;
     }
+
+
 
     public enum Kind {
         LATEST("LatestRom"),
@@ -274,28 +278,40 @@ public abstract class MiuiRom extends Installable {
     }
 
     @Override
-    public ChooserPane.Choice getChoice() {
-        String title, sub;
-        Image image = null;
+    public String getTitle() {
         if (this.isFake()){
-            return new ChooserPane.Choice(this.isOfficial() ? LRes.ROM_LOCAL_OFFICIAL.toString() : LRes.ROM_LOCAL.toString(), this.isOfficial() ? LRes.ROM_LOCAL_OFFICIAL_SUB.toString() : LRes.ROM_LOCAL_SUB.toString());
-
+            return this.isOfficial() ? LRes.ROM_LOCAL_OFFICIAL.toString() : LRes.ROM_LOCAL.toString();
         } else if (this.specie == null){
-            title = "Error: unknown specie";
-            sub = this.getMiuiVersion().toString();
+            return "Error: unknown specie";
         } else {
-            image = DrawableManager.getResourceImage(this.specie.getDrawable());
-            title = this.specie.toHuman();
+            return this.specie.toHuman();
+        }
+    }
+
+    @Override
+    public String getText() {
+        if (this.isFake()){
+            return this.isOfficial() ? LRes.ROM_LOCAL_OFFICIAL_SUB.toString() : LRes.ROM_LOCAL_SUB.toString();
+        } else if (this.specie == null){
+            return this.getMiuiVersion() == null ? "null" : getMiuiVersion().toString();
+        } else {
             List<String> subList = new ArrayList<>();
-            if (miuiVersion != null){
-                subList.add(LRes.MIUI_VERSION + ": " + miuiVersion.toString());
+            MiuiVersion version = getMiuiVersion();
+            if (version != null){
+                subList.add(LRes.MIUI_VERSION + ": " +version);
             }
+            Codebase codebase  = getCodebase();
             if (codebase != null){
                 subList.add(LRes.ANDROID_VERSION + ": " + codebase.toString());
             }
-            sub = String.join(" - ",subList);
+            return String.join(" - ",subList);
         }
-
-        return new ChooserPane.Choice(title, sub, image);
     }
+
+    @Override
+    public Image getIcon(){
+        return isFake() ? DrawableManager.getResourceImage(DrawableManager.LOCAL_PC) : DrawableManager.getResourceImage(this.specie.getDrawable());
+    }
+
+
 }

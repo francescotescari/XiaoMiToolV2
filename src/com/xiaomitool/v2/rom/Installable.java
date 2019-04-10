@@ -1,6 +1,7 @@
 package com.xiaomitool.v2.rom;
 
 
+import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.RInstall;
 import com.xiaomitool.v2.tasks.*;
@@ -14,13 +15,15 @@ import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
 
 import java.io.File;
 
-public abstract class Installable extends CommandClass implements Choiceable {
+public abstract class Installable extends CommandClass implements Choiceable, InstallObject {
 
 
     public enum Type {
         FASTBOOT,
         RECOVERY,
-        IMAGE;
+        IMAGE,
+        PROCEDURE,
+        OTHER;
     }
 
 
@@ -250,7 +253,20 @@ public abstract class Installable extends CommandClass implements Choiceable {
 
     public abstract RInstall getInstallProcedure();
 
+    @Override
+    public boolean isProcedure(){
+        return false;
+    }
 
+    @Override
+    public final ChooserPane.Choice getChoice(){
+        return new ChooserPane.Choice(getTitle(), getText(), getIcon());
+    }
+
+    @Override
+    public final Type getInstallType(){
+        return this.type;
+    }
 
 
 

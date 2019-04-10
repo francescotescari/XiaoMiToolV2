@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.rom;
 
+import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.procedure.RInstall;
 import com.xiaomitool.v2.procedure.install.TwrpInstall;
@@ -7,6 +8,7 @@ import com.xiaomitool.v2.xiaomi.miuithings.Codebase;
 import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
 
 import java.io.File;
+import java.util.Set;
 
 public abstract class ZipRom extends Installable {
     public ZipRom(String downloadUrl){
@@ -32,6 +34,11 @@ public abstract class ZipRom extends Installable {
     @Override
     public RInstall getInstallProcedure() {
         return TwrpInstall.installZip();
+    }
+
+    @Override
+    public Set<Device.Status> getRequiredStates() {
+        return InstallObject.SET_RECOVERY;
     }
 
 

@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.rom;
 
+import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.RInstall;
@@ -10,6 +11,7 @@ import com.xiaomitool.v2.xiaomi.miuithings.Codebase;
 import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
 
 import java.io.File;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -79,6 +81,11 @@ public class MiuiTgzRom extends MiuiRom {
         File extracted = (File) task.getResult();
         setFinalFile(extracted);
         return extracted;
+    }
+
+    @Override
+    public Set<Device.Status> getRequiredStates() {
+        return InstallObject.SET_FASTBOOT;
     }
 
     @Override

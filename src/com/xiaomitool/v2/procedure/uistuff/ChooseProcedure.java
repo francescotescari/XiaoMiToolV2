@@ -98,7 +98,7 @@ public class ChooseProcedure {
                 if (i >= installableLimit){
                     ChoosableProcedure proc = optionsProc.get(i-installableLimit);
                     Log.info("The user has choosen this procedure: "+proc.getChoice().toString());
-                    RInstall toDoNext = proc.getProcedure();
+                    RInstall toDoNext = proc.getInstallProcedure();
                     Procedures.pushRInstallOnStack(runner,toDoNext);
                     runner.setContext(IS_CHOOSEN_PROCEDURE, Boolean.TRUE);
                 } else {

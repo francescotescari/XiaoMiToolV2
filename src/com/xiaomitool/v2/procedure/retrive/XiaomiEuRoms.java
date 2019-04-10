@@ -83,16 +83,18 @@ public class XiaomiEuRoms {
         String downloadUrl = String.format(format,mirror,shortVersion,name,version,bigVersion,codebase);
         return new ZipRom(downloadUrl, miuiVersion, new Codebase(codebase)) {
             @Override
-            public ChooserPane.Choice getChoice() {
-                String text = LRes.XIAOMIEU_AUTO_DOWNLOAD.toString(), title = LRes.XIAOMIEU_TITLE.toString();
+            public String getTitle() {
+                return branch == null ? LRes.XIAOMIEU_TITLE.toString() : (LRes.XIAOMIEU_TITLE.toString()+" - "+ LRes.branchToString(branch));
+            }
 
-                if (this.getMiuiVersion() != null){
-                    text += " - "+this.getMiuiVersion().toString();
-                }
-                if (branch != null){
-                    title+=" - "+ LRes.branchToString(branch);
-                }
-                return new ChooserPane.Choice(title, text, new Image(DrawableManager.getPng("xiaomieu").toString(), true));
+            @Override
+            public String getText() {
+                return this.getMiuiVersion() == null ? LRes.XIAOMIEU_AUTO_DOWNLOAD.toString() : (LRes.XIAOMIEU_AUTO_DOWNLOAD.toString()+" - "+this.getMiuiVersion().toString());
+            }
+
+            @Override
+            public Image getIcon() {
+                return DrawableManager.getResourceImage("xiaomieu.png");
             }
         };
     }

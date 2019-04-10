@@ -7,6 +7,7 @@ import com.xiaomitool.v2.adb.FastbootCommons;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.NotNull;
 import com.xiaomitool.v2.utility.WaitSemaphore;
+import com.xiaomitool.v2.utility.YesNoMaybe;
 
 public class Device {
 
@@ -76,9 +77,12 @@ public class Device {
         } else if (Status.SIDELOAD.equals(status)){
             deviceProperties.getSideloadProperties().parse();
         } else if (Status.DEVICE.equals(status)){
+            getAnswers().setNeedDeviceDebug(YesNoMaybe.NO);
             deviceProperties.getAdbProperties().parse();
         } else if (Status.RECOVERY.equals(status)){
             deviceProperties.getRecoveryProperties().parse();
+        } else if (Status.UNAUTHORIZED.equals(status)){
+            getAnswers().setNeedDeviceDebug(YesNoMaybe.NO);
         }
         releaseAccess();
     }

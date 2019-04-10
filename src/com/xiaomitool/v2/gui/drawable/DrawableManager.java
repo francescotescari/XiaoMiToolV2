@@ -6,11 +6,12 @@ import javafx.scene.image.Image;
 import java.net.URL;
 
 public class DrawableManager {
-    public static String FASTBOOT_LOGO = "fastboot.png";
-    public static String MIUI10 = "miui10.png";
-    public static String NO_CONNECTION = "no_connection.png";
-    public static String DEVICE_AUTH = "device_auth.png";
-    public static String ERROR = "error.png";
+    public static final String LOCAL_PC = "localpc.png";
+    public static final String FASTBOOT_LOGO = "fastboot.png";
+    public static final String MIUI10 = "miui10.png";
+    public static final String NO_CONNECTION = "no_connection.png";
+    public static final String DEVICE_AUTH = "device_auth.png";
+    public static final String ERROR = "error.png";
     public static URL getResource(String name){
         URL resourcePath = DrawableManager.class.getResource(name);
         Log.debug("Resource: "+resourcePath);

@@ -38,9 +38,20 @@ public class ModFetch {
                     String version = magiskObj.getString("version");
                     ZipRom installable = new ZipRom(url) {
                         @Override
-                        public ChooserPane.Choice getChoice() {
-                            return new ChooserPane.Choice(LRes.MAGISK_ROOT.toString(), LRes.MAGISK_AUTO_DOWNLOAD.toString(version), new Image(DrawableManager.getPng("magiskround.png").toString()));
+                        public String getTitle() {
+                            return LRes.MAGISK_ROOT.toString();
                         }
+
+                        @Override
+                        public String getText() {
+                            return LRes.MAGISK_AUTO_DOWNLOAD.toString(version);
+                        }
+
+                        @Override
+                        public Image getIcon() {
+                            return DrawableManager.getResourceImage("magiskround.png");
+                        }
+
                     };
                     installable.setDownloadFilename("magisk_"+version+".zip");
                     Log.debug(installable.getDownloadUrl());

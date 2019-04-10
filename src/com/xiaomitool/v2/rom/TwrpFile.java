@@ -1,6 +1,7 @@
 package com.xiaomitool.v2.rom;
 
 
+import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.language.LRes;
@@ -16,6 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 
 public class TwrpFile extends Installable {
     private String codename;
@@ -86,19 +88,31 @@ public class TwrpFile extends Installable {
         return finalFile;
     }
 
+
+
+    @Override
+    public Set<Device.Status> getRequiredStates() {
+        return InstallObject.SET_FASTBOOT;
+    }
+
     @Override
     public RInstall getInstallProcedure() {
         return TwrpInstall.flashTwrp();
     }
 
     @Override
-    public ChooserPane.Choice getChoice() {
-        String title = LRes.TWRP_RECOVERY.toString();
-        String text = LRes.TWRP_SELECT_MANUAL.toString();
-        if (this.getDownloadUrl() != null){
-            title +=" - "+FilenameUtils.getName(this.getDownloadUrl());
-            text = LRes.TWRP_AUTO_DOWNLOAD.toString();
-        }
-        return new ChooserPane.Choice(title, text, new Image(DrawableManager.getPng("twrplogo.png").toString()));
+    public String getTitle() {
+        return LRes.TWRP_RECOVERY.toString() + (this.getDownloadUrl() != null ? (" - "+FilenameUtils.getName(this.getDownloadUrl())) : "");
     }
+
+    @Override
+    public String getText() {
+        return this.getDownloadUrl() != null ? LRes.TWRP_AUTO_DOWNLOAD.toString() : LRes.TWRP_SELECT_MANUAL.toString();
+    }
+
+    @Override
+    public Image getIcon() {
+        return DrawableManager.getResourceImage("twrplogo.png");
+    }
+
 }
