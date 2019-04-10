@@ -1,9 +1,9 @@
 package com.xiaomitool.v2.rom;
 
 import com.xiaomitool.v2.adb.device.Device;
-import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.procedure.RInstall;
 import com.xiaomitool.v2.procedure.install.StockRecoveryInstall;
+import com.xiaomitool.v2.rom.interfaces.InstallObject;
 import com.xiaomitool.v2.utility.NotNull;
 import com.xiaomitool.v2.xiaomi.miuithings.Branch;
 import com.xiaomitool.v2.xiaomi.miuithings.Codebase;
@@ -11,6 +11,7 @@ import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
 
 
 import java.io.File;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,7 +65,7 @@ public class MiuiZipRom extends MiuiRom {
 
 
     @Override
-    public Set<Device.Status> getRequiredStates() {
+    public LinkedHashSet<Device.Status> getRequiredStates() {
         return isOfficial() ? InstallObject.SET_SIDELOAD : InstallObject.SET_RECOVERY;
     }
 

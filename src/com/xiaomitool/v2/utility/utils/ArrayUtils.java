@@ -1,11 +1,10 @@
 package com.xiaomitool.v2.utility.utils;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashSet;
 
 public class ArrayUtils {
-    public static <T> HashSet<T> createHashSet(T... objs){
-        HashSet<T> set = new HashSet<>();
+    public static <T> LinkedHashSet<T> createLinkedHashSet(T... objs){
+        LinkedHashSet<T> set = new LinkedHashSet<>();
         for (T obj : objs){
             set.add(obj);
         }

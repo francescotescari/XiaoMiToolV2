@@ -376,7 +376,7 @@ public class ActionsDynamic {
                         throw new AdbException("Failed to reboot device to recovery mode");
                     }
                     HOWTO_GO_RECOVERY(device).run();
-                    if(!device.waitStatus(Device.Status.SIDELOAD)){
+                    if(!device.waitStatus(Device.Status.SIDELOAD, 5)){
                         throw new AdbException("Failed to reboot device to recovery mode");
                     }
                 } catch (AdbException e) {

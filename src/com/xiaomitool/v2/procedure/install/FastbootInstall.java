@@ -282,7 +282,7 @@ public class FastbootInstall {
                 int click = buttonPane.waitClick();
                 WindowManager.removeTopContent();
                 if (click != 0){
-                    throw new InstallException("Unlock procedure aborted, cannot continue", InstallException.Code.ABORTED, true);
+                    throw InstallException.ABORT_EXCEPTION;
                 }
                 Log.info("Unlock request confirmation success");
                 while (true) {

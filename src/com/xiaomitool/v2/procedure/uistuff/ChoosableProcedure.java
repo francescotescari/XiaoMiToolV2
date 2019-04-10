@@ -11,6 +11,7 @@ import com.xiaomitool.v2.procedure.install.FastbootInstall;
 import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.*;
+import com.xiaomitool.v2.rom.interfaces.InstallObject;
 import com.xiaomitool.v2.utility.Choiceable;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
@@ -18,6 +19,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 
@@ -40,7 +42,7 @@ public abstract class ChoosableProcedure implements Choiceable, InstallObject {
         }
 
         @Override
-        public Set<Device.Status> getRequiredStates() {
+        public LinkedHashSet<Device.Status> getRequiredStates() {
             return SET_SIDELOAD;
         }
 
@@ -108,7 +110,7 @@ public abstract class ChoosableProcedure implements Choiceable, InstallObject {
 
 
         @Override
-        public Set<Device.Status> getRequiredStates() {
+        public LinkedHashSet<Device.Status> getRequiredStates() {
             return SET_RECOVERY;
         }
 
@@ -167,7 +169,7 @@ public abstract class ChoosableProcedure implements Choiceable, InstallObject {
         }
 
         @Override
-        public Set<Device.Status> getRequiredStates() {
+        public LinkedHashSet<Device.Status> getRequiredStates() {
             return SET_FASTBOOT;
         }
 
@@ -225,7 +227,7 @@ public abstract class ChoosableProcedure implements Choiceable, InstallObject {
 
 
         @Override
-        public Set<Device.Status> getRequiredStates() {
+        public LinkedHashSet<Device.Status> getRequiredStates() {
             return SET_RECOVERY;
         }
 
@@ -281,7 +283,7 @@ public abstract class ChoosableProcedure implements Choiceable, InstallObject {
         }
 
         @Override
-        public Set<Device.Status> getRequiredStates() {
+        public LinkedHashSet<Device.Status> getRequiredStates() {
             return SET_FASTBOOT;
         }
 
@@ -313,8 +315,8 @@ public abstract class ChoosableProcedure implements Choiceable, InstallObject {
         }
 
         @Override
-        public Set<Device.Status> getRequiredStates() {
-            return new HashSet<>();
+        public LinkedHashSet<Device.Status> getRequiredStates() {
+            return new LinkedHashSet<>();
         }
 
         @Override

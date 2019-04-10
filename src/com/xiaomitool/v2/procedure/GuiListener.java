@@ -27,7 +27,7 @@ public abstract class GuiListener extends CommandClass {
     }
 
 
-    protected abstract void onException(InstallException exception);
+    protected abstract void onException(InstallException exception) ;
 
     public static class Debug extends GuiListener {
 

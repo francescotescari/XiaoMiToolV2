@@ -4,9 +4,11 @@ import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceManager;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.gui.visual.InstallPane;
+import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.logging.feedback.LiveFeedback;
 import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
+import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.utility.utils.StrUtils;
@@ -67,15 +69,32 @@ public class ProcedureRunner extends GuiListener {
     }
 
     public Command handleException(InstallException exception, RInstall cause) throws InterruptedException, InstallException, RMessage {
+        if (InstallException.ABORT_EXCEPTION.equals(exception)){
+            Log.warn("Aborted exception thrown, show message");
+            try {
+                GenericInstall.restartMain(GenericInstall.selectRomAndGo()).run(this);
+                return Command.SINKED;
+            } catch (InstallException e) {
+                exception = e;
+            } catch (RMessage rMessage) {
+                return rMessage.getCmd();
+            }
+        } else {
+            Log.warn("Not aborted exception thrown, show error");
+        }
+
+        final InstallException exceptionFinal = exception;
         if (cause != null && cause.hasFlag(RNode.FLAG_THROWRAWEXCEPTION)){
             throw exception;
         }
+        Log.error(this.getStackStrace());
         Command out;
         if (sendFeedback) {
-            out = listener.exception(exception, () -> LiveFeedbackEasy.sendInstallException(exception, ProcedureRunner.this));
+            out = listener.exception(exception, () -> LiveFeedbackEasy.sendInstallException(exceptionFinal, ProcedureRunner.this));
         } else {
             out = listener.exception(exception, null);
         }
+        Log.warn(this.getStackStrace());
         if (Command.ABORT.equals(out)){
             throw new RMessage(out);
         }
@@ -83,20 +102,36 @@ public class ProcedureRunner extends GuiListener {
     }
 
     private final List<String> stackLog = new ArrayList<>();
-    void pushStackTrace(String stackLog){
-        this.stackLog.add(stackLog);
+    private int spaces = 0;
+    void pushStackTrace(Object toLog, boolean in){
+        String log = StrUtils.tabs(spaces);
+        if (in){
+            log += toLog+" {";
+            ++spaces;
+        } else {
+            log += "} "+toLog;
+            --spaces;
+        }
+        synchronized (this.stackLog) {
+            this.stackLog.add(log);
+        }
     }
 
-    public  String getStackStrace(){
-        return String.join("\n",stackLog);
+    public String getStackStrace(){
+        return getStackStrace(100);
     }
 
+    public  String getStackStrace(int maxlen){
 
-
-
-
-
-
+        StringBuilder builder = new StringBuilder();
+        synchronized (this.stackLog) {
+            int start = Integer.max(this.stackLog.size()-maxlen, 0);
+            for (int i = start; i<=stackLog.size(); ++i){
+                builder.append(this.stackLog.get(i)).append("\n");
+            }
+        }
+        return builder.toString();
+    }
 
     @Override
     public void toast(String message) {
@@ -110,6 +145,7 @@ public class ProcedureRunner extends GuiListener {
 
     @Override
     protected void onException(InstallException exception) {
+
         listener.onException(exception);
     }
 

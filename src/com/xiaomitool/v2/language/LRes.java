@@ -261,8 +261,7 @@ public enum  LRes  {
     SELECT_IF_YOURE_FROM("Select this if you are from %s"),
     SELECTED_REGION("Selected region: %s"),
     ROM_INSTALL_NOT_ALLOWED("You can't install this rom: %s"),
-    ROM_INSTALL_NOT_ALLOWED_EXP("The rom you selected cannot be installed onto the current rom without unlocking the bootloader.\nThis is because locked bootloader installations must be validated and allowed by Xiaomi server\nThe server didn't allowed the installation or errors occurred during installation\nServer response:\n\n%s")
-
+    ROM_INSTALL_NOT_ALLOWED_EXP("The rom you selected cannot be installed onto the current rom without unlocking the bootloader.\nThis is because locked bootloader installations must be validated and allowed by Xiaomi server\nThe server didn't allowed the installation or errors occurred during installation\nServer response:\n\n%s"),
     ;
     private String text;
 

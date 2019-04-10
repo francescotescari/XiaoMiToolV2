@@ -15,13 +15,13 @@ public abstract class RInstall {
      void runInternal(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
           Log.debug("Running now procedure: "+this.toString(2));
           Log.info("Running now procedure: "+this.toString());
-          boolean pushStack = this instanceof RNode;
+          boolean pushStack = !(this instanceof RNode);
           if (pushStack) {
-               runner.pushStackTrace("in:" + this.toString());
+               runner.pushStackTrace(this, true);
           }
           run(runner);
           if (pushStack) {
-               runner.pushStackTrace("out:" + this.toString());
+               runner.pushStackTrace(this, false);
           }
      }
      protected int flags;

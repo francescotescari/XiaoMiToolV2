@@ -21,6 +21,7 @@ import com.xiaomitool.v2.procedure.uistuff.ChooseProcedure;
 import com.xiaomitool.v2.procedure.uistuff.ConfirmationProcedure;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.chooser.InstallationRequirement;
+import com.xiaomitool.v2.rom.interfaces.StatedProcedure;
 import com.xiaomitool.v2.tasks.UpdateListener;
 import com.xiaomitool.v2.utility.CommandClass;
 import com.xiaomitool.v2.utility.YesNoMaybe;
@@ -179,21 +180,23 @@ public class GenericInstall {
                     runner.setContext(KEY_STASHED_INSTALLABLE, installable);
                 }
                 Log.debug("Satisfying all requirements");
-                RInstall toSatisfy = InstallationRequirement.satisfyNextRequirement(Procedures.requireDevice(runner),installable);
-                RInstall copy = null;
+                StatedProcedure toSatisfy = InstallationRequirement.satisfyNextRequirement(Procedures.requireDevice(runner),installable);
+                StatedProcedure copy = null;
                 while (toSatisfy != null){
-                    Log.debug("Statisfying requrement: "+toSatisfy.toString());
-                    Log.info("Next procedure to satisfy: "+toSatisfy.toString(1));
-                    toSatisfy.run(runner);
-                    copy = toSatisfy;
+                    if (toSatisfy.getInstallProcedure() != null) {
+                        if (YesNoMaybe.YES.equals(device.getAnswers().isNeedDeviceDebug()) && Procedures.stillNeedUsbDebug(runner, toSatisfy)) {
+                            Log.warn("Satisfying the requirement resetted the phone, you need to enable usb debug again");
+                            RebootDevice.rebootNoWaitIfConnected().run(runner);
+                            ActionsDynamic.WAIT_USB_DEBUG_ENABLE(device).run();
+                        }
+                        Log.debug("Statisfying requrement: " + toSatisfy.toString());
+                        Log.info("Next procedure to satisfy: " + toSatisfy.getInstallProcedure().toString(2));
+                        toSatisfy.getInstallProcedure().run(runner);
+                        copy = toSatisfy;
+                    }
                     toSatisfy = InstallationRequirement.satisfyNextRequirement(Procedures.requireDevice(runner),installable);
                     if (Objects.equals(copy, toSatisfy)){
-                        throw new InstallException("Trying to satisfy a requirement that should had been just satisfied: "+copy.toString(), InstallException.Code.INTERNAL_ERROR, false);
-                    }
-                    if (YesNoMaybe.YES.equals(device.getAnswers().isNeedDeviceDebug())){
-                        Log.warn("Satisfying the requirement resetted the phone, you need to enable usb debug again");
-                        RebootDevice.rebootNoWaitIfConnected().run(runner);
-                        ActionsDynamic.WAIT_USB_DEBUG_ENABLE(device).run();
+                        throw new InstallException("Trying to satisfy a requirement that should had been just satisfied: "+copy, InstallException.Code.INTERNAL_ERROR, false);
                     }
                     try {
                         Log.info("The device might be rebooting right now, lets wait it for 30 seconds");
@@ -203,7 +206,15 @@ public class GenericInstall {
                     }
                 }
                 stashed = (Installable) runner.getContext(KEY_STASHED_INSTALLABLE);
+
+
                 if (stashed != null){
+                    if (YesNoMaybe.YES.equals(device.getAnswers().isNeedDeviceDebug()) && Procedures.stillNeedUsbDebug(runner, stashed)) {
+                        Log.warn("Satisfying the requirement resetted the phone, you need to enable usb debug again before installing stashed installable");
+                        RebootDevice.rebootNoWaitIfConnected().run(runner);
+                        ActionsDynamic.WAIT_USB_DEBUG_ENABLE(device).run();
+                    }
+
                     Log.info("Reloading the stashed installable: "+stashed.toLogString());
                     Log.debug("Reloading stashed installable: "+stashed);
                     Procedures.setInstallable(runner, stashed);
@@ -272,6 +283,10 @@ public class GenericInstall {
     }
 
     public static RInstall showUserAndRestart(String message, boolean throwUplevel){
+        return showUserAndRestart(message, throwUplevel, null);
+    }
+
+    public static RInstall showUserAndRestart(String message, boolean throwUplevel, RInstall startFromHere){
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -283,7 +298,7 @@ public class GenericInstall {
                 if (click != 0){
                     throw new RMessage(CommandClass.Command.UPLEVEL);
                 }
-                restartMain(null).run(runner);
+                restartMain(startFromHere).run(runner);
             }
         };
     }

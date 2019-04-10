@@ -4,6 +4,7 @@ package com.xiaomitool.v2.rom;
 import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.RInstall;
+import com.xiaomitool.v2.rom.interfaces.InstallObject;
 import com.xiaomitool.v2.tasks.*;
 import com.xiaomitool.v2.utility.Choiceable;
 import com.xiaomitool.v2.utility.CommandClass;

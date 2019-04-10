@@ -1,16 +1,16 @@
 package com.xiaomitool.v2.rom;
 
 import com.xiaomitool.v2.adb.device.Device;
-import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.RInstall;
 import com.xiaomitool.v2.procedure.install.FastbootInstall;
+import com.xiaomitool.v2.rom.interfaces.InstallObject;
 import com.xiaomitool.v2.tasks.*;
-import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.miuithings.Codebase;
 import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
 
 import java.io.File;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,7 +84,7 @@ public class MiuiTgzRom extends MiuiRom {
     }
 
     @Override
-    public Set<Device.Status> getRequiredStates() {
+    public LinkedHashSet<Device.Status> getRequiredStates() {
         return InstallObject.SET_FASTBOOT;
     }
 

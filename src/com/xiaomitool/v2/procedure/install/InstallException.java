@@ -6,6 +6,8 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.rom.RomException;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
 
+import java.util.Objects;
+
 public class InstallException extends Exception {
 
     public static final InstallException ABORT_EXCEPTION = new InstallException("The installation was aborted by the user", Code.ABORTED, false);
@@ -97,5 +99,17 @@ public class InstallException extends Exception {
 
     public Code getCode() {
         return code;
+    }
+
+    @Override
+    public boolean equals(Object object){
+        if (object == null || !(object instanceof InstallException)){
+            return false;
+        }
+        InstallException o = (InstallException) object;
+        if (!Objects.equals(this.getCode(), o.getCode())){
+            return false;
+        }
+        return Objects.equals(this.getMessage(), o.getMessage());
     }
 }

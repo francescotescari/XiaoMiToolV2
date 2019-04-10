@@ -3,11 +3,11 @@ package com.xiaomitool.v2.rom;
 
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
-import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.RInstall;
 import com.xiaomitool.v2.procedure.install.TwrpInstall;
+import com.xiaomitool.v2.rom.interfaces.InstallObject;
 import com.xiaomitool.v2.tasks.*;
 import com.xiaomitool.v2.utility.NotNull;
 import javafx.scene.image.Image;
@@ -17,6 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class TwrpFile extends Installable {
@@ -91,7 +92,7 @@ public class TwrpFile extends Installable {
 
 
     @Override
-    public Set<Device.Status> getRequiredStates() {
+    public LinkedHashSet<Device.Status> getRequiredStates() {
         return InstallObject.SET_FASTBOOT;
     }
 

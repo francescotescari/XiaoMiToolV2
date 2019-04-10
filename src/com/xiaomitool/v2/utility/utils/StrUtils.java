@@ -5,6 +5,7 @@ import netscape.javascript.JSObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DecimalFormat;
@@ -152,5 +153,27 @@ public class StrUtils {
             }
         }
         return parts1.length - parts2.length;
+    }
+
+
+    private static final byte[] SPACE_STRING = "                                                ".getBytes();
+    private static final byte[] TABS_STIRNG = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t".getBytes();
+    private static String chars(byte[] source, int count) {
+        if (count < 0){
+            return  "";
+        }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(count);
+        while (count > 0){
+            int len = Integer.min(count, source.length);
+            byteArrayOutputStream.write(source, 0, len);
+            count-= len;
+        }
+        return new String(byteArrayOutputStream.toByteArray());
+    }
+    public static String tabs(int tabs){
+        return chars(TABS_STIRNG, tabs);
+    }
+    public static String spaces(int tabs){
+        return chars(SPACE_STRING, tabs);
     }
 }

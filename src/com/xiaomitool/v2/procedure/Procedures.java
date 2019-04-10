@@ -12,6 +12,7 @@ import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.chooser.InstallableChooser;
 import com.xiaomitool.v2.rom.chooser.ProcedureChooser;
+import com.xiaomitool.v2.rom.interfaces.StatedProcedure;
 import com.xiaomitool.v2.tasks.UpdateListener;
 import com.xiaomitool.v2.utility.CommandClass;
 import com.xiaomitool.v2.utility.YesNoMaybe;
@@ -25,6 +26,8 @@ import javafx.stage.FileChooser;
 
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 import static com.xiaomitool.v2.procedure.install.InstallException.Code.*;
@@ -196,4 +199,26 @@ public class Procedures {
         };
     }
 
+    public static boolean stillNeedUsbDebug(ProcedureRunner runner, StatedProcedure procedure) throws InstallException {
+        return getAllRequiredStates(runner, procedure).contains(Device.Status.DEVICE);
+    }
+
+    private static LinkedHashSet<Device.Status> getAllRequiredStates(ProcedureRunner runner, StatedProcedure procedure) throws InstallException {
+        Device device = Procedures.requireDevice(runner);
+        Device.Status status = device.getStatus();
+        if (!device.isConnected()){
+            status = null;
+        }
+        LinkedHashSet<Device.Status> statuses = new LinkedHashSet<>();
+        for (Device.Status requiredStatus : procedure.getRequiredStates()){
+            statuses.add(requiredStatus);
+            if (!requiredStatus.equals(status)){
+                if (status == null || Device.Status.FASTBOOT.equals(status)){
+                    statuses.add(Device.Status.DEVICE);
+                }
+            }
+            status = requiredStatus;
+        }
+        return statuses;
+    }
 }
