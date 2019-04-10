@@ -52,11 +52,11 @@ public class GenericInstall {
                 Log.info("Starting required resource download");
                 if(!installable.isNeedDownload()){
                     Log.info("No need to download resources, skip");
-                    Log.debug("No need to downlaod");
+                    Log.debug("No need to download");
                     return;
                 }
                 if (StrUtils.isNullOrEmpty(installable.getDownloadUrl())){
-                    throw new InstallException("Donwload failed: empty or null download url", InstallException.Code.DOWNLOAD_FAILED, false);
+                    throw new InstallException("Download failed: empty or null download url", InstallException.Code.DOWNLOAD_FAILED, false);
                 }
                 Log.info("Starting download from: "+installable.getDownloadUrl());
                 ProgressPane.DefProgressPane defProgressPane = new ProgressPane.DefProgressPane();

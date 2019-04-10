@@ -33,7 +33,7 @@ import java.util.zip.InflaterInputStream;
 public class LogSender {
     private static final String SALT_RESPONSE = "response_good";
     private static Instant lastSendSuccessInstant = null;
-    private static int WAIT_BEFORE_SENDING = 60;
+    private static int WAIT_BEFORE_SENDING = 300;
 
     private static final String HOST_PATH = ToolManager.getFeedbackUrl();
 
@@ -182,14 +182,21 @@ public class LogSender {
         return uploadFeedback(userFeedback, sendLogFile ? Log.getDebugger() : null);
     }
 
-    public static void cooldownCounter(CustomButton button) {
+    private static boolean logSendCooldown;
+    public static boolean isLogCooldown(){
+        return logSendCooldown;
+    }
+
+    public static Thread cooldownCounter(CustomButton button) {
+        logSendCooldown = false;
         if (getTimeFromLastSend() == -1){
             Platform.runLater(() -> {
                 button.setText(LRes.SEND_FEEDBACK.toString());
                 button.setDisable(false);
             });
         } else {
-            new Thread(new Runnable() {
+            logSendCooldown = true;
+            Thread res = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     int seconds = 0;
@@ -205,13 +212,17 @@ public class LogSender {
                         });
                         ThreadUtils.sleepSilently(1000);
                     }
+                    logSendCooldown = false;
                     Platform.runLater(() -> {
                         button.setText(LRes.SEND_FEEDBACK.toString());
                         button.setDisable(false);
                     });
                 }
-            }).start();
+            });
+            res.start();
+            return res;
         }
+        return null;
 
     }
     private static int getTimeFromLastSend(){

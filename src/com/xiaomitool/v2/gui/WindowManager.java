@@ -9,6 +9,7 @@ import com.xiaomitool.v2.gui.visual.OverlayPane;
 import com.xiaomitool.v2.gui.visual.ToastPane;
 import com.xiaomitool.v2.gui.visual.VisiblePane;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.logging.feedback.LogSender;
 import com.xiaomitool.v2.utility.Pointer;
 import com.xiaomitool.v2.utility.RunnableMessage;
 import com.xiaomitool.v2.utility.SilentCompleteFuture;
@@ -136,6 +137,9 @@ public class WindowManager {
         @Override
         public int run() throws InterruptedException {
             WindowManager.setOnExitAskForFeedback(false);
+            if (LogSender.isLogCooldown()){
+                return 0;
+            }
             ActionsStatic.ASK_FOR_FEEDBACK().run();
             return 0;
         }

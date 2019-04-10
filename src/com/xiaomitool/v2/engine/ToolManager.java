@@ -21,7 +21,7 @@ import java.util.List;
 
 public class ToolManager {
 
-    public static final String TOOL_VERSION = "9.4.1";
+    public static final String TOOL_VERSION = "9.4.10";
     public static final String URL_DONATION = "https://www.xiaomitool.com/V2/donate";
     public static final String TOOL_VERSION_EX = "alpha";
     public static final String XMT_HOST = "https://www.xiaomitool.com/V2";
