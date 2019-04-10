@@ -359,6 +359,6 @@ public class FastbootInstall {
                 }
 
             }
-        }, GenericInstall.updateDeviceStatus(true, null, false));
+        }, GenericInstall.updateDeviceStatus(true, null, false, true));
     }
 }

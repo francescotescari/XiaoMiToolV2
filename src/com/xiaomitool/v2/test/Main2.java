@@ -15,7 +15,9 @@ import com.xiaomitool.v2.procedure.Procedures;
 import com.xiaomitool.v2.process.LineScanner;
 import com.xiaomitool.v2.process.ProcessRunner;
 import com.xiaomitool.v2.resources.ResourcesManager;
+import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.utility.utils.InetUtils;
+import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
@@ -76,7 +78,7 @@ public class Main2 {
 
 
     public static void main(String[] args) throws IOException {
-        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+        Log.debug(MiuiRom.Specie.listToSearchSpecies(SettingsUtils.Region.GLOBAL, "dipper_it_vf_global"));
 
     }
 

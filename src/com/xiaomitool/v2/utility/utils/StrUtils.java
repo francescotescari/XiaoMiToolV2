@@ -176,4 +176,16 @@ public class StrUtils {
     public static String spaces(int tabs){
         return chars(SPACE_STRING, tabs);
     }
+
+    public static String after(String fullWord, String start) {
+        char[] fullChars = fullWord.toCharArray();
+        char[] startChars = start.toCharArray();
+        int i;
+        for (i = 0; i<fullChars.length && i<startChars.length; ++i){
+            if (fullChars[i] != startChars[i]){
+                return null;
+            }
+        }
+        return new String(fullChars,i, fullChars.length-i);
+    }
 }

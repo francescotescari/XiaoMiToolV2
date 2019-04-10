@@ -141,15 +141,10 @@ public class WindowManager {
         }
     };
 
+    private static RunnableMessage ON_BEFORE_CLOSE = null;
+
     public static void setOnExitAskForFeedback(boolean ask){
-        if (mainWindowController == null){
-            return;
-        }
-        if (ask){
-            mainWindowController.setOnBeforeClose(ASK_FEEDBACK);
-        } else {
-            mainWindowController.setOnBeforeClose(null);
-        }
+        ON_BEFORE_CLOSE = ask ? ASK_FEEDBACK : null;
     }
 
     private static MainWindowController mainWindowController = null;
@@ -157,6 +152,17 @@ public class WindowManager {
         mainStage = primaryStage;
         mainWindowController = new MainWindowController();
         launchWindow(FRAME_MAIN, mainWindowController,primaryStage);
+        mainWindowController.setOnBeforeClose(new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+                ActionsStatic.CLOSING().run();
+                RunnableMessage r = ON_BEFORE_CLOSE;
+                if (r != null){
+                    return r.run();
+                }
+                return 0;
+            }
+        });
         primaryStage.setOnCloseRequest(event -> {
             ToolManager.exit(0);
             // Save file

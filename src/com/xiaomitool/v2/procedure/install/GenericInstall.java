@@ -36,6 +36,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.io.FilenameUtils;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 import static com.xiaomitool.v2.engine.CommonsMessages.NOOP;
@@ -223,12 +224,16 @@ public class GenericInstall {
         };
     }
 
-
     public static RInstall updateDeviceStatus(Boolean isUnlocked, Boolean hasTwrp, Boolean hasUsbDebug){
+        return updateDeviceStatus(isUnlocked, hasTwrp, hasUsbDebug, null);
+    }
+
+
+    public static RInstall updateDeviceStatus(Boolean isUnlocked, Boolean hasTwrp, Boolean hasUsbDebug, Boolean hasStockMiui){
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Log.info("Updating the device status: isUnlocked: "+isUnlocked+", hasTwrp: "+hasTwrp+", hasUsbDebug: "+hasUsbDebug);
+                Log.info("Updating the device status: isUnlocked: "+isUnlocked+", hasTwrp: "+hasTwrp+", hasUsbDebug: "+hasUsbDebug+", hasStockMiui: "+hasStockMiui);
                 Device device = Procedures.requireDevice(runner);
                 if (isUnlocked != null){
                     device.getDeviceProperties().getFastbootProperties().put(DeviceProperties.X_LOCKSTATUS, isUnlocked ? UnlockStatus.UNLOCKED : UnlockStatus.LOCKED);
@@ -238,6 +243,9 @@ public class GenericInstall {
                 }
                 if (hasUsbDebug != null){
                     device.getAnswers().setNeedDeviceDebug(hasUsbDebug ? YesNoMaybe.NO : YesNoMaybe.YES);
+                }
+                if (hasStockMiui != null){
+                    device.getAnswers().setAnswer(DeviceAnswers.HAS_STOCK_MIUI, hasStockMiui ? YesNoMaybe.YES : YesNoMaybe.NO);
                 }
             }
         };
@@ -270,7 +278,7 @@ public class GenericInstall {
                         try {
                             ActionsDynamic.MAIN_SCREEN_LOADING(LRes.LOADING).run();
                             lastThread.interrupt();
-                            ActionsDynamic.START_PROCEDURE(device, startFromHere, runner).run();
+                            ActionsDynamic.START_PROCEDURE(device, RNode.sequence(unstashContext(), startFromHere), runner).run();
                         } catch (InterruptedException e) {
                             Log.warn("Main tool runner thread interrutped: "+e.getMessage());
                         }
@@ -326,8 +334,33 @@ public class GenericInstall {
         GenericInstall.installationSuccess().run(runner);*/
     }
 
+    private static HashMap<String, Object> context;
+    private static RInstall stashContext(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                context = new HashMap<>();
+                runner.stashEntireContext(context);
+            }
+        };
+    }
+
+    private static RInstall unstashContext(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                if (context == null){
+                    return;
+                }
+                runner.reloadContext(context);
+                context = null;
+            }
+        };
+    }
+
     public static RInstall selectRomAndGo() {
         return RNode.sequence(
+                stashContext(),
                 ChooseProcedure.chooseRom(),
                 checkIfProcedureDone(),
                 RNode.conditional(KEY_BOOL_SHOULD_SKIP_INSTALL,

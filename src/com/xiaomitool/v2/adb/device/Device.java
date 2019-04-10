@@ -81,8 +81,6 @@ public class Device {
             deviceProperties.getAdbProperties().parse();
         } else if (Status.RECOVERY.equals(status)){
             deviceProperties.getRecoveryProperties().parse();
-        } else if (Status.UNAUTHORIZED.equals(status)){
-            getAnswers().setNeedDeviceDebug(YesNoMaybe.NO);
         }
         releaseAccess();
     }

@@ -8,6 +8,7 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.resources.ResourceImages;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.utility.utils.SettingsUtils.Region;
+import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiUtilities;
 import com.xiaomitool.v2.xiaomi.miuithings.Branch;
 import com.xiaomitool.v2.xiaomi.miuithings.Codebase;
@@ -66,18 +67,23 @@ public abstract class MiuiRom extends Installable {
         INDIA_STABLE(6, Region.INDIA, LRes.INDIA_STABLE),
         INDIA_DEVELOPER(7, Region.INDIA, LRes.INDIA_DEVELOPER),
         RUSSIA_STABLE(8, Region.RUSSIA, LRes.RUSSIA_STABLE),
-        RUSSIA_DEVELOPER(9, Region.RUSSIA, LRes.RUSSIA_DEVELOPER);
+        RUSSIA_DEVELOPER(9, Region.RUSSIA, LRes.RUSSIA_DEVELOPER),
+        OTHER(100, Region.OTHER, LRes.REG_OTHER);
         private final int code;
         private Branch branch;
         private Region parentRegion;
         private LRes lRes;
+        private String suffix;
         Specie(int code, Region parentRegion, LRes lRes){
+            this.suffix = parentRegion.getSuffix();
             this.code = code; this.parentRegion = parentRegion;
             this.lRes = lRes;
         }
 
+
+
         public String getDrawable(){
-            return parentRegion.getDrawable();
+            return parentRegion == null ? Region.GLOBAL.getDrawable() : parentRegion.getDrawable();
         }
 
         public Region getParentRegion(){
@@ -97,19 +103,7 @@ public abstract class MiuiRom extends Installable {
         }
         public String buildModDevice(String codename){
             String cleanCodename = XiaomiUtilities.stripCodename(codename);
-            switch (this.parentRegion){
-                case CN:
-                    return cleanCodename;
-                case GLOBAL:
-                    return cleanCodename+"_global";
-                case INDIA:
-                    return cleanCodename+"_india_global";
-                case RUSSIA:
-                    return cleanCodename+"_ru_global";
-                case EU:
-                    return cleanCodename+"_eea_global";
-            }
-            return codename;
+            return cleanCodename+suffix;
         }
 
 
@@ -136,6 +130,8 @@ public abstract class MiuiRom extends Installable {
             species.add(CHINA_DEVELOPER);
             species.add(GLOBAL_STABLE);
             species.add(GLOBAL_DEVELOPER);
+            Specie currentSpecie = fromStringBranch(device, Branch.STABLE);
+
             if (!DeviceGroups.isMultiRegionDevice(device)){
                 return species;
             }
@@ -147,6 +143,9 @@ public abstract class MiuiRom extends Installable {
             if (DeviceGroups.hasEEARegion(device)){
                 species.add(EUROPEAN_STABLE);
                 species.add(EUROPEAN_DEVELOPER);
+            }
+            if (currentSpecie != null){
+                species.add(currentSpecie);
             }
             species.removeAll(NOT_EXISTING_SPECIES);
             return species;
@@ -199,10 +198,17 @@ public abstract class MiuiRom extends Installable {
             if (branch == null || codename == null){
                 return null;
             }
-            int rCode = baseSpecieFromCodename(codename).code;
+            Specie rCode = baseSpecieFromCodename(codename);
+            if (OTHER.equals(rCode)){
+                rCode.setBranch(branch);
+                return rCode;
+            }
             int bCode = Branch.STABLE.equals(branch.getDual()) ? 0 : 1;
-            Specie p = fromCode(bCode+rCode);
-            Log.debug("Specie from device and branch: "+p.toString());
+            Specie p = fromCode(bCode+rCode.code);
+            if (p == null){
+                return null;
+            }
+            Log.debug("Specie from device and branch: "+p);
             p.setBranch(branch);
             return p;
         }
@@ -210,17 +216,20 @@ public abstract class MiuiRom extends Installable {
         private static Specie baseSpecieFromCodename(String codename){
             if (codename == null){
                 return null;
-            } else if (codename.contains("_eea_global")){
-                return EUROPEAN_STABLE;
-            } else if (codename.contains("_india_global")){
-                return INDIA_STABLE;
-            } else if (codename.contains("_ru_global")){
-                return RUSSIA_STABLE;
-            } else  if (codename.contains("_global")){
-                return GLOBAL_STABLE;
-            } else {
-                return CHINA_STABLE;
             }
+            String stripped = XiaomiUtilities.stripCodename(codename);
+            String suffix = StrUtils.after(codename, stripped);
+            if (suffix == null){
+                return null;
+            }
+            for (Specie specie : Specie.values()){
+                if (suffix.equalsIgnoreCase(specie.suffix) && !specie.equals(OTHER)){
+                    return specie.toStable();
+                }
+            }
+            Specie res = OTHER;
+            res.suffix = suffix;
+            return res;
         }
 
         public void setBranch(Branch branch) {
@@ -229,6 +238,11 @@ public abstract class MiuiRom extends Installable {
 
         public String toHuman(){
             return lRes.toString();
+        }
+
+        @Override
+        public String toString(){
+            return super.toString()+"("+suffix+")";
         }
 
 

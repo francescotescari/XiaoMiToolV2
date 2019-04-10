@@ -121,4 +121,19 @@ public class DeviceAnswers {
         branch = branch == null ? Branch.DEVELOPER : branch;
         return MiuiRom.Specie.fromStringBranch(product,branch);
     }
+
+    public static final String HAS_STOCK_MIUI = "hasStockMiui";
+
+    public void updateStatus(Device.Status status){
+        if (Device.Status.SIDELOAD.equals(status)){
+            this.setAnswer(HAS_TWRP, YesNoMaybe.NO);
+        } else if (Device.Status.DEVICE.equals(status)){
+            if (YesNoMaybe.YES.equals(getAnswer(HAS_STOCK_MIUI)) && YesNoMaybe.YES.equals(this.hasTwrpRecovery())){
+                this.setAnswer(HAS_TWRP, YesNoMaybe.MAYBE);
+            }
+            setNeedDeviceDebug(YesNoMaybe.NO);
+        } else if (Device.Status.UNAUTHORIZED.equals(status)){
+            setNeedDeviceDebug(YesNoMaybe.NO);
+        }
+    }
 }

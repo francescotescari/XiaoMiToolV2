@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.engine;
 
+import com.xiaomitool.v2.engine.actions.ActionsStatic;
 import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.controller.LoginController;
@@ -79,6 +80,7 @@ public class ToolManager {
         if (exiting){
             return;
         }
+
         exiting = true;
         LiveFeedbackEasy.sendClose();
         saveOptions();

@@ -489,6 +489,9 @@ public class ActionsDynamic {
 
                     try {
                         Thread.sleep(1200);
+                        if (UnlockStatus.LOCKED.equals(device.getAnswers().getUnlockStatus())){
+                            device.getAnswers().setAnswer(DeviceAnswers.HAS_STOCK_MIUI, YesNoMaybe.YES);
+                        }
                         ActionsDynamic.START_PROCEDURE(device).run();
                     } catch (InterruptedException e) {
 

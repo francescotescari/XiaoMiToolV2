@@ -18,6 +18,7 @@ import javafx.scene.layout.Pane;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProcedureRunner extends GuiListener {
     private InstallException exception;
@@ -69,6 +70,7 @@ public class ProcedureRunner extends GuiListener {
     }
 
     public Command handleException(InstallException exception, RInstall cause) throws InterruptedException, InstallException, RMessage {
+        Log.warn(this.getStackStrace());
         if (InstallException.ABORT_EXCEPTION.equals(exception)){
             Log.warn("Aborted exception thrown, show message");
             try {
@@ -94,7 +96,7 @@ public class ProcedureRunner extends GuiListener {
         } else {
             out = listener.exception(exception, null);
         }
-        Log.warn(this.getStackStrace());
+
         if (Command.ABORT.equals(out)){
             throw new RMessage(out);
         }
@@ -126,8 +128,10 @@ public class ProcedureRunner extends GuiListener {
         StringBuilder builder = new StringBuilder();
         synchronized (this.stackLog) {
             int start = Integer.max(this.stackLog.size()-maxlen, 0);
-            for (int i = start; i<=stackLog.size(); ++i){
-                builder.append(this.stackLog.get(i)).append("\n");
+            for (int i = start; i<stackLog.size(); ++i){
+                try {
+                    builder.append(this.stackLog.get(i)).append("\n");
+                } catch (Throwable ignored){}
             }
         }
         return builder.toString();
@@ -230,6 +234,19 @@ public class ProcedureRunner extends GuiListener {
             this.listener = new GuiListener.Debug();
         } else {
             this.listener = listener;
+        }
+    }
+
+    public void stashEntireContext(HashMap<String, Object> dst) {
+        for (Map.Entry<String, Object> entry : this.context.entrySet()){
+            dst.put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    public void reloadContext(HashMap<String, Object> src){
+        this.context = new HashMap<>();
+        for (Map.Entry<String, Object> entry : src.entrySet()){
+            context.put(entry.getKey(), entry.getValue());
         }
     }
 }

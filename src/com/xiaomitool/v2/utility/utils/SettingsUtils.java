@@ -160,18 +160,25 @@ public class SettingsUtils extends HashMap<String, String> {
         return decrypted;
     }
     public static enum Region {
-        EU(LRes.REG_EUROPE,"eu","reg_europe.png"),
-        INDIA(LRes.REG_INDIA,"india","reg_india.png"),
-        CN(LRes.REG_CHINA,"cn","reg_china.png"),
-        RUSSIA(LRes.REG_RUSSIA,"russia","reg_russia.png"),
-        GLOBAL(LRes.REG_OTHER,"global","reg_global.png");
+        EU(LRes.REG_EUROPE,"eu","reg_europe.png","_eea_global"),
+        INDIA(LRes.REG_INDIA,"india","reg_india.png","_in_global"),
+        CN(LRes.REG_CHINA,"cn","reg_china.png",""),
+        RUSSIA(LRes.REG_RUSSIA,"russia","reg_russia.png","_ru_global"),
+        GLOBAL(LRes.REG_OTHER,"global","reg_global.png","_global"),
+        OTHER(LRes.REG_OTHER, "other", "reg_global.png","");
         private LRes lRes;
-        private String toString, drawRes;
-        private Region(LRes lRes, String toString, String drawRes){
+        private final String toString, drawRes, suffix;
+        private Region(LRes lRes, String toString, String drawRes, String suffix){
             this.lRes = lRes;
             this.toString = toString;
             this.drawRes = drawRes;
+            this.suffix = suffix;
         }
+
+        public String getSuffix() {
+            return suffix;
+        }
+
         public String toHuman(){
             return lRes.toString();
         }

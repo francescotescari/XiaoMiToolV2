@@ -537,5 +537,14 @@ public class ActionsStatic {
         };
     }
 
+    public static RunnableMessage CLOSING(){
+        return new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+                return ActionsDynamic.MAIN_SCREEN_LOADING(LRes.CLOSING).run();
+            }
+        };
+    }
+
 
 }

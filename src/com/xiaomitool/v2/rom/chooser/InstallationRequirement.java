@@ -127,7 +127,7 @@ public abstract class   InstallationRequirement implements StatedProcedure {
     public static final InstallationRequirement TWRP_INSTALLED = new InstallationRequirement("twrp install", UNLOCKED_BOOTLOADER, CHECK_IF_TWRP_INSTALLED) {
         @Override
         public RInstall getInstallProcedure() {
-            return RNode.sequence(TwrpFetch.fetchTwrpFallbackToPc(), GenericInstall.resourceFetchWait(), TwrpInstall.flashTwrp(), TwrpInstall.checkIfIsInTwrp());
+            return RNode.sequence(TwrpFetch.fetchTwrpFallbackToPc(), GenericInstall.resourceFetchWait(), TwrpInstall.flashTwrp(), ManageDevice.waitDevice(30, Device.Status.RECOVERY), TwrpInstall.checkIfIsInTwrp());
         }
 
         @Override
