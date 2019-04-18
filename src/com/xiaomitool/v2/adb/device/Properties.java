@@ -3,6 +3,7 @@ package com.xiaomitool.v2.adb.device;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.RunnableWithArg;
 import com.xiaomitool.v2.utility.WaitSemaphore;
+import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -128,5 +129,9 @@ public abstract class Properties {
         synchronized (propertiesMap) {
             this.parsed = false;
         }
+    }
+
+    public void set(String key, Object value) {
+        this.propertiesMap.put(key, value);
     }
 }

@@ -267,6 +267,10 @@ public class GenericInstall {
     private static final String KEY_BOOL_SHOULD_SKIP_INSTALL = "bool_should_skip_install";
 
     public static RInstall restartMain(RInstall startFromHere){
+        if (startFromHere == null){
+            startFromHere = GenericInstall.selectRomAndGo();
+        }
+        final RInstall start = startFromHere;
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -278,7 +282,8 @@ public class GenericInstall {
                         try {
                             ActionsDynamic.MAIN_SCREEN_LOADING(LRes.LOADING).run();
                             lastThread.interrupt();
-                            ActionsDynamic.START_PROCEDURE(device, RNode.sequence(unstashContext(), startFromHere), runner).run();
+
+                            ActionsDynamic.START_PROCEDURE(device, RNode.sequence(unstashContext(), start), runner).run();
                         } catch (InterruptedException e) {
                             Log.warn("Main tool runner thread interrutped: "+e.getMessage());
                         }

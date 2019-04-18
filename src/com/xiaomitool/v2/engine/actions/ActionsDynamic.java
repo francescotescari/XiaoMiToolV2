@@ -664,6 +664,7 @@ public class ActionsDynamic {
                             } else if (e instanceof  InterruptedException){
                                 throw (InterruptedException) e;
                             }
+                            Log.printStackTrace(e);
                             thisRunner.handleException(new InstallException(e.getMessage(), InstallException.Code.INTERNAL_ERROR, false), main);
                         } catch (InstallException e1) {
                             throw new RMessage(e1);

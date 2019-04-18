@@ -21,6 +21,7 @@ import com.xiaomitool.v2.procedure.uistuff.ConfirmationProcedure;
 import com.xiaomitool.v2.utility.BezierInterpolator;
 import com.xiaomitool.v2.utility.Pointer;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
+import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -83,6 +84,7 @@ public class GuiTest2 extends Application{
                     device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODEBASE, "9.0");
 
                     device.getDeviceProperties().getSideloadProperties().put(DeviceProperties.ROMZONE,"1");
+                    device.getDeviceProperties().getFastbootProperties().set(DeviceProperties.X_LOCKSTATUS, UnlockStatus.UNLOCKED);
                     //runner.setContext("prop_"+DeviceProperties.CODENAME,"whyred");
                     AdbCommunication.registerAutoScanDevices();
                     GenericInstall.main().run(runner);
