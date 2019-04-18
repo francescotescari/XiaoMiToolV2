@@ -142,9 +142,9 @@ public class DeviceAnswers {
         DeviceProperties properties = device.getDeviceProperties();
         SerialNumber sn;
         sn = (SerialNumber) properties.getSideloadProperties().get(DeviceProperties.X_SERIAL_NUMBER);
-        if (sn != null){return sn;}
+        if (sn != null && sn.isValid()){return sn;}
         sn = (SerialNumber) properties.getAdbProperties().get(DeviceProperties.X_SERIAL_NUMBER);
-        if (sn != null){return sn;}
+        if (sn != null && sn.isValid()){return sn;}
         sn = (SerialNumber) properties.getFastbootProperties().get(DeviceProperties.X_SERIAL_NUMBER);
         return sn;
     }

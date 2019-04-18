@@ -5,6 +5,8 @@ import com.xiaomitool.v2.utility.RunnableWithArg;
 import com.xiaomitool.v2.utility.WaitSemaphore;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,6 +54,8 @@ public abstract class Properties {
 
 
     }
+    private Instant lastFailIntant = null;
+
     public boolean parse(boolean force, boolean internal){
 
         synchronized (propertiesMap) {
@@ -65,6 +69,13 @@ public abstract class Properties {
             parsed = true;
             Log.debug("Parsing should be disabled");
 
+            if (failed && lastFailIntant != null && failedParsingAttempts > 3){
+                if (Duration.between(lastFailIntant, Instant.now()).getSeconds() < 10){
+                    Log.warn("Parsing failed more than three times less than 10 seconds ago, waiting");
+                    return false;
+                }
+            }
+
             if (parseInternal()) {
                 Log.debug(this.toString());
                 Log.info("Properties parsed");
@@ -72,8 +83,10 @@ public abstract class Properties {
                 failedParsingAttempts = 0;
                 return true;
             }
+            lastFailIntant = Instant.now();
             failed = true;
             ++failedParsingAttempts;
+            Log.warn("Failed to parse properties: "+this.toString()+", attempt: "+failedParsingAttempts);
             if (failedParsingAttempts > 3) {
                 Log.warn("Failed to parse properties for three times");
                 if (onFailedAttemptThree != null) {

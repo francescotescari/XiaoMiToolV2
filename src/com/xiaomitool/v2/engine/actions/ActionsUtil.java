@@ -5,6 +5,7 @@ import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.adb.device.Properties;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.utility.utils.NumberUtils;
+import com.xiaomitool.v2.xiaomi.miuithings.SerialNumber;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import javafx.application.Platform;
 import javafx.scene.text.Text;
@@ -39,8 +40,8 @@ public class ActionsUtil {
         recoveryAvailable = !UnlockStatus.UNLOCKED.equals(unlockStatus) ? (sideloadProperties.isParsed() ? LRes.YES : (sideloadProperties.isFailed() ? LRes.NO : LRes.UNKNOWN)).toString() : LRes.IRRELEVANT.toString() ;
         Properties fastbootProperties =props.getFastbootProperties();
         fastbootAvailable = fastbootProperties.isParsed() ? LRes.YES.toString() : (fastbootProperties.isFailed() ? LRes.NO.toString() : LRes.UNKNOWN.toString()) ;
-        int sn =  (Integer) props.get(DeviceProperties.X_SERIAL_NUMBER,0);
-        serialNumber = sn !=  0 ? NumberUtils.intToHex(sn) : LRes.UNKNOWN.toString();
+        SerialNumber sn =  (SerialNumber) props.get(DeviceProperties.X_SERIAL_NUMBER,null);
+        serialNumber = sn !=  null ? sn.toHexString() : LRes.UNKNOWN.toString();
         texts[0].setText(serial);
         texts[1].setText(brand);
         texts[2].setText(model);
