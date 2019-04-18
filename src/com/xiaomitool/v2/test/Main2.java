@@ -16,11 +16,13 @@ import com.xiaomitool.v2.process.LineScanner;
 import com.xiaomitool.v2.process.ProcessRunner;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.rom.MiuiRom;
+import com.xiaomitool.v2.utility.utils.ArrayUtils;
 import com.xiaomitool.v2.utility.utils.InetUtils;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
+import com.xiaomitool.v2.xiaomi.miuithings.SerialNumber;
 import com.xiaomitool.v2.xiaomi.unlock.UnlockCommonRequests;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -29,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -78,7 +81,14 @@ public class Main2 {
 
 
     public static void main(String[] args) throws IOException {
-        Log.debug(MiuiRom.Specie.listToSearchSpecies(SettingsUtils.Region.GLOBAL, "dipper_it_vf_global"));
+        SerialNumber serialNumber = SerialNumber.fromFastbootToken("VQECJAEED7QYPwMGY2FjdHVzAhTwDKzrTswnj9GjPqlVN8C9wdb");
+        Log.debug(serialNumber.toHexString());
+        serialNumber = SerialNumber.fromFastbootToken("VQECJAEEsfaMwwMGY2FjdHVzAhQ5SkoycEA0Dobfg3VM06MkzU2");
+        Log.debug(serialNumber.toHexString());
+        serialNumber = SerialNumber.fromFastbootToken("drDW3P6E0VgWi0qIxG07gFTU3xM=");
+        Log.debug(serialNumber.toHexString());
+        serialNumber = SerialNumber.fromHexString("0x13dfd454");
+        Log.debug(serialNumber.toHexString());
 
     }
 

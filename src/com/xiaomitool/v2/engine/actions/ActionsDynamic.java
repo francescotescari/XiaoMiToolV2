@@ -605,7 +605,7 @@ public class ActionsDynamic {
                         logginProps.put("c", String.valueOf(properties.get(DeviceProperties.CODEBASE)));
                         logginProps.put("v", String.valueOf(properties.get(DeviceProperties.FULL_VERSION)));
                         logginProps.put("bs", String.valueOf(device.getAnswers().getUnlockStatus()));
-                        logginProps.put("sn", String.valueOf(properties.get(DeviceProperties.X_SERIAL_NUMBER)));
+                        logginProps.put("sn", String.valueOf(device.getAnswers().getSerialNumber()));
                         logginProps.put("rg", String.valueOf(SettingsUtils.getRegion()));
                         LiveFeedbackEasy.sendLog("DATA", new JSONObject(logginProps).toString());
                     } catch (Exception ignored) {

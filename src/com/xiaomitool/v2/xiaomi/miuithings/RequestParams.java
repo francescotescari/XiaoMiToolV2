@@ -16,7 +16,7 @@ public abstract class RequestParams implements Cloneable {
     protected int is_cts;
     protected int a;
     protected int isR;
-    protected String serialNumber;
+    protected SerialNumber serialNumber;
     protected int sys;
     protected UnlockStatus unlockStatus;
     protected String packageHash;
@@ -123,7 +123,7 @@ public abstract class RequestParams implements Cloneable {
         this.zone = zone;
     }
 
-    public String getSerialNumber() {
+    public SerialNumber getSerialNumber() {
         return serialNumber;
     }
 

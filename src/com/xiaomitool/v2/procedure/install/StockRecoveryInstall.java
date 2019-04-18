@@ -22,7 +22,9 @@ import com.xiaomitool.v2.utility.DriverUtils;
 import com.xiaomitool.v2.utility.MTPUtils;
 import com.xiaomitool.v2.utility.Pointer;
 import com.xiaomitool.v2.utility.utils.StrUtils;
+import com.xiaomitool.v2.xiaomi.miuithings.Branch;
 import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
+import com.xiaomitool.v2.xiaomi.miuithings.SerialNumber;
 
 import java.io.File;
 import java.io.IOException;
@@ -314,7 +316,8 @@ public class StockRecoveryInstall {
                 String codebase = AdbCommons.raw(serial, "getcodebase:");
                 String dev = AdbCommons.raw(serial, "getdevice:");
                 String zone = AdbCommons.raw(serial, "getromzone:");
-                if (dev == null || version == null || sn == null || codebase == null) {
+                String branch = AdbCommons.raw(serial, "getbranch:");
+                if (dev == null || version == null || sn == null || codebase == null || branch == null) {
                     throw new InstallException("Failed to retrieve recovery information: null param", InstallException.Code.INFO_RETRIVE_FAILED, true);
                 }
                 int z;
@@ -330,7 +333,7 @@ public class StockRecoveryInstall {
                         z = MiuiRom.Specie.getZone(dev);
                     }
                 }
-                DeviceRequestParams deviceRequestParams = new DeviceRequestParams(dev, version, codebase, null, sn, z);
+                DeviceRequestParams deviceRequestParams = new DeviceRequestParams(dev, version, codebase, Branch.fromCode(branch), SerialNumber.fromHexString(sn), z);
                 procedureRunner.setContext(Procedures.REQUEST_PARAMS, deviceRequestParams);
             }
         };

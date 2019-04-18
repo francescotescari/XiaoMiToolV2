@@ -8,6 +8,7 @@ import com.xiaomitool.v2.utility.YesNoMaybe;
 import com.xiaomitool.v2.utility.utils.ThreadUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiUtilities;
 import com.xiaomitool.v2.xiaomi.miuithings.Branch;
+import com.xiaomitool.v2.xiaomi.miuithings.SerialNumber;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 
 import java.io.File;
@@ -130,9 +131,9 @@ public class DeviceProperties {
                     return false;
                 }
             }
-            int x = AdbUtils.parseSerialNumber(sn);
-            if (x != 0){
-                this.put(X_SERIAL_NUMBER, x);
+            SerialNumber serial = SerialNumber.fromHexString(sn);
+            if (serial != null){
+                this.put(X_SERIAL_NUMBER, serial);
                 return true;
             }
             return false;
@@ -181,9 +182,9 @@ public class DeviceProperties {
             if (token.isEmpty()){
                 return false;
             }
-            Integer x =  AdbUtils.parseFastbootTokenSerialNumber(token);
-            if (x != 0){
-                this.put(X_SERIAL_NUMBER, x);
+            SerialNumber sn = SerialNumber.fromFastbootToken(token);
+            if (sn != null){
+                this.put(X_SERIAL_NUMBER, sn);
                 return true;
             }
             return false;
@@ -242,7 +243,7 @@ public class DeviceProperties {
             ThreadUtils.sleepSilently(30);
             value = AdbCommons.raw(serial, "getsn:");
             if (value != null) {
-                this.put(X_SERIAL_NUMBER, AdbUtils.parseSerialNumber(value));
+                this.put(X_SERIAL_NUMBER, SerialNumber.fromHexString(value));
             }
             ThreadUtils.sleepSilently(30);
             value = AdbCommons.raw(serial, "getcodebase:");

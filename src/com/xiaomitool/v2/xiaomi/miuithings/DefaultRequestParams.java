@@ -35,7 +35,7 @@ public class DefaultRequestParams extends RequestParams implements Cloneable {
         is_cts =0;
         a=a;
         isR=0;
-        serialNumber="0x00000000";
+        serialNumber=SerialNumber.SN_ZERO;
         sys=0;
         unlockStatus= UnlockStatus.UNLOCKED;
         packageHash=null;
@@ -68,7 +68,7 @@ public class DefaultRequestParams extends RequestParams implements Cloneable {
         map.put("id", id);
         map.put("a",a);
         map.put("isR",isR);
-        map.put("sn",serialNumber);
+        map.put("sn",serialNumber == null ? SerialNumber.SN_ZERO.toHexString() : serialNumber.toHexString());
         map.put("sys",sys);
         map.put("unlock",unlockStatus.getInt());
         if(packageHash != null){
@@ -98,7 +98,7 @@ public class DefaultRequestParams extends RequestParams implements Cloneable {
 
     }
 
-    public void setSerialNumber(String sn) {
+    public void setSerialNumber(SerialNumber sn) {
         this.serialNumber = sn;
     }
 }

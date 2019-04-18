@@ -9,6 +9,7 @@ import com.xiaomitool.v2.utility.YesNoMaybe;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.miuithings.Branch;
 import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
+import com.xiaomitool.v2.xiaomi.miuithings.SerialNumber;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 
 import java.util.HashMap;
@@ -135,5 +136,16 @@ public class DeviceAnswers {
         } else if (Device.Status.UNAUTHORIZED.equals(status)){
             setNeedDeviceDebug(YesNoMaybe.NO);
         }
+    }
+
+    public SerialNumber getSerialNumber() {
+        DeviceProperties properties = device.getDeviceProperties();
+        SerialNumber sn;
+        sn = (SerialNumber) properties.getSideloadProperties().get(DeviceProperties.X_SERIAL_NUMBER);
+        if (sn != null){return sn;}
+        sn = (SerialNumber) properties.getAdbProperties().get(DeviceProperties.X_SERIAL_NUMBER);
+        if (sn != null){return sn;}
+        sn = (SerialNumber) properties.getFastbootProperties().get(DeviceProperties.X_SERIAL_NUMBER);
+        return sn;
     }
 }

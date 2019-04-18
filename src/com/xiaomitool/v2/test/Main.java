@@ -7,10 +7,7 @@ import com.xiaomitool.v2.rom.MiuiZipRom;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
-import com.xiaomitool.v2.xiaomi.miuithings.Branch;
-import com.xiaomitool.v2.xiaomi.miuithings.DefaultRequestParams;
-import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
-import com.xiaomitool.v2.xiaomi.miuithings.RequestParams;
+import com.xiaomitool.v2.xiaomi.miuithings.*;
 import com.xiaomitool.v2.xiaomi.romota.MiuiRomOta;
 import com.xiaomitool.v2.xiaomi.unlock.UnlockCommonRequests;
 import org.json.JSONObject;
@@ -64,7 +61,7 @@ public class Main {
 
         DefaultRequestParams params3 = new DefaultRequestParams("cepheus_eea_global","V10.2.15.0.PFAEUXM","9.0",Branch.STABLE);
         params3.setZone(2);
-        params3.setSerialNumber("AAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABB");
+        params3.setSerialNumber(SerialNumber.fromHexString("AAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABB"));
         //params3.setPkg("e3aaed0507a830eaaf503dcc7c1977e0");
         Log.debug(MiuiRomOta.otaV3_request(params3));
         if (true){
@@ -72,7 +69,7 @@ public class Main {
         }
        // keytore.setCredentials(gv[1], gv[0]);
         //*keystore.requireServiceKeyAndToken("miuiromota");
-        RequestParams params = new DeviceRequestParams("dipper","9.3.7","9.0",Branch.DEVELOPER,"0xb7f63ec7",3);
+        RequestParams params = new DeviceRequestParams("dipper","9.3.7","9.0",Branch.DEVELOPER,SerialNumber.fromHexString("0xb7f63ec7"),3);
         //params.setPkg("3acee2689def952a29dc70978c9f63fa");
         Log.debug(MiuiRomOta.otaV3_request(params));
         /*params.setPkg("d8f3965aebf2dbfb0291fb21be6cff1b");*/
@@ -228,7 +225,7 @@ public class Main {
                 System.err.println("Input at least 3 parameter!");
                 continue;
             }
-            RequestParams params2 = new DeviceRequestParams(words[0], words[1], words[2], words.length > 3 ? Branch.fromCode(words[3]) : null, "0x1c01702d", 2);
+            RequestParams params2 = new DeviceRequestParams(words[0], words[1], words[2], words.length > 3 ? Branch.fromCode(words[3]) : null, SerialNumber.fromHexString("0x1c01702d"), 2);
             if (words.length > 4){
                 params.setPkg(words[4]);
             }

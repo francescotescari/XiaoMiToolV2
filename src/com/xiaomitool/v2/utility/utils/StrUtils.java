@@ -2,6 +2,8 @@ package com.xiaomitool.v2.utility.utils;
 
 import com.xiaomitool.v2.logging.Log;
 import netscape.javascript.JSObject;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -187,5 +189,13 @@ public class StrUtils {
             }
         }
         return new String(fullChars,i, fullChars.length-i);
+    }
+
+    public static String toHexString(byte[] data) {
+        return Hex.encodeHexString(data);
+    }
+
+    public static String reverse(String str) {
+        return new StringBuilder(str).reverse().toString();
     }
 }

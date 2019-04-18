@@ -11,7 +11,7 @@ import com.xiaomitool.v2.xiaomi.XiaomiUtilities;
 
 
 public class DeviceRequestParams extends DefaultRequestParams implements Cloneable {
-    public DeviceRequestParams(String device, String version, String codebase, @Nullable Branch branch, String serialNumber, int zone){
+    public DeviceRequestParams(String device, String version, String codebase, @Nullable Branch branch, SerialNumber serialNumber, int zone){
         super(device,version,codebase,branch);
         super.serialNumber = serialNumber;
         Log.debug("Devi4zone: "+zone);
@@ -45,16 +45,16 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
                 codebase+="0";
             }
         }
-        Integer serialNumber = (Integer)  properties.get(DeviceProperties.X_SERIAL_NUMBER);
         String zone =  (String) properties.get(DeviceProperties.ROMZONE);
         Log.debug("Device zone1: "+zone);
+        SerialNumber sn = device.getAnswers().getSerialNumber();
         if (requireOtaParameters) {
             try {
                 ObjUtils.checkNotNull(version, "version");
                 ObjUtils.checkNotNull(codebase, "codebase");
-                ObjUtils.checkNotNull(serialNumber, "serialNumber");
-                if (serialNumber == 0){
-                    throw new NullPointerException("serial number is zero");
+                ObjUtils.checkNotNull(sn, "serialNumber");
+                if (!sn.isValid()){
+                    throw new NullPointerException("serial number is invalid: "+sn);
                 }
             } catch (NullPointerException e){
                 throw new AdbException("Missing required ota parameter in device properties: "+e.getMessage());
@@ -78,7 +78,8 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
         if (branch == null){
             branch = miuiVersion.getBranch();
         }
-        return new DeviceRequestParams(codename,version,codebase,branch, XiaomiUtilities.snToString(serialNumber), z);
+
+        return new DeviceRequestParams(codename,version,codebase,branch, sn, z);
         
 
     }

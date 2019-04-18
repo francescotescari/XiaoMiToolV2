@@ -21,6 +21,7 @@ import com.xiaomitool.v2.procedure.uistuff.ConfirmationProcedure;
 import com.xiaomitool.v2.utility.BezierInterpolator;
 import com.xiaomitool.v2.utility.Pointer;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
+import com.xiaomitool.v2.xiaomi.miuithings.SerialNumber;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import javafx.animation.*;
 import javafx.application.Application;
@@ -80,7 +81,7 @@ public class GuiTest2 extends Application{
                     runner.init(null,device);
                     device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODENAME, "whyred");
                     device.getDeviceProperties().getAdbProperties().put(DeviceProperties.FULL_VERSION, "9.3.9");
-                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.X_SERIAL_NUMBER, 1);
+                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.X_SERIAL_NUMBER, SerialNumber.fromHexString("0x01230123"));
                     device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODEBASE, "9.0");
 
                     device.getDeviceProperties().getSideloadProperties().put(DeviceProperties.ROMZONE,"1");
