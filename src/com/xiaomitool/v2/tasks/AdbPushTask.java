@@ -1,8 +1,10 @@
 package com.xiaomitool.v2.tasks;
 
 import com.xiaomitool.v2.adb.AdbException;
+import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.process.AdbRunner;
+import com.xiaomitool.v2.utility.Pointer;
 import com.xiaomitool.v2.utility.RunnableWithArg;
 
 import java.io.File;
@@ -34,7 +36,7 @@ public class AdbPushTask extends Task {
         runner.addArgument(destinationPath);
         Pattern pattern = Pattern.compile("\\[(\\d+)/(\\d+)\\]");
         Pattern alternativePattern = Pattern.compile("\\[\\s*(\\d+)%\\]");
-
+        final Pointer lastLine = new Pointer();
         runner.addSyncCallback(new RunnableWithArg() {
             @Override
             public void run(Object arg) {
@@ -42,6 +44,7 @@ public class AdbPushTask extends Task {
                     update(-1);
                     return;
                 }
+                lastLine.pointed = arg;
                 Matcher m = pattern.matcher(arg.toString());
                 long totalSize = fileSize;
                 if (!m.find()){
@@ -57,7 +60,7 @@ public class AdbPushTask extends Task {
                     setTotalSize(totalSize);
                 }
                 try {
-                    Long done = Long.parseLong(m.group(1));
+                    long done = Long.parseLong(m.group(1));
                     update(done);
                 } catch (Throwable t){
                     update(-1);
@@ -72,7 +75,11 @@ public class AdbPushTask extends Task {
             return;
         }
         if (runner.getExitValue() != 0){
-            error(new AdbException("Failed to push file to the device: exit code "+runner.getExitValue()));
+            String mot = lastLine.pointed != null ? lastLine.pointed.toString() : ("exit code "+runner.getExitValue());
+            if (mot.toLowerCase().contains("no space left on device")){
+                mot = LRes.NO_SPACE_LEFT_DEVICE.toString();
+            }
+            error(new AdbException("Failed to push file to the device: "+mot));
             return;
         }
         finished(sourceFile);
