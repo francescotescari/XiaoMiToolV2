@@ -121,7 +121,7 @@ public class FastbootCommons {
         if (runner.getExitValue() != 0){
             Log.debug("Output of flash is failed");
             if (output != null) {
-                if (output.toLowerCase().contains("anti-rollback")){
+                if (output.toLowerCase().contains("anti-rollback") || output.toLowerCase().contains("rollback version")){
                     return "err:anti-rollback";
                 }
             }

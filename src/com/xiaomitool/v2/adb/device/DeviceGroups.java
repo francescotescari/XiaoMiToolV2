@@ -196,7 +196,7 @@ public class DeviceGroups {
         set.add("wt88047");
         set.add("gucci");
         set.add("ferrari");
-        set.add("leo");
+        //set.add("leo");
         set.add("hermes");
         set.add("latte");
         return set;
