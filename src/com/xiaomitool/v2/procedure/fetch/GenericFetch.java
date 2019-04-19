@@ -14,6 +14,7 @@ import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.rom.RomException;
 import com.xiaomitool.v2.rom.ZipRom;
 import com.xiaomitool.v2.rom.chooser.InstallableChooser;
+import com.xiaomitool.v2.utility.utils.ApkUtils;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.miuithings.Branch;
@@ -30,6 +31,7 @@ public class GenericFetch {
 
     public static final String SELECTED_FILE = "gen_sel_file";
     public static final String FILE_MD5 = "gen_file_md5";
+    public static final String PACKAGE_NAME = "apk_package_name";
 
 
 
@@ -62,6 +64,20 @@ public class GenericFetch {
                     throw new InstallException("Failed to calculate file md5: "+file.toString(), InstallException.Code.HASH_FAILED, true);
                 }
                 runner.setContext(FILE_MD5, md5);
+            }
+        };
+    }
+
+    public static RInstall getPackageName(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                if (runner.getContext(PACKAGE_NAME) != null){
+                    return;
+                }
+                File apk = (File) runner.requireContext(SELECTED_FILE);
+                String packageName = ApkUtils.getPackageName(apk.toPath());
+                runner.setContext(PACKAGE_NAME, packageName);
             }
         };
     }

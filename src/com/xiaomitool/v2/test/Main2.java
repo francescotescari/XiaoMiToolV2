@@ -3,6 +3,8 @@ package com.xiaomitool.v2.test;
 import com.xiaomitool.v2.adb.AdbCommons;
 import com.xiaomitool.v2.adb.device.DeviceGroups;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
+import com.xiaomitool.v2.apk.ApkManifestDecoder;
+import com.xiaomitool.v2.apk.ApkManifestParser;
 import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
@@ -16,10 +18,7 @@ import com.xiaomitool.v2.process.LineScanner;
 import com.xiaomitool.v2.process.ProcessRunner;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.rom.MiuiRom;
-import com.xiaomitool.v2.utility.utils.ArrayUtils;
-import com.xiaomitool.v2.utility.utils.InetUtils;
-import com.xiaomitool.v2.utility.utils.SettingsUtils;
-import com.xiaomitool.v2.utility.utils.StrUtils;
+import com.xiaomitool.v2.utility.utils.*;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
 import com.xiaomitool.v2.xiaomi.miuithings.SerialNumber;
@@ -27,10 +26,13 @@ import com.xiaomitool.v2.xiaomi.unlock.UnlockCommonRequests;
 import org.apache.commons.codec.digest.DigestUtils;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -80,15 +82,9 @@ public class Main2 {
 
 
 
-    public static void main(String[] args) throws IOException {
-        SerialNumber serialNumber = SerialNumber.fromFastbootToken("VQECJAEED7QYPwMGY2FjdHVzAhTwDKzrTswnj9GjPqlVN8C9wdb");
-        Log.debug(serialNumber.toHexString());
-        serialNumber = SerialNumber.fromFastbootToken("VQECJAEEsfaMwwMGY2FjdHVzAhQ5SkoycEA0Dobfg3VM06MkzU2");
-        Log.debug(serialNumber.toHexString());
-        serialNumber = SerialNumber.fromFastbootToken("drDW3P6E0VgWi0qIxG07gFTU3xM=");
-        Log.debug(serialNumber.toHexString());
-        serialNumber = SerialNumber.fromHexString("0x13dfd454");
-        Log.debug(serialNumber.toHexString());
+    public static void main(String[] args) throws Exception {
+       Log.debug(ApkUtils.getPackageName(Paths.get("F:\\Download\\sdattest\\upd.apk")));
+
 
     }
 

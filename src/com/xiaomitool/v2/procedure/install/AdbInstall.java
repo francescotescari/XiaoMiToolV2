@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.procedure.install;
 
+import com.xiaomitool.v2.adb.AdbCommons;
 import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.gui.WindowManager;
@@ -63,12 +64,33 @@ public class AdbInstall {
                 WindowManager.setMainContent(defProgressPane, false);
                 TaskManager.getInstance().startSameThread(pushTask);
                 pushTask.waitFinished();
+                Thread.sleep(250);
                 WindowManager.removeTopContent();
                 if (pushTask.getError() != null){
                     throw new InstallException(new AdbException("Failed to push file on device: "+pushTask.getError().getMessage()));
                 }
                 Log.info("Adb push task success");
                 runner.setContext(OUTPUT_DST_PATH, outputPath);
+
+            }
+        };
+
+    }
+
+    public static RInstall assureDirExists(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Device device = Procedures.requireDevice(runner);
+                String destinationpath = (String) runner.getContext(DESTINATION_PATH);
+                boolean ok = AdbCommons.fileExists(destinationpath, device.getSerial());
+                if (ok){
+                    return;
+                }
+                if (!AdbCommons.mkdir(destinationpath, device.getSerial())){
+                    throw new InstallException("Failed to create remote directory: "+destinationpath, InstallException.Code.ADB_EXCEPTION, true);
+                }
+                Thread.sleep(200);
 
             }
         };

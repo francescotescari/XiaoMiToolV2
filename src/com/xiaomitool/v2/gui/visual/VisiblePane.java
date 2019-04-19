@@ -47,8 +47,15 @@ public class VisiblePane {
         topChild = children.getLast();
         if (topChild != null){
             topChild.setVisible(true);
+        } else {
+            if (onEmpty != null){
+                add(onEmpty);
+            }
         }
         } catch (Throwable t){
+            if (onEmpty != null){
+                add(onEmpty);
+            }
             return;
         }
     }
@@ -87,5 +94,10 @@ public class VisiblePane {
     public void clear(){
         children.clear();
         pane.getChildren().clear();
+    }
+
+    private Pane onEmpty;
+    public void onEmpty(Pane pane) {
+        this.onEmpty = onEmpty;
     }
 }

@@ -29,7 +29,7 @@ public class DeviceAnswers {
          return answer;
      }
 
-    private YesNoMaybe isInTwrpRecoveryInternal(){
+    private synchronized YesNoMaybe isInTwrpRecoveryInternal(){
         if (!Device.Status.RECOVERY.equals(device.getStatus()) || !device.isConnected()){
             return YesNoMaybe.NO;
         }
@@ -67,10 +67,10 @@ public class DeviceAnswers {
          return this.savedAnswers.get(id);
     }
 
-    public YesNoMaybe isInTwrpRecovery(){
+    public synchronized YesNoMaybe isInTwrpRecovery(){
         return setAnswer(HAS_TWRP,isInTwrpRecovery(3));
     }
-    private  YesNoMaybe isInTwrpRecovery(int trials){
+    private   YesNoMaybe isInTwrpRecovery(int trials){
         YesNoMaybe result = isInTwrpRecoveryInternal();
         while (YesNoMaybe.MAYBE.equals(result) && --trials > 0){
             try {

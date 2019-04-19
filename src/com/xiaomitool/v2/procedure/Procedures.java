@@ -221,4 +221,13 @@ public class Procedures {
         }
         return statuses;
     }
+
+    public static RInstall featureNotAvailable() {
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                throw new InstallException("Feature not available yet", INTERNAL_ERROR, false);
+            }
+        };
+    }
 }

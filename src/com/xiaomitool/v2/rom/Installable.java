@@ -24,7 +24,9 @@ public abstract class Installable extends CommandClass implements Choiceable, In
         RECOVERY,
         IMAGE,
         PROCEDURE,
-        OTHER;
+        OTHER,
+        APK,
+        MULTI;
     }
 
 
@@ -267,6 +269,10 @@ public abstract class Installable extends CommandClass implements Choiceable, In
     @Override
     public final Type getInstallType(){
         return this.type;
+    }
+
+    public Installable orig(){
+        return this;
     }
 
 

@@ -12,6 +12,8 @@ import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.device.ManageDevice;
 import com.xiaomitool.v2.procedure.device.OtherProcedures;
 import com.xiaomitool.v2.procedure.device.RebootDevice;
+import com.xiaomitool.v2.procedure.fetch.GenericFetch;
+import com.xiaomitool.v2.rom.ApkFileInstallable;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.tasks.TaskManager;
 import com.xiaomitool.v2.tasks.TwrpInstallTask;
@@ -157,6 +159,42 @@ private static final String ERASE_DATA_KEY = "erase_the_data";
                 }
             }
         }, GenericInstall.updateDeviceStatus(null,null,false));
+    }
+
+    public static RInstall installApkViaTwrp(){
+        return RNode.sequence(new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                ApkFileInstallable installable = (ApkFileInstallable) Procedures.requireInstallable(runner).orig();
+                runner.setContext(GenericFetch.PACKAGE_NAME, installable.getPackageName());
+                runner.setContext(GenericFetch.SELECTED_FILE, installable.getFinalFile());
+            }
+        }, GenericFetch.getPackageName(), new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                ApkFileInstallable installable = (ApkFileInstallable) Procedures.requireInstallable(runner).orig();
+                String packageName = (String) runner.requireContext(GenericFetch.PACKAGE_NAME);
+                installable.setPackageName(packageName);
+                runner.setContext(AdbInstall.DESTINATION_PATH, "/data/app/" + packageName + "-1");
+            }
+        }, AdbInstall.assureDirExists(), new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                runner.setContext(AdbInstall.DESTINATION_PATH, null);
+            }
+        }, AdbInstall.pushInstallableFile(), new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                ApkFileInstallable installable = (ApkFileInstallable) Procedures.requireInstallable(runner).orig();
+                String apkPath = (String) runner.requireContext(AdbInstall.OUTPUT_DST_PATH);
+                String packageName = installable.getPackageName();
+                Device device = Procedures.requireDevice(runner);
+                String res = AdbCommons.adb_shellWithOr("cp \"" + apkPath + "\" /data/app/" + packageName + "-1", device.getSerial(), 5);
+                if (res == null){
+                    throw new InstallException(new AdbException("Failed to copy apk to app folder"));
+                }
+            }
+        });
     }
 
 

@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.procedure.fetch;
 
+import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.inet.CustomHttpException;
@@ -8,11 +9,10 @@ import com.xiaomitool.v2.inet.EasyHttp;
 import com.xiaomitool.v2.inet.EasyResponse;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.procedure.ProcedureRunner;
-import com.xiaomitool.v2.procedure.Procedures;
-import com.xiaomitool.v2.procedure.RInstall;
-import com.xiaomitool.v2.procedure.RMessage;
+import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.install.InstallException;
+import com.xiaomitool.v2.rom.ApkFileInstallable;
+import com.xiaomitool.v2.rom.MultiInstallable;
 import com.xiaomitool.v2.rom.ZipRom;
 import javafx.scene.image.Image;
 import org.json.JSONException;
@@ -34,9 +34,12 @@ public class ModFetch {
                     Log.info("Magisk latest response: "+response.getBody());
                     JSONObject jsonObject = new JSONObject(response.getBody());
                     JSONObject magiskObj = jsonObject.getJSONObject("magisk");
-                    String url = magiskObj.getString("link");
-                    String version = magiskObj.getString("version");
-                    ZipRom installable = new ZipRom(url) {
+                    JSONObject appObj = jsonObject.getJSONObject("app");
+                    String mUrl = magiskObj.getString("link");
+                    String mVersion = magiskObj.getString("version");
+                    String aUrl = appObj.getString("link");
+                    String aVersion = appObj.getString("version");
+                    ZipRom mZip = new ZipRom(mUrl) {
                         @Override
                         public String getTitle() {
                             return LRes.MAGISK_ROOT.toString();
@@ -44,7 +47,7 @@ public class ModFetch {
 
                         @Override
                         public String getText() {
-                            return LRes.MAGISK_AUTO_DOWNLOAD.toString(version);
+                            return LRes.MAGISK_AUTO_DOWNLOAD.toString(mVersion);
                         }
 
                         @Override
@@ -53,9 +56,41 @@ public class ModFetch {
                         }
 
                     };
-                    installable.setDownloadFilename("magisk_"+version+".zip");
-                    Log.debug(installable.getDownloadUrl());
-                    Procedures.setInstallable(runner,installable);
+                    mZip.setDownloadFilename("magisk_"+mVersion+".zip");
+                    ApkFileInstallable app = new ApkFileInstallable("MagiskManager "+aVersion, aUrl, Device.Status.RECOVERY){
+                        @Override
+                        public RInstall getInstallProcedure(){
+                            return RNode.sequence(new RInstall() {
+                                @Override
+                                public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                                    runner.text(LRes.MAGISK_INSTALL_MANAGER.toString());
+                                }
+                            }, super.getInstallProcedure());
+                        }
+                    };
+                    app.setPackageName("com.topjohnwu.magisk");
+                    app.setDownloadFilename("magiskMg_"+aVersion+".apk");
+                    MultiInstallable multiInstallable = new MultiInstallable(mZip, app) {
+                        @Override
+                        public String getTitle() {
+                            return mZip.getTitle();
+                        }
+
+                        @Override
+                        public String getText() {
+                            return mZip.getText();
+                        }
+
+                        @Override
+                        public Image getIcon() {
+                            return mZip.getIcon();
+                        }
+
+
+
+                    };
+                    Log.debug(mZip.getDownloadUrl());
+                    Procedures.setInstallable(runner,multiInstallable);
                 } catch (CustomHttpException e) {
                     throw new InstallException(e);
                 } catch (JSONException e){

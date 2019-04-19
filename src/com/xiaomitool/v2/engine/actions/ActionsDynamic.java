@@ -628,6 +628,7 @@ public class ActionsDynamic {
                     }
                     thisRunner = runner;
                 }
+                WindowManager.setOnEmpty(installPane);
                 WindowManager.setMainContent(installPane);
 
                 RInstall thisRun = startFromHere != null ? startFromHere : main();

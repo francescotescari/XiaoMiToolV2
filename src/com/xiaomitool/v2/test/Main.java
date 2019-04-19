@@ -10,6 +10,7 @@ import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
 import com.xiaomitool.v2.xiaomi.miuithings.*;
 import com.xiaomitool.v2.xiaomi.romota.MiuiRomOta;
 import com.xiaomitool.v2.xiaomi.unlock.UnlockCommonRequests;
+import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
 
 
@@ -54,10 +55,10 @@ public class Main {
 
        // Log.debug(UnlockCommonRequests.ahaUnlock("VQEBMwEgdAsBSujVP9OjWVoBu7zFT3QLAUro1T/To1laAbu8xU8DCWJlcnlsbGl1bQIEQXtF7A==","dipper","","",""));
         //keystore.requireServiceKeyAndToken("miuibbs");
-        /*Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIAEQUWfXYPsAAAAAAAAAAAAAAAMGZGlwcGVyAgS9bC/5","whyred","","",""));
+        Log.debug(UnlockCommonRequests.ahaUnlock(Base64.encodeBase64String(new byte[]{0x55,0x01,0x01,0x12,0x01,0x10,0x51,0x67,(byte) 0xd7,0x60,(byte) 0xfb,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x03,0x06,0x64,0x69,0x70,0x70,0x65,0x72,0x02,0x04,(byte) 0xbd,0x6c,0x2f,(byte) 0xf9}),"whyred","","",""));
         if (true){
             return;
-        }*/
+        }
 
         DefaultRequestParams params3 = new DefaultRequestParams("cepheus_eea_global","V10.2.15.0.PFAEUXM","9.0",Branch.STABLE);
         params3.setZone(2);

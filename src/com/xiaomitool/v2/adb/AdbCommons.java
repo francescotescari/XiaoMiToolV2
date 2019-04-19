@@ -150,4 +150,8 @@ public class AdbCommons {
     public static AdbRunner runner(String cmd, String device, int timeout){
         return adb_command(cmd, device, timeout);
     }
+
+    public static boolean mkdir(String path, String serial) {
+        return adb_shellWithOr("mkdir \""+path+"\"",serial, 5) != null;
+    }
 }

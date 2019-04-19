@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.rom.chooser;
 
+import com.sun.org.apache.xpath.internal.operations.Mult;
 import com.xiaomitool.v2.adb.device.*;
 import com.xiaomitool.v2.adb.device.Properties;
 import com.xiaomitool.v2.language.LRes;
@@ -16,6 +17,7 @@ import com.xiaomitool.v2.procedure.install.TwrpInstall;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.rom.MiuiZipRom;
+import com.xiaomitool.v2.rom.MultiInstallable;
 import com.xiaomitool.v2.rom.interfaces.StatedProcedure;
 import com.xiaomitool.v2.utility.YesNoMaybe;
 import com.xiaomitool.v2.utility.utils.ArrayUtils;
@@ -247,6 +249,12 @@ public abstract class   InstallationRequirement implements StatedProcedure {
             case FASTBOOT:
                 requirementList.add(UNLOCKED_BOOTLOADER);
                 break;
+            case MULTI:
+                if (installable instanceof MultiInstallable){
+                    for (Installable i :((MultiInstallable) installable).getChildren()){
+                        requirementList.addAll(Arrays.asList(getInstallableRequirements(i, device)));
+                    }
+                }
 
         }
         return requirementList.toArray(new InstallationRequirement[]{});

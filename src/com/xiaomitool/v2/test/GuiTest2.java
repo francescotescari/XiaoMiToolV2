@@ -75,14 +75,14 @@ public class GuiTest2 extends Application{
                         }
                     }
                     if (device == null){
-                        device = new Device("88eec8b5");
+                        device = new Device("307d3cd5");
                         DeviceManager.addDevice(device);
                     }
                     runner.init(null,device);
-                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODENAME, "whyred");
-                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.FULL_VERSION, "9.3.9");
+                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODENAME, "capricorn");
+                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.FULL_VERSION, "8.1.11");
                     device.getDeviceProperties().getAdbProperties().put(DeviceProperties.X_SERIAL_NUMBER, SerialNumber.fromHexString("0x01230123"));
-                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODEBASE, "9.0");
+                    device.getDeviceProperties().getAdbProperties().put(DeviceProperties.CODEBASE, "8.0.0");
 
                     device.getDeviceProperties().getSideloadProperties().put(DeviceProperties.ROMZONE,"1");
                     device.getDeviceProperties().getFastbootProperties().set(DeviceProperties.X_LOCKSTATUS, UnlockStatus.UNLOCKED);

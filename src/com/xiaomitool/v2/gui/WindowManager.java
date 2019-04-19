@@ -70,11 +70,16 @@ public class WindowManager {
             Platform.runLater(WindowManager::removeTopContent);
         }
     }
+    public static void setOnEmpty(Pane pane){
+        mainVisiblePane.onEmpty(pane);
+    }
+
     public static void setMainContent(Node node, boolean deleteUnder){
         if (mainVisiblePane == null){
             return;
         }
         if (Platform.isFxApplicationThread()) {
+            mainVisiblePane.saveStack(!deleteUnder);
             mainVisiblePane.add(node);
         } else {
             Platform.runLater(new Runnable() {
