@@ -248,6 +248,7 @@ public class FastbootInstall {
                     }
                 }
                 String token = FastbootCommons.getvar("token", device.getSerial());
+                Thread.sleep(400);
                 if (token == null){
                     throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, true);
                 }
@@ -255,6 +256,10 @@ public class FastbootInstall {
                 String product = (String) device.getDeviceProperties().getFastbootProperties().get(DeviceProperties.FASTBOOT_PRODUCT);
                 if (product == null){
                     product = FastbootCommons.getvar("product", device.getSerial());
+                    Thread.sleep(600);
+                    if (product == null){
+                        throw new InstallException("Failed to get fastboot variable product: "+FastbootCommons.getLastError(device.getSerial()), INFO_RETRIVE_FAILED, true);
+                    }
                 }
                 try {
                     runner.text(LRes.UNLOCK_CHECKING_ACCOUNT);

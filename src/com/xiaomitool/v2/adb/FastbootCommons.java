@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -154,6 +155,14 @@ public class FastbootCommons {
         } catch (IOException e) {
             return null;
         }
+        int exitCode = runner.getExitValue();
+        if (exitCode == 0){
+            LAST_ERROR_MAP.put(device, null);
+        } else {
+            List<String> outlines = runner.getOutputLines();
+            String output = outlines != null && !outlines.isEmpty() ? outlines.get(outlines.size()-1) : "unknown error";
+            LAST_ERROR_MAP.put(device,output);
+        }
         return runner;
         /**/
     }
@@ -193,5 +202,11 @@ public class FastbootCommons {
             return false;
         }
         return true;
+    }
+
+    private static final HashMap<String, String> LAST_ERROR_MAP = new HashMap<>();
+
+    public static String getLastError(String serial) {
+        return String.valueOf(LAST_ERROR_MAP.get(serial));
     }
 }
