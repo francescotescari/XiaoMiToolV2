@@ -209,9 +209,7 @@ public class ResourcesManager {
         return result.collect(Collectors.toList());
     }
 
-    public static Image b64toImage(String base64){
-        return b64toImage(base64.getBytes());
-    }
+
     public static Image b64toImage(byte[] base64encoded){
         return new Image(new Base64InputStream(new ByteArrayInputStream(base64encoded),false));
     }

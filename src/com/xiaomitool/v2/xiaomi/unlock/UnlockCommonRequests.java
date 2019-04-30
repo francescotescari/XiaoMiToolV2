@@ -3,6 +3,7 @@ package com.xiaomitool.v2.xiaomi.unlock;
 import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
@@ -92,7 +93,7 @@ public class UnlockCommonRequests {
         pp.put("region","");
         pp.put("uid",keystore.getUserId());
         String data = new JSONObject(pp).toString(3);
-        data = Base64.getEncoder().encodeToString(data.getBytes());
+        data = Base64.getEncoder().encodeToString(data.getBytes(ResourcesConst.interalCharset()));
         request.addParam("data",data);
         request.addNonce();
         request.addParam("sid",SID);
@@ -112,7 +113,7 @@ public class UnlockCommonRequests {
         pp.put("product",product);
         pp.put("region","");
         String data = new JSONObject(pp).toString(3);
-        data = Base64.getEncoder().encodeToString(data.getBytes());
+        data = Base64.getEncoder().encodeToString(data.getBytes(ResourcesConst.interalCharset()));
         request.addParam("appId","1");
         request.addParam("data",data);
         request.addNonce();
@@ -129,7 +130,7 @@ public class UnlockCommonRequests {
         pp.put("pcId",keystore.getPcId());
         JSONObject object = new JSONObject(pp);
         String data = object.toString();
-        data = Base64.getEncoder().encodeToString(data.getBytes());
+        data = Base64.getEncoder().encodeToString(data.getBytes(ResourcesConst.interalCharset()));
         request.addParam("data",data);
         request.addNonce();
         request.addParam("sid",SID);
@@ -156,7 +157,7 @@ public class UnlockCommonRequests {
         JSONObject object = new JSONObject(pp);
         object.put("deviceInfo",new JSONObject(pp2));
         String data = object.toString();
-        data = Base64.getEncoder().encodeToString(data.getBytes());
+        data = Base64.getEncoder().encodeToString(data.getBytes(ResourcesConst.interalCharset()));
         request.addParam("data",data);
         request.addNonce();
         request.addParam("sid",SID);
@@ -172,7 +173,7 @@ public class UnlockCommonRequests {
         pp.put("clientId","qcomFlash");
         pp.put("flashToken",flashToken);
         String data = new JSONObject(pp).toString();
-        data = Base64.getEncoder().encodeToString(data.getBytes());
+        data = Base64.getEncoder().encodeToString(data.getBytes(ResourcesConst.interalCharset()));
         request.addParam("data",data);
         request.addNonce();
         request.addParam("sid",SID);
@@ -205,10 +206,9 @@ public class UnlockCommonRequests {
 
 
         String data = StrUtils.map2json(pp, 3);
-        data = Base64.getEncoder().encodeToString(data.getBytes());
+        data = Base64.getEncoder().encodeToString(data.getBytes(ResourcesConst.interalCharset()));
         request.addParam("appId","1");
         request.addParam("data",data);
-        request.setHeader("expect", "100-continue");
         request.addNonce();
         request.addParam("sid",SID);
         return request.exec();

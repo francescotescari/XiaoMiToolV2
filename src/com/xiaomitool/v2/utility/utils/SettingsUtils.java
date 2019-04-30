@@ -12,6 +12,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -131,7 +132,7 @@ public class SettingsUtils extends HashMap<String, String> {
         String encrypted;
         try {
 
-            encrypted = Base64.getEncoder().encodeToString(AES.aes128cbc_encrypt(encKey.getBytes(),encIV.getBytes(),value.getBytes()));
+            encrypted = Base64.getEncoder().encodeToString(AES.aes128cbc_encrypt(encKey.getBytes(StandardCharsets.ISO_8859_1),encIV.getBytes(),value.getBytes(StandardCharsets.ISO_8859_1)));
         } catch (Exception e) {
             Log.error("Failed to save encrypted data: "+e.getMessage());
             return;
@@ -152,7 +153,7 @@ public class SettingsUtils extends HashMap<String, String> {
             return null;
         }
         try {
-            decrypted = new String(AES.aes128cbc_decrypt(encKey.getBytes(),encIV.getBytes(),Base64.getDecoder().decode(encrypted)));
+            decrypted = new String(AES.aes128cbc_decrypt(encKey.getBytes(StandardCharsets.ISO_8859_1),encIV.getBytes(StandardCharsets.ISO_8859_1),Base64.getDecoder().decode(encrypted)));
         } catch (Exception e) {
             Log.error("Failed to get encrypted data: "+e.getMessage());
             return null;

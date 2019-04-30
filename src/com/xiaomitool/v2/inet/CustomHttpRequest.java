@@ -2,6 +2,7 @@ package com.xiaomitool.v2.inet;
 
 
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.utility.MultiMap;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
@@ -134,11 +135,8 @@ public class CustomHttpRequest {
                 for (Map.Entry<String, Object> entry : postParams.entrySet()) {
                     basicNameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));
                 }
-                try {
-                    ((HttpPost) request).setEntity(new UrlEncodedFormEntity(basicNameValuePairs));
-                } catch (UnsupportedEncodingException e) {
-                    throw new CustomHttpException("Failed to encode post data",e);
-                }
+                ((HttpPost) request).setEntity(new UrlEncodedFormEntity(basicNameValuePairs, ResourcesConst.interalCharset()));
+
             }
 
         } else if (requestType.equals(Type.GET)){

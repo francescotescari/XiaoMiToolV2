@@ -3,7 +3,10 @@ package com.xiaomitool.v2.resources;
 
 import org.apache.commons.lang3.SystemUtils;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Locale;
 
 public class ResourcesConst {
     public static final String OSNAME_WINDOWS = "windows";
@@ -29,6 +32,14 @@ public class ResourcesConst {
     }
     public static boolean isLinux(){
         return SystemUtils.IS_OS_LINUX;
+    }
+
+    public static Charset interalCharset(){
+        return StandardCharsets.UTF_8;
+    }
+
+    public static Charset uiCharset(){
+        return Charset.defaultCharset();
     }
 
 
@@ -60,6 +71,14 @@ public class ResourcesConst {
 
     public static String getOSLogString(){
         return System.getProperty("os.name") + " - "+ System.getProperty("os.arch") + " - " + System.getProperty("os.version");
+    }
+
+    public static String getLocaleLogString(){
+        return Locale.getDefault() + " - " + Charset.defaultCharset();
+    }
+
+    public static String getLogString(){
+        return "OS info: "+getOSLogString()+" ||| Locale info: "+getLocaleLogString();
     }
 
     public static String getOSExe(String exe) {

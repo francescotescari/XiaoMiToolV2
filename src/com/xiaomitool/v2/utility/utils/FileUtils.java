@@ -2,6 +2,7 @@ package com.xiaomitool.v2.utility.utils;
 
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.IOUtils;
@@ -30,7 +31,7 @@ public class FileUtils {
     }
     public static void writeAll(File file, String output) throws IOException {
         BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file),FILE_READ_BUFFER_SIZE);
-        outputStream.write(output.getBytes());
+        outputStream.write(output.getBytes(ResourcesConst.interalCharset()));
         outputStream.close();
 
     }

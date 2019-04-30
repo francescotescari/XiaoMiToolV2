@@ -1,6 +1,7 @@
 package com.xiaomitool.v2.utility;
 
 import com.xiaomitool.v2.process.ProcessRunner;
+import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.tasks.Task;
 import com.xiaomitool.v2.utility.utils.StrUtils;
@@ -44,7 +45,7 @@ public class MTPUtils {
         OSNotSupportedException.requireWindows();
         ProcessRunner runner = winMtpRunner();
         runner.addArgument("getroot");
-        runner.addArgument(Base64.getEncoder().encodeToString(device.id.getBytes()));
+        runner.addArgument(Base64.getEncoder().encodeToString(device.id.getBytes(ResourcesConst.interalCharset())));
         runner.runWait();
         if (runner.getExitValue() != 0){
             return "";
@@ -56,7 +57,7 @@ public class MTPUtils {
         OSNotSupportedException.requireWindows();
         ProcessRunner runner = winMtpRunner();
         runner.addArgument("push");
-        runner.addArgument(Base64.getEncoder().encodeToString(device.id.getBytes()));
+        runner.addArgument(Base64.getEncoder().encodeToString(device.id.getBytes(ResourcesConst.interalCharset())));
         runner.addArgument(fileToPush.toString());
         runner.addArgument(destination);
         return new Task() {

@@ -58,7 +58,7 @@ public class ToolManager {
         Lang.loadSystemLanguage();
         GuiUtils.init();
         checkLoadSession();
-        Log.info("Starting XiaoMiTool V2 "+ TOOL_VERSION+ " : "+ ResourcesConst.getOSLogString());
+        Log.info("Starting XiaoMiTool V2 "+ TOOL_VERSION+ " : "+ ResourcesConst.getLogString());
         WindowManager.launchMain(primaryStage);
     }
 

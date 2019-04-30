@@ -1,6 +1,7 @@
 package com.xiaomitool.v2.utility;
 
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.resources.ResourcesConst;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -146,7 +147,7 @@ public class FeedbackOutputStream extends OutputStream {
         }
 
         private FeedbackChunck(String data, int flags){
-            this.data = data.getBytes();
+            this.data = data.getBytes(ResourcesConst.interalCharset());
             this.length = this.data.length;
             this.flags = flags;
         }

@@ -6,7 +6,7 @@ import com.xiaomitool.v2.utility.NotNull;
 
 public class XiaomiUtilities {
     public static String findJsonStart(String data){
-        byte[] d = data.getBytes();
+        char[] d = data.toCharArray();
         for (int i = 0; i<d.length; ++i){
             if (d[i] == '{'){
                 return data.substring(i);

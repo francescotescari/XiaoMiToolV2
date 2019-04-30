@@ -1,9 +1,7 @@
 package com.xiaomitool.v2.utility.utils;
 
-import com.xiaomitool.v2.logging.Log;
-import netscape.javascript.JSObject;
+import com.xiaomitool.v2.resources.ResourcesConst;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,23 +10,23 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StrUtils {
-    static final String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    static final String CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final Pattern PROGRESS_REGEX = Pattern.compile("\\[\\s*(\\d+)\\s*\\/\\s*(\\d+)\\s*\\]");
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#0.00");
     public static String randomWord(int len){
-        int clen = chars.length();
+        int clen = CHARS.length();
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i<len; ++i){
-            builder.append(chars.charAt(ThreadLocalRandom.current().nextInt(0, clen)));
+            builder.append(CHARS.charAt(ThreadLocalRandom.current().nextInt(0, clen)));
         }
         return builder.toString();
+
     }
 
     public static long[] parseProgress (String line){
@@ -158,8 +156,8 @@ public class StrUtils {
     }
 
 
-    private static final byte[] SPACE_STRING = "                                                ".getBytes();
-    private static final byte[] TABS_STIRNG = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t".getBytes();
+    private static final byte[] SPACE_STRING = "                                                ".getBytes(ResourcesConst.interalCharset());
+    private static final byte[] TABS_STIRNG = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t".getBytes(ResourcesConst.interalCharset());
     private static String chars(byte[] source, int count) {
         if (count < 0){
             return  "";

@@ -4,11 +4,13 @@ import com.xiaomitool.v2.crypto.AES;
 import com.xiaomitool.v2.crypto.Hash;
 import com.xiaomitool.v2.inet.HttpQuery;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.resources.ResourcesConst;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.HmacUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 
@@ -30,13 +32,13 @@ public class XiaomiCrypto {
 
     public static String cloudService_encrypt(String data, String key) throws Exception {
         byte[] bkey = Base64.decodeBase64(key);
-        return Base64.encodeBase64String(AES.aes128cbc_encrypt(bkey, DEFAULT_IV.getBytes(), data.getBytes()));
+        return Base64.encodeBase64String(AES.aes128cbc_encrypt(bkey, DEFAULT_IV.getBytes(StandardCharsets.ISO_8859_1), data.getBytes(ResourcesConst.interalCharset())));
     }
 
     public static String cloudService_decrypt(String data, String key) throws Exception {
         byte[] bkey = Base64.decodeBase64(key);
         byte[] bdata =Base64.decodeBase64(data);
-        return new String(AES.aes128cbc_decrypt(bkey, DEFAULT_IV.getBytes(), bdata));
+        return new String(AES.aes128cbc_decrypt(bkey, DEFAULT_IV.getBytes(StandardCharsets.ISO_8859_1), bdata), ResourcesConst.interalCharset());
     }
 
 
@@ -51,7 +53,7 @@ public class XiaomiCrypto {
     public static String cloudService_signHmac(byte[] hmacKey, String method, String path, String query){
         String hmacData = method+"\n"+path+"\n"+query;
         Log.debug("hmacData: "+hmacData);
-        String hmac = HmacUtils.hmacSha1Hex(hmacKey, hmacData.getBytes());
+        String hmac = HmacUtils.hmacSha1Hex(hmacKey, hmacData.getBytes(ResourcesConst.interalCharset()));
         Log.debug("Hmac: "+hmac);
         return hmac;
     }

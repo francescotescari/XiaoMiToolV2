@@ -36,6 +36,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.io.FilenameUtils;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Objects;
 

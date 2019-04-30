@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.logging;
 
+import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.utility.FeedbackOutputStream;
 
@@ -22,7 +23,7 @@ import java.util.zip.DeflaterOutputStream;
 
 public class Debugger extends BufferedOutputStream {
     private static final byte LOG_LINE_SEPARATOR = '\n';
-    private static final byte[] LINE_SEPARATOR = System.lineSeparator().getBytes();
+    private static final byte[] LINE_SEPARATOR = System.lineSeparator().getBytes(ResourcesConst.interalCharset());
     private static final String LOG_FN = "xmt2log_";
     private static final Pattern LOG_PATTERN = Pattern.compile(LOG_FN+"(\\d+)\\.txt$");
     private static final int MAX_LOG_FILES = 5;

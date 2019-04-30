@@ -61,7 +61,7 @@ public class ActionsStatic {
             if (message != 1) {
                 ToolManager.exit(0);
             }
-            LiveFeedbackEasy.sendOpen(ResourcesConst.getOSLogString(), null);
+            LiveFeedbackEasy.sendOpen(ResourcesConst.getLogString(), null);
             Log.info("Discalimer accepted");
 
             CHECK_FOR_UPDATES_V2().run();

@@ -2,6 +2,8 @@ package com.xiaomitool.v2.test;
 
 import com.xiaomitool.v2.logging.Log;
 
+import java.nio.charset.Charset;
+
 public class Test {
     public static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ut consectetur justo. Sed lobortis lectus id erat laoreet aliquet. Vestibulum tortor felis, venenatis eget sem id, accumsan molestie justo. Ut efficitur massa lorem. Donec pretium tortor purus, a iaculis nunc feugiat vitae. Sed ullamcorper dui eget ipsum maximus volutpat. Nulla facilisi. Praesent lacinia tincidunt velit vitae pellentesque. Ut luctus sollicitudin iaculis.\n" +
             "\n" +
@@ -31,9 +33,7 @@ public class Test {
 
 
     public static void main(String[] argsv){
-        Troll a = new Troll(0), b = new Troll(1);
-        Log.debug(a.equals(b));
-        Log.debug(a.hashCode()==b.hashCode());
+        Log.debug(Charset.defaultCharset().toString());
     }
 
 

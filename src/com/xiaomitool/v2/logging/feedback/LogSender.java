@@ -10,6 +10,7 @@ import com.xiaomitool.v2.inet.EasyResponse;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Debugger;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.utility.FeedbackOutputStream;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.utility.utils.StrUtils;
@@ -139,7 +140,7 @@ public class LogSender {
     }
 
     private static String encodeB64Url(byte[] data) throws UnsupportedEncodingException {
-        return URLEncoder.encode(Base64.encodeBase64String(data), Charset.defaultCharset().toString());
+        return URLEncoder.encode(Base64.encodeBase64String(data), ResourcesConst.interalCharset().name());
     }
 
     private static void test(byte[] data, byte[] ending){
