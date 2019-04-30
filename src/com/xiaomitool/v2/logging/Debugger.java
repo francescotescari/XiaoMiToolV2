@@ -78,10 +78,12 @@ public class Debugger extends BufferedOutputStream {
         }
     }
 
-    public void writeln(Object line, boolean isFeedback) throws IOException {
-        byte[] data = String.valueOf(line).getBytes();
-        this.write(data);
-        this.write(LINE_SEPARATOR);
+    public void writeln(Object line, boolean isFeedback, boolean is_private) throws IOException {
+        byte[] data = String.valueOf(line).getBytes(ResourcesConst.interalCharset());
+        if (!is_private) {
+            this.write(data);
+            this.write(LINE_SEPARATOR);
+        }
         if (isFeedback){
             synchronized (feedbackOutputStream) {
                 OutputStream outputStream = getCompressingOutputStream();

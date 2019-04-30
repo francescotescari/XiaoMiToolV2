@@ -109,8 +109,8 @@ public abstract class RequestParams implements Cloneable {
         return !specie.isChinese();
     }
 
-    public String getRequestRegion(){
-        return specie == null ? (isInternationalBadMethod() ? "global" : "cn") : specie.getRequestRegion();
+    public String getFastbootRegion(){
+        return specie == null ? (isInternationalBadMethod() ? "global" : "cn") : specie.getFastbootRegion();
     }
 
 

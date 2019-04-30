@@ -4,7 +4,9 @@ import com.xiaomitool.v2.crypto.Hash;
 import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.inet.EasyHttp;
 import com.xiaomitool.v2.inet.EasyResponse;
+import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.utils.InetUtils;
+import com.xiaomitool.v2.utility.utils.ThreadUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,12 +49,14 @@ public class XiaomiServiceEntry {
         cookies.put("passToken",keystore.getPassToken());
         cookies.put("userId",keystore.getUserId());
         cookies.put("deviceId",keystore.getDeviceId());
+        ThreadUtils.runSafely(() -> Log.log_private("Logging in using cookies: " + new JSONObject(cookies)));
         EasyHttp request = new EasyHttp().url(url).cookies(cookies);
         EasyResponse response;
 
             response = request.exec();
 
         String body  =response.getBody();
+        Log.log_private("First step response body: "+body);
         body = XiaomiUtilities.findJsonStart(body);
         if (body == null){
             throw new XiaomiProcedureException("[getSSecurity] Failed to find SSecurity json");
@@ -79,7 +83,7 @@ public class XiaomiServiceEntry {
             throw new XiaomiProcedureException("[getServiceToken] Cannot sign location, maybe missing parameters or failed hash");
         }
         EasyResponse response;
-
+        Log.log_private("Second step request: "+url);
             response = EasyHttp.get(url);
 
         HashMap<String, String> cookies = response.getCookies();
@@ -89,6 +93,7 @@ public class XiaomiServiceEntry {
         }
         slh_key = cookies.get(id+"_slh");
         ph_key = cookies.get(id+"_ph");
+        Log.log_private("Retrived service token: "+serviceToken+" - "+slh_key+" - "+ph_key);
     }
 
     private void httpGetSSAndST() throws XiaomiProcedureException, CustomHttpException {

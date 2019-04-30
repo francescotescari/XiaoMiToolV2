@@ -10,4 +10,13 @@ public class ThreadUtils {
             Log.printStackTrace(e);
         }
     }
+
+    public static void runSafely(Runnable runnable){
+        try {
+            runnable.run();
+        } catch (Throwable t){
+            Log.error("Run safely failed: "+t.getMessage());
+            Log.printStackTrace(t);
+        }
+    }
 }

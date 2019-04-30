@@ -71,13 +71,17 @@ public abstract class MiuiRom extends Installable {
         OTHER(100, Region.OTHER, LRes.REG_OTHER);
         private final int code;
         private Branch branch;
-        private Region parentRegion;
-        private LRes lRes;
-        private String suffix;
+        private final Region parentRegion;
+        private final LRes lRes;
+        private  String suffix;
         Specie(int code, Region parentRegion, LRes lRes){
             this.suffix = parentRegion.getSuffix();
             this.code = code; this.parentRegion = parentRegion;
             this.lRes = lRes;
+        }
+
+        public String getFastbootRegion(){
+            return this.parentRegion.getFastbootValue();
         }
 
 
@@ -151,13 +155,6 @@ public abstract class MiuiRom extends Installable {
             return species;
         }
 
-        public String getRequestRegion(){
-            if (this.isChinese()){
-                return "cn";
-            } else {
-                return "global";
-            }
-        }
 
         public boolean isChinese(){
             return Region.CN.equals(this.parentRegion);

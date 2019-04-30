@@ -4,6 +4,7 @@ import com.xiaomitool.v2.crypto.AES;
 import com.xiaomitool.v2.crypto.Hash;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
 
 import com.xiaomitool.v2.utility.NotNull;
@@ -132,7 +133,7 @@ public class SettingsUtils extends HashMap<String, String> {
         String encrypted;
         try {
 
-            encrypted = Base64.getEncoder().encodeToString(AES.aes128cbc_encrypt(encKey.getBytes(StandardCharsets.ISO_8859_1),encIV.getBytes(),value.getBytes(StandardCharsets.ISO_8859_1)));
+            encrypted = Base64.getEncoder().encodeToString(AES.aes128cbc_encrypt(encKey.getBytes(StandardCharsets.ISO_8859_1),encIV.getBytes(StandardCharsets.ISO_8859_1),value.getBytes(ResourcesConst.interalCharset())));
         } catch (Exception e) {
             Log.error("Failed to save encrypted data: "+e.getMessage());
             return;
@@ -161,19 +162,24 @@ public class SettingsUtils extends HashMap<String, String> {
         return decrypted;
     }
     public static enum Region {
-        EU(LRes.REG_EUROPE,"eu","reg_europe.png","_eea_global"),
-        INDIA(LRes.REG_INDIA,"india","reg_india.png","_in_global"),
-        CN(LRes.REG_CHINA,"cn","reg_china.png",""),
-        RUSSIA(LRes.REG_RUSSIA,"russia","reg_russia.png","_ru_global"),
-        GLOBAL(LRes.REG_OTHER,"global","reg_global.png","_global"),
-        OTHER(LRes.REG_OTHER, "other", "reg_global.png","");
+        EU(LRes.REG_EUROPE,"eu","reg_europe.png","_eea_global","eea"),
+        INDIA(LRes.REG_INDIA,"india","reg_india.png","_in_global","in"),
+        CN(LRes.REG_CHINA,"cn","reg_china.png","","cn"),
+        RUSSIA(LRes.REG_RUSSIA,"russia","reg_russia.png","_ru_global","global"),
+        GLOBAL(LRes.REG_OTHER,"global","reg_global.png","_global","global"),
+        OTHER(LRes.REG_OTHER, "other", "reg_global.png","","global");
         private LRes lRes;
-        private final String toString, drawRes, suffix;
-        private Region(LRes lRes, String toString, String drawRes, String suffix){
+        private final String toString, drawRes, suffix, fastboot_value;
+        private Region(LRes lRes, String toString, String drawRes, String suffix, String fastboot_value){
             this.lRes = lRes;
             this.toString = toString;
             this.drawRes = drawRes;
             this.suffix = suffix;
+            this.fastboot_value = fastboot_value;
+        }
+
+        public String getFastbootValue() {
+            return fastboot_value;
         }
 
         public String getSuffix() {

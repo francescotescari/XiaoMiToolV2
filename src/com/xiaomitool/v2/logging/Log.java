@@ -26,6 +26,10 @@ public class Log {
         }
     }
 
+    public static void log_private(Object arg){
+        log("PRIV",arg, true, true);
+    }
+
 
 
     public static void debug(Object arg){
@@ -59,6 +63,10 @@ public class Log {
     }
 
     public static void log(String prefix, Object arg, boolean isFeedback){
+        log(prefix, arg, isFeedback, false);
+    }
+
+    private static void log(String prefix, Object arg, boolean isFeedback, boolean is_private){
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         String classLog = "";
         if (ADVANCED_LOG && stackTraceElements.length > 3) {
@@ -75,7 +83,7 @@ public class Log {
 
             if (logOutput != null){
                 try {
-                    logOutput.writeln(out, isFeedback);
+                    logOutput.writeln(out, isFeedback, is_private);
                 } catch (Exception e) {
 
                     System.out.println("Failed to write to feedback output: "+e.getMessage());

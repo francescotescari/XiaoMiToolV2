@@ -1,6 +1,5 @@
 package com.xiaomitool.v2.xiaomi.romota;
 
-import com.xiaomitool.v2.adb.device.DeviceGroups;
 import com.xiaomitool.v2.crypto.Hash;
 import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.inet.EasyHttp;
@@ -206,7 +205,7 @@ public class MiuiRomOta {
     public static void latestTest(RequestParams params) throws XiaomiProcedureException, CustomHttpException {
         String device = params.getModDevice();
         Branch branch = params.getBranch();
-        String region = params.getRequestRegion();
+        String region = params.getFastbootRegion();
         String n = params.getCarrier();
         String lang = params.getLanguage();
         HashMap<String, String> map = new HashMap<>();
@@ -274,7 +273,7 @@ public class MiuiRomOta {
     public static MiuiTgzRom latestFastboot_request(RequestParams params) throws XiaomiProcedureException, CustomHttpException {
         String device = params.getModDevice();
         Branch branch = params.getBranch();
-        String region = params.getRequestRegion();
+        String region = params.getFastbootRegion();
         String n = params.getCarrier();
         String lang = params.getLanguage();
         String url = String.format("http://update.miui.com/updates/miota-fullrom.php?d=%s&b=%s&r=%s&n=%s&l=%s", device, branch.getCode(), region, n, lang);
@@ -347,7 +346,7 @@ public class MiuiRomOta {
         String device = params.getModDevice();
         Branch branch = params.getBranch();
 
-        String region = params.getRequestRegion();
+        String region = params.getFastbootRegion();
         String n = params.getCarrier();
         String url = String.format("https://update.miui.com/updates/v1/fullromdownload.php?d=%s&b=%s&r=%s&n=%s", device, branch.getCode(), region, n), dl;
 

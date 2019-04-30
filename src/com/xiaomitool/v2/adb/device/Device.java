@@ -82,6 +82,7 @@ public class Device {
         } else if (Status.RECOVERY.equals(status)){
             deviceProperties.getRecoveryProperties().parse();
         }
+        getAnswers().updateStatus(status);
         releaseAccess();
     }
     public Status getStatus() {
