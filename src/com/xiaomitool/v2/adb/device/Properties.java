@@ -29,6 +29,7 @@ public abstract class Properties {
     }
 
     public boolean parse(){
+        Log.debug("Parsing requested for "+this);
         return parse(false);
     }
     public boolean parse(boolean force){

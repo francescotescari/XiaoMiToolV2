@@ -23,12 +23,14 @@ import com.xiaomitool.v2.utility.Pointer;
 import com.xiaomitool.v2.utility.RunnableWithArg;
 import com.xiaomitool.v2.utility.YesNoMaybe;
 import com.xiaomitool.v2.utility.utils.FileUtils;
+import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.utility.utils.ThreadUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import com.xiaomitool.v2.xiaomi.unlock.UnlockCommonRequests;
 import javafx.application.Platform;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.json.JSONObject;
 
@@ -84,7 +86,7 @@ public class FastbootInstall {
                     List<Path> res = result.collect(Collectors.toList());
                     Log.info("Possible flash_all files found: "+res);
                     if (res.size() == 0){
-                        throw new InstallException("Flash all file not found in extracted dir: "+file, FILE_NOT_FOUND, true);
+                        throw new InstallException("Flash all file not found in extracted dir: "+file, FILE_NOT_FOUND);
                     }
                     res.sort(Comparator.comparingInt(o -> o.toString().length()));
                     Path flashAllPath = res.get(0);
@@ -92,7 +94,7 @@ public class FastbootInstall {
                     procedureRunner.setContext(FLASH_ALL_PATH, flashAllPath);
 
                 } catch (IOException e) {
-                    throw new InstallException("IOException while finding flash_all file: "+e.getMessage(),FILE_NOT_FOUND, true);
+                    throw new InstallException("IOException while finding flash_all file: "+e.getMessage(),FILE_NOT_FOUND, e);
                 }
             }
         };
@@ -103,7 +105,7 @@ public class FastbootInstall {
             public void run(ProcedureRunner procedureRunner) throws InstallException, InterruptedException {
                 Path flashAllFile = (Path) procedureRunner.requireContext(FLASH_ALL_PATH);
                 if (flashAllFile == null || !Files.exists(flashAllFile)){
-                    throw new InstallException("Failed to obtain flash_all file",FILE_NOT_FOUND, false);
+                    throw new InstallException("Failed to obtain flash_all file",FILE_NOT_FOUND, "File "+flashAllFile+" doesn't exists");
                 }
                 String content;
                 Log.info("Building custom flash_all file");
@@ -111,7 +113,7 @@ public class FastbootInstall {
                 try {
                     content= FileUtils.readAll(flash_all);
                 } catch (IOException e) {
-                    throw new InstallException("Failed to read flash_all file",InstallException.Code.IO_ERROR, true);
+                    throw new InstallException("Failed to read flash_all file",InstallException.Code.IO_ERROR, e);
                 }
                 Log.info("Original flash_all file: ");
                 Log.info(content);
@@ -145,7 +147,7 @@ public class FastbootInstall {
                 try {
                     FileUtils.writeAll(flash_xiaomitool,outputContent);
                 } catch (IOException e) {
-                    throw new InstallException("Failed to write to flash_xiaomitool file: "+e.getMessage(),IO_ERROR, true);
+                    throw new InstallException("Failed to write to flash_xiaomitool file: "+e.getMessage(),IO_ERROR, e);
                 }
                 Log.info("Flash_all file generated success");
                 procedureRunner.setContext(FLASH_SCRIPT_FILE, flash_xiaomitool);
@@ -174,11 +176,11 @@ public class FastbootInstall {
                     Log.info("Copying fastboot resources to flash_all file directory: "+flash_all_dir);
                     ResourcesManager.copyResourcesToDir(ResourcesManager.getFastbootFilesPath(), flash_all_dir);
                 } catch (Exception e){
-                    throw new InstallException("Failed to copy fastboot to flash_all dir: "+e.getMessage(), FASTBOOT_FLASH_FAILED, true);
+                    throw new InstallException("Failed to copy fastboot to flash_all dir: "+e.getMessage(), FASTBOOT_FLASH_FAILED, e);
                 }
                 Device device = Procedures.requireDevice(procedureRunner);
                 if (flashAllFile == null){
-                    throw new InstallException("Null flash_all file",FILE_NOT_FOUND, false);
+                    throw new InstallException("Null flash_all file",FILE_NOT_FOUND);
                 }
                 flashAllFile.setExecutable(true);
                 String flashAllFileShell = flashAllFile.toPath().getFileName().toString();
@@ -218,12 +220,12 @@ public class FastbootInstall {
                     runner.runWait(3000);
                 } catch (IOException e) {
                     device.releaseAccess();
-                    throw new InstallException("Failed to run flash_all file: "+e.getMessage(),IO_ERROR, true);
+                    throw new InstallException("Failed to run flash_all file: "+e.getMessage(),IO_ERROR, e);
                 }
                 device.releaseAccess();
                 int exitCode = runner.getExitValue();
                 if (exitCode != 0){
-                    throw new InstallException("Fastboot flash all failed, exit code: "+exitCode+", output: "+lastLine.pointed, FASTBOOT_FLASH_FAILED, true);
+                    throw new InstallException("Fastboot flash all failed, exit code: "+exitCode+", output: "+lastLine.pointed, FASTBOOT_FLASH_FAILED, StrUtils.lastLine(runner.getOutputString()));
                 }
                 Log.info("Flash_all script run success");
             }
@@ -244,13 +246,13 @@ public class FastbootInstall {
                 if (!keystore.isLogged()){
                     LoginController.loginRunnable().run();
                     if (!keystore.isLogged()){
-                        throw new InstallException("Login is required for this action. Please login with your Xiaomi account", InstallException.Code.INFO_RETRIVE_FAILED, true);
+                        throw new InstallException("Login is required for this action. Please login with your Xiaomi account", InstallException.Code.INFO_RETRIVE_FAILED);
                     }
                 }
                 String token = FastbootCommons.getvar("token", device.getSerial());
                 Thread.sleep(400);
                 if (token == null){
-                    throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, true);
+                    throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, FastbootCommons.getLastError(device.getSerial()));
                 }
                 Log.info("First trial unlock token: "+token);
                 String product = (String) device.getDeviceProperties().getFastbootProperties().get(DeviceProperties.FASTBOOT_PRODUCT);
@@ -258,7 +260,7 @@ public class FastbootInstall {
                     product = FastbootCommons.getvar("product", device.getSerial());
                     Thread.sleep(600);
                     if (product == null){
-                        throw new InstallException("Failed to get fastboot variable product: "+FastbootCommons.getLastError(device.getSerial()), INFO_RETRIVE_FAILED, true);
+                        throw new InstallException("Failed to get fastboot variable product: ", INFO_RETRIVE_FAILED, FastbootCommons.getLastError(device.getSerial()));
                     }
                 }
                 try {
@@ -293,7 +295,7 @@ public class FastbootInstall {
                 while (true) {
                     token = FastbootCommons.getvar("token", device.getSerial());
                     if (token == null) {
-                        throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, true);
+                        throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, FastbootCommons.getLastError(device.getSerial()));
                     }
                     Log.info("Unlock request token: "+token);
                     try {
@@ -301,7 +303,7 @@ public class FastbootInstall {
                         runner.text(LRes.UNLOCK_REQUESTING_TOKEN);
                         unlockData = UnlockCommonRequests.ahaUnlock(token, product, "", "", "");
                         if (unlockData == null) {
-                            throw new InstallException("Failed to get the unlock data required", InstallException.Code.INFO_RETRIVE_FAILED, true);
+                            throw new InstallException("Failed to get the unlock data required", InstallException.Code.INFO_RETRIVE_FAILED, "Null response from unlock common request");
                         }
                         Log.info("Unlock request response: "+unlockData);
                         Log.debug(unlockData);
@@ -328,7 +330,7 @@ public class FastbootInstall {
                         runner.text(LRes.UNLOCK_UNLOCKING_DEVICE);
                         YesNoMaybe unlocked = FastbootCommons.oemUnlock(device.getSerial(), encryptData);
                         if (YesNoMaybe.NO.equals(unlocked)) {
-                            throw new InstallException("Failed to unlock the device, fastboot exit with status non zero or internal error", InstallException.Code.UNLOCK_ERROR, true);
+                            throw new InstallException("Failed to unlock the device, fastboot exit with status non zero or internal error", InstallException.Code.UNLOCK_ERROR, "Last error: "+FastbootCommons.getLastError(device.getSerial()));
                         }
                         device.getDeviceProperties().getFastbootProperties().put(DeviceProperties.X_LOCKSTATUS, UnlockStatus.UNKNOWN);
                         Thread.sleep(1000);
@@ -342,7 +344,7 @@ public class FastbootInstall {
                                 Log.info("UnlockStatus: "+device.getAnswers().getUnlockStatus());
                             }
                             if (UnlockStatus.LOCKED.equals(device.getAnswers().getUnlockStatus())) {
-                                throw new InstallException("Failed to unlock the device, the procedure failed during the unlock command, the device doens't seem to be unlocked", UNLOCK_ERROR, true);
+                                throw new InstallException("Failed to unlock the device, the procedure failed during the unlock command, the device doens't seem to be unlocked", UNLOCK_ERROR, "Device lock status: "+device.getAnswers().getUnlockStatus());
                             }
                             Log.info("This is the strangest way to suppose that the device is unlocked :/");
                         } catch (AdbException e){
@@ -359,7 +361,7 @@ public class FastbootInstall {
                     } catch (InstallException e) {
                         throw e;
                     } catch (Exception e){
-                        throw new InstallException("Internal error while parsing unlock data: "+e.getMessage(), InstallException.Code.INTERNAL_ERROR, true);
+                        throw new InstallException("Internal error while parsing unlock data: "+e.getMessage(), InstallException.Code.INTERNAL_ERROR, e);
                     }
                 }
 

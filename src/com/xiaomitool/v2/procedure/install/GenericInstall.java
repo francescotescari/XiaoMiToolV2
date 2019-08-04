@@ -57,7 +57,7 @@ public class GenericInstall {
                     return;
                 }
                 if (StrUtils.isNullOrEmpty(installable.getDownloadUrl())){
-                    throw new InstallException("Download failed: empty or null download url", InstallException.Code.DOWNLOAD_FAILED, false);
+                    throw new InstallException("Download failed: empty or null download url", InstallException.Code.DOWNLOAD_FAILED, "Installable "+installable+" has no download url but it is market as it should have");
                 }
                 Log.info("Starting download from: "+installable.getDownloadUrl());
                 ProgressPane.DefProgressPane defProgressPane = new ProgressPane.DefProgressPane();
@@ -68,7 +68,7 @@ public class GenericInstall {
                     installable.download(listener);
                     Log.info("Download was success");
                 }catch (Exception e){
-                    throw new InstallException("Download task failed: "+e.getMessage(), InstallException.Code.DOWNLOAD_FAILED, true);
+                    throw new InstallException("Download task failed: "+e.getMessage(), InstallException.Code.DOWNLOAD_FAILED, e);
                 } finally {
                     WindowManager.removeTopContent();
                 }
@@ -89,7 +89,7 @@ public class GenericInstall {
                     return;
                 }
                 if (installable.getDownloadedFile() == null){
-                    throw new InstallException("Extract failed: null downloaded file", InstallException.Code.EXTRACTION_FAILED, false);
+                    throw new InstallException("Extract failed: null downloaded file", InstallException.Code.EXTRACTION_FAILED, "Installable "+installable+" has no extract file but it is market as it should have");
                 }
                 Log.info("Extracting file: "+installable.getDownloadedFile());
                 ProgressPane.DefProgressPane defProgressPane = new ProgressPane.DefProgressPane();
@@ -100,7 +100,7 @@ public class GenericInstall {
                     installable.extract(listener);
                     Log.info("Extraction was success");
                 }catch (Exception e){
-                    throw new InstallException("Extraction task failed: "+e.getMessage(), InstallException.Code.EXTRACTION_FAILED, true);
+                    throw new InstallException("Extraction task failed: "+e.getMessage(), InstallException.Code.EXTRACTION_FAILED, e);
                 } finally {
                     WindowManager.removeTopContent();
                 }
@@ -140,7 +140,7 @@ public class GenericInstall {
                 Log.info("Installation succesful, showing donation message");
                 DeviceManager.stopScanThreads();
                 DonationPane donationPane = new DonationPane();
-                WindowManager.setMainContent(donationPane);
+                WindowManager.setMainContent(donationPane, true);
                 int msg = NOOP;
                 while (msg == NOOP) {
                     msg = donationPane.waitClick();
@@ -162,7 +162,7 @@ public class GenericInstall {
                 vBox.setAlignment(Pos.CENTER);
                 vBox.setSpacing(40);
                 buttonPane.setContent(vBox);
-                WindowManager.setMainContent(buttonPane);
+                WindowManager.setMainContent(buttonPane, true);
                 buttonPane.waitClick();
                 ToolManager.exit(0);
             }
@@ -198,7 +198,7 @@ public class GenericInstall {
                     }
                     toSatisfy = InstallationRequirement.satisfyNextRequirement(Procedures.requireDevice(runner),installable);
                     if (Objects.equals(copy, toSatisfy)){
-                        throw new InstallException("Trying to satisfy a requirement that should had been just satisfied: "+copy, InstallException.Code.INTERNAL_ERROR, false);
+                        throw new InstallException("Trying to satisfy a requirement that should had been just satisfied: "+copy, InstallException.Code.INTERNAL_ERROR, "Past requirement: "+copy+", current requirement: "+toSatisfy);
                     }
                     try {
                         Log.info("The device might be rebooting right now, lets wait it for 30 seconds");
@@ -207,6 +207,7 @@ public class GenericInstall {
                         Log.warn("Starting next requirement satisfaction without device active");
                     }
                 }
+                Log.debug("Stasfied all requirments");
                 stashed = (Installable) runner.getContext(KEY_STASHED_INSTALLABLE);
 
 

@@ -64,13 +64,13 @@ public class GuiTest2 extends Application{
             public void run() {
                 try {
                     InstallPane pane = new InstallPane();
-                    WindowManager.setMainContent(pane);
+                    WindowManager.setMainContent(pane, true);
                     ProcedureRunner runner = new ProcedureRunner(pane);
                     runner.setAfterExceptionPane(pane);
                     DeviceManager.refresh();
                     Device device = null;
                     for (Device d : DeviceManager.getDevices()){
-                        if (d.getSerial().equals("88eec8b5")){
+                        if (d.getSerial().equals("307d3cd5")){
                             device = d;
                         }
                     }
@@ -180,7 +180,7 @@ public class GuiTest2 extends Application{
                         try {
 
 
-                            WindowManager.setMainContent(donationPane);
+                            WindowManager.setMainContent(donationPane,true);
                             coor = GuiUtils.getCenterCoordinates(pane);
                             if (true){
                                 return;
@@ -196,7 +196,7 @@ public class GuiTest2 extends Application{
 
                             Pointer p = new Pointer();
                             InstallPane installPane = new InstallPane();
-                            WindowManager.setMainContent(installPane);
+                            WindowManager.setMainContent(installPane, true);
                             ProcedureRunner runner = new ProcedureRunner(installPane.getListener());
                             runner.setContext(Procedures.SELECTED_DEVICE, new Device("88eec8b5"));
                             /*DeviceRequestParams params = new DeviceRequestParams("whyred_global","8.9.13","8.1.0",Branch.DEVELOPER,"0x1c01702d", 1);

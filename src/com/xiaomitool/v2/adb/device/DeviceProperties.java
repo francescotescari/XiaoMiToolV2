@@ -143,6 +143,7 @@ public class DeviceProperties {
 
         @Override
         protected boolean parseInternal() {
+            ThreadUtils.sleepSilently(1000);
             boolean result;
             result = findUnlockState();
             findVars();

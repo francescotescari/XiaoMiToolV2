@@ -40,7 +40,7 @@ public class FastbootFetch {
                 if (sp == null){
                     sp = params.getSpecie();
                     if (sp == null){
-                        throw new InstallException("Failed to obtain device branch and region: null specie", InstallException.Code.MISSING_PROPERTY, false);
+                        throw new InstallException("Failed to obtain device branch and region: null specie", InstallException.Code.MISSING_PROPERTY);
                     }
                 } else {
                     params.setSpecie(sp);

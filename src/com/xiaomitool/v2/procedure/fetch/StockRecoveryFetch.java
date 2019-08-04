@@ -35,7 +35,7 @@ public class StockRecoveryFetch {
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Installable installable = Procedures.requireInstallable(runner);
                 if (StrUtils.isNullOrEmpty(installable.getMd5())){
-                    throw new InstallException("Latest ota package has no md5", InstallException.Code.INFO_RETRIVE_FAILED, false);
+                    throw new InstallException("Latest ota package has no md5", InstallException.Code.INFO_RETRIVE_FAILED);
                 }
                 runner.setContext(GenericFetch.FILE_MD5, installable.getMd5());
             }
@@ -82,7 +82,7 @@ public class StockRecoveryFetch {
                 }
                 Log.info("Choosen preferred rom: "+installable);
                 if (installable == null || (!installable.hasInstallToken() && !UnlockStatus.UNLOCKED.equals(Procedures.requireDevice(runner).getAnswers().getUnlockStatus()))){
-                    throw new InstallException("Ota response doesn't contain an installable rom data", InstallException.Code.MISSING_PROPERTY, true);
+                    throw new InstallException("Ota response doesn't contain an installable rom data", InstallException.Code.MISSING_PROPERTY);
                 }
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 MiuiRom.Specie romSpecie = specie.toBranch(installable.getBranch());
@@ -178,7 +178,7 @@ public class StockRecoveryFetch {
                 Installable installable = rom.get(MiuiRom.Kind.PACKAGE);
                 Log.info("Found pkg rom: "+installable);
                 if (installable == null){
-                    throw new InstallException("Failed to validate rom pkg. Xiaomi server doesn't allow installation", InstallException.Code.CANNOT_INSTALL, true);
+                    throw new InstallException("Failed to validate rom pkg. Xiaomi server doesn't allow installation of this rom with locked bootloader", InstallException.Code.CANNOT_INSTALL);
                 }
                 String id = idBySpecie(specie);
                 chooser.add(id, installable);
@@ -199,7 +199,7 @@ public class StockRecoveryFetch {
                 String id = idBySpecie(specie);
                 Installable installable = chooser.getByType(id, Installable.Type.FASTBOOT);
                 if (installable == null){
-                    throw new InstallException("", InstallException.Code.INTERNAL_ERROR, false);
+                    throw new InstallException("You should not see this error, please report with a feedback", InstallException.Code.INTERNAL_ERROR, "FetchOnlyIfNoFastboot internal dummy");
                 }
             }
         }, toRun);
@@ -239,7 +239,7 @@ public class StockRecoveryFetch {
                 if (sp == null){
                     sp = params.getSpecie();
                     if (sp == null){
-                        throw new InstallException("Failed to obtain device branch and region: null specie", InstallException.Code.MISSING_PROPERTY, false);
+                        throw new InstallException("Failed to obtain device branch and region: null specie", InstallException.Code.MISSING_PROPERTY);
                     }
                 } else {
                     params.setSpecie(sp);
@@ -268,7 +268,7 @@ public class StockRecoveryFetch {
                     version = installable.getMiuiVersion();
                 }
                 if (version == null){
-                    throw new InstallException("Failed to create romOta request: null version", InstallException.Code.INFO_RETRIVE_FAILED, true);
+                    throw new InstallException("Failed to create romOta request: null version", InstallException.Code.INFO_RETRIVE_FAILED);
                 }
                 params.setVersion(version);
                 String md5 = (String) runner.consumeContext(SRF_MD5);
@@ -298,7 +298,7 @@ public class StockRecoveryFetch {
                 }
                 Log.info("Preffered latest rom choosen: "+installable);
                 if (installable == null){
-                    throw new InstallException("Ota response doesn't contain an installable rom data", InstallException.Code.MISSING_PROPERTY, true);
+                    throw new InstallException("Ota response doesn't contain an installable rom data", InstallException.Code.MISSING_PROPERTY);
                 }
                 /*if (!installable.hasInstallToken() && !UnlockStatus.UNLOCKED.equals(Procedures.requireDevice(runner).getAnswers().getUnlockStatus()) && installable.getMd5() != null && !installable.getMd5().isEmpty()){
                     runner.setContext(SRF_MD5, installable.getMd5());
@@ -333,7 +333,7 @@ public class StockRecoveryFetch {
                 if (sp == null){
                     sp = params.getSpecie();
                     if (sp == null){
-                        throw new InstallException("Failed to obtain device branch and region: null specie", InstallException.Code.MISSING_PROPERTY, false);
+                        throw new InstallException("Failed to obtain device branch and region: null specie", InstallException.Code.MISSING_PROPERTY);
                     }
                 } else {
                     params.setSpecie(sp);

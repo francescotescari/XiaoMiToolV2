@@ -29,7 +29,7 @@ public class AdbSideloadTask extends Task {
         runner.setDeviceSerial(serial);
         runner.addArgument("sideload");
         if (fileToSideload == null){
-            this.error(new InstallException("null file to sideload", InstallException.Code.INTERNAL_ERROR, false));
+            this.error(new InstallException("null file to sideload", InstallException.Code.INTERNAL_ERROR));
         }
         runner.addArgument(fileToSideload.getAbsolutePath());
 

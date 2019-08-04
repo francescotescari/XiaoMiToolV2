@@ -54,13 +54,13 @@ public class StockRecoveryInstall {
                 try {
                     initDeviceMap = MTPUtils.list();
                 } catch (IOException e) {
-                    throw new InstallException("MTP list devices failed: " + e.getMessage(), InstallException.Code.MTP_FAILED, true);
+                    throw new InstallException("MTP list devices failed: " + e.getMessage(), InstallException.Code.MTP_FAILED, e);
                 }
                 procedureRunner.text(LRes.MTP_ENABLING_DEVICE);
                 Log.info("Enabling MTP on the device");
                 String out = AdbCommons.raw(device.getSerial(), "enablemtp:");
                 if (out == null) {
-                    throw new InstallException("Adb enablemtp command failed, maybe your device doesn't support it or device is not connected", InstallException.Code.ADB_EXCEPTION, true);
+                    throw new InstallException("Adb enablemtp command failed, maybe your device doesn't support it or device is not connected", InstallException.Code.ADB_EXCEPTION, "Last error: "+AdbCommons.getLastError(device.getSerial()));
                 }
                 Thread.sleep(2000);
                 procedureRunner.text(LRes.SEARCHING_CONNECTED_MTP_DEVICES);
@@ -69,7 +69,7 @@ public class StockRecoveryInstall {
                 try {
                     afterDeviceMap = MTPUtils.list();
                 } catch (IOException e) {
-                    throw new InstallException("MTP list devices failed: " + e.getMessage(), InstallException.Code.MTP_FAILED, true);
+                    throw new InstallException("MTP list devices failed: " + e.getMessage(), InstallException.Code.MTP_FAILED, e);
                 }
                 String newDeviceKey = null;
                 List<MTPUtils.MTPDevice> xiaomiDevices = new ArrayList<>();
@@ -119,7 +119,7 @@ public class StockRecoveryInstall {
                         return;
                     }
                 }
-                throw new InstallException("Cannot detect recovery mtp device, try updating the mtp driver on the device", InstallException.Code.MTP_FAILED, true);
+                throw new InstallException("Cannot detect recovery mtp device, try updating the mtp driver on the device", InstallException.Code.MTP_FAILED);
 
 
             }
@@ -146,12 +146,12 @@ public class StockRecoveryInstall {
                 Installable installable = (Installable) procedureRunner.requireContext(Procedures.INSTALLABLE);
                 File finalFile = installable.getFinalFile();
                 if (finalFile == null) {
-                    throw new InstallException("Null install file", InstallException.Code.INTERNAL_ERROR, false);
+                    throw new InstallException("Null install file", InstallException.Code.INTERNAL_ERROR);
                 }
                 Path file = finalFile.toPath();
                 procedureRunner.text(LRes.MTP_SENDING_FILE);
                 if (!Files.exists(file)) {
-                    throw new InstallException("File " + file.toString() + " doesn't exists!", InstallException.Code.FILE_NOT_FOUND, false);
+                    throw new InstallException("File " + file.toString() + " doesn't exists!", InstallException.Code.FILE_NOT_FOUND);
                 }
                 Log.info("Sending file: "+file+" to the device using MTP");
                 MTPUtils.MTPDevice device = (MTPUtils.MTPDevice) procedureRunner.requireContext(SELECTED_MTP_DEVICE);
@@ -166,7 +166,7 @@ public class StockRecoveryInstall {
                 WindowManager.removeTopContent();
                 Exception error = task.getError();
                 if (error != null) {
-                    throw new InstallException("Failed to send file to mtp device: " + error.getMessage(), InstallException.Code.MTP_FAILED, true);
+                    throw new InstallException("Failed to send file to mtp device: " + error.getMessage(), InstallException.Code.MTP_FAILED, error);
                 }
                 procedureRunner.text(LRes.FILE_SENT_TO_DEVICE);
                 Log.info("File MTP sent to the device succesfully");
@@ -184,7 +184,7 @@ public class StockRecoveryInstall {
                 String token = installable.getInstallToken();
                 runner.text(LRes.STARTING_MIUI_SIDELOAD);
                 if (StrUtils.isNullOrEmpty(token)){
-                    throw new InstallException("Empty install token", InstallException.Code.SIDELOAD_INSTALL_FAILED, false);
+                    throw new InstallException("Empty install token", InstallException.Code.SIDELOAD_INSTALL_FAILED, "Installable "+installable+" has no install token");
                 }
                 Log.info("Starting miui sidelaod of file: "+installable.getFinalFile());
                 Log.info("Install token: "+token);
@@ -212,7 +212,7 @@ public class StockRecoveryInstall {
                 Log.info("Sideload finished with progress: "+sideloadTask.getLatestUpdate()+"/"+sideloadTask.getTotalSize());
                 if (!sideloadTask.isFinished()){
                     Exception e = sideloadTask.getError();
-                    throw new InstallException("MIUI sideload failed: "+e.getMessage(), InstallException.Code.SIDELOAD_INSTALL_FAILED, true);
+                    throw new InstallException("MIUI sideload failed: "+e.getMessage(), InstallException.Code.SIDELOAD_INSTALL_FAILED, e);
                 }
                 Log.info("Sideload task finished succesfully");
 
@@ -233,7 +233,7 @@ public class StockRecoveryInstall {
 
                 String token = installable.getInstallToken();
                 if (token == null || token.isEmpty()) {
-                    throw new InstallException("Empty install token", InstallException.Code.MTP_INSTALL_FAILED, false);
+                    throw new InstallException("Empty install token", InstallException.Code.MTP_INSTALL_FAILED);
                 }
                 Log.info("Starting MTP installation");
                 Log.info("Install token: "+token);
@@ -249,24 +249,24 @@ public class StockRecoveryInstall {
                 try {
                     adbRunner.runWait(3600);
                 } catch (IOException e) {
-                    throw new InstallException("Failed to start mtpinstall process: " + e.getMessage(), InstallException.Code.INTERNAL_ERROR, true);
+                    throw new InstallException("Failed to start mtpinstall process: " + e.getMessage(), InstallException.Code.INTERNAL_ERROR, e);
                 }
                 AdbCommunication.giveAllAccess();
                 WindowManager.removeTopContent();
                 Duration timeElapsed = Duration.between(startTime, LocalDateTime.now());
                 Log.info("MTP installation duration: "+timeElapsed.getSeconds()+" seconds");
                 if (adbRunner.getExitValue() != 0) {
-                    throw new InstallException("MtpInstall process returned with code " + adbRunner.getExitValue(), InstallException.Code.MTP_INSTALL_FAILED, true);
+                    throw new InstallException("MtpInstall process returned with code " + adbRunner.getExitValue(), InstallException.Code.MTP_INSTALL_FAILED, adbRunner.getOutputString());
                 }
                 String output = adbRunner.getOutputString();
                 output = output == null ? "" : output.toLowerCase();
                 Log.info("MTP installation output: "+output);
                 if (output.contains("installation_aborted")) {
-                    throw new InstallException("MtpInstallation was aborted by the device: probably wrong token or Xiaomi patched that", InstallException.Code.MTP_INSTALL_FAILED, false);
+                    throw new InstallException("MtpInstallation was aborted by the device: probably wrong token", InstallException.Code.MTP_INSTALL_FAILED);
                 }
                 long seconds = timeElapsed.getSeconds();
                 if (seconds < 8) {
-                    throw new InstallException("MtpInstallation took only " + seconds + " seconds to complete, thus it can't be successful", InstallException.Code.MTP_INSTALL_FAILED, false);
+                    throw new InstallException("MtpInstallation took only " + seconds + " seconds to complete, thus it can't be successful", InstallException.Code.MTP_INSTALL_FAILED, adbRunner.getOutputString());
                 }
                 runner.text(LRes.ROM_INSTALLED_ON_DEVICE);
 
@@ -283,7 +283,7 @@ public class StockRecoveryInstall {
                 Log.info("Formatting data via stock recovery");
                 String out = AdbCommons.raw(device.getSerial(), "format-data:");
                 if (out == null) {
-                    throw new InstallException("Failed to wipe data: null output", InstallException.Code.ADB_EXCEPTION, true);
+                    throw new InstallException("Failed to wipe data: null output", InstallException.Code.ADB_EXCEPTION, AdbCommons.getLastError(device.getSerial()));
                 }
                 Log.info("Format data successful");
                 runner.text(LRes.PARTITION_FORMATTED);
@@ -297,7 +297,7 @@ public class StockRecoveryInstall {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 if (!ResourcesConst.isWindows()){
-                    throw new InstallException("This operation is not supported by this os", InstallException.Code.OS_NOT_SUPPORTED, false);
+                    throw new InstallException("This operation is not supported by this os", InstallException.Code.OS_NOT_SUPPORTED);
                 }
             }
         },RebootDevice.requireStockRecovery(), enableMtp(), sendFileViaMTP(), installMtpFile(), formatData());
@@ -318,7 +318,7 @@ public class StockRecoveryInstall {
                 String zone = AdbCommons.raw(serial, "getromzone:");
                 String branch = AdbCommons.raw(serial, "getbranch:");
                 if (dev == null || version == null || sn == null || codebase == null || branch == null) {
-                    throw new InstallException("Failed to retrieve recovery information: null param", InstallException.Code.INFO_RETRIVE_FAILED, true);
+                    throw new InstallException("Failed to retrieve recovery information: null param", InstallException.Code.INFO_RETRIVE_FAILED);
                 }
                 int z;
                 if (zone == null){

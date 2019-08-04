@@ -13,6 +13,7 @@ import com.xiaomitool.v2.gui.deviceView.DeviceView;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.visual.*;
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.procedure.Procedures;
 import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import javafx.animation.*;
@@ -59,18 +60,11 @@ public class GuiTest extends Application {
                                       }
                                   }).start();*/
                                   Log.debug("CCASASAS");
-                                  /*DeviceRecoveryView deviceRecoveryView = new DeviceRecoveryView(DeviceView.DEVICE_18_9, 400);
-                                  WindowManager.setMainContent(deviceRecoveryView);
-                                  deviceRecoveryView.selectOption(2);
-                                  deviceRecoveryView.animateSelectThird(2000);*/
-                                  new Thread(new Runnable() {
-                                      @Override
-                                      public void run() {
-                                          try {
-                                              ActionsDynamic.HOWTO_GO_RECOVERY(null).run();
-                                          } catch (InterruptedException e) {
-                                              e.printStackTrace();
-                                          }
+                                  new Thread(() -> {
+                                      try {
+                                          Procedures.selectFilesFromPc("Please select rom files", "Select one or more file to install.\nMake sure they are ordered correcty (from top to bottom) as installation order should be.\nA wrong installation order can lead to device bricking or other unwanted possibilities");
+                                      } catch (InterruptedException e) {
+                                          e.printStackTrace();
                                       }
                                   }).start();
 

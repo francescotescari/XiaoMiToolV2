@@ -10,19 +10,19 @@ import java.util.Objects;
 
 public class InstallException extends Exception {
 
-    public static final InstallException ABORT_EXCEPTION = new InstallException("The installation was aborted by the user", Code.ABORTED, false);
+    public static final InstallException ABORT_EXCEPTION = new InstallException("The installation was aborted by the user", Code.ABORTED);
 
 
     public InstallException(InterruptedException e) {
-        this("InterruptedException: "+e.getMessage(), Code.INTERNAL_ERROR, true);
+        this("InterruptedException: "+e.getMessage(), Code.INTERNAL_ERROR, e);
     }
 
     public InstallException(AdbException e) {
-        this("Adb execution exception: "+e.getMessage(), Code.ADB_EXCEPTION, true);
+        this("Adb execution exception: "+e.getMessage(), Code.ADB_EXCEPTION, e);
     }
 
     public InstallException(XiaomiProcedureException exeption) {
-        this("Xiaomi procedure failed: "+exeption.getMessage(), Code.XIAOMI_EXCEPTION, true);
+        this("Xiaomi procedure failed: "+exeption.getMessage(), Code.XIAOMI_EXCEPTION, exeption);
     }
 
     public enum Code {
@@ -71,19 +71,26 @@ public class InstallException extends Exception {
     private boolean waitCommand;
     private  Object[] params;
     public InstallException(CustomHttpException exception){
-        this("Internet connection error: "+exception.getMessage(), Code.CONNECTION_ERROR, true);
+        this("Internet connection error: "+exception.getMessage(), Code.CONNECTION_ERROR, exception);
     }
     public InstallException(RomException e) {
-        this("Rom selection procedure error: "+e.getMessage(), Code.ROM_SELECTION_ERROR, true);
+        this("Rom selection procedure error: "+e.getMessage(), Code.ROM_SELECTION_ERROR, e);
     }
 
-    public InstallException(String message, Code code,boolean waitCommand, Object... otherParams){
-        super(message);
+    public InstallException(String message, Code code, Throwable cause){
+        super(message, cause);
         Log.warn("InstallException created: "+code+" - "+message);
         this.code = code;
-        this.waitCommand = waitCommand;
-        this.params = otherParams;
+
     }
+    public InstallException(String message, Code code, String cause){
+        this(message, code, new Throwable(cause));
+    }
+    public InstallException(String message, Code code){
+        this(message, code, (Throwable) null);
+
+    }
+
     @Override
     public String toString(){
         return this.getClass().getSimpleName()+" - "+this.getCode()+" - "+this.getMessage();

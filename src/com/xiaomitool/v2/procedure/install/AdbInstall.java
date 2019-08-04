@@ -88,7 +88,7 @@ public class AdbInstall {
                     return;
                 }
                 if (!AdbCommons.mkdir(destinationpath, device.getSerial())){
-                    throw new InstallException("Failed to create remote directory: "+destinationpath, InstallException.Code.ADB_EXCEPTION, true);
+                    throw new InstallException("Failed to create remote directory: "+destinationpath, InstallException.Code.ADB_EXCEPTION, AdbCommons.getLastError(device.getSerial()));
                 }
                 Thread.sleep(200);
 

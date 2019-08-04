@@ -4,6 +4,7 @@ import com.xiaomitool.v2.adb.AdbCommons;
 import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.FastbootCommons;
 import com.xiaomitool.v2.adb.device.Device;
+import com.xiaomitool.v2.adb.device.DeviceAnswers;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.visual.ProgressPane;
 import com.xiaomitool.v2.language.LRes;
@@ -57,22 +58,47 @@ public class TwrpInstall  {
     }
 
     public static RInstall checkIfIsInTwrp() {
-        return RNode.sequence(RebootDevice.requireRecovery(), OtherProcedures.sleep(2000), ManageDevice.requireAccessible(true),  new RInstall() {
+        return RNode.sequence(OtherProcedures.sleep(4000),RebootDevice.requireRecovery(), OtherProcedures.sleep(2000), ManageDevice.requireAccessible(true),  new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
                 Log.info("Checking if device is in TWRP recovery");
                 if (YesNoMaybe.NO.equals(device.getAnswers().isInTwrpRecovery())){
-                    throw new InstallException("Failed to get twrp commands running, are you in twrp?", InstallException.Code.TWRP_INSTALL_FAILED, true);
+                    throw new InstallException("Failed to get twrp commands running, are you in twrp? Wait for twrp boot and try again", InstallException.Code.TWRP_INSTALL_FAILED, "Device is not in twrp or openrecoveryscripts not working atm. Device Status: "+device.getStatus()+" - connected: "+device.isConnected());
                 }
             }
         });
     }
+    public static RInstall formatDataIfEncryptedAndNeeded(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Device device = Procedures.requireDevice(runner);
+                YesNoMaybe encrypted = device.getAnswers().isTwrpDataEncrypted();
+                YesNoMaybe needed = device.getAnswers().isWipeDataNeeded();
+                if (!YesNoMaybe.YES.equals(encrypted) || YesNoMaybe.NO.equals(needed)){
+                    return;
+                }
+                runner.text(LRes.DATA_ENCRYPTED_DETECT);
+                AdbCommons.adb_shell("twrp unmount data", device.getSerial(), 6);
+                Thread.sleep(1000);
+                runner.text(LRes.PARTITION_FORMATTING.toString("data"));
+                if (!AdbCommons.formatBootdevicePartition("userdata", device.getSerial(), 10)){
+                    throw new InstallException(new AdbException("Failed to format userdata: "+AdbCommons.getLastError(device.getSerial())));
+                }
+                device.getAnswers().setAnswer(DeviceAnswers.NEED_WIPE_DATA, YesNoMaybe.NO);
+                Thread.sleep(1000);
+                AdbCommons.adb_shell("twrp mount data", device.getSerial(), 6);
+
+            }
+        };
+    }
+
 private static final String ERASE_DATA_KEY = "erase_the_data";
 
     @ExportFunction("install_zip_viatwrp")
-    public static RInstall installZip(){
-        return RNode.sequence(RebootDevice.requireRecovery(), new RInstall() {
+    public static RInstall installZip(boolean formatDataIfNecessary){
+        return RNode.sequence(RebootDevice.requireRecovery(), formatDataIfNecessary ? formatDataIfEncryptedAndNeeded() : Procedures.doNothing(), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
@@ -123,7 +149,7 @@ private static final String ERASE_DATA_KEY = "erase_the_data";
                 task.waitFinished();
                 WindowManager.removeTopContent();
                 if (task.getError() != null || !task.isFinished()){
-                    throw new InstallException("Failed to install the zip file on the device: task failed: "+((task.getError() != null) ? task.getError().getMessage() : "not finished"), InstallException.Code.TWRP_INSTALL_FAILED, true);
+                    throw new InstallException("Failed to install the zip file on the device: task failed: "+((task.getError() != null) ? task.getError().getMessage() : "not finished"), InstallException.Code.TWRP_INSTALL_FAILED, task.getError());
                 }
 
 
@@ -140,7 +166,7 @@ private static final String ERASE_DATA_KEY = "erase_the_data";
                 result |= (AdbCommons.adb_shell("twrp wipe cache",device.getSerial(), 8) != null);
                // result |= (AdbCommons.adb_shell("twrp wipe data", device.getSerial(), 10) != null);
                 if (!result){
-                    throw new InstallException("Failed to wipe cache: twrp command failed", InstallException.Code.WIPE_FAILED, true ) ;
+                    throw new InstallException("Failed to wipe cache: twrp command failed", InstallException.Code.WIPE_FAILED, AdbCommons.getLastError(device.getSerial()) ) ;
                 }
             }
         });
@@ -155,7 +181,7 @@ private static final String ERASE_DATA_KEY = "erase_the_data";
                 result |= (AdbCommons.adb_shell("twrp wipe cache",device.getSerial(), 8) != null);
                 result |= (AdbCommons.adb_shell("twrp wipe data", device.getSerial(), 10) != null);
                 if (!result){
-                    throw new InstallException("Failed to wipe cache and data: twrp command failed", InstallException.Code.WIPE_FAILED, true ) ;
+                    throw new InstallException("Failed to wipe cache and data: twrp command failed", InstallException.Code.WIPE_FAILED, AdbCommons.getLastError(device.getSerial()) ) ;
                 }
             }
         }, GenericInstall.updateDeviceStatus(null,null,false));

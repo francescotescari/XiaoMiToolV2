@@ -25,8 +25,8 @@ public class ManageDevice {
     }
 
     public static RInstall checkIfTwrpInstalled(){
-        return RNode.sequence(requireAccessible(),
-                RNode.fallback(RNode.sequence(RebootDevice.rebootRecovery(true, false, 15), TwrpInstall.checkIfIsInTwrp(), new RInstall() {
+        return RNode.sequence(requireAccessible(), OtherProcedures.sleep(1000),
+                RNode.fallback(RNode.sequence(RebootDevice.rebootRecovery(true, false, 30), TwrpInstall.checkIfIsInTwrp(), new RInstall() {
                     @Override
                     public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                         Device device = Procedures.requireDevice(runner);
@@ -119,7 +119,7 @@ public class ManageDevice {
                 device.setConnected(false);
                 DeviceManager.refresh();
                 if (device.waitActive(t) == null){
-                    throw new InstallException("Waited device for "+timeout+" seconds but it wasn't active", InstallException.Code.WAIT_DEVICE_TIMEOUT, true);
+                    throw new InstallException("Waited device for "+timeout+" seconds but it seems still disconnected", InstallException.Code.WAIT_DEVICE_TIMEOUT);
                 }
 
             }

@@ -57,10 +57,11 @@ public class WindowManager {
         mainVisiblePane = pane;
         mainVisiblePane.getPane().setMaxSize(PREF_WIN_WIDTH, PREF_WIN_HEIGHT-90);
     }
-    public static void setMainContent(Node node){
+    /*public static void setMainContent(Node node){
         setMainContent(node,true);
-    }
+    }*/
     public static void removeTopContent(){
+        Log.debug("WMA: removing top content");
         if (mainVisiblePane == null){
             return;
         }
@@ -75,6 +76,7 @@ public class WindowManager {
     }
 
     public static void setMainContent(Node node, boolean deleteUnder){
+        Log.debug("WMA: set main content: "+node+", du: "+deleteUnder);
         if (mainVisiblePane == null){
             return;
         }

@@ -190,7 +190,7 @@ public class ActionsStatic {
            // instruction.setTextAlignment(TextAlignment.CENTER);
             instruction.setWrappingWidth(WindowManager.getMainPane().getWidth()-180);
             buttonPane.setContent(instruction);
-            WindowManager.setMainContent(buttonPane);
+            WindowManager.setMainContent(buttonPane, true);
             buttonPane.waitClick();
             ActionsDynamic.MAIN_SCREEN_LOADING(LRes.LOADING).run();
             AdbCommunication.restartServer();
@@ -472,7 +472,7 @@ public class ActionsStatic {
         Pane p = new TextScrollPane( t2, LRes.DISCLAIMER.toString());
         p.setPadding(new Insets(20,100,20,100));
         buttonPane.setContent(p);
-        WindowManager.setMainContent(buttonPane);
+        WindowManager.setMainContent(buttonPane, true);
         Log.debug(Thread.currentThread());
         return buttonPane.waitClick();
     };}
@@ -510,7 +510,7 @@ public class ActionsStatic {
                 hBox.setSpacing(100);
                 vBox1.setSpacing(20);
                 vBox2.setSpacing(20);
-                WindowManager.setMainContent(hBox);
+                WindowManager.setMainContent(hBox, true);
             }
         });
         return idClickReceiver.waitClick()%2;

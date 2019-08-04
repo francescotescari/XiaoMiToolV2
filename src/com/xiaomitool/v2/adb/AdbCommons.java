@@ -4,12 +4,14 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.process.AdbRunner;
 import com.xiaomitool.v2.process.ProcessRunner;
 import com.xiaomitool.v2.resources.ResourcesManager;
+import com.xiaomitool.v2.utility.utils.StrUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,6 +75,14 @@ public class AdbCommons {
             Log.debug("Cannot execute adb command \"adb "+cmd+"\", reason: "+e.getMessage());
             return null;
         }
+        int exitCode = runner.getExitValue();
+        if (exitCode == 0){
+            LAST_ERROR_MAP.put(device, null);
+        } else {
+            List<String> outlines = runner.getOutputLines();
+            String output = outlines != null && !outlines.isEmpty() ? outlines.get(outlines.size()-1) : "unknown error";
+            LAST_ERROR_MAP.put(device,output);
+        }
         return runner;
     }
 
@@ -92,6 +102,11 @@ public class AdbCommons {
         String output = adb_shellWithOr("ls "+path,device, DEFAULT_TIMEOUT);
         return output != null;
     }
+
+    public static boolean formatBootdevicePartition(String partition, String device, int timeout){
+        return adb_shellWithOr("mke2fs -T ext4 /dev/block/bootdevice/by-name/"+partition, device, timeout) != null;
+    }
+
     public static String adb_shell(String cmd, String device, int timeout){
         AdbRunner runner = new AdbRunner("shell", "-x", cmd);
         runner.setDeviceSerial(device);
@@ -111,7 +126,13 @@ public class AdbCommons {
     public static String adb_shellWithOr(String cmd, String device, int timeout){
         cmd += " || echo "+CHECK_RETURN_CODE;
         String output = adb_shell(cmd, device, timeout);
-        return (output == null || output.contains(CHECK_RETURN_CODE)) ? null : output;
+        if (output == null){
+            return null;
+        } else if (output.contains(CHECK_RETURN_CODE)){
+            LAST_ERROR_MAP.put(cmd, StrUtils.lastLine(output));
+            return null;
+        }
+        return output;
     }
     public static File simplePull(String device, String pullPath, String destPath)  {
         Path tmpPath = ResourcesManager.getTmpPath();
@@ -153,5 +174,11 @@ public class AdbCommons {
 
     public static boolean mkdir(String path, String serial) {
         return adb_shellWithOr("mkdir \""+path+"\"",serial, 5) != null;
+    }
+
+    private static final HashMap<String, String> LAST_ERROR_MAP = new HashMap<>();
+
+    public static String getLastError(String serial) {
+        return String.valueOf(LAST_ERROR_MAP.get(serial));
     }
 }

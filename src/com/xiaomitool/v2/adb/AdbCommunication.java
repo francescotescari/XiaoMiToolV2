@@ -43,6 +43,7 @@ public class AdbCommunication {
 
 
     public static void registerAutoScanDevices(){
+        Log.info("Starting autoscan threads");
         synchronized (sync) {
             if (refreshDevicesThread != null) {
                 return;
@@ -74,12 +75,16 @@ public class AdbCommunication {
             @Override
             public void run() {
                 while (true) {
+                    Log.debug("R start");
                     DeviceManager.refresh();
+                    Log.debug("R fin");
                     try {
                         Thread.sleep(REFRESH_TIME_MS);
                     } catch (InterruptedException e) {
-
+                        Log.error("Refresh thread interrupted");
+                        Log.printStackTrace(e);
                     }
+                    Log.debug("Refreshing nowwwww");
                 }
             }
         };
@@ -87,31 +92,31 @@ public class AdbCommunication {
         refreshDevicesThread.start();
     }
 
-    private static void refereshAdbDevices(){
+    private static void refereshAdbDevices(Map<String, Device.Status> updatingDevices){
             List<String> cmdOut = AdbCommons.devices();
             if (cmdOut == null){
                 return;
             }
 
-            for (Map.Entry<String, Device.Status> entry : AdbUtils.parseDevices(cmdOut).entrySet()){
-                DeviceManager.cacheDeviceStatus(entry.getKey(), entry.getValue());
+            synchronized (updatingDevices){
+                updatingDevices.putAll(AdbUtils.parseDevices(cmdOut));
             }
 
     }
-    private static void  refreshFastbootDevices(){
+    private static void  refreshFastbootDevices(Map<String, Device.Status> updatingDevices){
             List<String> cmdOut = FastbootCommons.devices();
             if (cmdOut == null){
                 return;
             }
-            for (Map.Entry<String, Device.Status> entry : AdbUtils.parseDevices(cmdOut).entrySet()){
-                DeviceManager.cacheDeviceStatus(entry.getKey(), entry.getValue());
+            synchronized (updatingDevices){
+                updatingDevices.putAll(AdbUtils.parseDevices(cmdOut));
             }
 
     }
 
-    public static void refreshDevices(){
-        refereshAdbDevices();
-        refreshFastbootDevices();
+    public static void refreshDevices(Map<String, Device.Status> updatingDevices){
+        refereshAdbDevices(updatingDevices);
+        refreshFastbootDevices(updatingDevices);
     }
 
     public static void getAllAccess() {
@@ -127,6 +132,7 @@ public class AdbCommunication {
         }
     }
     public static void unregisterAutoScanDevices(){
+        Log.info("Stopping autoscan threads");
         if (trackDeviceProcess != null){
             trackDeviceProcess.kill();
         }
@@ -138,5 +144,9 @@ public class AdbCommunication {
             trackDevicesThread.interrupt();
         }
         trackDevicesThread = null;
+    }
+
+    public static boolean isAutoScanRegistered() {
+        return refreshDevicesThread != null && refreshDevicesThread.isAlive();
     }
 }

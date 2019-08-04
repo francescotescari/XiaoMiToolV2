@@ -2,10 +2,7 @@ package com.xiaomitool.v2.rom;
 
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.procedure.ProcedureRunner;
-import com.xiaomitool.v2.procedure.RInstall;
-import com.xiaomitool.v2.procedure.RMessage;
-import com.xiaomitool.v2.procedure.RNode;
+import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.tasks.UpdateListener;
@@ -15,6 +12,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 
 public abstract  class MultiInstallable extends Installable {
     private Installable[] children;
@@ -62,16 +60,15 @@ public abstract  class MultiInstallable extends Installable {
             if (i >= parts.length){
                 break;
             }
-            parts[i] = child.getInstallProcedure();
-            i++;
-            if (i < parts.length){
-                parts[i] = RNode.sequence(new RInstall() {
+            parts[i++] = child.getInstallProcedure();
+            if (i <= parts.length-2){
+                parts[i++] = RNode.sequence(new RInstall() {
                     @Override
                     public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                         setCurrentId(id);
                     }
-                }, GenericInstall.resourceFetchWait());
-                i++;
+                }, Objects.equals(children[current-1].getInstallType(), children[current].getInstallType()) ? Procedures.doNothing() : GenericInstall.satisfyAllRequirements(), GenericInstall.resourceFetchWait());
+
             }
 
         }
@@ -148,7 +145,7 @@ public abstract  class MultiInstallable extends Installable {
         return getCurrentChild().isNeedExtraction();
     }
 
-    private Installable getCurrentChild(){
+    public Installable getCurrentChild(){
         return children[currentId];
     }
 

@@ -17,7 +17,19 @@ import com.xiaomitool.v2.tasks.UpdateListener;
 import com.xiaomitool.v2.utility.CommandClass;
 import com.xiaomitool.v2.utility.YesNoMaybe;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.control.SelectionModel;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -26,9 +38,8 @@ import javafx.stage.FileChooser;
 
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.*;
+import java.util.function.Function;
 
 import static com.xiaomitool.v2.procedure.install.InstallException.Code.*;
 
@@ -58,10 +69,103 @@ public class Procedures {
     public static String requireDeviceProperty(ProcedureRunner runner, String property) throws InstallException {
         String prop = getDeviceProperty(runner, property);
         if (prop == null){
-            throw new InstallException("Failed to get device property: "+property, InstallException.Code.INFO_RETRIVE_FAILED, false);
+            throw new InstallException("Failed to get device property: "+property, InstallException.Code.INFO_RETRIVE_FAILED);
         }
         return prop;
     }
+
+    private static class FileEntry {
+        private final File file;
+
+        public FileEntry(File f){
+            String path = f.getAbsolutePath();
+            if (path.length() > 40){
+                path = "..."+path.substring(path.length()-40);
+            }
+            this.path.set(path);
+            this.file = f;
+        }
+
+        private final SimpleStringProperty path = new SimpleStringProperty(this, "path");
+
+        public SimpleStringProperty pathProperty() {
+            return path;
+        }
+
+
+    }
+
+
+
+    public static List<File> selectFilesFromPc(String title, String text, FileChooser.ExtensionFilter... filters) throws InterruptedException {
+        SidePane sidePane = new SidePane();
+
+        SortableTableView<FileEntry> tableView = new SortableTableView<>(new SortableTableView.TableViewColumn<>(LRes.SELECTED_FILE_LIST.toString(), FileEntry::pathProperty, 300d));
+        //tableView.getItems().addAll(new FileEntry(new File("./ciao")), new FileEntry(new File("./bello")));
+        tableView.setPrefSize(300,250);
+        sidePane.setLeft(GuiUtils.center(tableView));
+        DragAndDropPane dragAndDropPane = new DragAndDropPane(300, 300);
+        dragAndDropPane.setFilters(filters);
+        sidePane.setRight(GuiUtils.center(dragAndDropPane));
+
+        Text tit = new Text(title);
+        tit.setFont(Font.font(20));
+        dragAndDropPane.setOnFileChange(new ChangeListener<File>() {
+            @Override
+            public void changed(ObservableValue<? extends File> observable, File oldValue, File newValue) {
+                if (newValue != null){
+                    tableView.getItems().add(new FileEntry(newValue));
+                    dragAndDropPane.reset();
+                }
+            }
+        });
+
+        tit.setTextAlignment(TextAlignment.CENTER);
+        tit.setWrappingWidth(WindowManager.getContentWidth()-100);
+
+
+
+        Text  tText = new Text(text);
+        tText.setFont(Font.font(16));
+
+
+
+        tText.setTextAlignment(TextAlignment.CENTER);
+        tText.setWrappingWidth(WindowManager.getContentWidth()-100);
+
+        VBox vBox = new VBox(tit,tText,sidePane);
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setSpacing(10);
+
+
+        ButtonPane buttonPane = new ButtonPane(LRes.CONTINUE, LRes.CANCEL);
+        buttonPane.setContent(vBox);
+
+        WindowManager.setMainContent(buttonPane, false);
+        List<File> files = null;
+        while (true){
+            int choice = buttonPane.waitClick();
+            if (choice == 1){
+                break;
+            }
+            ObservableList<FileEntry> items = tableView.getItems();
+            if (items.isEmpty()){
+                WindowManager.popup(LRes.FILE_PLEASE_SELECT_POPUP.toString(), PopupWindow.Icon.WARN);
+                continue;
+            }
+            files = new LinkedList<>();
+            for (FileEntry entry : items){
+                files.add(entry.file);
+            }
+            Log.debug(files);
+            break;
+        }
+        WindowManager.removeTopContent();
+        return files;
+
+
+    }
+
 
     public static File selectFileFromPc(String title, String text, FileChooser.ExtensionFilter... filters) throws InterruptedException, InstallException {
 
@@ -178,7 +282,7 @@ public class Procedures {
         if (file != null){
             return file;
         }
-        throw new InstallException("Installable doesn't contain file", FILE_NOT_FOUND, false);
+        throw new InstallException("Installable doesn't contain file", FILE_NOT_FOUND, "Null downloaded file and final file, url: "+installable.getDownloadUrl());
     }
 
     public static ProcedureChooser requireProcedureChooser(ProcedureRunner runner) throws InstallException {
@@ -226,7 +330,7 @@ public class Procedures {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                throw new InstallException("Feature not available yet", INTERNAL_ERROR, false);
+                throw new InstallException("Feature not available yet", INTERNAL_ERROR, "You should not see this message");
             }
         };
     }

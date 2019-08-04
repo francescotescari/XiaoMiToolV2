@@ -196,4 +196,15 @@ public class StrUtils {
     public static String reverse(String str) {
         return new StringBuilder(str).reverse().toString();
     }
+
+    public static String lastLine(String output) {
+        if (output == null){
+            return null;
+        }
+        try {
+            return output.split("\n")[0];
+        } catch (Throwable t){
+            return null;
+        }
+    }
 }

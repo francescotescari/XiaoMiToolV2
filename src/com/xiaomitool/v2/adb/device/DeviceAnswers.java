@@ -7,6 +7,7 @@ import com.xiaomitool.v2.process.AdbRunner;
 import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.utility.YesNoMaybe;
 import com.xiaomitool.v2.utility.utils.StrUtils;
+import com.xiaomitool.v2.utility.utils.ThreadUtils;
 import com.xiaomitool.v2.xiaomi.miuithings.Branch;
 import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
 import com.xiaomitool.v2.xiaomi.miuithings.SerialNumber;
@@ -30,7 +31,11 @@ public class DeviceAnswers {
      }
 
     private synchronized YesNoMaybe isInTwrpRecoveryInternal(){
-        if (!Device.Status.RECOVERY.equals(device.getStatus()) || !device.isConnected()){
+         if (Device.Status.OFFLINE.equals(device.getStatus()) || !device.isConnected()){
+             ThreadUtils.sleepSilently(1000);
+             return YesNoMaybe.MAYBE;
+         }
+        if (!Device.Status.RECOVERY.equals(device.getStatus())){
             return YesNoMaybe.NO;
         }
         String random = StrUtils.randomWord(8).toLowerCase();
@@ -75,7 +80,7 @@ public class DeviceAnswers {
         while (YesNoMaybe.MAYBE.equals(result) && --trials > 0){
             try {
                 Thread.sleep(1500);
-                DeviceManager.refresh();
+                DeviceManager.waitRefresh();
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 Log.debug(e);
@@ -147,5 +152,55 @@ public class DeviceAnswers {
         if (sn != null && sn.isValid()){return sn;}
         sn = (SerialNumber) properties.getFastbootProperties().get(DeviceProperties.X_SERIAL_NUMBER);
         return sn;
+    }
+
+    public static final String NEED_WIPE_DATA = "need_wipe_data";
+    public YesNoMaybe isTwrpDataEncrypted(){
+        return isTwrpDataEncrypted(false);
+    }
+
+    private YesNoMaybe isTwrpDataEncrypted(boolean mount_data) {
+        if (mount_data){
+            AdbCommons.adb_shell("twrp mount data", device.getSerial(), 5);
+        }
+        String output = AdbCommons.adb_shell("(ls -l /data || echo no_line_first) && (ls -l /sdcard || echo no_line_again)", device.getSerial(), 4);
+        boolean fail1 = false, fail2 = false;
+        if (output == null){
+            return YesNoMaybe.MAYBE;
+        }
+        output = output.trim();
+        String[] lines = output.split("\n");
+        for (String line : lines){
+            if (line.contains("no_line_first")){
+                fail1 = true;
+            } else if (line.contains("no_line_again")){
+                fail2 = true;
+            }
+        }
+        if (fail1 && fail2){
+            if (mount_data){
+                return YesNoMaybe.MAYBE;
+            } else {
+                return isTwrpDataEncrypted(true);
+            }
+        }
+        int size = lines.length;
+        if (fail1 || fail2){
+            size--;
+        }
+
+        if (size == 0){
+            return YesNoMaybe.YES;
+        } else if (size > 3){
+            return YesNoMaybe.NO;
+        }
+        return YesNoMaybe.MAYBE;
+    }
+
+    public YesNoMaybe isWipeDataNeeded() {
+        if ("unencrypted".equalsIgnoreCase((String) device.getDeviceProperties().getAdbProperties().get("ro.crypto.state"))){
+            return YesNoMaybe.NO;
+        }
+        return getAnswer(NEED_WIPE_DATA);
     }
 }

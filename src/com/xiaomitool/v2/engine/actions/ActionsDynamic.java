@@ -127,7 +127,7 @@ public class ActionsDynamic {
         vBox.setSpacing(20);
         pane.setContent(vBox);
 
-        WindowManager.setMainContent(pane);
+        WindowManager.setMainContent(pane, false);
         DeviceManager.addMessageReceiver(pane.getIdClickReceiver());
         int message = CommonsMessages.NOOP;
         while ((message != CommonsMessages.NEW_DEVICE || DeviceManager.count(wantedStatus) == 0) && message < 0){
@@ -139,6 +139,7 @@ public class ActionsDynamic {
                 }
             }
         }
+        WindowManager.removeTopContent();
         DeviceManager.removeMessageReceiver(pane.getIdClickReceiver());
 
         return ActionsDynamic.SEARCH_SELECT_DEVICES(wantedStatus).run();
@@ -188,12 +189,9 @@ public class ActionsDynamic {
 
 
         buttonPane.setContent(GuiUtils.center(tableView));
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                WindowManager.setMainContent(buttonPane);
-            }
-        });
+
+                WindowManager.setMainContent(buttonPane, true);
+
         int message = CommonsMessages.NOOP;
         DeviceManager.addMessageReceiver(buttonPane.getIdClickReceiver());
         boolean newDevice = false;
@@ -421,7 +419,7 @@ public class ActionsDynamic {
             vBox.setAlignment(Pos.CENTER);
             vBox.setSpacing(10);
 
-            WindowManager.setMainContent(GuiUtils.center(vBox));
+            WindowManager.setMainContent(GuiUtils.center(vBox), true);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -629,7 +627,7 @@ public class ActionsDynamic {
                     thisRunner = runner;
                 }
                 WindowManager.setOnEmpty(installPane);
-                WindowManager.setMainContent(installPane);
+                WindowManager.setMainContent(installPane, true);
 
                 RInstall thisRun = startFromHere != null ? startFromHere : main();
                 thisRunner.init(null,device);
@@ -666,7 +664,7 @@ public class ActionsDynamic {
                                 throw (InterruptedException) e;
                             }
                             Log.printStackTrace(e);
-                            thisRunner.handleException(new InstallException(e.getMessage(), InstallException.Code.INTERNAL_ERROR, false), main);
+                            thisRunner.handleException(new InstallException(e.getMessage(), InstallException.Code.INTERNAL_ERROR, e), main);
                         } catch (InstallException e1) {
                             throw new RMessage(e1);
                         }
@@ -733,7 +731,7 @@ public class ActionsDynamic {
             while (msg < 0){
                 exitcode = 0;
 
-                if (device != null && device.isConnected() && Device.Status.SIDELOAD.equals(device.getStatus())){
+                if (device != null && device.isConnected() && (Device.Status.SIDELOAD.equals(device.getStatus()) || Device.Status.RECOVERY.equals(device.getStatus()))){
                     exitcode = 1;
                     break;
                 }

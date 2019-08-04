@@ -179,7 +179,7 @@ public class ProcedureRunner extends GuiListener {
     public Object requireContext(String key) throws InstallException {
         Object res = getContext(key);
         if (res == null){
-            throw new InstallException("Failed to get context parameter: "+key, InstallException.Code.INTERNAL_ERROR, false);
+            throw new InstallException("Failed to get context parameter: "+key, InstallException.Code.INTERNAL_ERROR);
         }
         return res;
     }

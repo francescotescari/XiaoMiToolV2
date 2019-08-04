@@ -12,6 +12,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public abstract class ZipRom extends Installable {
+
+
     public ZipRom(String downloadUrl){
         this(downloadUrl, null,null);
     }
@@ -30,11 +32,17 @@ public abstract class ZipRom extends Installable {
     public ZipRom(File file) {
         super(Type.RECOVERY, false, file.toString(), false, false);
         this.setFinalFile(file);
+
     }
 
     @Override
     public RInstall getInstallProcedure() {
-        return TwrpInstall.installZip();
+        boolean mightWipeData = true;
+        File file = getFinalFile();
+        if (file != null && file.length() < 100*1024*1024){
+            mightWipeData = false;
+        }
+        return TwrpInstall.installZip(mightWipeData);
     }
 
     @Override

@@ -250,11 +250,7 @@ public abstract class   InstallationRequirement implements StatedProcedure {
                 requirementList.add(UNLOCKED_BOOTLOADER);
                 break;
             case MULTI:
-                if (installable instanceof MultiInstallable){
-                    for (Installable i :((MultiInstallable) installable).getChildren()){
-                        requirementList.addAll(Arrays.asList(getInstallableRequirements(i, device)));
-                    }
-                }
+                return getInstallableRequirements(((MultiInstallable) installable).getCurrentChild(), device);
 
         }
         return requirementList.toArray(new InstallationRequirement[]{});

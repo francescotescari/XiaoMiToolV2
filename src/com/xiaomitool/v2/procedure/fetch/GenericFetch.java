@@ -51,17 +51,17 @@ public class GenericFetch {
                 File file = (File) runner.requireContext(SELECTED_FILE);
                 Log.info("Computing MD5 hash of file: "+file);
                 if (!file.exists()){
-                    throw new InstallException("File not found: "+file.toString(), InstallException.Code.FILE_NOT_FOUND, false);
+                    throw new InstallException("File not found: "+file.toString(), InstallException.Code.FILE_NOT_FOUND);
                 }
                 String md5 = "";
                 runner.text(LRes.CALCULATING_MD5);
                 try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                     md5 = DigestUtils.md5Hex(in);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new InstallException("Failed to calculate file md5: "+file, InstallException.Code.HASH_FAILED, e);
                 }
                 if (StrUtils.isNullOrEmpty(md5)){
-                    throw new InstallException("Failed to calculate file md5: "+file.toString(), InstallException.Code.HASH_FAILED, true);
+                    throw new InstallException("Failed to calculate file md5: "+file.toString(), InstallException.Code.HASH_FAILED, "Null or empty result hash");
                 }
                 runner.setContext(FILE_MD5, md5);
             }

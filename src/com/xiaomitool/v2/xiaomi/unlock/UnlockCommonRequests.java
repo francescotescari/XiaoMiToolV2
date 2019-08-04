@@ -4,6 +4,7 @@ import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.resources.ResourcesConst;
+import com.xiaomitool.v2.test.Test;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
@@ -59,7 +60,7 @@ public class UnlockCommonRequests {
         map.put(20035, LRes.UNL_ERR_20035);
         map.put(20036, LRes.UNL_ERR_20036);
         map.put(20037, LRes.UNL_ERR_20037);
-        map.put(20041, LRes.UNL_ERR_20037);
+        map.put(20041, LRes.UNL_ERR_20041);
         return map;
     }
 
@@ -75,7 +76,7 @@ public class UnlockCommonRequests {
 
     public static String nonceV2() throws XiaomiProcedureException, CustomHttpException {
         UnlockRequest request = new UnlockRequest(NONCEV2);
-        request.addParam("r", StrUtils.randomWord(16).toLowerCase());
+        request.addParam("r", new String(StrUtils.randomWord(16).toLowerCase().getBytes(ResourcesConst.interalCharset()),ResourcesConst.interalCharset()));
         request.addParam("sid",SID);
         return  request.exec();
 
@@ -198,7 +199,7 @@ public class UnlockCommonRequests {
         pp.put("deviceInfo",p2);
         pp.put("deviceToken",token);
         pp.put("language","en");
-        pp.put("operate","unlock");
+        pp.put("operate", "unlock");
         pp.put("pcId",keystore.getPcId());
         pp.put("region","");
         pp.put("uid",keystore.getUserId());

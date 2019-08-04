@@ -8,6 +8,7 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.NotNull;
 import com.xiaomitool.v2.utility.WaitSemaphore;
 import com.xiaomitool.v2.utility.YesNoMaybe;
+import com.xiaomitool.v2.utility.utils.ThreadUtils;
 
 public class Device {
 
@@ -45,7 +46,7 @@ public class Device {
     private Status status;
     private boolean isConnected = true, firstOffline = true;
     private final DeviceProperties deviceProperties ;
-    private final WaitSemaphore deviceActiveSem = new WaitSemaphore(), canBeAccessed = new WaitSemaphore(1);
+    private final WaitSemaphore deviceActiveSem = new WaitSemaphore(), canBeAccessed = new WaitSemaphore(1, "can_be_accessed");
     private final DeviceAnswers deviceAnswers;
 
     public Device(String serial){
@@ -67,23 +68,30 @@ public class Device {
             Log.debug("This should never happen");
             return;
         }
+        try {
+            if (!status.equals(this.status)) {
+                Log.debug("Device " + serial + " status: " + status.toString());
+            }
 
-        if (!status.equals(this.status)){
-            Log.debug("Device "+serial+" status: "+status.toString());
+            this.status = status;
+            if (Status.FASTBOOT.equals(status)) {
+                ThreadUtils.sleepSilently(1000);
+                deviceProperties.getFastbootProperties().parse();
+            } else if (Status.SIDELOAD.equals(status)) {
+                deviceProperties.getSideloadProperties().parse();
+            } else if (Status.DEVICE.equals(status)) {
+                getAnswers().setNeedDeviceDebug(YesNoMaybe.NO);
+                deviceProperties.getAdbProperties().parse();
+            } else if (Status.RECOVERY.equals(status)) {
+                deviceProperties.getRecoveryProperties().parse();
+            }
+            getAnswers().updateStatus(status);
+        } catch (Throwable t){
+            throw new RuntimeException(t);
+        } finally {
+            releaseAccess();
         }
-        this.status = status;
-        if (Status.FASTBOOT.equals(status)){
-            deviceProperties.getFastbootProperties().parse();
-        } else if (Status.SIDELOAD.equals(status)){
-            deviceProperties.getSideloadProperties().parse();
-        } else if (Status.DEVICE.equals(status)){
-            getAnswers().setNeedDeviceDebug(YesNoMaybe.NO);
-            deviceProperties.getAdbProperties().parse();
-        } else if (Status.RECOVERY.equals(status)){
-            deviceProperties.getRecoveryProperties().parse();
-        }
-        getAnswers().updateStatus(status);
-        releaseAccess();
+
     }
     public Status getStatus() {
         return status;
@@ -210,8 +218,11 @@ public class Device {
     }
 
     public boolean waitStatus(@NotNull Status status, int timeout) throws InterruptedException, AdbException {
-        if(!deviceActiveSem.waitOnce(timeout)){
-            throw new AdbException("Waiting device active timed out");
+        if(!deviceActiveSem.waitOnce(Integer.max(0,timeout-2))){
+            canBeAccessed.waitOnce(3);
+            if (!deviceActiveSem.waitOnce(1)){
+                throw new AdbException("Waiting device active timed out");
+            }
         }
         if (status.equals(this.status)){
             return true;

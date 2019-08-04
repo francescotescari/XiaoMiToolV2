@@ -6,6 +6,7 @@ import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.MessageReceiver;
+import com.xiaomitool.v2.utility.WaitSemaphore;
 import javafx.application.Platform;
 
 import java.util.*;
@@ -45,9 +46,31 @@ public class DeviceManager {
         return selectedDevice;
     }
 
+    private static final ArrayList<WaitSemaphore> refreshWaitSems = new ArrayList<>();
+
+    public static void waitRefresh() throws InterruptedException {
+        if (!AdbCommunication.isAutoScanRegistered()){
+            refresh();
+            return;
+        }
+        if (Thread.currentThread().equals(refreshingThread)){
+            return;
+        }
+        WaitSemaphore waitSemaphore = new WaitSemaphore(0);
+        synchronized (refreshWaitSems){
+            refreshWaitSems.add(waitSemaphore);
+        }
+        waitSemaphore.waitOnce();
+
+    }
+
+    private static Thread refreshingThread = null;
+
     public static synchronized void refresh(){
+        refreshingThread = Thread.currentThread();
         updatingDevices = new HashMap<>();
-        AdbCommunication.refreshDevices();
+        AdbCommunication.refreshDevices(updatingDevices);
+        Log.debug("Updating devices: "+updatingDevices);
         for (Map.Entry<String, Device.Status> entry : updatingDevices.entrySet()){
             Log.info("Connected device: "+entry.getKey()+" -> "+entry.getValue());
             Log.debug(entry.getKey() + " - "+entry.getValue());
@@ -58,9 +81,18 @@ public class DeviceManager {
                 Log.debug(d.getSerial() + " is not in updating devices");
             }
         }
+        Log.debug("Setting devices statuses");
         for (Map.Entry<String, Device.Status> entry : updatingDevices.entrySet()){
             setDeviceStatus(entry.getKey(), entry.getValue());
         }
+        Log.debug("Setted devices statuses");
+        synchronized (refreshWaitSems){
+            for (WaitSemaphore s : refreshWaitSems){
+                s.increase();
+            }
+            refreshWaitSems.clear();
+        }
+        refreshingThread = null;
 
     }
     public static int count(){
@@ -103,9 +135,6 @@ public class DeviceManager {
         if(newStatus)
         message(CommonsMessages.DEVICE_UPDATE_FINISH);
 
-    }
-    public static void cacheDeviceStatus(String serial, Device.Status status){
-        updatingDevices.put(serial,status);
     }
 
     public static Device getFirstDevice(){

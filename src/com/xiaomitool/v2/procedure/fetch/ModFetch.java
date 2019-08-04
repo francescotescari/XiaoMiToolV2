@@ -29,7 +29,7 @@ public class ModFetch {
                     runner.text(LRes.SEARCHING_LATEST_MAGISK);
                     EasyResponse response = EasyHttp.get(MAGISK_UPDATE_URL);
                     if (!response.isAllRight()){
-                        throw new InstallException("Failed to get latest stable magisk data from static url", InstallException.Code.INFO_RETRIVE_FAILED, true);
+                        throw new InstallException("Failed to get latest stable magisk data from static url", InstallException.Code.INFO_RETRIVE_FAILED, new Exception("Returned status code: "+response.getCode()));
                     }
                     Log.info("Magisk latest response: "+response.getBody());
                     JSONObject jsonObject = new JSONObject(response.getBody());
@@ -94,7 +94,7 @@ public class ModFetch {
                 } catch (CustomHttpException e) {
                     throw new InstallException(e);
                 } catch (JSONException e){
-                    throw new InstallException("Failed to parse latest stable magisk data", InstallException.Code.INFO_RETRIVE_FAILED, false);
+                    throw new InstallException("Failed to parse latest stable magisk data", InstallException.Code.INFO_RETRIVE_FAILED, e);
                 }
             }
         };

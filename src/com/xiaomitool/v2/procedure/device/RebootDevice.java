@@ -33,7 +33,7 @@ public class RebootDevice {
                     throw new InstallException(e);
                 }
                 if (!result){
-                    throw new InstallException("Failed to reboot device to recovery mode", InstallException.Code.REBOOT_FAILED, false);
+                    throw new InstallException("Failed to reboot device to recovery mode", InstallException.Code.REBOOT_FAILED);
                 }
             }
         });
@@ -68,7 +68,7 @@ public class RebootDevice {
                     throw new InstallException(e);
                 }
                 if (!result){
-                    throw new InstallException("Failed to reboot device to recovery mode", InstallException.Code.REBOOT_FAILED, false);
+                    throw new InstallException("Failed to reboot device to recovery mode", InstallException.Code.REBOOT_FAILED);
                 }
             }
         });
@@ -168,7 +168,7 @@ public class RebootDevice {
                     throw new InstallException(e);
                 }
                 if (!result){
-                    throw new InstallException("Failed to reboot device to fastboot mode", InstallException.Code.REBOOT_FAILED, false);
+                    throw new InstallException("Failed to reboot device to fastboot mode", InstallException.Code.REBOOT_FAILED);
                 }
             }
         });
@@ -236,7 +236,7 @@ public class RebootDevice {
                 Device device = Procedures.requireDevice(runner);
                 boolean result = ActionsDynamic.REBOOT_STOCK_RECOVERY(device,force).run() != 0;
                 if (!result){
-                    throw new InstallException("Failed to reboot device to stock recovery mode", InstallException.Code.REBOOT_FAILED, false);
+                    throw new InstallException("Failed to reboot device to stock recovery mode", InstallException.Code.REBOOT_FAILED);
                 }
             }
         });

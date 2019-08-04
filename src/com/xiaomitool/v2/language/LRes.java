@@ -255,6 +255,7 @@ public enum  LRes  {
     REG_CHINA("China"),
     REG_EUROPE("Europe"),
     REG_INDIA("India"),
+    REG_GLOBAL("Global"),
     REG_OTHER("Other regions"),
     PLEASE_SELECT_REGION("Please select your region"),
     PLEASE_SELECT_REGION_TEXT("Depending on your region, specific official roms for selected region will be searched\nand specific MIUI servers will be used.\nPlease select the region you are from"),
@@ -265,8 +266,16 @@ public enum  LRes  {
     CLOSING("Closing XiaoMiTool"),
     NO_SPACE_LEFT_DEVICE("No space left on device"),
     INSTALL_APK_APP("Install apk app: %s"),
-    MAGISK_INSTALL_MANAGER("Installing magisk manager")
+    MAGISK_INSTALL_MANAGER("Installing magisk manager"),
+    DATA_ENCRYPTED_DETECT("Detected encrypted data partition"),
+    SELECTED_FILE_LIST("Selected file list"),
+    FILE_SELECT_MULTIPLE_TITLE("Please select rom files to install"),
+    FILE_SELECT_MULTIPLE_TEXT( "Select one or more files to install.\nMake sure they are ordered correctly (from top to bottom) following the wanted installation order.\nA wrong installation order can lead to device bricking or unwanted results."),
+    SINGLE_FILE("Single file"),
+    MULTIPLE_FILES("Multiple files"),
+    //MULTI_ZIP_INSTALL_CHOICE_TEXT("Please choose installation f")
     ;
+
     private String text;
 
     LRes(String defaultText){

@@ -51,11 +51,16 @@ public class Main {
         pp.put("uid",keystore.getUserId());
 
         //Log.debug(StrUtils.map2json(pp, 3));
+        RequestParams requestParams = new DefaultRequestParams("dipper_global","V10.2.3.0.PEAMIXM","9.0");
+        requestParams.setPkg("b14f8b43306a361d6dfbf8c6d02b1fb3");
+        //Log.debug(MiuiRomOta.otaV3_request(requestParams));
 
-
-       // Log.debug(UnlockCommonRequests.ahaUnlock("VQEBMwEgdAsBSujVP9OjWVoBu7zFT3QLAUro1T/To1laAbu8xU8DCWJlcnlsbGl1bQIEQXtF7A==","dipper","","",""));
+        requestParams = new DefaultRequestParams("dipper","9.4.26","9.0");
+        //Log.debug(MiuiRomOta.otaV3_request(requestParams));
+        //Log.debug(UnlockCommonRequests.userInfo());
+        Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIAEQdrQ0Pv0obXkYogLoo1pv2gMGZGlwcGVyAgQjkKEq","dipper","","",""));
         //keystore.requireServiceKeyAndToken("miuibbs");
-        Log.debug(UnlockCommonRequests.ahaUnlock(Base64.encodeBase64String(new byte[]{0x55,0x01,0x01,0x12,0x01,0x10,0x51,0x67,(byte) 0xd7,0x60,(byte) 0xfb,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x03,0x06,0x64,0x69,0x70,0x70,0x65,0x72,0x02,0x04,(byte) 0xbd,0x6c,0x2f,(byte) 0xf9}),"whyred","","",""));
+        //Log.debug(UnlockCommonRequests.ahaUnlock(Base64.encodeBase64String(new byte[]{0x55,0x01,0x01,0x12,0x01,0x10,0x51,0x67,(byte) 0xd7,0x60,(byte) 0xfb,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x03,0x06,0x64,0x69,0x70,0x70,0x65,0x72,0x02,0x04,(byte) 0xbd,0x6c,0x2f,(byte) 0xf9}),"whyred","","",""));
         if (true){
             return;
         }
@@ -194,7 +199,7 @@ public class Main {
         if (true){
             return;
         }
-        RequestParams requestParams = null;
+        RequestParams requestParams2 = null;
         MiuiRomOta.latestTest(requestParams);{
             if (true){
                 return;

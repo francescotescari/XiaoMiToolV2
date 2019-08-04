@@ -111,7 +111,7 @@ public class DragAndDropPane extends StackPane {
                     File path = db.getFiles().get(0);
                     if (path != null) {
                         String filePath = path.toString();
-                        if (filters != null) {
+                        if (filters != null && filters.length > 0) {
                             for (FileChooser.ExtensionFilter filter : filters) {
                                 for (String ext : filter.getExtensions()) {
                                     if (filePath.toLowerCase().endsWith(ext.toLowerCase())){
@@ -120,6 +120,8 @@ public class DragAndDropPane extends StackPane {
                                     }
                                 }
                             }
+                        } else {
+                            success = true;
                         }
                         if (success) {
                             inputFile.set(path);
@@ -152,23 +154,7 @@ public class DragAndDropPane extends StackPane {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        String text;
-                        if (newValue == null){
-                            text = selectText;
-                            content.getChildren().clear();
-                            content.getChildren().addAll(insideString,canvas,empty);
-                            border.setBorder(getBorder(true));
-                            DragAndDropPane.super.setOpacity(0.6);
-
-                        } else {
-                            text = LRes.FILE_SELECTED+":\n"+FilenameUtils.getName(newValue.toString());
-                            content.getChildren().clear();
-                            content.getChildren().addAll(insideString);
-                            border.setBorder(getBorder(false));
-                            DragAndDropPane.super.setOpacity(0.75);
-
-                        }
-                        insideString.setText(text);
+                        handleFile(newValue);
                     }
                 };
                 WindowManager.runNowOrLater(runnable);
@@ -178,11 +164,35 @@ public class DragAndDropPane extends StackPane {
         });
     }
 
+    private void handleFile(File newValue){
+        String text;
+        if (newValue == null){
+            text = selectText;
+            content.getChildren().clear();
+            content.getChildren().addAll(insideString,canvas,empty);
+            border.setBorder(getBorder(true));
+            DragAndDropPane.super.setOpacity(0.6);
+
+        } else {
+            text = LRes.FILE_SELECTED+":\n"+FilenameUtils.getName(newValue.toString());
+            content.getChildren().clear();
+            content.getChildren().addAll(insideString);
+            border.setBorder(getBorder(false));
+            DragAndDropPane.super.setOpacity(0.75);
+
+        }
+        insideString.setText(text);
+    }
+
     public void setOnFileChange(ChangeListener<? super File> listener){
         inputFile.addListener(listener);
     }
 
     public void setFilters(FileChooser.ExtensionFilter[] filters) {
         this.filters = filters;
+    }
+
+    public void reset() {
+        handleFile(null);
     }
 }

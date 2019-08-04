@@ -166,7 +166,7 @@ public class SettingsUtils extends HashMap<String, String> {
         INDIA(LRes.REG_INDIA,"india","reg_india.png","_in_global","in"),
         CN(LRes.REG_CHINA,"cn","reg_china.png","","cn"),
         RUSSIA(LRes.REG_RUSSIA,"russia","reg_russia.png","_ru_global","global"),
-        GLOBAL(LRes.REG_OTHER,"global","reg_global.png","_global","global"),
+        GLOBAL(LRes.REG_GLOBAL,"global","reg_global.png","_global","global"),
         OTHER(LRes.REG_OTHER, "other", "reg_global.png","","global");
         private LRes lRes;
         private final String toString, drawRes, suffix, fastboot_value;
