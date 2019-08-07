@@ -21,7 +21,9 @@ import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.utility.utils.*;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
+import com.xiaomitool.v2.xiaomi.XiaomiUtilities;
 import com.xiaomitool.v2.xiaomi.miuithings.SerialNumber;
+import com.xiaomitool.v2.xiaomi.romota.MiuiCommunityApis;
 import com.xiaomitool.v2.xiaomi.unlock.UnlockCommonRequests;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -35,6 +37,7 @@ import java.lang.management.RuntimeMXBean;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 public class Main2 {
@@ -80,10 +83,14 @@ public class Main2 {
         addParam(KEY_PANEL, str2);
     }
 
-
+    private static final Pattern P_IS_REDMI = Pattern.compile("^((xiao)?mi)?\\s*redmi(\\s)",Pattern.CASE_INSENSITIVE);
 
     public static void main(String[] args) throws Exception {
-       Log.debug(ApkUtils.getPackageName(Paths.get("F:\\Download\\sdattest\\upd.apk")));
+        List<XiaomiUtilities.DeviceName> names = XiaomiUtilities.DeviceName.parse("Xiaomi Mi 2A");
+        Log.debug(names);
+        //Log.debug(MiuiCommunityApis.getDevicesCommunityIds());
+
+
 
 
     }

@@ -18,7 +18,7 @@ public class ManageDevice {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 ActionsDynamic.MAIN_SCREEN_LOADING(LRes.LOADING).run();
-                DeviceManager.refresh();
+                DeviceManager.waitRefresh();
                 WindowManager.removeTopContent();
             }
         };

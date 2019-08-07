@@ -16,6 +16,7 @@ import com.xiaomitool.v2.rom.chooser.InstallableChooser;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
+import com.xiaomitool.v2.xiaomi.XiaomiUtilities;
 import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
 import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
@@ -368,6 +369,21 @@ public class StockRecoveryFetch {
                 runner.setContext(GenericFetch.SELECTED_FILE, file);
             }
         }, GenericFetch.computeMD5File(), validatePkgRom(runner));
+    }
+
+    private static final String DEVICE_API_IDS_MAP = "device_api_ids";
+
+    public static RInstall requireDeviceApiIds(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Map<XiaomiUtilities.DeviceName, Integer> map = (Map<XiaomiUtilities.DeviceName, Integer>) runner.getContext(DEVICE_API_IDS_MAP);
+                if (map == null){
+                    map = new HashMap<>();
+
+                }
+            }
+        };
     }
 
 

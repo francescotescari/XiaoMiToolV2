@@ -36,6 +36,8 @@ public class VisiblePane {
     public void removeTop(){
         try {
             Node topChild = children.getLast();
+            Log.debug(children);
+            Log.debug(topChild);
             if (topChild == null){
                 return;
             }

@@ -27,7 +27,7 @@ public class WaitSemaphore {
     }
     public void decrease() throws InterruptedException {
         log_action("Decrease");
-        new Exception().printStackTrace();
+        //new Exception().printStackTrace();
         semaphore.acquire();
     }
     public void waitOnce() throws InterruptedException {
@@ -36,7 +36,7 @@ public class WaitSemaphore {
         semaphore.release();
     }
     private void log_action(String action){
-        Log.debug("SEM "+(this.name == null ? this : this.name)+", "+this.semaphore.availablePermits()+", "+action);
+        //Log.debug("SEM "+(this.name == null ? this : this.name)+", "+this.semaphore.availablePermits()+", "+action);
     }
 
     public boolean waitOnce(int timeoutSeconds) throws InterruptedException {
