@@ -138,6 +138,19 @@ public class DeviceView extends StackPane {
 
     protected double imageOffsetX, imageOffsetY;
     protected boolean keepRatio;
+    public void setContent(Color color){
+        java.awt.Color cCol =  new java.awt.Color((float) color.getRed(),
+                (float) color.getGreen(),
+                (float) color.getBlue(),
+                (float) color.getOpacity());
+
+        BufferedImage image = new BufferedImage((int) deviceImage.getInnerWidth(), (int) deviceImage.getInnerHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graph = image.createGraphics();
+        graph.setPaint (cCol);
+        graph.fillRect ( 0, 0, image.getWidth(), image.getHeight() );
+        setContent(SwingFXUtils.toFXImage(image, null));
+    }
+
     public void setContent(ImageView image, boolean keepRatio) {
         this.keepRatio = keepRatio;
         displayedImage = image.getImage();
@@ -346,6 +359,10 @@ public class DeviceView extends StackPane {
         if (contentPane != null){
             contentPane.setBackground(background);
         }
+    }
+
+    public void setBackgroundColor(Color color){
+        setImageBackground(new Background(new BackgroundFill(color, null, null)));
     }
 
     public Transition setClickVolumeUp(int times) {

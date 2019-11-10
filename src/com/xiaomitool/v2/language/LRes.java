@@ -26,7 +26,7 @@ public enum  LRes  {
     LOADING("Loading"),
     HT_ENABLE_USB_DEBUG("How to enable usb debugging?"),
     SEARCH_AGAIN("Search again"),
-    NO_DEVICE_CONNECTED("No devices with usb debugging enabled found.\nPlease enable usb debugging and try again."),
+    NO_DEVICE_CONNECTED("No devices with usb debugging enabled found.\nPlease enable usb debugging and try again.\n\nIf you connected the device and enabled the usb debugging but it is not recognized,\nplease try changing the USB port and/or cable used."),
     FEATURE_NOT_AVAILABLE("Feature not available yet."),
     UNKNOWN("Unknown"),
     SERIAL("Serial"),
@@ -37,7 +37,7 @@ public enum  LRes  {
     SELECT("Select"),
     SELECTED_DEVICE("Selected device: %s"),
     TRY_AGAIN("Try again"),
-    DEVICE_NOT_CONNECTED("It seems your device is not connected. Please make sure your device is on, connected to your pc and with usb debugging enabled.\nIf it's rebooting then wait the boot completion"),
+    DEVICE_NOT_CONNECTED("It seems your device is not connected. Please make sure your device is on, connected to your pc and with usb debugging enabled.\nIf it's rebooting then wait the boot completion\n\nIf you connected the device and enabled the usb debugging but it is not recognized,\nplease try changing the USB port and/or cable used."),
     AUTH_DEVICE_TEXT("Your device is offline or not authorized. Please authorize your device by clicking on the popup window that is displayed on its screen.\nIf the device is in recovery mode or doesn't have the popup, try unplugging and pluggin back in the cable"),
     YES("Yes"),
     NO("No"),
@@ -52,8 +52,7 @@ public enum  LRes  {
     RECOVERY_PARSED("Complete recovery information"),
     FINDING_INFO_TEXT("Collecting information from your device to determine which procedures can be executed.\nPlease wait for this operation to finish or any messages from this tool.\nThe device will reboot a few times during this operation."),
     //RECOVERY_RECOVER_TMP("You are about to use an exclusive feature of this tool that should be used only in one of these scenarios:\n-Your device doesn't boot and goes to recovery menu with this message: \"This MIUI version can't be installed on this device\" or\n-Your device has locked bootloader and when you get to the region selection screen during first device configuration you can select only \"China\" and by pressing that your device reboots and goes into bootloop.\nYou should not use this feature if your device has not one of these problems, because it is a risky operation that could brick your device by leading to such problems or worse.\nThis feature is not official and depends on Xiaomi servers and Xiaomi recovery and thus could be disabled by Xiaomi in the future. Please make sure you are connected to Internet.\nThis procedure will wipe the device data."),
-    NO_DEVICE_CONNECTED_RECOVERY("No devices in recovery mode found.\nPlease put your device in recovery mode and try again."),
-    NO_DEVICE_CONNECTED_FASTBOOT("No devices in fastboot mode found.\nPlease put your device in fastboot mode and try again."),
+    NO_DEVICE_CONNECTED_MODE("No devices in %s mode found.\nPlease put your device in %s mode and try again.\nMake sure your device is connected to the PC with a valid USB cable."),
     HT_GO_RECOVERY("How to enter recovery mode?"),
     HT_GO_FASTBOOT("How to enter fastboot mode?"),
     BTN_VOLUP_POW("Hold the volume+ and power buttons until your device reboots to recovery menu screen"),
@@ -111,9 +110,9 @@ public enum  LRes  {
     INSTALLING_UPDATED("Installing update..."),
     IGNORE("Ignore"),
     LOGIN_CANCELED("Login canceled or failed"),
-    LOGIN_SUCCESS("Logged in succesfully"),
+    LOGIN_SUCCESS("Logged in successfully"),
     PROCEDURE_EXC_TITLE("Procedure error occurred"),
-    PROCEDURE_EXC_TEXT("There was an error during the installation producedure.\n%s\nPress \"%s\" to try again the failed procedure.\nPress \"%s\" to go a step back and try again the entire latest step\nPress \"%s\" to cancel the procedure and abort the installation process"),
+    PROCEDURE_EXC_TEXT("There was an error during the installation procedure.\n%s\nPress \"%s\" to try again the failed procedure.\nPress \"%s\" to go a step back and try again the entire latest step\nPress \"%s\" to cancel the procedure and abort the installation process"),
     PROCEDURE_EXC_DETAILS("Error type: %s\nError description: %s"),
     PROCEDURE_EXC_ADV_DETAILS("Advanced error details"),
     CANCEL("Cancel"),
@@ -274,8 +273,13 @@ public enum  LRes  {
     SINGLE_FILE("Single file"),
     MULTIPLE_FILES("Multiple files"),
     //MULTI_ZIP_INSTALL_CHOICE_TEXT("Please choose installation f")
+    RECOVER_PHONE_CHARGED("Please make sure your device is charged.\nSometimes it might seem bricked when it is just discharged.\nA red blinking notification light can also indicate an empty battery.\nIf you are not sure that your phone is charged, leave it attached to the original charger for at least 10 minutes before continuing"),
+    FAILED_TO_DO_THAT("Failed to do that"),
+    ENTER_FASTBOOT_MODE("To enter fastboot mode, press the volume down and power for several seconds, until the screen turns on.\nYou should see the fastboot logo as shown beside.\nIt is not necessary to turn off the device before pressing the buttons.\nIf the device reboots normally, you are not keeping the buttons pressed for long enough."),
+    PLEASE_SELECT_DEVICE("Please select your device"),
+    STARTING_RECOVERY_PROC("Starting recovery procedure"),
+    SEARCHING_BEST_ROM_TO_RECOVER("Searching the best rom to recover the device")
     ;
-
     private String text;
 
     LRes(String defaultText){

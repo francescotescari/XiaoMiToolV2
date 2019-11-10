@@ -130,4 +130,8 @@ public abstract class RequestParams implements Cloneable {
     public String getPkg() {
         return this.packageHash;
     }
+
+    public void setCodebase(Codebase codebase){
+        this.codebase = codebase;
+    };
 }

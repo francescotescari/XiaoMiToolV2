@@ -29,7 +29,7 @@ public abstract class Properties {
     }
 
     public boolean parse(){
-        Log.debug("Parsing requested for "+this);
+        Log.debug("Parsing requested for "+this.getClass());
         return parse(false);
     }
     public boolean parse(boolean force){
@@ -59,7 +59,7 @@ public abstract class Properties {
 
     public boolean parse(boolean force, boolean internal){
 
-        synchronized (propertiesMap) {
+
             Log.debug("Starting parsing: force: "+force+", class: "+this.getClass().getSimpleName());
             if (parsed && !force) {
                 Log.debug("Already parsed, returning");
@@ -98,7 +98,7 @@ public abstract class Properties {
             }
             parsed = false;
             return false;
-        }
+
     }
 
     public void setOnFailedAttemptThree(RunnableWithArg onFailedAttemptThree) {

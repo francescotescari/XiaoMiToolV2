@@ -11,9 +11,11 @@ import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.PopupWindow;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.deviceView.Animatable;
+import com.xiaomitool.v2.gui.deviceView.DeviceFastbootView;
 import com.xiaomitool.v2.gui.deviceView.DeviceRecoveryView;
 import com.xiaomitool.v2.gui.deviceView.DeviceView;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
+import com.xiaomitool.v2.gui.other.DeviceCodenameEntry;
 import com.xiaomitool.v2.gui.other.DeviceTableEntry;
 import com.xiaomitool.v2.gui.visual.*;
 import com.xiaomitool.v2.language.LRes;
@@ -29,11 +31,10 @@ import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.procedure.uistuff.ChooseProcedure;
 import com.xiaomitool.v2.procedure.uistuff.ConfirmationProcedure;
-import com.xiaomitool.v2.utility.CommandClass;
-import com.xiaomitool.v2.utility.Nullable;
-import com.xiaomitool.v2.utility.RunnableMessage;
+import com.xiaomitool.v2.resources.ResourcesManager;
+import com.xiaomitool.v2.utility.*;
 
-import com.xiaomitool.v2.utility.YesNoMaybe;
+import com.xiaomitool.v2.utility.utils.ArrayUtils;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import javafx.animation.Animation;
@@ -53,14 +54,23 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.json.JSONObject;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
+import java.io.IOException;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.xiaomitool.v2.engine.CommonsMessages.NOOP;
 import static com.xiaomitool.v2.procedure.install.GenericInstall.main;
 
 
 public class ActionsDynamic {
+    public static RunnableMessage MAIN_SCREEN_LOADING(){
+        return MAIN_SCREEN_LOADING(LRes.LOADING);
+    }
     public static RunnableMessage MAIN_SCREEN_LOADING(LRes message){
         return MAIN_SCREEN_LOADING(message.toString());
     }
@@ -74,16 +84,23 @@ public class ActionsDynamic {
             }
         };
     }
-    public static RunnableMessage SEARCH_SELECT_DEVICES(@Nullable Device.Status wantedStatus){ return () -> {
+    public static RunnableMessage SEARCH_SELECT_DEVICES(@Nullable Device.Status... wantedStatus){ return () -> {
         Log.info("Searching at least one device");
         ActionsDynamic.MAIN_SCREEN_LOADING(LRes.SEARCHING_CONNECTED_DEVICES).run();
-        DeviceManager.refresh();
+        DeviceManager.refresh(true);
         Thread.sleep(1000);
         int connectedDevices = DeviceManager.count(wantedStatus);
         Log.info("Total connected device found: "+connectedDevices);
         RunnableMessage nextStep;
         if (connectedDevices == 0) {
-            nextStep = NO_DEVICE_CONNECTED(wantedStatus);
+            new Thread(() -> {
+                try {
+                    DriverUtils.fixAndroidDevices(ResourcesManager.getAndroidDriverPath());
+                } catch (IOException e) {
+                    Log.error("Cannot try to fix drivers: "+e.getMessage());
+                }
+            }).start();
+            nextStep = NO_DEVICE_CONNECTED((wantedStatus == null || wantedStatus.length == 0) ? null : wantedStatus[0]);
         } else {
             nextStep = SELECT_DEVICE(wantedStatus);
         }
@@ -92,7 +109,8 @@ public class ActionsDynamic {
 
     public static RunnableMessage NO_DEVICE_CONNECTED(@Nullable Device.Status wantedStatus) { return  () -> {
         Log.info("Showing no devices visual");
-        LRes msg, button;
+        LRes  button;
+        String msg;
         RunnableMessage howto = null;
         Device.Status wStatus = wantedStatus;
         if (wStatus == null){
@@ -101,16 +119,17 @@ public class ActionsDynamic {
         switch (wStatus){
             case SIDELOAD:
             case RECOVERY:
-                msg = LRes.NO_DEVICE_CONNECTED_RECOVERY;
+                msg = LRes.NO_DEVICE_CONNECTED_MODE.toString(Device.Status.RECOVERY.toString(),Device.Status.RECOVERY.toString());
                 button = LRes.HT_GO_RECOVERY;
                 howto = HOWTO_GO_RECOVERY(null);
                 break;
             case FASTBOOT:
-                msg = LRes.NO_DEVICE_CONNECTED_FASTBOOT;
+                msg = LRes.NO_DEVICE_CONNECTED_MODE.toString(Device.Status.FASTBOOT.toString(), Device.Status.FASTBOOT.toString());
                 button = LRes.HT_GO_FASTBOOT;
+                howto = HOWTO_GO_FASTBOOT(null, false);
                 break;
             default:
-                msg = LRes.NO_DEVICE_CONNECTED;
+                msg = LRes.NO_DEVICE_CONNECTED.toString();
                 button = LRes.HT_ENABLE_USB_DEBUG;
                 howto = ActionsDynamic.HOW_TO_ENABLE_USB_DEBUGGING(null, DeviceManager.getDevices().isEmpty());
 
@@ -119,9 +138,10 @@ public class ActionsDynamic {
         ImageView no_connection = new ImageView(new Image(DrawableManager.getPng(DrawableManager.NO_CONNECTION).toString()));
         no_connection.setFitHeight(200);
         no_connection.setPreserveRatio(true);
-        Text no = new Text(msg.toString());
+        Text no = new Text(msg);
         no.setTextAlignment(TextAlignment.CENTER);
         no.setFont(Font.font(16));
+        no.setWrappingWidth(WindowManager.getContentWidth()-80);
         VBox vBox = new VBox(no_connection,no);
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(20);
@@ -145,7 +165,7 @@ public class ActionsDynamic {
         return ActionsDynamic.SEARCH_SELECT_DEVICES(wantedStatus).run();
     };}
 
-    public static RunnableMessage SELECT_DEVICE(@Nullable Device.Status wantedStatus) { return  () -> {
+    public static RunnableMessage SELECT_DEVICE(@Nullable Device.Status... wantedStatus) { return  () -> {
         Log.info("Displaying found devices to choose");
         TableView<DeviceTableEntry> tableView = new TableView<DeviceTableEntry>(){
             public void requestFocus() { }
@@ -163,7 +183,7 @@ public class ActionsDynamic {
         tableView.getColumns().addAll(serial,status,codename,brand,model);
         ObservableList<DeviceTableEntry> observableList = tableView.getItems();
         for (Device device : DeviceManager.getDevices()){
-            if (wantedStatus != null && !device.getStatus().equals(wantedStatus)){
+            if (wantedStatus != null && wantedStatus.length > 0 && !ArrayUtils.in(wantedStatus, device.getStatus())){
                 continue;
             }
             Log.debug("Displaying device "+device.getSerial()+", status: "+device.getStatus());
@@ -202,7 +222,7 @@ public class ActionsDynamic {
             } else if (newDevice && message == CommonsMessages.DEVICE_UPDATE_FINISH){
                 observableList.clear();
                 for (Device device : DeviceManager.getDevices()){
-                    if (wantedStatus != null && !device.getStatus().equals(wantedStatus)){
+                    if (wantedStatus != null && !ArrayUtils.in(wantedStatus, device.getStatus())){
                         continue;
                     }
                     DeviceTableEntry tableEntry = new DeviceTableEntry(device);
@@ -387,6 +407,7 @@ public class ActionsDynamic {
 
     public static RunnableMessage FIND_DEVICE_INFO(Device device){
         return () -> {
+            ActionsStatic.REQUIRE_FIXANDROID().run();
             device.getAnswers().setAnswer(DeviceAnswers.HAS_TWRP, YesNoMaybe.MAYBE);
             device.getDeviceProperties().getRecoveryProperties().reset();
             Log.info("Starting find_device_info visual procedure");
@@ -484,13 +505,18 @@ public class ActionsDynamic {
                         Log.info("Either stock recovery or custom recovery properties are already found, we dont need more fore now, skipping");
                         ActionsUtil.setDevicePropertiesText(device, texts);
                     }
+                    try {
+                        ActionsStatic.STOP_FIXANDROID().run();
+                    } catch (Exception e){
+                        throw new RuntimeException(e);
+                    }
 
                     try {
                         Thread.sleep(1200);
                         if (UnlockStatus.LOCKED.equals(device.getAnswers().getUnlockStatus())){
                             device.getAnswers().setAnswer(DeviceAnswers.HAS_STOCK_MIUI, YesNoMaybe.YES);
                         }
-                        ActionsDynamic.START_PROCEDURE(device).run();
+                        ActionsDynamic.START_PROCEDURE(device, GenericInstall.main(), null, GenericInstall.selectRomAndGo()).run();
                     } catch (InterruptedException e) {
 
                     }
@@ -550,7 +576,7 @@ public class ActionsDynamic {
                     messsage = NOOP;
                 }
                 if (messsage == 0){
-                    DeviceManager.refresh();
+                    DeviceManager.refresh(true);
                     if (device.needAuthorization()) {
                         ActionsStatic.RESTART_ADB_SERVER().run();
                         if (!device.needAuthorization() && device.isConnected()){
@@ -587,15 +613,13 @@ public class ActionsDynamic {
             return res ? 1 : 0;
         };
     }
-    public static RunnableMessage START_PROCEDURE(Device device){
-        return START_PROCEDURE(device, null,null);
-    }
 
-    public static RunnableMessage START_PROCEDURE(Device device, RInstall startFromHere, ProcedureRunner runner){
+
+    public static RunnableMessage START_PROCEDURE(Device device, RInstall startFromHere, ProcedureRunner runner, RInstall onRestart){
         return new RunnableMessage() {
             @Override
             public int run() throws InterruptedException {
-                if (startFromHere == null) {
+                if (startFromHere == null && device != null) {
                     try {
                         DeviceProperties properties = device.getDeviceProperties();
                         HashMap<String, String> logginProps = new HashMap<>();
@@ -612,6 +636,7 @@ public class ActionsDynamic {
                 }
 
 
+
                 Log.info("Starting installation part main procedure");
                 InstallPane installPane;
                 ProcedureRunner thisRunner;
@@ -626,10 +651,10 @@ public class ActionsDynamic {
                     }
                     thisRunner = runner;
                 }
+                thisRunner.setRestarter(onRestart);
                 WindowManager.setOnEmpty(installPane);
                 WindowManager.setMainContent(installPane, true);
 
-                RInstall thisRun = startFromHere != null ? startFromHere : main();
                 thisRunner.init(null,device);
 
                 //runner.setContext("prop_"+DeviceProperties.CODENAME,"whyred");
@@ -653,7 +678,10 @@ public class ActionsDynamic {
                     GenericInstall.runInstallProcedure().run(runner);
                     GenericInstall.installationSuccess().run(runner);*/
                    Log.info("Main procedure loaded, starting now");
-                        thisRun.run(thisRunner);
+                        if (startFromHere == null){
+                            throw new InstallException("Null procedure to start from", InstallException.Code.INTERNAL_ERROR);
+                        }
+                        startFromHere.run(thisRunner);
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -701,6 +729,48 @@ public class ActionsDynamic {
     public static RunnableMessage HOWTO_GO_RECOVERY(Device device){
         return HOWTO_GO_RECOVERY(true,device);
     }
+
+    public static RunnableMessage HOWTO_GO_FASTBOOT(Device device, boolean canFail){
+        return ()->{
+            ButtonPane buttonPane = canFail ? new ButtonPane(LRes.OK_FINISHED, LRes.FAILED_TO_DO_THAT) : new ButtonPane(LRes.OK_FINISHED);
+            DeviceFastbootView deviceFastbootView = new DeviceFastbootView(DeviceView.DEVICE_18_9,640);
+            deviceFastbootView.animate(-1, 3000);
+            SidePane sidePane = new SidePane();
+            Text t = new Text(LRes.ENTER_FASTBOOT_MODE.toString());
+            t.setWrappingWidth(400);
+            t.setFont(Font.font(15));
+            sidePane.setLeft(t);
+            Pane p = DeviceView.crop(deviceFastbootView,410);
+            sidePane.setRight(GuiUtils.center(p));
+            buttonPane.setContent(sidePane);
+            WindowManager.setMainContent(buttonPane,false);
+            DeviceManager.addMessageReceiver(buttonPane.getIdClickReceiver());
+            int msg = NOOP;
+            int exitcode = 0;
+            while (msg < 0){
+                if (device != null && device.isConnected() && (Device.Status.FASTBOOT.equals(device.getStatus()))){
+                    exitcode = 1;
+                    break;
+                }
+                if (device == null){
+                    for (Device d : DeviceManager.getDevices()){
+                        if (d.isConnected() && Device.Status.FASTBOOT.equals(d.getStatus())){
+                            exitcode = 2;
+                        }
+                    }
+                }
+                //Log.debug(msg+" - "+DeviceManager.count(Device.Status.SIDELOAD));
+                msg = buttonPane.waitClick();
+            }
+            if (msg != 0 && exitcode == 0){
+                exitcode = -1;
+            }
+            DeviceManager.removeMessageReceiver(buttonPane.getIdClickReceiver());
+            WindowManager.removeTopContent();
+            return exitcode;
+        };
+    }
+
 
     public static RunnableMessage HOWTO_GO_RECOVERY(boolean rebootingText, Device device){
         return  () -> {
@@ -792,6 +862,72 @@ public class ActionsDynamic {
                 DeviceManager.removeMessageReceiver(receiver);
                 WindowManager.removeTopContent();
                 return exitcode;
+            }
+        };
+    }
+
+    public static RunnableMessage SELECT_DEVICE_CODENAME(Pointer result, HashMap<String, String> devices){
+        return new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+                Log.info("Displaying codename choose table");
+                TableView<DeviceCodenameEntry> tableView = new TableView<DeviceCodenameEntry>(){
+                    public void requestFocus() { }
+                };
+                TableColumn<DeviceCodenameEntry,String> codename = new TableColumn<>(LRes.CODENAME.toString());
+                TableColumn<DeviceCodenameEntry,String> model = new TableColumn<>(LRes.MODEL.toString());
+                codename.setCellValueFactory(new PropertyValueFactory<>("codename"));
+                model.setCellValueFactory(new PropertyValueFactory<>("name"));
+                tableView.getColumns().addAll(codename,model);
+                ObservableList<DeviceCodenameEntry> observableList = tableView.getItems();
+                ArrayList<Map.Entry<String, String>> sortingList = new ArrayList<>(devices.entrySet());
+                sortingList.sort(new Comparator<Map.Entry<String, String>>() {
+                    @Override
+                    public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+                        return Collator.getInstance().compare(o1.getValue(), o2.getValue());
+                    }
+                });
+                for (Map.Entry<String, String> device : sortingList){
+                    DeviceCodenameEntry tableEntry = new DeviceCodenameEntry(device.getKey(), device.getValue());
+                    observableList.add(tableEntry);
+                    //System.out.println("map.put(\""+device.getKey()+"\",\""+device.getValue()+"\");");
+                }
+                ButtonPane buttonPane = new ButtonPane(LRes.SELECT, LRes.ABORT);
+                tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+                for (TableColumn column : tableView.getColumns()){
+                    column.setPrefWidth(300);
+                    column.setSortable(false);
+                }
+
+                tableView.setPrefSize(600,400);
+                tableView.setEditable(false);
+                String hex = "ffa970";
+                tableView.setStyle("-fx-focus-color: #C8C8C8;\n" +
+                        "-fx-faint-focus-color: #C8C8C8;\n" +
+                        "-fx-selection-bar: #"+hex+"; -fx-selection-bar-non-focused: #"+hex+";"
+                );
+                tableView.setBorder(Border.EMPTY);
+                Text text = new Text(LRes.PLEASE_SELECT_DEVICE.toString());
+                text.setFont(Font.font(20));
+                text.setTextAlignment(TextAlignment.CENTER);
+                VBox vBox = new VBox(20, GuiUtils.center(text), tableView);
+                buttonPane.setContent(GuiUtils.center(vBox));
+                WindowManager.setMainContent(buttonPane, false);
+                int message = CommonsMessages.NOOP;
+                while (message == CommonsMessages.NOOP) {
+                    message = buttonPane.waitClick();
+                    DeviceCodenameEntry selected = tableView.getSelectionModel().getSelectedItem();
+                    if (message == 0) {
+                        if (selected == null) {
+                            WindowManager.popup(LRes.PLEASE_SELECT_DEVICE.toString(), PopupWindow.Icon.WARN);
+                            message = CommonsMessages.NOOP;
+                        } else {
+                            result.pointed = selected.getCodename();
+                        }
+                    }
+                }
+                WindowManager.removeTopContent();
+                return message == 0 ? 1 : 0;
             }
         };
     }

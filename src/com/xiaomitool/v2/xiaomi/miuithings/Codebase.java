@@ -2,6 +2,10 @@ package com.xiaomitool.v2.xiaomi.miuithings;
 
 import com.xiaomitool.v2.utility.KeepOriginClass;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +14,36 @@ public class Codebase extends KeepOriginClass {
     private Integer main;
     private Integer sub;
     private Integer revision;
+
+    public static final Codebase A4_4 = new Codebase("4.4");
+    public static final Codebase A5_0 = new Codebase("5.0");
+    public static final Codebase A5_1 = new Codebase("5.1");
+    public static final Codebase A6_0 = new Codebase("6.0");
+    public static final Codebase A7_0 = new Codebase("7.0");
+    public static final Codebase A7_1 = new Codebase("7.1");
+    public static final Codebase A8_0 = new Codebase("8.0");
+    public static final Codebase A8_1 = new Codebase("8.1");
+    public static final Codebase A9_0 = new Codebase("9.0");
+    public static final Codebase A10_0 = new Codebase("10.0");
+
+    public static final HashMap<Integer, Codebase> KNOWN_CODEBASE = new HashMap<>(10);
+
+    static {
+        KNOWN_CODEBASE.put(40, A4_4);
+        KNOWN_CODEBASE.put(50, A5_0);
+        KNOWN_CODEBASE.put(51,A5_1);
+        KNOWN_CODEBASE.put(60,A6_0);
+        KNOWN_CODEBASE.put(70,A7_0);
+        KNOWN_CODEBASE.put(71,A7_1);
+        KNOWN_CODEBASE.put(80,A8_0);
+        KNOWN_CODEBASE.put(81,A8_1);
+        KNOWN_CODEBASE.put(90,A9_0);
+        KNOWN_CODEBASE.put(100,A10_0);
+    }
+
+
+
+
 
     public Codebase(String version){
         super(version);
@@ -33,6 +67,32 @@ public class Codebase extends KeepOriginClass {
     }
     public int getSub(){
         return sub;
+    }
+
+    public Codebase next(){
+        if (!isValid){
+            return null;
+        }
+        int code = main*10+sub;
+        Codebase res = KNOWN_CODEBASE.get(code+1);
+        if (res == null){
+            code = code-(code%10);
+            res = KNOWN_CODEBASE.get(code+10);
+        }
+        return res;
+    }
+
+    public List<Codebase> nexts(int max){
+        ArrayList<Codebase> list = new ArrayList<>(max);
+        list.add(this);
+        while (list.size() < max){
+            Codebase c = next();
+            if (c == null){
+                break;
+            }
+            list.add(c);
+        }
+        return list;
     }
 
     int compare(Codebase v2){

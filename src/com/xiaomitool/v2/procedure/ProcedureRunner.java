@@ -41,7 +41,15 @@ public class ProcedureRunner extends GuiListener {
         this.afterExeptionPane = pane;
     }
 
+    private RInstall restarter = null;
 
+    public void setRestarter(RInstall restarter) {
+        this.restarter = restarter;
+    }
+
+    public RInstall getRestarter(){
+        return restarter;
+    }
 
     public Command run(RInstall runnable) throws InstallException, RMessage {
 
@@ -74,7 +82,7 @@ public class ProcedureRunner extends GuiListener {
         if (InstallException.ABORT_EXCEPTION.equals(exception)){
             Log.warn("Aborted exception thrown, show message");
             try {
-                GenericInstall.restartMain(GenericInstall.selectRomAndGo()).run(this);
+                GenericInstall.restartMain(restarter).run(this);
                 return Command.SINKED;
             } catch (InstallException e) {
                 exception = e;

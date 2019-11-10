@@ -10,6 +10,7 @@ import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.chooser.InstallationRequirement;
 import com.xiaomitool.v2.utility.utils.InetUtils;
+import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 
 import java.util.List;
 
@@ -97,4 +98,52 @@ public class ConfirmationProcedure {
             }
         }, RNode.conditional(KEY_BOOL_CONFIRM_INSTALL, null, RNode.sequence(ChooseProcedure.chooseRom(), confirmInstallableProcedure(), Procedures.runSavedProcedure("confirmInstallationStart"))));
     }
+
+
+    public static RInstall confirmPhoneCharged(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                ButtonPane buttonPane = new ButtonPane(LRes.OK_UNDERSTAND);
+                buttonPane.setContentText(LRes.RECOVER_PHONE_CHARGED);
+                WindowManager.setMainContent(buttonPane, false);
+                buttonPane.waitClick();
+                WindowManager.removeTopContent();
+            }
+        };
+    }
+
+    public static String WANT_TO_UNLOCK = "want_to_unlock";
+    public static String IS_DEVICE_UNLOCKED = "device_is_unlocked";
+
+    public static RInstall suggestUnlockBootloader(String message){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Device device = Procedures.requireDevice(runner);
+                UnlockStatus status = device.getAnswers().getUnlockStatus();
+                runner.setContext(IS_DEVICE_UNLOCKED, true);
+                if (UnlockStatus.UNLOCKED.equals(status)){
+                    return;
+                }
+                runner.setContext(IS_DEVICE_UNLOCKED, false);
+                ButtonPane buttonPane = new ButtonPane(LRes.REQ_BOOTLOADER_UNLOCKED, LRes.CONTINUE);
+                buttonPane.setContentText(message);
+                WindowManager.setMainContent(buttonPane, false);
+                int click = buttonPane.waitClick();
+                runner.setContext(WANT_TO_UNLOCK, click == 0);
+                WindowManager.removeTopContent(true);
+            }
+        };
+    }
+
+    public static RInstall isThisMiuiVersionCantBeInstalled(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+
+            }
+        };
+    }
+
 }

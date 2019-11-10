@@ -14,14 +14,21 @@ import com.xiaomitool.v2.procedure.GuiListener;
 import com.xiaomitool.v2.procedure.ProcedureRunner;
 import com.xiaomitool.v2.procedure.Procedures;
 
+import com.xiaomitool.v2.procedure.fetch.ModFetch;
+import com.xiaomitool.v2.procedure.fetch.TwrpFetch;
+import com.xiaomitool.v2.procedure.retrive.AfhRequest;
+import com.xiaomitool.v2.procedure.retrive.XiaomiEuRoms;
 import com.xiaomitool.v2.process.LineScanner;
 import com.xiaomitool.v2.process.ProcessRunner;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.rom.MiuiRom;
+import com.xiaomitool.v2.rom.TwrpFile;
 import com.xiaomitool.v2.utility.utils.*;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
 import com.xiaomitool.v2.xiaomi.XiaomiUtilities;
+import com.xiaomitool.v2.xiaomi.miuithings.DefaultRequestParams;
+import com.xiaomitool.v2.xiaomi.miuithings.RequestParams;
 import com.xiaomitool.v2.xiaomi.miuithings.SerialNumber;
 import com.xiaomitool.v2.xiaomi.romota.MiuiCommunityApis;
 import com.xiaomitool.v2.xiaomi.unlock.UnlockCommonRequests;
@@ -86,9 +93,7 @@ public class Main2 {
     private static final Pattern P_IS_REDMI = Pattern.compile("^((xiao)?mi)?\\s*redmi(\\s)",Pattern.CASE_INSENSITIVE);
 
     public static void main(String[] args) throws Exception {
-        List<XiaomiUtilities.DeviceName> names = XiaomiUtilities.DeviceName.parse("Xiaomi Mi 2A");
-        Log.debug(names);
-        //Log.debug(MiuiCommunityApis.getDevicesCommunityIds());
+        Log.debug(XiaomiEuRoms.latest(new DefaultRequestParams("davinci","9.8.7","9.0")).getDownloadUrl());
 
 
 

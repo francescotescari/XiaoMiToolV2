@@ -367,28 +367,25 @@ public class MiuiRomOta {
 
     }
 
-    public static JSONObject deviceNames_request() throws XiaomiProcedureException {
+    public static JSONObject deviceNames_request() throws XiaomiProcedureException, CustomHttpException {
         String salt = "ZjYyYWIxYzNhM2I=";
         String url = "https://update.miui.com/updates/v1/devinfo.php";
         EasyResponse response;
-        try {
-            response = new MiuiSaltedRequest(salt).url(url).field("sid","miassistant").field("t","1001").exec();
-        } catch (CustomHttpException e) {
-            throw new XiaomiProcedureException("[deviceNames_request] Request failed: "+e.getMessage(), XiaomiProcedureException.ExceptionCode.CONNECTION_ERROR);
-        }
+        response = new MiuiSaltedRequest(salt).url(url).field("sid","miassistant").field("t","1001").exec();
+
         String body = response.getBody();
         JSONObject obj;
         try {
             obj = new JSONObject(body);
-        }catch (JSONException e){
+            int code = obj.optInt("code",0);
+            if (code == 0) {
+                throw new XiaomiProcedureException("Invalid codename api result code: " + code);
+            }
+            return obj.getJSONObject("data");
+        } catch (JSONException e){
             throw new XiaomiProcedureException("[deviceNames_request] Json parsing failed: "+e.getMessage());
         }
-        int code = obj.optInt("code",0);
-        if (code == 0){
-            return null;
-        }
 
-        return obj.optJSONObject("data");
     }
 
 }

@@ -56,17 +56,19 @@ public class Device {
         this(serial, Status.fromString(state));
     }
     public Device(String serial, Status state){
+        this(serial, state, false);
+    }
+    public Device(String serial, Status state, boolean blocking){
         this.serial = serial;
         deviceProperties = new DeviceProperties(this);
         deviceAnswers = new DeviceAnswers(this);
-        setStatus(state);
+        setStatus(state, blocking);
     }
-    public void setStatus(Status status) {
+    public void setStatus(Status status, boolean blocking) {
         try {
             obtainAccess();
         } catch (InterruptedException e) {
-            Log.debug("This should never happen");
-            return;
+            throw new RuntimeException(e);
         }
         try {
             if (!status.equals(this.status)) {
@@ -74,8 +76,29 @@ public class Device {
             }
 
             this.status = status;
-            if (Status.FASTBOOT.equals(status)) {
-                ThreadUtils.sleepSilently(1000);
+            Runnable doParse = () -> setStatusParse(status);
+            if (blocking){
+                releaseAccess();
+                try {
+                    doParse.run();
+                } finally {
+                    requireAccess();
+                }
+            } else {
+                new Thread(doParse).start();
+            }
+            getAnswers().updateStatus(status);
+        } finally {
+            releaseAccess();
+        }
+
+
+    }
+
+    private synchronized void setStatusParse(Status status) {
+        synchronized (deviceProperties) {
+            if (Status.FASTBOOT.equals(status) && !deviceProperties.getFastbootProperties().isParsed()) {
+                ThreadUtils.sleepSilently(2000);
                 deviceProperties.getFastbootProperties().parse();
             } else if (Status.SIDELOAD.equals(status)) {
                 deviceProperties.getSideloadProperties().parse();
@@ -85,11 +108,6 @@ public class Device {
             } else if (Status.RECOVERY.equals(status)) {
                 deviceProperties.getRecoveryProperties().parse();
             }
-            getAnswers().updateStatus(status);
-        } catch (Throwable t){
-            throw new RuntimeException(t);
-        } finally {
-            releaseAccess();
         }
 
     }
@@ -100,8 +118,12 @@ public class Device {
     public String getSerial() {
         return serial;
     }
-    public void requireAccess() throws InterruptedException {
-        canBeAccessed.waitOnce();
+    public void requireAccess(){
+        try {
+            canBeAccessed.waitOnce();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
     public void obtainAccess() throws InterruptedException {
         canBeAccessed.decrease();

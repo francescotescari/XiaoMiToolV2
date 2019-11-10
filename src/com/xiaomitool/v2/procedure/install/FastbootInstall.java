@@ -334,7 +334,7 @@ public class FastbootInstall {
                         }
                         device.getDeviceProperties().getFastbootProperties().put(DeviceProperties.X_LOCKSTATUS, UnlockStatus.UNKNOWN);
                         Thread.sleep(1000);
-                        DeviceManager.refresh();
+                        DeviceManager.refresh(true);
                         try {
                             device.waitStatus(Device.Status.FASTBOOT, 5);
                             Device.Status status = device.getStatus();

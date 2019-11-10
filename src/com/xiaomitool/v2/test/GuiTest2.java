@@ -67,7 +67,7 @@ public class GuiTest2 extends Application{
                     WindowManager.setMainContent(pane, true);
                     ProcedureRunner runner = new ProcedureRunner(pane);
                     runner.setAfterExceptionPane(pane);
-                    DeviceManager.refresh();
+                    DeviceManager.refresh(true);
                     Device device = null;
                     for (Device d : DeviceManager.getDevices()){
                         if (d.getSerial().equals("307d3cd5")){

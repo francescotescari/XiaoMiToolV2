@@ -11,11 +11,15 @@ import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.rom.MiuiTgzRom;
 import com.xiaomitool.v2.rom.chooser.InstallableChooser;
+import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
+import com.xiaomitool.v2.xiaomi.miuithings.Branch;
 import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
 import com.xiaomitool.v2.xiaomi.miuithings.RequestParams;
 import com.xiaomitool.v2.xiaomi.romota.MiuiRomOta;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static com.xiaomitool.v2.rom.chooser.InstallableChooser.idBySpecie;
@@ -80,5 +84,66 @@ public class FastbootFetch {
             procedures[i++] =findLatestFastboot(specie);
         }
         return RNode.skipOnException(procedures);
+    }
+
+    public static RInstall findBestRecoveryFastboot(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Device device = Procedures.requireDevice(runner);
+                SettingsUtils.Region region = SettingsUtils.getRegion();
+                List<SettingsUtils.Region> tryRegions =new ArrayList<>();
+                if (SettingsUtils.Region.CN.equals(region)){
+                    tryRegions.add(SettingsUtils.Region.CN);
+                    tryRegions.add(SettingsUtils.Region.GLOBAL);
+                } else if (SettingsUtils.Region.EU.equals(region)) {
+                    tryRegions.add(SettingsUtils.Region.EU);
+                    tryRegions.add(SettingsUtils.Region.GLOBAL);
+                    tryRegions.add(SettingsUtils.Region.CN);
+                } else {
+                    if (!SettingsUtils.Region.GLOBAL.equals(region) && !SettingsUtils.Region.OTHER.equals(region)){
+                        tryRegions.add(region);
+                    }
+                    tryRegions.add(SettingsUtils.Region.GLOBAL);
+                    tryRegions.add(SettingsUtils.Region.EU);
+                    tryRegions.add(SettingsUtils.Region.CN);
+                }
+                RequestParams params;
+                try {
+                    params = DeviceRequestParams.readFromDevice(device, false);
+                } catch (AdbException e) {
+                    throw new InstallException(e);
+                }
+                runner.text(LRes.SEARCHING_BEST_ROM_TO_RECOVER);
+                Branch[] branches = new Branch[]{Branch.DEVELOPER, Branch.STABLE};
+                for (SettingsUtils.Region reg : tryRegions) {
+                    for (Branch bi : branches) {
+                        MiuiRom.Specie sp = MiuiRom.Specie.fromZoneBranch(reg, bi);
+                        params.setSpecie(sp);
+                        MiuiTgzRom rom;
+                        try {
+                            try {
+                                rom = MiuiRomOta.latestFastboot_request(params);
+                            } catch (XiaomiProcedureException e) {
+                                try {
+                                    rom = MiuiRomOta.latestFastboot2_request(params);
+                                } catch (XiaomiProcedureException e2) {
+                                    rom = null;
+                                }
+                            }
+                        } catch (CustomHttpException e) {
+                            throw new InstallException(e);
+                        }
+                        if (rom != null){
+                            InstallableChooser c = Procedures.requireInstallableChooser(runner);
+                            c.add(idBySpecie(sp), rom);
+                            Procedures.setInstallable(runner, rom);
+                            return;
+                        }
+                    }
+                }
+                throw new InstallException("Failed to get a fastboot image for this device: "+device.getDeviceProperties().getCodename(true), InstallException.Code.INFO_RETRIVE_FAILED);
+            }
+        };
     }
 }

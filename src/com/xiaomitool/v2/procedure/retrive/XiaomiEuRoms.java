@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class XiaomiEuRoms {
     public static final String[] SOURCEFORGE_MIRRORS = new String[]{"master"};//"astuteinternet","ayera","cfhcable","cytranet","datapacket","excellmedia","freefr","iweb","jaist","kent","liquidtelecom","netcologne","netix","newcontinuum","phoenixnap","razaoinfo","superb-dca2","superb-sea2","svwh","tenet","ufpr","vorboss"};
     private static final Pattern BIG_VERSION_PATTERN = Pattern.compile("^([vV]\\d{1,2})");
-    private static final String EU_HOST = "https://basketbuild.com/uploads/devs/ZduneX25";
+    private static final String EU_HOST = "https://miuipolska.pl/d/xiaomi.eu/updater";
     public static ZipRom latest(RequestParams params) throws CustomHttpException, RomException {
         String device = params.getDevice();
         final Branch branch = params.getBranch().getDual();

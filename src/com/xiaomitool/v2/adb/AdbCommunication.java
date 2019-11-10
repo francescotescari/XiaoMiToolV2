@@ -57,7 +57,7 @@ public class AdbCommunication {
                 trackDeviceProcess.addSyncCallback(new RunnableWithArg() {
                     @Override
                     public void run(Object arg) {
-                        DeviceManager.refresh();
+                        DeviceManager.refresh(true);
                     }
                 });
                 try {
@@ -76,7 +76,7 @@ public class AdbCommunication {
             public void run() {
                 while (true) {
                     Log.debug("R start");
-                    DeviceManager.refresh();
+                    DeviceManager.refresh(true);
                     Log.debug("R fin");
                     try {
                         Thread.sleep(REFRESH_TIME_MS);

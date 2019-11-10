@@ -3,6 +3,8 @@ package com.xiaomitool.v2.procedure.fetch;
 import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
+import com.xiaomitool.v2.engine.actions.ActionsDynamic;
+import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
@@ -17,15 +19,22 @@ import com.xiaomitool.v2.rom.chooser.InstallableChooser;
 import com.xiaomitool.v2.utility.utils.ApkUtils;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.utility.utils.StrUtils;
+import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
+import com.xiaomitool.v2.xiaomi.XiaomiUtilities;
 import com.xiaomitool.v2.xiaomi.miuithings.Branch;
 import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
+import com.xiaomitool.v2.xiaomi.romota.MiuiRomOta;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 public class GenericFetch {
 
@@ -151,6 +160,49 @@ public class GenericFetch {
                 Procedures.setInstallable(runner,null);
             }
         }), Procedures.doNothing());
+    }
+
+
+    public static RInstall fetchDeviceCodename(String keyDest){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                ActionsDynamic.MAIN_SCREEN_LOADING().run();
+                JSONObject data = null;
+                HashMap<String, String> res = new HashMap<>();
+                try {
+                    data = MiuiRomOta.deviceNames_request();
+                } catch (XiaomiProcedureException | CustomHttpException e) {
+                    Log.error("Failed to get updated devices list: "+e.getMessage());
+                }
+                if (data != null) {
+                    for (String key : data.keySet()) {
+                        key = XiaomiUtilities.stripCodename(key);
+                        if (res.containsKey(key)) {
+                            continue;
+                        }
+                        try {
+                            JSONObject obj = data.getJSONObject(key);
+                            String name = obj.getString("display_name_en");
+                            if (name.isEmpty()) {
+                                name = obj.getString("display_name");
+                            }
+                            res.put(key, name);
+                        } catch (JSONException e) {
+                            continue;
+                        }
+                    }
+                }
+                for (Map.Entry<String, String> e : XiaomiUtilities.getDeviceCodenames().entrySet()){
+                    res.put(e.getKey(), e.getValue());
+                }
+                WindowManager.removeTopContent(false);
+                if (res.isEmpty()){
+                    throw new InstallException("Empty codename list from api", InstallException.Code.INFO_RETRIVE_FAILED);
+                }
+                runner.setContext(keyDest, res);
+            }
+        };
     }
 
 }

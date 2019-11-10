@@ -66,7 +66,7 @@ public class UnlockCommonRequests {
 
 
     private static final String SID = "miui_unlocktool_client";
-    private static final String CLIENT_VERSION = "3.3.827.31";
+    private static final String CLIENT_VERSION = "3.5.1108.44";
     private static final String NONCEV2 = "/api/v2/nonce";
     private static final String USERINFOV3 = "/api/v3/unlock/userinfo";
     private static final String DEVICECLEARV3 = "/api/v2/unlock/device/clear";
@@ -139,7 +139,7 @@ public class UnlockCommonRequests {
     }
 
 
-    public static String test() throws XiaomiProcedureException, CustomHttpException {
+   /* public static String test() throws XiaomiProcedureException, CustomHttpException {
         XiaomiKeystore keystore = XiaomiKeystore.getInstance();
         UnlockRequest request = new UnlockRequest("/api/v1/postsale/deviceInfo");
         HashMap<String, String> pp = new HashMap<>();
@@ -163,7 +163,7 @@ public class UnlockCommonRequests {
         request.addNonce();
         request.addParam("sid",SID);
         return request.exec();
-    }
+    }*/
 
     public static String ahaFlash(String flashToken) throws XiaomiProcedureException, CustomHttpException {
         XiaomiKeystore keystore = XiaomiKeystore.getInstance();

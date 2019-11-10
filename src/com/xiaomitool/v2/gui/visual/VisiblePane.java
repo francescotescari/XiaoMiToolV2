@@ -21,7 +21,8 @@ public class VisiblePane {
         }
         this.pane = pane;
     }
-    private LinkedList<Node> children = new LinkedList<>();
+    private final LinkedList<Node> children = new LinkedList<>();
+    private final LinkedList<Node> removeBuffer = new LinkedList<>();
 
     public void add(Node node){
         set(node,true);
@@ -33,33 +34,69 @@ public class VisiblePane {
         Log.debug("Set saving stack: "+b);
         keepStack = b;
     }
+
     public void removeTop(){
+        removeTop(true);
+    }
+    private void clearRemoveBuffer(){
+        synchronized (removeBuffer){
+            for (Node n : removeBuffer){
+                removeLayer(n);
+            }
+            removeBuffer.clear();
+        }
+    }
+
+    private void removeLayer(Node layer){
+        Node addNext = null;
+        try {
+            synchronized (children) {
+                layer.setVisible(false);
+                pane.getChildren().remove(layer);
+                layer = children.getLast();
+                if (layer != null) {
+                    layer.setVisible(true);
+                } else {
+                    if (onEmpty != null) {
+                        addNext = onEmpty;
+                    }
+                }
+            }
+        } catch (Exception e){
+            addNext = onEmpty;
+        }
+        if (addNext != null){
+            add(addNext);
+        }
+
+    }
+
+    public void removeTop(boolean instant){
+        if (instant){
+            clearRemoveBuffer();
+        }
         try {
             Node topChild = children.getLast();
             Log.debug(children);
             Log.debug(topChild);
-            if (topChild == null){
+            if (topChild == null) {
                 return;
             }
+            synchronized (children) {
+                children.remove(topChild);
+            }
+            if (instant) {
+                removeLayer(topChild);
+            } else {
+                synchronized (removeBuffer){
+                    removeBuffer.add(topChild);
+                }
+            }
+        } catch (Exception e){
+            Log.exc(e);
+        }
 
 
-        children.removeLast();
-        topChild.setVisible(false);
-        pane.getChildren().remove(topChild);
-        topChild = children.getLast();
-        if (topChild != null){
-            topChild.setVisible(true);
-        } else {
-            if (onEmpty != null){
-                add(onEmpty);
-            }
-        }
-        } catch (Throwable t){
-            if (onEmpty != null){
-                add(onEmpty);
-            }
-            return;
-        }
     }
 
     public Pane getPane() {
@@ -67,24 +104,27 @@ public class VisiblePane {
     }
 
     private void set(Node node, boolean show){
+        clearRemoveBuffer();
         Log.debug("Adding node: "+node.toString());
-        if (!keepStack && show){
-            children.clear();
-            pane.getChildren().clear();
-        }
-        if (!children.contains(node)){
-            children.add(node);
-            node.setPickOnBounds(false);
-            pane.getChildren().add(node);
-        }
-        if (keepStack) {
-            if (show) {
-                for (Node n : children) {
-                    n.setVisible(false);
+        synchronized (children) {
+            if (!keepStack && show) {
+                children.clear();
+                pane.getChildren().clear();
+            }
+            if (!children.contains(node)) {
+                children.add(node);
+                node.setPickOnBounds(false);
+                pane.getChildren().add(node);
+            }
+            if (keepStack) {
+                if (show) {
+                    for (Node n : children) {
+                        n.setVisible(false);
+                    }
+                    node.setVisible(true);
+                } else {
+                    node.setVisible(false);
                 }
-                node.setVisible(true);
-            } else {
-                node.setVisible(false);
             }
         }
     }

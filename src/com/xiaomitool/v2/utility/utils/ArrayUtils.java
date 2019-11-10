@@ -34,4 +34,16 @@ public class ArrayUtils {
         return res;
     }
 
+    public static <T> boolean in(T[] array, T element){
+        if (element == null){
+            return false;
+        }
+        for (T o : array){
+            if (element.equals(o)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

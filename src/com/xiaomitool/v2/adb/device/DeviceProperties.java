@@ -32,6 +32,8 @@ public class DeviceProperties {
     public static final String MODEL = "ro.product.model";
     public static final String FASTBOOT_PRODUCT = "product";
 
+    private final HashMap<String, Object> userDefined = new HashMap<>();
+
 
     class AdbProperties extends Properties {
         @Override
@@ -296,7 +298,10 @@ public class DeviceProperties {
         return res == null ? defaultReturn : res;
     }
     public Object get(String key){
-        Object x = sideloadProperties.get(key);
+        Object x = userDefined.get(key);
+        if (x == null){
+            x = sideloadProperties.get(key);
+        }
         if (x == null){
             x = adbProperties.get(key);
         }
@@ -307,6 +312,10 @@ public class DeviceProperties {
             x = recoveryProperties.get(key);
         }
         return x;
+    }
+
+    public void userSet(String key, Object value){
+        this.userDefined.put(key, value);
     }
 
 
@@ -341,7 +350,21 @@ public class DeviceProperties {
     }
 
     public String getCodename(boolean stripped){
-        String codename = (String) this.get(CODENAME);
+        String key = CODENAME;
+        Object x = sideloadProperties.get(key);
+        if (x == null){
+            x = adbProperties.get(key);
+        }
+        if (x == null){
+            x = userDefined.get(key);
+        }
+        if (x == null){
+            x = fastbootProperties.get(key);
+        }
+        if (x == null){
+            x = recoveryProperties.get(key);
+        }
+        String codename = (String) x;
         return stripped ? XiaomiUtilities.stripCodename(codename) : codename;
     }
 }

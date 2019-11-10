@@ -16,6 +16,7 @@ import com.xiaomitool.v2.gui.visual.*;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
+import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.tasks.DownloadTask;
@@ -42,7 +43,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -81,16 +81,47 @@ public class ActionsStatic {
                 if (message == 1){
                     message = FEATURE_NOT_AVAILABLE().run();
                 }
-                //ENDTODO
+                //ENDTODO*/
                 nextMain = message == 0 ? MAIN_MOD_DEVICE() : MAIN_RECOVER_DEVICE();
             }
             return nextMain.run();
         };
     }
 
+    public static RunnableMessage REQUIRE_FIXANDROID(){
+        return new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+                if (ResourcesConst.isWindows()) {
+                    try {
+                        DriverUtils.requireFixAndroidService(ResourcesManager.getAndroidDriverPath());
+                    } catch (IOException e) {
+                        Log.error("Failed to register auto driver fix: " + e.getMessage());
+                        Log.exc(e);
+                    }
+                }
+                return 0;
+            }
+        };
+    }
+
+    public static RunnableMessage STOP_FIXANDROID(){
+        return new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+                if (ResourcesConst.isWindows()){
+                    DriverUtils.stopFixAndroidService();
+                }
+                return 0;
+            }
+        };
+    }
+
+
+
     public static RunnableMessage INSTALL_DRIVERS(){
         return () -> {
-            if (!SystemUtils.IS_OS_WINDOWS){
+            if (!ResourcesConst.isWindows()){
                 return 0;
             }
             Log.debug("Installing drivers");
@@ -135,7 +166,7 @@ public class ActionsStatic {
             ActionsDynamic.MAIN_SCREEN_LOADING(LRes.SEARCHING_CONNECTED_DEVICES).run();
             AdbCommunication.restartServer();
             AdbCommunication.registerAutoScanDevices();
-            ActionsDynamic.SEARCH_SELECT_DEVICES(null).run();
+            ActionsDynamic.SEARCH_SELECT_DEVICES().run();
             Log.debug("SEARCHING");
             ActionsDynamic.REQUIRE_DEVICE_ON(DeviceManager.getSelectedDevice()).run();
             ActionsDynamic.FIND_DEVICE_INFO(DeviceManager.getSelectedDevice()).run();
@@ -167,7 +198,7 @@ public class ActionsStatic {
             Log.info("Restarting adb server");
             ActionsDynamic.MAIN_SCREEN_LOADING(LRes.LOADING).run();
             AdbCommunication.restartServer();
-            DeviceManager.refresh();
+            DeviceManager.refresh(true);
             WindowManager.removeTopContent();
             return 0;
         };
@@ -179,7 +210,9 @@ public class ActionsStatic {
 
     public static RunnableMessage MAIN_RECOVER_DEVICE () { return  () -> {
         //TODO
-      return MAIN_RECOVER_DEVICE_TMP().run();
+        //return ActionsDynamic.START_PROCEDURE(null, GenericInstall.recoverMain(), null, GenericInstall.recoverDeviceStart()).run();
+      //return MAIN_RECOVER_DEVICE_TMP().run();
+        return 0;
     };}
 
     public static RunnableMessage MAIN_RECOVER_DEVICE_TMP(){

@@ -19,6 +19,7 @@ import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
 import com.xiaomitool.v2.xiaomi.XiaomiUtilities;
 import com.xiaomitool.v2.xiaomi.miuithings.DeviceRequestParams;
 import com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion;
+import com.xiaomitool.v2.xiaomi.miuithings.RequestParams;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import com.xiaomitool.v2.xiaomi.romota.MiuiRomOta;
 
@@ -371,17 +372,18 @@ public class StockRecoveryFetch {
         }, GenericFetch.computeMD5File(), validatePkgRom(runner));
     }
 
-    private static final String DEVICE_API_IDS_MAP = "device_api_ids";
-
-    public static RInstall requireDeviceApiIds(){
+    public static RInstall findBestRecoverRom(){
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Map<XiaomiUtilities.DeviceName, Integer> map = (Map<XiaomiUtilities.DeviceName, Integer>) runner.getContext(DEVICE_API_IDS_MAP);
-                if (map == null){
-                    map = new HashMap<>();
-
+                Device device = Procedures.requireDevice(runner);
+                RequestParams params;
+                try {
+                    params = DeviceRequestParams.readFromDevice(device, true);
+                } catch (AdbException e) {
+                    throw new InstallException(e);
                 }
+                basicOta(params.getSpecie()).run(runner);
             }
         };
     }

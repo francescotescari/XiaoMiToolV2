@@ -61,6 +61,10 @@ public class WindowManager {
         setMainContent(node,true);
     }*/
     public static void removeTopContent(){
+        removeTopContent(true);
+    }
+
+    public static void removeTopContent(boolean instant){
 
         if (mainVisiblePane == null){
             return;
@@ -68,9 +72,9 @@ public class WindowManager {
         Log.debug("WMA: removing top content");
         
         if (Platform.isFxApplicationThread()) {
-            mainVisiblePane.removeTop();
+            mainVisiblePane.removeTop(instant);
         } else  {
-            Platform.runLater(() -> {mainVisiblePane.removeTop();});
+            Platform.runLater(() -> {mainVisiblePane.removeTop(instant);});
         }
     }
     public static void setOnEmpty(Pane pane){
@@ -79,7 +83,7 @@ public class WindowManager {
 
     public static void setMainContent(Node node, boolean deleteUnder){
         Log.debug("WMA: set main content: "+node+", du: "+deleteUnder);
-        new Exception().printStackTrace();
+        //new Exception().printStackTrace();
         if (mainVisiblePane == null){
             return;
         }

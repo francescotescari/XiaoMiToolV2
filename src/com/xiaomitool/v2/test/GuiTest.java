@@ -2,34 +2,25 @@ package com.xiaomitool.v2.test;
 
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.engine.ToolManager;
-import com.xiaomitool.v2.engine.actions.ActionsDynamic;
-import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.WindowManager;
 
-import com.xiaomitool.v2.gui.deviceView.Animatable;
-import com.xiaomitool.v2.gui.deviceView.AnimatableDeviceView;
-import com.xiaomitool.v2.gui.deviceView.DeviceRecoveryView;
-import com.xiaomitool.v2.gui.deviceView.DeviceView;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.visual.*;
-import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.procedure.ProcedureRunner;
 import com.xiaomitool.v2.procedure.Procedures;
-import com.xiaomitool.v2.resources.ResourcesConst;
-import com.xiaomitool.v2.resources.ResourcesManager;
+import com.xiaomitool.v2.procedure.RMessage;
+import com.xiaomitool.v2.procedure.install.GenericInstall;
+import com.xiaomitool.v2.procedure.install.InstallException;
+import com.xiaomitool.v2.procedure.install.RecoverInstall;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -39,7 +30,6 @@ public class GuiTest extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         ToolManager.init(primaryStage, new String[]{});
-        String[] texts = new String[]{"Prova1", "Prova2", "Prova3", "Prova4"};
         URL[] imgs = new URL[]{DrawableManager.getPng("usbdbg1"),DrawableManager.getPng("usbdbg2"),DrawableManager.getPng("usbdbg3"),DrawableManager.getPng("usbdbg4")};
         Image[] imgsfx = new Image[imgs.length];
         for (int i = 0; i<imgs.length; ++i){
@@ -59,14 +49,25 @@ public class GuiTest extends Application {
                                           }
                                       }
                                   }).start();*/
-                                  Log.debug("CCASASAS");
-                                  new Thread(() -> {
-                                      try {
-                                          Procedures.selectFilesFromPc("Please select rom files", "Select one or more file to install.\nMake sure they are ordered correcty (from top to bottom) as installation order should be.\nA wrong installation order can lead to device bricking or other unwanted possibilities");
-                                      } catch (InterruptedException e) {
-                                          e.printStackTrace();
-                                      }
-                                  }).start();
+                                 new Thread(()-> {
+                                     try {
+                                         Device device = new Device("0202");
+                                        InstallPane pane = new InstallPane();
+                                        WindowManager.setMainContent(pane, true);
+                                        ProcedureRunner runner = new ProcedureRunner(pane);
+                                        runner.setRestarter(GenericInstall.recoverDeviceStart());
+                                        runner.setContext(Procedures.SELECTED_DEVICE, device);
+                                         GenericInstall.recoverMain().run(runner);
+                                         RecoverInstall.recoverFastboot().run(runner);
+                                     } catch (InterruptedException e) {
+                                         e.printStackTrace();
+                                     } catch (InstallException e) {
+                                         e.printStackTrace();
+                                     } catch (RMessage rMessage) {
+                                         rMessage.printStackTrace();
+                                     }
+                                 }).start();
+
 
 
                                  /* DeviceImgInstructionPane imgInstructionPane = new DeviceImgInstructionPane(WindowManager.getContentHeight() + 30, WindowManager.getContentHeight() - 10, texts, imgsfx, null);

@@ -101,7 +101,7 @@ public class MiuiVersion extends KeepOriginClass {
             if (Branch.STABLE.equals(this.branch) || Branch.FAKE.equals(this.branch) && numbers.size() > 0){
                 return numbers.get(0);
             } else {
-                return this.compareTo(new MiuiVersion("8.5.25")).equals(NEWER) ? 10 : 9;
+                return this.compareTo(new MiuiVersion("8.5.25")).equals(NEWER) ? (this.compareTo(new MiuiVersion("9.8.30")).equals(NEWER) ? 11 : 10) : 9;
             }
         } else {
             return -1;

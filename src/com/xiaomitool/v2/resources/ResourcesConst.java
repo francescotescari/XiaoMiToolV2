@@ -24,6 +24,10 @@ public class ResourcesConst {
         }
     }
 
+    public static boolean isWin10(){
+        return SystemUtils.IS_OS_WINDOWS_10;
+    }
+
     public static boolean isWindows(){
         return SystemUtils.IS_OS_WINDOWS;
     }

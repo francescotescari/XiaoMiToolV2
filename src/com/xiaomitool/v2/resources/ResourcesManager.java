@@ -200,10 +200,15 @@ public class ResourcesManager {
         return getResourcesPath().resolve(DRIVER_DIR);
     }
     public static List<Path> getAllInfPaths() throws IOException {
-        Stream<Path> result = Files.find(getDriverPath(), 2, new BiPredicate<Path, BasicFileAttributes>() {
+        Stream<Path> result = Files.find(getDriverPath(), 3, new BiPredicate<Path, BasicFileAttributes>() {
             @Override
             public boolean test(Path path, BasicFileAttributes basicFileAttributes) {
-                return path != null && basicFileAttributes.isRegularFile() &&  path.toString().toLowerCase().endsWith(".inf");
+                if (path == null){
+                    return false;
+                }
+                String p = path.toString().toLowerCase();
+                boolean isRightVersion = !((p.contains("win10") && !ResourcesConst.isWin10()) || (p.contains("win8") &&  ResourcesConst.isWin10()));
+                return  basicFileAttributes.isRegularFile() &&  p.endsWith(".inf") && isRightVersion;
             }
         });
         return result.collect(Collectors.toList());
@@ -378,5 +383,19 @@ public class ResourcesManager {
 
     }
 
-
+    private static Path ANDROID_INF_PATH = null;
+    public static Path getAndroidDriverPath() throws IOException {
+        if (ANDROID_INF_PATH == null){
+            List<Path> infs = getAllInfPaths();
+            for (Path p : infs){
+                if (String.valueOf(p).toLowerCase().contains("android_winusb.inf")){
+                    ANDROID_INF_PATH = p;
+                }
+            }
+        }
+        if (ANDROID_INF_PATH == null){
+            throw new IOException("Failed to find the android driver path");
+        }
+        return ANDROID_INF_PATH;
+    }
 }

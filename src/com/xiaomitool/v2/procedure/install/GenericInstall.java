@@ -16,6 +16,7 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.device.ManageDevice;
+import com.xiaomitool.v2.procedure.device.OtherProcedures;
 import com.xiaomitool.v2.procedure.device.RebootDevice;
 import com.xiaomitool.v2.procedure.uistuff.ChooseProcedure;
 import com.xiaomitool.v2.procedure.uistuff.ConfirmationProcedure;
@@ -36,7 +37,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.io.FilenameUtils;
 
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -269,13 +269,14 @@ public class GenericInstall {
     private static final String KEY_BOOL_SHOULD_SKIP_INSTALL = "bool_should_skip_install";
 
     public static RInstall restartMain(RInstall startFromHere){
-        if (startFromHere == null){
-            startFromHere = GenericInstall.selectRomAndGo();
-        }
+
         final RInstall start = startFromHere;
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                if (start == null){
+                    throw new InstallException("Cannot restart procedure from null", InstallException.Code.INTERNAL_ERROR);
+                }
                 final Device device = Procedures.requireDevice(runner);
                 final Thread lastThread = Thread.currentThread();
                 new Thread(new Runnable() {
@@ -285,7 +286,7 @@ public class GenericInstall {
                             ActionsDynamic.MAIN_SCREEN_LOADING(LRes.LOADING).run();
                             lastThread.interrupt();
 
-                            ActionsDynamic.START_PROCEDURE(device, RNode.sequence(unstashContext(), start), runner).run();
+                            ActionsDynamic.START_PROCEDURE(device, RNode.sequence(unstashContext(), start), runner, start).run();
                         } catch (InterruptedException e) {
                             Log.warn("Main tool runner thread interrutped: "+e.getMessage());
                         }
@@ -313,9 +314,19 @@ public class GenericInstall {
                 if (click != 0){
                     throw new RMessage(CommandClass.Command.UPLEVEL);
                 }
-                restartMain(startFromHere).run(runner);
+                restartMain(runner.getRestarter()).run(runner);
             }
         };
+    }
+
+
+
+    public static RInstall recoverMain(){
+        return RNode.sequence(ManageDevice.requireAdbCheckService(), ConfirmationProcedure.confirmPhoneCharged(), ManageDevice.recoverSelectDevice(), recoverDeviceStart());
+    }
+
+    public static RInstall recoverDeviceStart(){
+        return RNode.sequence(OtherProcedures.restoreInstallPane(), OtherProcedures.text(LRes.STARTING_RECOVERY_PROC.toString()), ManageDevice.selectDeviceCodename(), stashContext());
     }
 
     public static RInstall main(){

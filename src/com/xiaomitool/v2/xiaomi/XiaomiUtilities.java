@@ -4,8 +4,10 @@ package com.xiaomitool.v2.xiaomi;
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceGroups;
 import com.xiaomitool.v2.utility.NotNull;
+import com.xiaomitool.v2.xiaomi.miuithings.Codebase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -293,6 +295,105 @@ public class XiaomiUtilities {
             }
         }
         return codename;
+    }
+
+    public static HashMap<String, String> getDeviceCodenames(){
+        HashMap<String, String> map = new HashMap<>();
+        map.put("equuleus","MI 8 PRO");
+        map.put("armani","Redmi 1S");
+        map.put("cactus","Redmi 6A");
+        map.put("laurus","MI A3");
+        map.put("dior","Redmi Note 1LTE");
+        map.put("gucci","Redmi Note 1S");
+        map.put("taurus","MI 2A");
+        map.put("aries","MI 2S");
+        map.put("pisces","MI 3");
+        map.put("cancro","MI 3W / MI 4W");
+        map.put("libra","MI 4c");
+        map.put("ferrari","MI 4I");
+        map.put("aqua","MI 4S");
+        map.put("gemini","MI 5");
+        map.put("meri","MI 5C");
+        map.put("capricorn","MI 5s");
+        map.put("natrium","MI 5s Plus");
+        map.put("tiffany","MI 5X");
+        map.put("sagit","MI 6");
+        map.put("wayne","MI 6X");
+        map.put("dipper","MI 8");
+        map.put("ursa","MI 8 Explorer Edition");
+        map.put("sirius","MI 8 SE");
+        map.put("cepheus","MI 9");
+        map.put("crux","MI 9 PRO 5G");
+        map.put("grus","MI 9 SE");
+        map.put("tissot","MI A1");
+        map.put("pyxis","MI CC 9");
+        map.put("vela","MI CC9 MEITU");
+        map.put("hydrogen","MI MAX");
+        map.put("oxygen","MI MAX 2");
+        map.put("nitrogen","MI MAX3");
+        map.put("helium","MI Max Prime");
+        map.put("chiron","MI MIX 2");
+        map.put("polaris","MI MIX 2S");
+        map.put("perseus","MI MIX 3");
+        map.put("scorpio","MI Note 2");
+        map.put("jason","MI Note 3");
+        map.put("virgo","MI Note");
+        map.put("leo","MI Note PRO");
+        map.put("mione_plus","MI ONE Plus");
+        map.put("latte","MI PAD 2");
+        map.put("cappu","MI PAD 3");
+        map.put("clover","MI PAD 4");
+        map.put("lotus","MI Play");
+        map.put("lithium","MI MIX");
+        map.put("platina","MI 8 Lite");
+        map.put("ido_xhdpi","Redmi 3");
+        map.put("land","Redmi 3S");
+        map.put("prada","Redmi 4");
+        map.put("rolex","Redmi 4A");
+        map.put("markw","Redmi 4 Prime");
+        map.put("santoni","Redmi 4X");
+        map.put("rosy","Redmi 5");
+        map.put("riva","Redmi 5A");
+        map.put("riva_fs","Redmi 5A FS");
+        map.put("vince","Redmi 5 Plus");
+        map.put("cereus","Redmi 6");
+        map.put("sakura","Redmi 6 Pro");
+        map.put("onclite","Redmi 7");
+        map.put("pine","Redmi 7A");
+        map.put("davinci","Redmi K20");
+        map.put("raphael","Redmi K20 Pro");
+        map.put("raphaels","Redmi K20 Pro Premium Edition");
+        map.put("hermes","Redmi Note 2");
+        map.put("kenzo","Redmi Note 3");
+        map.put("nikel","Redmi Note 4 MTK");
+        map.put("whyred","Redmi Note 5");
+        map.put("ugg","Redmi Note 5A");
+        map.put("ugglite","Redmi Note 5A Lite");
+        map.put("lavender","Redmi Note 7");
+        map.put("violet","Redmi Note 7 Pro");
+        map.put("ginkgo","Redmi Note 8");
+        map.put("begonia","Redmi Note 8 Pro");
+        map.put("ysl","Redmi S2");
+        map.put("wt98007","Redmi 1");
+        map.put("virgo_lte_ct","小米Note 全网通版");
+        map.put("mocha","MI Pad");
+        map.put("cancro_lte_ct","小米手机4 电信4G版");
+        map.put("hermes_pro","Redmi Note 2 PRO");
+        map.put("hennessy","Redmi Note 3 MTK");
+        map.put("mido","Redmi Note 4X/Redmi Note 4");
+        map.put("lcsh92_wet_tdd","红米Note TD版");
+        map.put("lcsh92_wet_jb9","红米Note WCDMA版");
+        map.put("omega","Redmi PRO");
+        map.put("HM2014011","红米手机1S TD 3G版");
+        map.put("HM2014501","红米手机1S TD 4G版");
+        map.put("lte26007","红米手机2A 标准版/增强版");
+        map.put("wt86047_pro","红米手机2 移动增强版 / 红米手机2A 高配版");
+        map.put("wt86047","红米手机2 移动版");
+        map.put("wt88047_pro","红米手机2 联通版/电信 增强版");
+        map.put("wt88047","红米手机2 联通版/电信版");
+        map.put("HM2013022","红米手机 TD版");
+        map.put("HM2013023","红米手机 WCDMA版");
+        return map;
     }
 
 }

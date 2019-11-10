@@ -23,7 +23,7 @@ public class DefaultRequestParams extends RequestParams implements Cloneable {
         super.codebase = new Codebase(codebase);
         super.branch =  (branch == null ? super.version.getBranch() : branch);
         super.specie = MiuiRom.Specie.fromStringBranch(device, super.branch);
-        super.zone = specie.getZone();
+        super.zone = specie == null ? 0 : specie.getZone();
 
         androidHash = "00000000000000000000000000000000";
         language = "en_US";

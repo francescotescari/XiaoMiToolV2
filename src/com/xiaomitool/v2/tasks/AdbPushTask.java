@@ -37,6 +37,8 @@ public class AdbPushTask extends Task {
         Pattern pattern = Pattern.compile("\\[(\\d+)/(\\d+)\\]");
         Pattern alternativePattern = Pattern.compile("\\[\\s*(\\d+)%\\]");
         final Pointer lastLine = new Pointer();
+        final Pointer isError = new Pointer();
+        isError.pointed = false;
         runner.addSyncCallback(new RunnableWithArg() {
             @Override
             public void run(Object arg) {
@@ -44,11 +46,15 @@ public class AdbPushTask extends Task {
                     update(-1);
                     return;
                 }
-                lastLine.pointed = arg;
-                Matcher m = pattern.matcher(arg.toString());
+                String line = String.valueOf(arg).toLowerCase();
+                if (lastLine.pointed == null || line.contains("error") || line.contains("failed")) {
+                    lastLine.pointed = arg;
+                }
+
+                Matcher m = pattern.matcher(line);
                 long totalSize = fileSize;
                 if (!m.find()){
-                    m = alternativePattern.matcher(arg.toString());
+                    m = alternativePattern.matcher(line);
                     if (!m.find()) {
                         update(-1);
                         return;

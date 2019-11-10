@@ -143,11 +143,15 @@ public class ProcessRunner {
     }
 
     public boolean kill(){
-        if (!ProcessStatus.RUNNING.equals(this.status) || runningProcess == null || !runningProcess.isAlive()){
+        if (!isAlive()){
             return false;
         }
         runningProcess.destroy();
         return true;
+    }
+
+    public boolean isAlive(){
+        return !ProcessStatus.RUNNING.equals(this.status) || runningProcess == null || !runningProcess.isAlive();
     }
 
     private String manageLineOutput(String line){

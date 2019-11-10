@@ -1,10 +1,12 @@
 package com.xiaomitool.v2.gui.deviceView;
 
 import javafx.scene.image.Image;
+import org.apache.commons.io.input.NullInputStream;
 
 public class DeviceImage {
 
-        private Image deviceImage;
+    public static final DeviceImage EMPTY = new DeviceImage(null, 0, 0, 0, 0, 0, 0 ,null, null, null);
+    private Image deviceImage;
         private double topOffset, leftOffset, heightInner, widthInner, heightOuter, widthOuter;
         private DeviceView.ButtonPosition volumeUp, volumeDown, power;
 
@@ -30,7 +32,7 @@ public class DeviceImage {
         }
 
         public Image getDeviceImage() {
-            return deviceImage;
+            return deviceImage == null ? new Image(new NullInputStream(0)) : deviceImage;
         }
 
         public double getInnerHeight() {

@@ -71,13 +71,27 @@ public abstract class MiuiRom extends Installable {
         OTHER(100, Region.OTHER, LRes.REG_OTHER);
         private final int code;
         private Branch branch;
-        private final Region parentRegion;
+        private Region parentRegion;
         private final LRes lRes;
         private  String suffix;
         Specie(int code, Region parentRegion, LRes lRes){
             this.suffix = parentRegion.getSuffix();
             this.code = code; this.parentRegion = parentRegion;
             this.lRes = lRes;
+        }
+
+        public static Specie fromZoneBranch(Region reg, Branch branch) {
+            for (Specie s: Specie.values()){
+                if (s.getParentRegion().equals(reg)){
+                    if (s.getBranch().equals(branch)){
+                        return s;
+                    }
+                }
+            }
+            Specie s = Specie.OTHER;
+            s.parentRegion = reg;
+            s.branch = branch;
+            return s;
         }
 
         public String getFastbootRegion(){

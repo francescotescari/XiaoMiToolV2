@@ -1,6 +1,7 @@
 package com.xiaomitool.v2.utility;
 
 import com.xiaomitool.v2.logging.Log;
+import com.xiaomitool.v2.procedure.ProcedureRunner;
 import com.xiaomitool.v2.process.ProcessRunner;
 import com.xiaomitool.v2.resources.ResourcesManager;
 
@@ -62,6 +63,29 @@ public class DriverUtils {
     public static boolean refresh(){
 
         return runCommand("refresh",10,"refresh");
+    }
+
+    public static boolean fixAndroidDevices(Path infFile){
+        return runCommand("fixandroid", 10, "fixandroid", infFile.toString());
+    }
+
+    private static ProcessRunner FIX_ANDROID_SERVICE = null;
+
+    public static synchronized void requireFixAndroidService(Path infPath) throws IOException {
+        if (FIX_ANDROID_SERVICE == null || !FIX_ANDROID_SERVICE.isAlive()){
+            FIX_ANDROID_SERVICE = getDriverRunner();
+            FIX_ANDROID_SERVICE.addArgument("fixandroid-service");
+            FIX_ANDROID_SERVICE.addArgument(infPath.toString());
+            FIX_ANDROID_SERVICE.start();
+        }
+    }
+
+    public static void stopFixAndroidService(){
+        if (FIX_ANDROID_SERVICE == null || !FIX_ANDROID_SERVICE.isAlive()){
+            return;
+        }
+        FIX_ANDROID_SERVICE.kill();
+        FIX_ANDROID_SERVICE = null;
     }
 
     public static boolean fixMtpDevices(){
