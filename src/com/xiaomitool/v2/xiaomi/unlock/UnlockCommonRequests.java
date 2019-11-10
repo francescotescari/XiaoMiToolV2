@@ -4,7 +4,6 @@ import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.resources.ResourcesConst;
-import com.xiaomitool.v2.test.Test;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;

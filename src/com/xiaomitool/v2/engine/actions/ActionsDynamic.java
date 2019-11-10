@@ -103,19 +103,19 @@ public class ActionsDynamic {
                     }
                 }).start();
             }
-            nextStep = NO_DEVICE_CONNECTED((wantedStatus == null || wantedStatus.length == 0) ? null : wantedStatus[0]);
+            nextStep = NO_DEVICE_CONNECTED(wantedStatus);
         } else {
             nextStep = SELECT_DEVICE(wantedStatus);
         }
         return nextStep.run();
     };}
 
-    public static RunnableMessage NO_DEVICE_CONNECTED(@Nullable Device.Status wantedStatus) { return  () -> {
+    public static RunnableMessage NO_DEVICE_CONNECTED(Device.Status... wantedStatus) { return  () -> {
         Log.info("Showing no devices visual");
         LRes  button;
         String msg;
         RunnableMessage howto = null;
-        Device.Status wStatus = wantedStatus;
+        Device.Status wStatus = (wantedStatus == null || wantedStatus.length == 0) ? null : wantedStatus[0];
         if (wStatus == null){
             wStatus = Device.Status.DEVICE;
         }
