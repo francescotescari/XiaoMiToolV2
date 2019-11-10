@@ -31,6 +31,7 @@ import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.procedure.uistuff.ChooseProcedure;
 import com.xiaomitool.v2.procedure.uistuff.ConfirmationProcedure;
+import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.utility.*;
 
@@ -93,13 +94,15 @@ public class ActionsDynamic {
         Log.info("Total connected device found: "+connectedDevices);
         RunnableMessage nextStep;
         if (connectedDevices == 0) {
-            new Thread(() -> {
-                try {
-                    DriverUtils.fixAndroidDevices(ResourcesManager.getAndroidDriverPath());
-                } catch (IOException e) {
-                    Log.error("Cannot try to fix drivers: "+e.getMessage());
-                }
-            }).start();
+            if (ResourcesConst.isWindows()) {
+                new Thread(() -> {
+                    try {
+                        DriverUtils.fixAndroidDevices(ResourcesManager.getAndroidDriverPath());
+                    } catch (IOException e) {
+                        Log.error("Cannot try to fix drivers: " + e.getMessage());
+                    }
+                }).start();
+            }
             nextStep = NO_DEVICE_CONNECTED((wantedStatus == null || wantedStatus.length == 0) ? null : wantedStatus[0]);
         } else {
             nextStep = SELECT_DEVICE(wantedStatus);
