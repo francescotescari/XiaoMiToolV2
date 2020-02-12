@@ -138,7 +138,8 @@ public class UnlockCommonRequests {
     }
 
 
-   /* public static String test() throws XiaomiProcedureException, CustomHttpException {
+   
+/* public static String test() throws XiaomiProcedureException, CustomHttpException {
         XiaomiKeystore keystore = XiaomiKeystore.getInstance();
         UnlockRequest request = new UnlockRequest("/api/v1/postsale/deviceInfo");
         HashMap<String, String> pp = new HashMap<>();

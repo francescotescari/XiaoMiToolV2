@@ -72,7 +72,7 @@ public class AdbCommons {
         try {
             runner.runWait(timeout);
         } catch (IOException e) {
-            Log.debug("Cannot execute adb command \"adb "+cmd+"\", reason: "+e.getMessage());
+            /*Log.debug("Cannot execute adb command \"adb "+cmd+"\", reason: "+e.getMessage());*/
             return null;
         }
         int exitCode = runner.getExitValue();

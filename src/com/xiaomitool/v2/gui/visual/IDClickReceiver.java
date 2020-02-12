@@ -48,7 +48,7 @@ public class IDClickReceiver implements MessageReceiver {
         buttons.add(node);
         ++currentID;
                 node.setOnMouseClicked(event -> {
-                    Log.debug("Button pressed: "+ button.id);
+                    /*Log.debug("Button pressed: "+ button.id);*/
                     message(button.id);
                 });
                 return button.id;

@@ -93,7 +93,7 @@ public class SettingsUtils extends HashMap<String, String> {
     public static File getDownloadFile(String downloadUrl){
         load();
         String name = FilenameUtils.getName(downloadUrl);
-        Log.debug(downloadUrl);
+        /*Log.debug(downloadUrl);*/
         return getDownloadPath().resolve(name).toFile();
     }
     public static File getExtractFile(File toExtract, int index){

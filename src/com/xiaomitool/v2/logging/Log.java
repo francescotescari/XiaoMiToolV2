@@ -38,7 +38,7 @@ public class Log {
         }
     }
     public static void debugLine(){
-        Log.debug("-----------------------------");
+        /*Log.debug("-----------------------------");*/
     }
     public static void info(Object arg){
 
@@ -55,7 +55,7 @@ public class Log {
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         String sStackTrace = sw.toString();
-        Log.debug(sStackTrace);
+        /*Log.debug(sStackTrace);*/
     }
 
     public static void process(Object arg, boolean isFeedback){

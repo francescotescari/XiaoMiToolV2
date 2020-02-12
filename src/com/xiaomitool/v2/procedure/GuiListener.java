@@ -33,12 +33,12 @@ public abstract class GuiListener extends CommandClass {
 
         @Override
         public void toast(String message) {
-            Log.debug("[TOAST] "+message);
+            /*Log.debug("[TOAST] "+message);*/
         }
 
         @Override
         public void text(String message) {
-            Log.debug("[MESSAGE] "+message);
+            /*Log.debug("[MESSAGE] "+message);*/
         }
 
 
@@ -48,7 +48,7 @@ public abstract class GuiListener extends CommandClass {
 
         @Override
         protected void onException(InstallException exception) {
-            Log.debug("[EXCEPTION] "+exception.getMessage());
+            /*Log.debug("[EXCEPTION] "+exception.getMessage());*/
             exception.printStackTrace();
         }
     }

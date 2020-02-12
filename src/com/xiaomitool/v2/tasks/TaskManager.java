@@ -15,7 +15,7 @@ public class TaskManager {
         start(task,false);
     }
     public void start(Task task, boolean sameThread){
-        Log.debug("Starting task, sameThread: "+sameThread);
+        /*Log.debug("Starting task, sameThread: "+sameThread);*/
         try {
             if (sameThread) {
                 task.startSameThread();
@@ -30,7 +30,7 @@ public class TaskManager {
                 listener.onError(t);
             }
         }
-        Log.debug("Start task finished");
+        /*Log.debug("Start task finished");*/
     }
     public void restart(Task task) throws InterruptedException {task.restart();}
     public void startSameThread(Task task){

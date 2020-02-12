@@ -47,7 +47,7 @@ public class MiuiRomOta {
 
         } catch (XiaomiProcedureException e) {
             if (e.getCode().equals(XiaomiProcedureException.ExceptionCode.NEED_LOGIN)){
-                Log.debug("Need login");
+                /*Log.debug("Need login");*/
             }
         }
         MiuiRom.Specie specie = params.getSpecie();
@@ -110,7 +110,7 @@ public class MiuiRomOta {
         } catch (Exception e) {
             throw  new XiaomiProcedureException("[otaV3_request] Response is invalid: decryption failed: "+e.getMessage());
         }
-        Log.debug(decrypted);
+        /*Log.debug(decrypted);*/
         Log.info("OTAV3 response: "+decrypted);
         JSONObject jsonData;
         try {
@@ -129,7 +129,7 @@ public class MiuiRomOta {
         for (Kind entry : entries){
             JSONObject j = jsonData.optJSONObject(entry.toString());
             if (j == null){
-                Log.debug("Missing total rom data: "+entry.toString());
+                /*Log.debug("Missing total rom data: "+entry.toString());*/
                 continue;
             }
             try {
@@ -279,7 +279,7 @@ public class MiuiRomOta {
         String url = String.format("http://update.miui.com/updates/miota-fullrom.php?d=%s&b=%s&r=%s&n=%s&l=%s", device, branch.getCode(), region, n, lang);
         String result;
             result = EasyHttp.get(url).getBody();
-            Log.debug(result);
+            /*Log.debug(result);*/
         Log.info("OTA Fastboot response: "+result);
         JSONObject json, jsonrom;
         MiuiTgzRom rom;
@@ -320,7 +320,7 @@ public class MiuiRomOta {
         response = new MiuiSaltedRequest(salt).url(url).field("sid","miassistant").field("d",device).field("c",codebase).field("f",branch).exec();
         String body = response.getBody();
         Log.info("OTA Recovery response: "+body);
-        Log.debug(body);
+        /*Log.debug(body);*/
         JSONObject obj;
         try {
              obj = new JSONObject(body);

@@ -14,11 +14,11 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
     public DeviceRequestParams(String device, String version, String codebase, @Nullable Branch branch, SerialNumber serialNumber, int zone){
         super(device,version,codebase,branch);
         super.serialNumber = serialNumber;
-        Log.debug("Devi4zone: "+zone);
+        /*Log.debug("Devi4zone: "+zone);*/
         super.zone = zone;
-        Log.debug("Devi3zone: "+super.zone);
+        /*Log.debug("Devi3zone: "+super.zone);*/
         try {
-            Log.debug(this.buildJson());
+            /*Log.debug(this.buildJson());*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -46,7 +46,7 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
             }
         }
         String zone =  (String) properties.get(DeviceProperties.ROMZONE);
-        Log.debug("Device zone1: "+zone);
+        /*Log.debug("Device zone1: "+zone);*/
         SerialNumber sn = device.getAnswers().getSerialNumber();
         if (requireOtaParameters) {
             try {
@@ -71,7 +71,7 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
                 z = MiuiRom.Specie.getZone(codename);
             }
         }
-        Log.debug("Device zone: "+z);
+        /*Log.debug("Device zone: "+z);*/
 
         MiuiVersion miuiVersion = new MiuiVersion(version);
         Branch branch = (Branch) properties.get(DeviceProperties.X_BRANCH);

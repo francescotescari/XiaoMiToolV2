@@ -154,7 +154,7 @@ public class DeviceView extends StackPane {
     public void setContent(ImageView image, boolean keepRatio) {
         this.keepRatio = keepRatio;
         displayedImage = image.getImage();
-        Log.debug("Original image size: "+displayedImage.getHeight()+"x"+displayedImage.getWidth());
+        /*Log.debug("Original image size: "+displayedImage.getHeight()+"x"+displayedImage.getWidth());*/
         double origImgRatio = displayedImage.getHeight()/displayedImage.getWidth();
         int resizeWidth, resizeHeight;
         Rectangle2D viewport;
@@ -172,10 +172,10 @@ public class DeviceView extends StackPane {
             imageOffsetY = 0;
             viewport = keepRatio ? new Rectangle2D(-1*imageOffsetX,0,this.getInnerWidth(), this.getInnerHeight()) : null;
         }
-        Log.debug("Viewport: "+viewport);
-        Log.debug("iOX = "+imageOffsetX+", iOY = "+imageOffsetY);
+        /*Log.debug("Viewport: "+viewport);*/
+        /*Log.debug("iOX = "+imageOffsetX+", iOY = "+imageOffsetY);*/
         contentScaleRatio = ((double) resizeHeight)/displayedImage.getHeight();
-        Log.debug("RSW: "+resizeWidth+", RSH: "+resizeHeight+", CSR: "+contentScaleRatio+", DIH:"+displayedImage.getHeight());
+        /*Log.debug("RSW: "+resizeWidth+", RSH: "+resizeHeight+", CSR: "+contentScaleRatio+", DIH:"+displayedImage.getHeight());*/
         BufferedImage srcImg = SwingFXUtils.fromFXImage(image.getImage(), null);
         BufferedImage img = new BufferedImage(resizeWidth, resizeHeight, srcImg.getType());
         if (true){
@@ -186,7 +186,7 @@ public class DeviceView extends StackPane {
             resampleOp.setFilter(ResampleFilters.getBiCubicFilter());
             resampleOp.doFilter(srcImg, img, resizeWidth, resizeHeight);
         }
-        Log.debug("Raw resized img: "+img.getHeight()+"x"+img.getWidth());
+        /*Log.debug("Raw resized img: "+img.getHeight()+"x"+img.getWidth());*/
 
         //
 
@@ -197,7 +197,7 @@ public class DeviceView extends StackPane {
         }
         image.setFitWidth(NumberUtils.double2int(this.getInnerWidth()));
         image.setFitHeight(NumberUtils.double2int(this.getInnerHeight()));
-        Log.debug("Result: "+image.getFitHeight()+"x"+image.getFitWidth()+" -img-> "+image.getImage().getHeight()+"x"+image.getImage().getWidth());
+        /*Log.debug("Result: "+image.getFitHeight()+"x"+image.getFitWidth()+" -img-> "+image.getImage().getHeight()+"x"+image.getImage().getWidth());*/
 
         contentPane.getChildren().clear();
 
@@ -210,7 +210,8 @@ public class DeviceView extends StackPane {
         contentPane.getChildren().add(GuiUtils.center(imageWrapPane));
 
 
-        /*        //image.setSmooth(true);
+        
+/*        //image.setSmooth(true);
         double offsetX = 0, offsetY =0 , height, width;
         image.setPreserveRatio(true);
         if (keepRatio){
@@ -386,7 +387,7 @@ public class DeviceView extends StackPane {
         containerPane.getChildren().add(rectangle);
         Transition transition = buildCircleTransition(centerX,centerY,times,false,false);
         transition.statusProperty().addListener((observable, oldValue, newValue) -> {
-            Log.debug(oldValue.toString()+" -> "+newValue.toString());
+            /*Log.debug(oldValue.toString()+" -> "+newValue.toString());*/
             if (Animation.Status.STOPPED.equals(newValue)){
                 containerPane.getChildren().removeAll(rectangle);
             }
@@ -406,10 +407,10 @@ public class DeviceView extends StackPane {
 
     private final ConcurrentLinkedQueue<Transition> circlesAnimation = new ConcurrentLinkedQueue<>();
     public void removeCircleAnimation(){
-        Log.debug("Clearing anims");
+        /*Log.debug("Clearing anims");*/
         synchronized (circlesAnimation) {
             for (Transition transition : circlesAnimation) {
-                Log.debug("Clearing trans: "+transition.toString());
+                /*Log.debug("Clearing trans: "+transition.toString());*/
                 transition.stop();
             }
             circlesAnimation.clear();
@@ -453,7 +454,7 @@ public class DeviceView extends StackPane {
         transition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
             @Override
             public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-                Log.debug(oldValue.toString()+" -> "+newValue.toString());
+                /*Log.debug(oldValue.toString()+" -> "+newValue.toString());*/
                 if (Animation.Status.STOPPED.equals(newValue)){
                     circle.setVisible(false);
                     containerPane.getChildren().remove(circle);

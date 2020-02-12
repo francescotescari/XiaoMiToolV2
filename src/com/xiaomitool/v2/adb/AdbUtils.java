@@ -39,7 +39,7 @@ public class AdbUtils {
         return result;
     }
     public static Map<String, Device.Status> parseTrackDevices(String line){
-        Log.debug("Parsing line: "+line);
+        /*Log.debug("Parsing line: "+line);*/
         int lenght = line.length();
         int offset = 0;
         HashMap<String, Device.Status> result = new HashMap<>();
@@ -47,7 +47,7 @@ public class AdbUtils {
         while (offset < lenght-3){
 
             String num = line.substring(offset, offset+4);
-            Log.debug("("+offset+") num: "+num);
+            /*Log.debug("("+offset+") num: "+num);*/
             int n;
             try {
                n = Integer.parseInt(num, 16);
@@ -61,7 +61,7 @@ public class AdbUtils {
             }
             String data = line.substring(offset, Integer.min(lenght,offset+n));
             offset+=n;
-            Log.debug(data);
+            /*Log.debug(data);*/
             Matcher m = pattern.matcher(data);
             if (m.matches()){
                 result.put(m.group(1), Device.Status.fromString(m.group(2)));
@@ -81,7 +81,7 @@ public class AdbUtils {
             Matcher matcher = pattern.matcher(line);
             if (matcher.matches()){
                 map.put(matcher.group(1), matcher.group(2));
-                Log.debug("Found prop: "+matcher.group(1)+" -> "+matcher.group(2));
+                /*Log.debug("Found prop: "+matcher.group(1)+" -> "+matcher.group(2));*/
             }
         }
         return map;
@@ -137,9 +137,9 @@ public class AdbUtils {
             Matcher m = pattern.matcher(line);
             if (m.find()){
                 String bool = m.group(1);
-                Log.debugLine();
-                Log.debug(bool);
-                Log.debugLine();
+                /*Log.debugLine();*/
+                /*Log.debug(bool);*/
+                /*Log.debugLine();*/
                 return "true".equals(bool.trim().toLowerCase()) ? "unlocked" : ("false".equals(bool.trim().toLowerCase()) ? "locked" : "unknown");
             }
         }

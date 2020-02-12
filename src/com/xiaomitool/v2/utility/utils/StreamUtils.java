@@ -20,7 +20,7 @@ public class StreamUtils {
             @Override
             public void run() {
                 try {
-                    Log.debug("Bytes available:" + stream.available());
+                    /*Log.debug("Bytes available:" + stream.available());*/
                     byte[] data = new byte[1024];
                     while (stream.read(data) > 0) {
                         String str = new String(data);

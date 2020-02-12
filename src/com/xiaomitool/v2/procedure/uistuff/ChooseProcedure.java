@@ -37,7 +37,7 @@ public class ChooseProcedure {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Log.debug("ENTERING CHOOSE ROM");
+                /*Log.debug("ENTERING CHOOSE ROM");*/
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 ProcedureChooser pchooser = Procedures.requireProcedureChooser(runner);
                 LinkedList<Installable> optionsInstallable = new LinkedList<>();
@@ -47,12 +47,12 @@ public class ChooseProcedure {
                 Log.info("Showing rom options to user");
                 Device device = Procedures.requireDevice(runner);
                 boolean unlocked = UnlockStatus.UNLOCKED.equals(device.getAnswers().getUnlockStatus());
-                Log.debug(chooser.entrySet());
+                /*Log.debug(chooser.entrySet());*/
                 for (Map.Entry<String, HashMap<Installable.Type, Installable>> entry : chooser.entrySet()){
                     if (!idGroup.hasId(entry.getKey())){
                         continue;
                     }
-                    Log.debug(entry.getKey()+" should be in "+idGroup.toString());
+                    /*Log.debug(entry.getKey()+" should be in "+idGroup.toString());*/
 
                     HashMap<Installable.Type, Installable> map = entry.getValue();
                     if (map == null || map.size() == 0){
@@ -68,7 +68,7 @@ public class ChooseProcedure {
 
 
                     optionsInstallable.add(installable);
-                    Log.debug("OptionINSTC: "+installable.getChoice().toString());
+                    /*Log.debug("OptionINSTC: "+installable.getChoice().toString());*/
                     choices.add(installable.getChoice());
                 }
                 for (Map.Entry<String, ChoosableProcedure> entry : pchooser.entrySet()){
@@ -76,7 +76,7 @@ public class ChooseProcedure {
                         continue;
                     }
                     ChoosableProcedure procedure = entry.getValue();
-                    Log.debug("OptionPROC: "+procedure.getChoice().toString());
+                    /*Log.debug("OptionPROC: "+procedure.getChoice().toString());*/
                     Log.info("Showing procedure: "+procedure.getChoice().toString());
                     optionsProc.add(procedure);
                     choices.add(procedure.getChoice());
@@ -103,13 +103,13 @@ public class ChooseProcedure {
                     runner.setContext(IS_CHOOSEN_PROCEDURE, Boolean.TRUE);
                 } else {
                     Installable choosenIntallable  = optionsInstallable.get(i);
-                    Log.debug("Choosen installable: "+choosenIntallable.toLogString());
+                    /*Log.debug("Choosen installable: "+choosenIntallable.toLogString());*/
                     Procedures.setInstallable(runner, choosenIntallable);
-                    Log.debug("CHOOSEN INSTALLABLE: "+choosenIntallable);
+                    /*Log.debug("CHOOSEN INSTALLABLE: "+choosenIntallable);*/
                     Log.info("The user has choosen this installable: "+choosenIntallable.getChoice().toString());
                     runner.setContext(IS_CHOOSEN_PROCEDURE, Boolean.FALSE);
                 }
-                Log.debug("EXITING CHOOSE ROM");
+                /*Log.debug("EXITING CHOOSE ROM");*/
 
             }
         }.next();

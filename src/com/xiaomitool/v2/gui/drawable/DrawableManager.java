@@ -14,7 +14,7 @@ public class DrawableManager {
     public static final String ERROR = "error.png";
     public static URL getResource(String name){
         URL resourcePath = DrawableManager.class.getResource(name);
-        Log.debug("Resource: "+resourcePath);
+        /*Log.debug("Resource: "+resourcePath);*/
         return resourcePath;
     }
     public static URL getPng(String name){

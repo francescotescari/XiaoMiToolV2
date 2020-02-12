@@ -88,7 +88,7 @@ public class ToolManager {
         LiveFeedbackEasy.runOnFeedbackSent(() -> {
 
 
-                Log.debug("CIAO");
+                /*Log.debug("CIAO");*/
                 for (Stage stage : activeStages){
                     Platform.runLater(new Runnable() {
                         @Override
@@ -98,7 +98,7 @@ public class ToolManager {
                     });
 
                 }
-                Log.debug("Closing finally");
+                /*Log.debug("Closing finally");*/
                 Log.closeLogFile();
                 MutexUtils.unlock();
                 Platform.runLater(new Runnable() {
@@ -149,11 +149,11 @@ public class ToolManager {
             Log.warn("Failed to load old session token");
             return;
         }
-        Log.debug("Old session token: "+json);
+        /*Log.debug("Old session token: "+json);*/
         try {
             JSONObject object = new JSONObject(json);
             XiaomiKeystore.getInstance().setCredentials(object);
-            Log.debug(XiaomiKeystore.getInstance().getUserId());
+            /*Log.debug(XiaomiKeystore.getInstance().getUserId());*/
 
             Platform.runLater(new Runnable() {
                 @Override

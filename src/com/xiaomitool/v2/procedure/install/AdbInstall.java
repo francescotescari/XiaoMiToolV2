@@ -31,7 +31,7 @@ public class AdbInstall {
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Installable installable = Procedures.requireInstallable(runner);
                 runner.setContext(FILE_TO_PUSH, installable.getFinalFile());
-                Log.debug(installable.getFinalFile());
+                /*Log.debug(installable.getFinalFile());*/
                 pushFile().run(runner);
             }
         };

@@ -107,31 +107,31 @@ public class UpdateListener {
         public Debug() {
             super(750);
             addOnAdvancedUpdate((downloaded, totalSize, currentSpeed, averageSpeed, missingTime) -> {
-                Log.debug("["+downloaded+"/"+totalSize+"] ("+(100*downloaded/totalSize)+"%) "+currentSpeed.toString()+" - "+averageSpeed.toString()+", missing "+missingTime.getQuantity()+" "+missingTime.getUnit().toString());
+                /*Log.debug("["+downloaded+"/"+totalSize+"] ("+(100*downloaded/totalSize)+"%) "+currentSpeed.toString()+" - "+averageSpeed.toString()+", missing "+missingTime.getQuantity()+" "+missingTime.getUnit().toString());*/
             });
             addOnStart(new OnStart() {
                 @Override
                 public void run(long totalSize) {
-                    Log.debugLine();
-                    Log.debug("Starting task, size: " + totalSize);
-                    Log.debugLine();
+                    /*Log.debugLine();*/
+                    /*Log.debug("Starting task, size: " + totalSize);*/
+                    /*Log.debugLine();*/
                 }
             });
             addOnFinished(new OnFinished() {
                 @Override
                 public void run(Object subject) {
-                    Log.debugLine();
-                    Log.debug("Task finished: " + subject.toString());
-                    Log.debugLine();
+                    /*Log.debugLine();*/
+                    /*Log.debug("Task finished: " + subject.toString());*/
+                    /*Log.debugLine();*/
                 }
             });
             addOnError(new OnError() {
                 @Override
                 public void run(Exception e) {
-                    Log.debugLine();
-                    Log.debug("Task error: "+e.getMessage());
-                    Log.debug(e.getStackTrace()[0].getFileName()+" : "+e.getStackTrace()[0].getLineNumber());
-                    Log.debugLine();
+                    /*Log.debugLine();*/
+                    /*Log.debug("Task error: "+e.getMessage());*/
+                    /*Log.debug(e.getStackTrace()[0].getFileName()+" : "+e.getStackTrace()[0].getLineNumber());*/
+                    /*Log.debugLine();*/
                 }
             });
         }

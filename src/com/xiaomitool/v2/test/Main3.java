@@ -24,7 +24,8 @@ public class Main3 {
 
 
 
-       /* HungyThread thread = new HungyThread();
+       
+/* HungyThread thread = new HungyThread();
         thread.start();
         Thread.sleep(2000);
         thread.addRunnable(new Runnable() {

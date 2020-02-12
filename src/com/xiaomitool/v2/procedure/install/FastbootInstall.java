@@ -51,7 +51,8 @@ import java.util.stream.Stream;
 import static com.xiaomitool.v2.procedure.install.InstallException.Code.*;
 
 public class FastbootInstall {
-   /* public void flash_tgz(Installable rom, Device device, InstallListener listener) throws InstallException, InterruptedException {
+   
+/* public void flash_tgz(Installable rom, Device device, InstallListener listener) throws InstallException, InterruptedException {
         ProcedureRunner runner = new ProcedureRunner(listener.getGuiListener());
         runner.run(Procedures.requireAccessibile());
         runner.run(Procedures.fetchResources(rom, listener));
@@ -125,7 +126,7 @@ public class FastbootInstall {
                     builder.append("@echo off").append(System.lineSeparator());
                     builder.append("echo Current dir: %~dp0").append(System.lineSeparator());
                 }
-                Log.debug("Total lines: "+lines);
+                /*Log.debug("Total lines: "+lines);*/
                 Pattern p = Pattern.compile("fastboot.+flash\\s+(\\w+)",Pattern.CASE_INSENSITIVE);
                 builder.append("echo Fastboot flash starting").append(System.lineSeparator());
                 for (String line : contentLines){
@@ -268,14 +269,14 @@ public class FastbootInstall {
                     String info = UnlockCommonRequests.userInfo();
                     if (info != null){
                         //TODO
-                        Log.debug(info);
+                        /*Log.debug(info);*/
                         Log.info("Unlock request user info: "+info);
                     }
                     runner.text(LRes.UNLOCK_CHECKING_DEVICE);
                     String alert = UnlockCommonRequests.deviceClear(product);
                     if (alert != null){
                         //TODO
-                        Log.debug(alert);
+                        /*Log.debug(alert);*/
                         Log.info("Unlock request device clear: "+alert);
                     }
                 } catch (XiaomiProcedureException e) {
@@ -306,12 +307,12 @@ public class FastbootInstall {
                             throw new InstallException("Failed to get the unlock data required", InstallException.Code.INFO_RETRIVE_FAILED, "Null response from unlock common request");
                         }
                         Log.info("Unlock request response: "+unlockData);
-                        Log.debug(unlockData);
+                        /*Log.debug(unlockData);*/
                         JSONObject json = new JSONObject(unlockData);
                         int code = json.optInt("code", -100);
                         String description = json.optString("description", "null");
                         String encryptData = json.optString("encryptData", null);
-                        Log.debug(description);
+                        /*Log.debug(description);*/
                         if (code != 0 || encryptData == null) {
                            // throw new InstallException("The server responded, but the unlock is not permitted, code: " + code + ", description: " + description, InstallException.Code.XIAOMI_EXCEPTION, true);
                             ButtonPane unlockButtonPane = new ButtonPane(LRes.TRY_AGAIN, LRes.ABORT);
@@ -349,7 +350,7 @@ public class FastbootInstall {
                             Log.info("This is the strangest way to suppose that the device is unlocked :/");
                         } catch (AdbException e){
                             //Device not in fastboot after 5 seconds = unlock success;
-                            Log.debug("Successful unlock!");
+                            /*Log.debug("Successful unlock!");*/
                             Log.info("The device is not in fastboot after 5 seconds -> should be unlocked");
                         }
                         break;

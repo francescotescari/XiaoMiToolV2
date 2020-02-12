@@ -22,14 +22,14 @@ public class AdbCommunication {
 
     public static void startServer(){
         if (!canInterrupt()){
-            Log.debug("Cannot interrupt adb connection");
+            /*Log.debug("Cannot interrupt adb connection");*/
         }
         AdbCommons.start_server();
 
     }
     public static void killServer(){
         if (!canInterrupt()){
-            Log.debug("Cannot interrupt adb connection");
+            /*Log.debug("Cannot interrupt adb connection");*/
             return;
         }
         AdbCommons.kill_server();
@@ -75,16 +75,16 @@ public class AdbCommunication {
             @Override
             public void run() {
                 while (true) {
-                    Log.debug("R start");
+                    /*Log.debug("R start");*/
                     DeviceManager.refresh(true);
-                    Log.debug("R fin");
+                    /*Log.debug("R fin");*/
                     try {
                         Thread.sleep(REFRESH_TIME_MS);
                     } catch (InterruptedException e) {
                         Log.error("Refresh thread interrupted");
                         Log.printStackTrace(e);
                     }
-                    Log.debug("Refreshing nowwwww");
+                    /*Log.debug("Refreshing nowwwww");*/
                 }
             }
         };

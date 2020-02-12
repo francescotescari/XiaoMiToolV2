@@ -42,7 +42,7 @@ public abstract  class MultiInstallable extends Installable {
         this.currentId = id;
         this.setFinalFile(null);
         this.downloadedFile = null;
-        Log.debug("Multi installable current id: "+id);
+        /*Log.debug("Multi installable current id: "+id);*/
     }
 
     public Installable[] getChildren(){
@@ -72,8 +72,8 @@ public abstract  class MultiInstallable extends Installable {
             }
 
         }
-        Log.debug("MUTLI PARTS");
-        Log.debug(Arrays.asList(parts));
+        /*Log.debug("MUTLI PARTS");*/
+        /*Log.debug(Arrays.asList(parts));*/
         return RNode.sequence(parts);
     }
 

@@ -39,7 +39,8 @@ public class GuiTest extends Application {
         Platform.runLater(new Runnable() {
                               @Override
                               public void run() {
-                                 /* new Thread(new Runnable() {
+                                 
+/* new Thread(new Runnable() {
                                       @Override
                                       public void run() {
                                           try {
@@ -70,7 +71,8 @@ public class GuiTest extends Application {
 
 
 
-                                 /* DeviceImgInstructionPane imgInstructionPane = new DeviceImgInstructionPane(WindowManager.getContentHeight() + 30, WindowManager.getContentHeight() - 10, texts, imgsfx, null);
+                                 
+/* DeviceImgInstructionPane imgInstructionPane = new DeviceImgInstructionPane(WindowManager.getContentHeight() + 30, WindowManager.getContentHeight() - 10, texts, imgsfx, null);
                                   WindowManager.setMainContent(imgInstructionPane);
                                   try {
                                       imgInstructionPane.animate();
@@ -80,7 +82,8 @@ public class GuiTest extends Application {
                               }*/
                               }
                           });
-                /*SidePane sidePane = new SidePane();
+                
+/*SidePane sidePane = new SidePane();
                 ButtonPane buttonPane = new ButtonPane("Prev","Next");
                 AnimatableDeviceView deviceView = new AnimatableDeviceView(DeviceView.DEVICE_18_9, WindowManager.getContentHeight()+30) {
                     @Override
@@ -130,7 +133,8 @@ public class GuiTest extends Application {
         });*/
 
 
-        /*Pane pane = new StackPane();
+        
+/*Pane pane = new StackPane();
         pane.setBackground(WindowManager.DEFAULT_BACKGROUND);
         pane.setPrefSize(1000,700);
 
@@ -152,7 +156,8 @@ public class GuiTest extends Application {
             }
         });
         pane.getChildren().addAll(lb, overlay);*/
-        /*ScrollPane scrollPane = new ScrollPane();
+        
+/*ScrollPane scrollPane = new ScrollPane();
         pane.getChildren().add(scrollPane);
         Text t = new Text(Test.LOREM_IPSUM);
         t.wrappingWidthProperty().bind(scrollPane.widthProperty().subtract(30));
@@ -162,7 +167,8 @@ public class GuiTest extends Application {
         scrollPane.setContent(t);*/
         //pane.setBackground(GuiUtils.backgroundFromColor(new LinearGradient(0,0.8,0,1, true, CycleMethod.NO_CYCLE,new Stop(0, Color.TRANSPARENT), new Stop(1,Color.GREEN))));
 
-        /*Image image = new Image(DrawableManager.getPng("device18_9").toString(),300,300,true,true);
+        
+/*Image image = new Image(DrawableManager.getPng("device18_9").toString(),300,300,true,true);
         DeviceImage deviceImage = new DeviceImage(image,220,35,1920,1080,2360, 1160, new DeviceView.ButtonPosition(410,1150,10,200),new DeviceView.ButtonPosition(610,1150,10,200),new DeviceView.ButtonPosition(880,1150,10,200));
         DeviceRecoveryView deviceView = new DeviceRecoveryView(DEVICE_18_9, 700);
         //deviceView.animateSelectThird(3000);
@@ -175,7 +181,8 @@ public class GuiTest extends Application {
         //setContent(imageView);
         /*setClickVolumeDown(1);
         setClickPower(1);*/
-        /*StackPane anchorPane = new StackPane(deviceView);
+        
+/*StackPane anchorPane = new StackPane(deviceView);
         anchorPane.setBackground(GuiUtils.backgroundFromColor(Color.RED));
         anchorPane.setMaxSize(500,500);
 
@@ -191,7 +198,8 @@ public class GuiTest extends Application {
         //pane.getChildren().add(rectangle);
         //pane.setMaxSize(500,500);
 
-       /* DeviceView deviceView = new DeviceView(DeviceView.DEVICE_18_9, 900);
+       
+/* DeviceView deviceView = new DeviceView(DeviceView.DEVICE_18_9, 900);
         ImageView image = new ImageView(DrawableManager.getPng(DrawableManager.DEVICE_AUTH).toString());
         image.setViewport(new Rectangle2D(0,image.getImage().getHeight()-2160,1080,2160));
         deviceView.setContent(image);
@@ -200,7 +208,8 @@ public class GuiTest extends Application {
     Pane pane1 = GuiUtils.crop(deviceView,0,550,500, 350);
     pane1.setPrefSize(-1,400);
 */
-      /* TextStackPane textStackPane = new TextStackPane(300,300);
+      
+/* TextStackPane textStackPane = new TextStackPane(300,300);
 
       // GuiUtils.debug(textStackPane);
 
@@ -249,7 +258,8 @@ public class GuiTest extends Application {
             }
         }).start();*/
 
-      /*  Scene scene = new Scene(pane);
+      
+/*  Scene scene = new Scene(pane);
         primaryStage.setScene(scene);
         primaryStage.show();*/
 
@@ -289,7 +299,8 @@ public class GuiTest extends Application {
 
 
 
-    /*public static class DeviceView extends StackPane {
+    
+/*public static class DeviceView extends StackPane {
         private com.xiaomitool.v2.test.GuiTest.DeviceView deviceView;
         private StackPane contentPane;
         private ImageView imageView;

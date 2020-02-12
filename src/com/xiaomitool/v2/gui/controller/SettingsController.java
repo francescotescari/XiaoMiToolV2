@@ -174,7 +174,7 @@ public class SettingsController extends DefaultController {
             edir = extractDir.toString();
         }
         TEXT_DOWNLOAD.setText(ddir);
-        Log.debug(TEXT_DOWNLOAD.getLayoutBounds().getWidth());
+        /*Log.debug(TEXT_DOWNLOAD.getLayoutBounds().getWidth());*/
         TEXT_EXTRACT.setText(edir);
         String saveSession = SettingsUtils.getOpt(SettingsUtils.PREF_SAVE_SESSION);
         boolean bool = "true".equalsIgnoreCase(saveSession);
@@ -313,7 +313,7 @@ public class SettingsController extends DefaultController {
                     feedbackPopup.getController().setOnBeforeClose(new RunnableMessage() {
                         @Override
                         public int run() throws InterruptedException {
-                            Log.debug("Closing");
+                            /*Log.debug("Closing");*/
                             textArea.setText("");
                             return 0;
                         }

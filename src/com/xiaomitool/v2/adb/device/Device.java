@@ -72,7 +72,7 @@ public class Device {
         }
         try {
             if (!status.equals(this.status)) {
-                Log.debug("Device " + serial + " status: " + status.toString());
+                /*Log.debug("Device " + serial + " status: " + status.toString());*/
             }
 
             this.status = status;
@@ -133,7 +133,7 @@ public class Device {
     }
 
     public void setConnected(boolean connected) {
-        Log.debug("Set connected for device "+ serial+": "+connected);
+        /*Log.debug("Set connected for device "+ serial+": "+connected);*/
         isConnected = connected;
         if (connected){
             deviceActiveSem.setPermits(1);
@@ -158,7 +158,7 @@ public class Device {
     private boolean reboot(Status toStatus, boolean force, boolean wait) throws AdbException, InterruptedException {
         requireAccessibile();
         if (!force && toStatus.equals(this.status)) {
-            Log.debug("Device doesn't need reboot: current status ("+this.status+") is the same as wanted status ("+toStatus+")");
+            /*Log.debug("Device doesn't need reboot: current status ("+this.status+") is the same as wanted status ("+toStatus+")");*/
             return true;
         }
         return rebootInternal(toStatus,wait);

@@ -39,7 +39,8 @@ public class AdbRunner extends ProcessRunner {
         list.addAll(arguments);
         return list;
     }
-    /*@Override
+    
+/*@Override
     protected void attachStdOutErrReader(){
 
 

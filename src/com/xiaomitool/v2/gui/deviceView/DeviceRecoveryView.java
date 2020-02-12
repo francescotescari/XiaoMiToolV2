@@ -35,17 +35,17 @@ public class DeviceRecoveryView extends DeviceView implements Animatable {
     public void selectOption(int index){
         if (selectRectangle == null){
             selectRectangle = buildSelectRectangle();
-            Log.debug("Rectangle built");
+            /*Log.debug("Rectangle built");*/
 
         }
         try {
             imageWrapPane.getChildren().add(selectRectangle);
 
         } catch (Throwable t){
-            Log.debug("Rectangle already present");
+            /*Log.debug("Rectangle already present");*/
         }
         double layoutY = NumberUtils.double2int((736+161*index)*scaleRatio)+NumberUtils.double2int(imageOffsetY);
-        Log.debug("Layout y: "+layoutY);
+        /*Log.debug("Layout y: "+layoutY);*/
         selectRectangle.setLayoutY(layoutY);
     }
 

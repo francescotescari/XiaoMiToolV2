@@ -48,12 +48,12 @@ public class GenericInstall {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Log.debug("Downloading resource");
+                /*Log.debug("Downloading resource");*/
                 Installable installable = Procedures.requireInstallable(runner);
                 Log.info("Starting required resource download");
                 if(!installable.isNeedDownload()){
                     Log.info("No need to download resources, skip");
-                    Log.debug("No need to download");
+                    /*Log.debug("No need to download");*/
                     return;
                 }
                 if (StrUtils.isNullOrEmpty(installable.getDownloadUrl())){
@@ -80,11 +80,11 @@ public class GenericInstall {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Log.debug("Extracting resource");
+                /*Log.debug("Extracting resource");*/
                 Installable installable = Procedures.requireInstallable(runner);
                 Log.info("Starting extraction of resources");
                 if(!installable.isNeedExtraction()){
-                    Log.debug("No need to extract");
+                    /*Log.debug("No need to extract");*/
                     Log.info("There is no need to extract, skip");
                     return;
                 }
@@ -181,7 +181,7 @@ public class GenericInstall {
                     Log.info("Stashing the installable to satisfy the requirements: "+installable.toLogString());
                     runner.setContext(KEY_STASHED_INSTALLABLE, installable);
                 }
-                Log.debug("Satisfying all requirements");
+                /*Log.debug("Satisfying all requirements");*/
                 StatedProcedure toSatisfy = InstallationRequirement.satisfyNextRequirement(Procedures.requireDevice(runner),installable);
                 StatedProcedure copy = null;
                 while (toSatisfy != null){
@@ -191,7 +191,7 @@ public class GenericInstall {
                             RebootDevice.rebootNoWaitIfConnected().run(runner);
                             ActionsDynamic.WAIT_USB_DEBUG_ENABLE(device).run();
                         }
-                        Log.debug("Statisfying requrement: " + toSatisfy.toString());
+                        /*Log.debug("Statisfying requrement: " + toSatisfy.toString());*/
                         Log.info("Next procedure to satisfy: " + toSatisfy.getInstallProcedure().toString(2));
                         toSatisfy.getInstallProcedure().run(runner);
                         copy = toSatisfy;
@@ -207,7 +207,7 @@ public class GenericInstall {
                         Log.warn("Starting next requirement satisfaction without device active");
                     }
                 }
-                Log.debug("Stasfied all requirments");
+                /*Log.debug("Stasfied all requirments");*/
                 stashed = (Installable) runner.getContext(KEY_STASHED_INSTALLABLE);
 
 
@@ -219,7 +219,7 @@ public class GenericInstall {
                     }
 
                     Log.info("Reloading the stashed installable: "+stashed.toLogString());
-                    Log.debug("Reloading stashed installable: "+stashed);
+                    /*Log.debug("Reloading stashed installable: "+stashed);*/
                     Procedures.setInstallable(runner, stashed);
                 }
             }
@@ -335,7 +335,8 @@ public class GenericInstall {
                 ChooseProcedure.chooseRomCategory(),
                 selectRomAndGo()
             );
-        /*RebootDevice.rebootNoWaitIfConnected().run(runner);
+        
+/*RebootDevice.rebootNoWaitIfConnected().run(runner);
         Log.debug("PRO0 CHOOSE CAT");
         ChooseProcedure.chooseRomCategory().run(runner);
         Log.debug("PRO0 CHOOSE ROM");

@@ -71,7 +71,7 @@ public class AdbPushTask extends Task {
                 } catch (Throwable t){
                     update(-1);
                 }
-                Log.debug(arg.toString());
+                /*Log.debug(arg.toString());*/
             }
         });
         try {

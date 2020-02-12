@@ -103,7 +103,7 @@ public class LoginController extends DefaultController {
         pointer.pointed = new CookieUtils.EventCookieAdd() {
             @Override
             public boolean run(URI url, HttpCookie cookie) {
-                Log.debug("New cookie: url: "+url.toString()+", cookie: "+cookie);
+                /*Log.debug("New cookie: url: "+url.toString()+", cookie: "+cookie);*/
                 String name = cookie.getName();
                 if ("passToken".equals(name)){
                     passToken = cookie.getValue();
@@ -121,7 +121,7 @@ public class LoginController extends DefaultController {
         };
         CookieUtils.addCookieListener((CookieUtils.EventCookieAdd) pointer.pointed);
         ENGINE.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
-            Log.debug("New browser state: old: "+oldValue+", new: "+newValue);
+            /*Log.debug("New browser state: old: "+oldValue+", new: "+newValue);*/
             if (loadingLocalContent){
                 return;
             }
@@ -139,7 +139,7 @@ public class LoginController extends DefaultController {
     }
 
     private void loginDone(){
-        Log.debug("Login done succesfully");
+        /*Log.debug("Login done succesfully");*/
         Log.info("Logged in succesfulyl: "+userId);
         XiaomiKeystore.getInstance().setCredentials(userId,passToken,deviceId);
         Platform.runLater(new Runnable() {
@@ -266,7 +266,7 @@ public class LoginController extends DefaultController {
         uidLabel.setText(userId);
         loggedIn = !userId.isEmpty();
         String text = loggedIn ? "Logout" : "Login";
-        Log.debug("Setting loggedIn to: "+loggedIn);
+        /*Log.debug("Setting loggedIn to: "+loggedIn);*/
         Hyperlink link = (Hyperlink) GuiObjects.getNode(GuiObjects.LOGIN_LINK);
         if (link == null){
             Log.error("Cannot set login hyperLink: null object");

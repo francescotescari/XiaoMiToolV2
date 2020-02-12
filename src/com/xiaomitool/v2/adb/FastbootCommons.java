@@ -120,7 +120,7 @@ public class FastbootCommons {
         }
         String output = runner.getOutputString();
         if (runner.getExitValue() != 0){
-            Log.debug("Output of flash is failed");
+            /*Log.debug("Output of flash is failed");*/
             if (output != null) {
                 if (output.toLowerCase().contains("anti-rollback") || output.toLowerCase().contains("rollback version")){
                     return "err:anti-rollback";
@@ -164,7 +164,8 @@ public class FastbootCommons {
             LAST_ERROR_MAP.put(device,output);
         }
         return runner;
-        /**/
+        
+/**/
     }
 
     public static String boot(String serial, File finalFile) {

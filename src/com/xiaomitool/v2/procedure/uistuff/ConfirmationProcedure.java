@@ -30,7 +30,7 @@ public class ConfirmationProcedure {
                 runner.setContext(KEY_BOOL_CONFIRM_STEPS, Boolean.TRUE);
                 if (requirements.isEmpty()){
                     Log.info("No additional requirements are needed for this installation");
-                    Log.debug("No requirements for this installation");
+                    /*Log.debug("No requirements for this installation");*/
                     return;
                 }
                 StringBuilder text = new StringBuilder(LRes.CONFIRM_REQUIREMENTS_TEXT.toString(LRes.CONTINUE.toString(), LRes.CANCEL.toString()));

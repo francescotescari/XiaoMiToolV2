@@ -42,14 +42,14 @@ public class FeedbackOutputStream extends OutputStream {
         }
     }
     public void setUserMessage(String message) {
-        Log.debug("Usermessage pre: "+this.userMessage);
-        Log.debug("Usermessage change: "+message);
+        /*Log.debug("Usermessage pre: "+this.userMessage);*/
+        /*Log.debug("Usermessage change: "+message);*/
         if (message != null) {
             this.userMessage = new FeedbackChunck(message, FLAG_USERMESSAGE);
         } else {
             this.userMessage = null;
         }
-        Log.debug("Usermessage post: "+this.userMessage);
+        /*Log.debug("Usermessage post: "+this.userMessage);*/
     }
 
 
@@ -99,7 +99,7 @@ public class FeedbackOutputStream extends OutputStream {
     public InputStream getReadInputStream(){
         List<InputStream> streamList = new ArrayList<>();
         if (userMessage != null){
-            Log.debug("Adding usermessage to chucks");
+            /*Log.debug("Adding usermessage to chucks");*/
             streamList.add(new FeedbackChunckInputStream(userMessage));
         }
         for (FeedbackChunck dataChunk : dataChunks){

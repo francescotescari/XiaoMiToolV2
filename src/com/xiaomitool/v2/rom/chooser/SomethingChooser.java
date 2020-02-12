@@ -55,7 +55,7 @@ public abstract class SomethingChooser<T> {
     protected LinkedHashMap<String, T> hashMap = new LinkedHashMap<>();
 
     public void add(String id, T obj){
-        Log.debug("Add to chooser");
+        /*Log.debug("Add to chooser");*/
        // Log.printStackTrace(new Exception());
         this.hashMap.put(id, obj);
     }

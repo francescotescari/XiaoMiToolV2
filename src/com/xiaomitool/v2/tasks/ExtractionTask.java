@@ -77,7 +77,7 @@ public class ExtractionTask extends Task {
             if (!validOutputDir) {
 
                 dirExtractTo = SettingsUtils.getExtractFile(fileToExtract, index);
-                Log.debug("Finding new extraction directory: "+dirExtractTo.toString());
+                /*Log.debug("Finding new extraction directory: "+dirExtractTo.toString());*/
             }
             validOutputDir = true;
             if (dirExtractTo.exists()) {

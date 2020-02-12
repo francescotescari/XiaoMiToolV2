@@ -46,7 +46,7 @@ public class EasyResponse {
             if (m.find()){
                 String key = m.group(1);
                 String value = m.group(2);
-                Log.debug("Cookie found: "+key+" - "+value);
+                /*Log.debug("Cookie found: "+key+" - "+value);*/
 
                 toReturn.merge(key, value, new BiFunction<String, String, String>() {
                     @Override

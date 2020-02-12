@@ -95,7 +95,8 @@ public class DragAndDropPane extends StackPane {
             public void handle(DragEvent event) {
                 if (event.getGestureSource() != this
                         && event.getDragboard().hasFiles()) {
-                    /* allow for both copying and moving, whatever user chooses */
+                    
+/* allow for both copying and moving, whatever user chooses */
                     event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                 }
                 event.consume();
@@ -125,12 +126,13 @@ public class DragAndDropPane extends StackPane {
                         }
                         if (success) {
                             inputFile.set(path);
-                            Log.debug(path.toString());
+                            /*Log.debug(path.toString());*/
                         }
 
                     }
                 }
-                /* let the source know whether the string was successfully
+                
+/* let the source know whether the string was successfully
                  * transferred and used */
                 event.setDropCompleted(success);
 
@@ -143,7 +145,7 @@ public class DragAndDropPane extends StackPane {
                 File file = FileUtils.selectFile(LRes.FILE_PLEASE_SELECT.toString("twrp"), filters);
                 if (file != null){
                     inputFile.set(file);
-                    Log.debug(file);
+                    /*Log.debug(file);*/
                 }
             }
         });

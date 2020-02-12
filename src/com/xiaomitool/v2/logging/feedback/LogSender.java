@@ -150,9 +150,9 @@ public class LogSender {
                 try {
                     InflaterInputStream inflaterInputStream = new InflaterInputStream(new ByteArrayInputStream(byteMerge(data, ending)), new Inflater(true));
                     IOUtils.copy(inflaterInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
-                    Log.debug("TEST SUCCESS! ");
+                    /*Log.debug("TEST SUCCESS! ");*/
                 }catch (IOException e){
-                    Log.debug("TEST FAILED: ");
+                    /*Log.debug("TEST FAILED: ");*/
                     Log.printStackTrace(e);
                 }
 

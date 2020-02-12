@@ -178,7 +178,7 @@ public abstract class Installable extends CommandClass implements Choiceable, In
         if (fetchResourceThread != null && fetchResourceThread.isAlive()){
             return;
         }
-        Log.debug("Fetching installable resources");
+        /*Log.debug("Fetching installable resources");*/
         resourceReady.setPermits(0);
         lastException = null;
         Runnable runnable = new Runnable() {
@@ -186,22 +186,22 @@ public abstract class Installable extends CommandClass implements Choiceable, In
             public void run() {
                 resourceReady.setPermits(0);
                 lastException = null;
-                Log.debug("Fetching installable resource file");
+                /*Log.debug("Fetching installable resource file");*/
                 try {
                     while (true) {
-                        Log.debug("Checking resource status");
+                        /*Log.debug("Checking resource status");*/
                         if (getFinalFile() != null) {
-                            Log.debug("Resource file fetched succesfully");
+                            /*Log.debug("Resource file fetched succesfully");*/
                             break;
                         } else if (getDownloadedFile() != null) {
-                            Log.debug("Starting resource file extraction");
+                            /*Log.debug("Starting resource file extraction");*/
                             finalFile = (File) extractInternal(extractListener);
-                            Log.debug("Resource file extracted succesfully");
+                            /*Log.debug("Resource file extracted succesfully");*/
                             downloadedFile = null;
                         } else if (getDownloadUrl() != null) {
-                            Log.debug("Starting resource file download");
+                            /*Log.debug("Starting resource file download");*/
                             downloadedFile = (File) downloadInternal(downloadListener);
-                            Log.debug("Resource file downloaded succesfully");
+                            /*Log.debug("Resource file downloaded succesfully");*/
                             downloadUrl = null;
                         } else {
 

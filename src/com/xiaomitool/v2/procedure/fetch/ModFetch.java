@@ -89,7 +89,7 @@ public class ModFetch {
 
 
                     };
-                    Log.debug(mZip.getDownloadUrl());
+                    /*Log.debug(mZip.getDownloadUrl());*/
                     Procedures.setInstallable(runner,multiInstallable);
                 } catch (CustomHttpException e) {
                     throw new InstallException(e);

@@ -110,7 +110,7 @@ public class UpdateUtils {
     }
 
     private static void removePendingUpdates(){
-        Log.debug("Starting remove pending update thread");
+        /*Log.debug("Starting remove pending update thread");*/
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -118,14 +118,14 @@ public class UpdateUtils {
                 try {
                     Path currentJarDir = ResourcesManager.getCurrentJarDirPath();
                     Path pendingUpdate = currentJarDir.resolve(ActionsStatic.XMT_UPDATE_FILENAME);
-                    Log.debug("Checking if update file "+pendingUpdate+" exists");
+                    /*Log.debug("Checking if update file "+pendingUpdate+" exists");*/
                     if (Files.exists(pendingUpdate)){
-                        Log.debug("It exists");
+                        /*Log.debug("It exists");*/
                         Files.delete(pendingUpdate);
                     }
                     return;
                 } catch (Throwable t){
-                    Log.debug("Delete error: "+t.getMessage());
+                    /*Log.debug("Delete error: "+t.getMessage());*/
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException ignored) {
@@ -142,7 +142,7 @@ public class UpdateUtils {
         Path sourceXMT = ResourcesManager.getCurrentJarPath();
         Path dstXMT = currentDir.resolve("XiaoMiTool.jar");
         if (!MutexUtils.waitUnlock(10)){
-            Log.debug("Mutex unlock wait failed");
+            /*Log.debug("Mutex unlock wait failed");*/
         }
         Files.copy(sourceXMT,dstXMT, StandardCopyOption.REPLACE_EXISTING);
         if(!Files.exists(dstXMT)){

@@ -144,12 +144,12 @@ public class GenericFetch {
         return RNode.skipOnException(RNode.sequence(TwrpFetch.fetchTwrp(), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Log.debug("Checking if twrp auto found");
+                /*Log.debug("Checking if twrp auto found");*/
                 Installable installable = Procedures.requireInstallable(runner);
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 chooser.add(InstallableChooser.ID_INSTALL_TWRP,installable);
                 Procedures.setInstallable(runner,null);
-                Log.debug("Auto twrp added");
+                /*Log.debug("Auto twrp added");*/
             }
         }), RNode.sequence(ModFetch.fetchMagiskStable(), new RInstall() {
             @Override

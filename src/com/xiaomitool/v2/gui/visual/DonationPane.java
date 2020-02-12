@@ -60,7 +60,7 @@ public class DonationPane extends ButtonPane {
                 if (dontCoor == null){
                     dontCoor = GuiUtils.getCenterCoordinates(dontDonate);
                     if (dontCoor != null) {
-                        Log.debug("Dont coor: " +dontCoor[0]+" . "+dontCoor[1]);
+                        /*Log.debug("Dont coor: " +dontCoor[0]+" . "+dontCoor[1]);*/
                     }
                 } else {
                     distanceFromDont = GuiUtils.distanceBetween(event.getSceneX(), event.getSceneY(), dontCoor[0], dontCoor[1])+1;

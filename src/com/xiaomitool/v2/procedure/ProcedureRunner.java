@@ -165,7 +165,7 @@ public class ProcedureRunner extends GuiListener {
     private HashMap<String, Object> context = new HashMap<>();
     public void setContext(String key, Object value){
         context.put(key,value);
-        Log.debug("Context var set: "+key+" -> "+StrUtils.str(value));
+        /*Log.debug("Context var set: "+key+" -> "+StrUtils.str(value));*/
     }
 
     public void stashContext(String key, Object newValue){
@@ -181,7 +181,7 @@ public class ProcedureRunner extends GuiListener {
     public Object getContext(String key){
 
         Object res = context.get(key);
-        Log.debug("Getting context var: "+key+" -> "+StrUtils.str(res));
+        /*Log.debug("Getting context var: "+key+" -> "+StrUtils.str(res));*/
         return res;
     }
     public Object requireContext(String key) throws InstallException {

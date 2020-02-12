@@ -27,7 +27,8 @@ public class Main {
     public static int numThread = 10;
     public static void main(String[] argv) throws IOException, XiaomiProcedureException, CustomHttpException {
 
-        /*if (argv.length < 2){
+        
+/*if (argv.length < 2){
             System.err.println("Usage: MiOtaUpdates.jar passToken userId");
             System.exit(1);
         }*/
@@ -58,7 +59,7 @@ public class Main {
         requestParams = new DefaultRequestParams("dipper","9.4.26","9.0");
         //Log.debug(MiuiRomOta.otaV3_request(requestParams));
         //Log.debug(UnlockCommonRequests.userInfo());
-        Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIAEQdrQ0Pv0obXkYogLoo1pv2gMGZGlwcGVyAgQjkKEq","dipper","","",""));
+        /*Log.debug(UnlockCommonRequests.ahaUnlock("VQEBIAEQdrQ0Pv0obXkYogLoo1pv2gMGZGlwcGVyAgQjkKEq","dipper","","",""));*/
         //keystore.requireServiceKeyAndToken("miuibbs");
         //Log.debug(UnlockCommonRequests.ahaUnlock(Base64.encodeBase64String(new byte[]{0x55,0x01,0x01,0x12,0x01,0x10,0x51,0x67,(byte) 0xd7,0x60,(byte) 0xfb,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x03,0x06,0x64,0x69,0x70,0x70,0x65,0x72,0x02,0x04,(byte) 0xbd,0x6c,0x2f,(byte) 0xf9}),"whyred","","",""));
         if (true){
@@ -69,7 +70,7 @@ public class Main {
         params3.setZone(2);
         params3.setSerialNumber(SerialNumber.fromHexString("AAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHAAAABB"));
         //params3.setPkg("e3aaed0507a830eaaf503dcc7c1977e0");
-        Log.debug(MiuiRomOta.otaV3_request(params3));
+        /*Log.debug(MiuiRomOta.otaV3_request(params3));*/
         if (true){
             return;
         }
@@ -77,8 +78,9 @@ public class Main {
         //*keystore.requireServiceKeyAndToken("miuiromota");
         RequestParams params = new DeviceRequestParams("dipper","9.3.7","9.0",Branch.DEVELOPER,SerialNumber.fromHexString("0xb7f63ec7"),3);
         //params.setPkg("3acee2689def952a29dc70978c9f63fa");
-        Log.debug(MiuiRomOta.otaV3_request(params));
-        /*params.setPkg("d8f3965aebf2dbfb0291fb21be6cff1b");*/
+        /*Log.debug(MiuiRomOta.otaV3_request(params));*/
+        
+/*params.setPkg("d8f3965aebf2dbfb0291fb21be6cff1b");*/
         MiuiRomOta.otaV3_request(params);
         if (true){
             return;
@@ -113,7 +115,7 @@ public class Main {
                             continue;
                         }
                         if (res.size() != 0) {
-                            Log.debug("SIIZE:" + res.size());
+                            /*Log.debug("SIIZE:" + res.size());*/
                             System.exit(0);
                         }
                     }
@@ -126,7 +128,8 @@ public class Main {
             }
         }
 
-        /*
+        
+/*
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -236,7 +239,7 @@ public class Main {
                 params.setPkg(words[4]);
             }
             try {
-                Log.debug(MiuiRomOta.otaV3_request(params).toString());
+                /*Log.debug(MiuiRomOta.otaV3_request(params).toString());*/
             } catch (XiaomiProcedureException e) {
                 e.printStackTrace();
             }
@@ -244,7 +247,8 @@ public class Main {
         //keystore.setCredentials("1606054557","V1:HzW8ovuUt6U+f6kJqUrMNZM3r6TuRSe2jgLLXMPMiP61yN4DiTWRU8UfFoEMlcHf8CHzFw/G0cJM3gcPlCWDAMYH8XjoUmpa8HP/6xVSFYXF7gs0cPWVxWsmYScZwKRoCmz40TP0mT9/qnyu7CcvGp1nejcF5YBxvQF97VNnuEdxHnnofBGJiO1wcwVYc1+Rhz/nEB0wKFJ2YhG9Mn5VUA16HFLtRojPEX599zoEXNHETvYHnD4xHkY875Lv1nhk");
         //Log.debugArray(keystore.requireServiceKeyAndToken("miuiromota"));
         //Log.debugArray(keystore.requireServiceKeyAndToken("unlockApi"));
-        /*RequestParams params = new DefaultRequestParams("dipper","8.5.30","8.1");
+        
+/*RequestParams params = new DefaultRequestParams("dipper","8.5.30","8.1");
         MiuiRomOta.otaV3_request(params);
         RequestParams params2 = new DefaultRequestParams("dipper","8.6.12","8.1");
         MiuiRomOta.otaV3_request(params2);

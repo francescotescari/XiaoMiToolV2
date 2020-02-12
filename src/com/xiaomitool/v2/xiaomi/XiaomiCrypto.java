@@ -23,7 +23,7 @@ public class XiaomiCrypto {
             try {
                 return Hex.decodeHex(hex.toCharArray());
             } catch (DecoderException e) {
-                Log.debug("Failed to build hmacKey: ");
+                /*Log.debug("Failed to build hmacKey: ");*/
             }
             return null;
 
@@ -52,16 +52,16 @@ public class XiaomiCrypto {
     }
     public static String cloudService_signHmac(byte[] hmacKey, String method, String path, String query){
         String hmacData = method+"\n"+path+"\n"+query;
-        Log.debug("hmacData: "+hmacData);
+        /*Log.debug("hmacData: "+hmacData);*/
         String hmac = HmacUtils.hmacSha1Hex(hmacKey, hmacData.getBytes(ResourcesConst.interalCharset()));
-        Log.debug("Hmac: "+hmac);
+        /*Log.debug("Hmac: "+hmac);*/
         return hmac;
     }
     public static String cloudService_signSha1(String key, String method, String path, String query){
         String shaData = method+"&"+path+"&"+query+"&"+key;
-        Log.debug("shaData: "+shaData);
+        /*Log.debug("shaData: "+shaData);*/
         String sha = Hash.sha1Base64(shaData);
-        Log.debug("Sha1: "+sha);
+        /*Log.debug("Sha1: "+sha);*/
         return sha;
     }
 }

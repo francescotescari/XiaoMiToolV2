@@ -15,7 +15,7 @@ public class MainR {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Log.debug("ONE RUNNING");
+                /*Log.debug("ONE RUNNING");*/
             }
         };
     }
@@ -24,7 +24,7 @@ public class MainR {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage {
-                Log.debug("TWO RUNNING");
+                /*Log.debug("TWO RUNNING");*/
             }
         };
     }
@@ -33,7 +33,7 @@ public class MainR {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage {
-                Log.debug("THREE RUNNING");
+                /*Log.debug("THREE RUNNING");*/
                 throw new InstallException(new CustomHttpException("LOL"));
             }
         };

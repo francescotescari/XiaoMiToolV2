@@ -51,7 +51,7 @@ public class Twrp {
         String toFind = "twrp_"+codename;
         String betterFid = null;
         for (AfhRequest.AfhEntry entry : entries){
-            Log.debug("Looking afh entry: "+entry.getFilename());
+            /*Log.debug("Looking afh entry: "+entry.getFilename());*/
             String name = entry.getFilename().toLowerCase();
             if (name.contains(toFind)){
                 betterFid = entry.getFid();

@@ -83,7 +83,7 @@ public class RebootDevice {
                 try {
                     device.rebootNoWait(Device.Status.DEVICE,false);
                 } catch (Throwable e) {
-                    Log.debug("Device not rebooted, but it doesn't matter");
+                    /*Log.debug("Device not rebooted, but it doesn't matter");*/
                 }
             }
         };
@@ -101,15 +101,15 @@ public class RebootDevice {
                 }
                 boolean shouldRebootAgain = false;
                 while (true) {
-                    Log.debug(device.getStatus());
+                    /*Log.debug(device.getStatus());*/
                     try {
                         rebootRecovery(true, false).setFlag(RNode.FLAG_THROWRAWEXCEPTION, true).run(runner);
                         return;
                     } catch (InstallException e) {
-                        Log.debug("Executing got here");
-                        Log.debug(e);
-                        Log.debug(e.getMessage());
-                        Log.debug(e.getCode());
+                        /*Log.debug("Executing got here");*/
+                        /*Log.debug(e);*/
+                        /*Log.debug(e.getMessage());*/
+                        /*Log.debug(e.getCode());*/
                         ButtonPane buttonPane = new ButtonPane(LRes.TRY_AGAIN, LRes.ABORT);
                         buttonPane.setContentText(LRes.REBOOT_RECOVERY_FAILED.toString(e.getMessage()));
 
@@ -142,7 +142,7 @@ public class RebootDevice {
                         }
 
                     } finally {
-                        Log.debug("Finally got executed");
+                        /*Log.debug("Finally got executed");*/
                     }
                 }
             }
@@ -186,7 +186,7 @@ public class RebootDevice {
                 }
                 boolean shouldRebootAgain = false;
                 while (true) {
-                    Log.debug(device.getStatus());
+                    /*Log.debug(device.getStatus());*/
                     try {
                         rebootBootloader(true, false).setFlag(RNode.FLAG_THROWRAWEXCEPTION, true).run(runner);
                         return;
@@ -269,7 +269,7 @@ public class RebootDevice {
                 }
                 boolean shouldRebootAgain = false;
                 while (true) {
-                    Log.debug(device.getStatus());
+                    /*Log.debug(device.getStatus());*/
                     try {
                         rebootStockRecovery(false).setFlag(RNode.FLAG_THROWRAWEXCEPTION, true).run(runner);
                         return;

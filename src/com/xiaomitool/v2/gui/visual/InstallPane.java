@@ -56,12 +56,12 @@ public class InstallPane extends StackPane {
                 Log.log("FATAL",exception.toString(),true);
                 Log.exc(exception);
                 Log.exc(new Exception("TraceBackException"));
-                Log.debug(StrUtils.exceptionToString(new Exception()));
+                /*Log.debug(StrUtils.exceptionToString(new Exception()));*/
                 Log.printStackTrace(exception);
                 //exception.printStackTrace();
-                Log.debug("GUI LISTENER EXCEPTION:");
-                Log.debug(exception.getMessage());
-                Log.debug(exception.getCode().toString());
+                /*Log.debug("GUI LISTENER EXCEPTION:");*/
+                /*Log.debug(exception.getMessage());*/
+                /*Log.debug(exception.getCode().toString());*/
                 String stackTrace = StrUtils.exceptionToString(exception);
                 int len = stackTrace.length();
                 stackTrace = StrUtils.firstNLines(stackTrace,5);

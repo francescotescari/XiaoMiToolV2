@@ -81,7 +81,7 @@ public class ProcessRunner {
         processNumber++;
         pNum = processNumber;
         Log.log("PSTA", "Start process ("+processNumber+"):"+stringBuilder.toString(), true);
-        Log.debug("Process args: ["+String.join(" ",args)+"]");
+        /*Log.debug("Process args: ["+String.join(" ",args)+"]");*/
         ProcessBuilder builder = new ProcessBuilder(args);
         builder.redirectErrorStream(true);
         builder.redirectOutput(ProcessBuilder.Redirect.PIPE);
@@ -91,7 +91,8 @@ public class ProcessRunner {
         Process proc = builder.start();
         IOThrower = new Thrower<>();
 
-        /*OutputStream outputStream = proc.getOutputStream();
+        
+/*OutputStream outputStream = proc.getOutputStream();
         if (outputStream != null){
             outputStream.close();
         }*/
@@ -104,7 +105,7 @@ public class ProcessRunner {
                     Scanner scanner = new Scanner(inputStream);
                     scanner.useDelimiter(Pattern.compile("[\\r\\n;]+"));
                     String data;
-                    Log.debug("Starting process output read");
+                    /*Log.debug("Starting process output read");*/
                     while (scanner.hasNextLine()) {
                         data = manageLineOutput(scanner.nextLine());
                         if (data == null) {
@@ -119,7 +120,7 @@ public class ProcessRunner {
                             toDo.run(data);
                         }
                     }
-                    Log.debug("Process has no more output lines");
+                    /*Log.debug("Process has no more output lines");*/
                 } catch (Exception e){
                     //IOThrower.set(e);
 
@@ -137,7 +138,7 @@ public class ProcessRunner {
         LinkedList<String> list = new LinkedList<>();
         list.add(executable.toString());
         list.addAll(arguments);
-        Log.debug("New process: "+list.toString());
+        /*Log.debug("New process: "+list.toString());*/
 
         return list;
     }
@@ -181,7 +182,7 @@ public class ProcessRunner {
             setStatus(ProcessStatus.FINISHED);
             this.exitValue = process.exitValue();
         } catch (InterruptedException e) {
-            Log.debug("Thread interruped while waiting process");
+            /*Log.debug("Thread interruped while waiting process");*/
             Log.error("Process ("+pNum+") wait timeout ("+timeout+") or interrupted: "+e.getMessage());
 
             this.exitValue = -1;
@@ -191,7 +192,7 @@ public class ProcessRunner {
             process.destroyForcibly();
         }
         Log.info("Process ("+pNum+") ended with exit code: "+exitValue+", output len: "+ StrUtils.lenght(this.getOutputString()));
-        Log.debug("Processe ended with exit code "+this.exitValue);
+        /*Log.debug("Processe ended with exit code "+this.exitValue);*/
         return this.exitValue;
     }
 

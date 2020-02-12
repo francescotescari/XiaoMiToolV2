@@ -37,8 +37,8 @@ public class LineScanner {
             return;
         }
         String data = new String(buffer,0,len);
-        Log.debug("Line scan data");
-        Log.debug(data.replace("\r","\\r").replace("\n","\\n"));
+        /*Log.debug("Line scan data");*/
+        /*Log.debug(data.replace("\r","\\r").replace("\n","\\n"));*/
         String[] lines = data.split("(\\r|\\n)");
         if (builder != null){
             builder.append(lines[0]);

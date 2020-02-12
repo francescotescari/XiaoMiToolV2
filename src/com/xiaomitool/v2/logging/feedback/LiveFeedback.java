@@ -8,50 +8,61 @@ public final class LiveFeedback {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
   }
-  /**
+  
+/**
    * Protobuf enum {@code feedback.FeedbackType}
    */
   public enum FeedbackType
       implements com.google.protobuf.ProtocolMessageEnum {
-    /**
+    
+/**
      * <code>ERROR = 0;</code>
      */
     ERROR(0, 0),
-    /**
+    
+/**
      * <code>SUCCESS = 1;</code>
      */
     SUCCESS(1, 1),
-    /**
+    
+/**
      * <code>LOG = 2;</code>
      */
     LOG(2, 2),
-    /**
+    
+/**
      * <code>OPEN = 3;</code>
      */
     OPEN(3, 3),
-    /**
+    
+/**
      * <code>CLOSE = 4;</code>
      */
     CLOSE(4, 4),
     ;
 
-    /**
+    
+/**
      * <code>ERROR = 0;</code>
      */
     public static final int ERROR_VALUE = 0;
-    /**
+    
+/**
      * <code>SUCCESS = 1;</code>
      */
     public static final int SUCCESS_VALUE = 1;
-    /**
+    
+/**
      * <code>LOG = 2;</code>
      */
     public static final int LOG_VALUE = 2;
-    /**
+    
+/**
      * <code>OPEN = 3;</code>
      */
     public static final int OPEN_VALUE = 3;
-    /**
+    
+/**
      * <code>CLOSE = 4;</code>
      */
     public static final int CLOSE_VALUE = 4;
@@ -121,53 +132,64 @@ public final class LiveFeedback {
       // @@protoc_insertion_point(interface_extends:feedback.Feedback)
       com.google.protobuf.MessageOrBuilder {
 
-    /**
+    
+/**
      * <code>required .feedback.FeedbackType type = 1;</code>
      */
     boolean hasType();
-    /**
+    
+/**
      * <code>required .feedback.FeedbackType type = 1;</code>
      */
     com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackType getType();
 
-    /**
+    
+/**
      * <code>required int64 time = 2;</code>
      */
     boolean hasTime();
-    /**
+    
+/**
      * <code>required int64 time = 2;</code>
      */
     long getTime();
 
-    /**
+    
+/**
      * <code>optional string quickMessage = 3;</code>
      */
     boolean hasQuickMessage();
-    /**
+    
+/**
      * <code>optional string quickMessage = 3;</code>
      */
     java.lang.String getQuickMessage();
-    /**
+    
+/**
      * <code>optional string quickMessage = 3;</code>
      */
     com.google.protobuf.ByteString
         getQuickMessageBytes();
 
-    /**
+    
+/**
      * <code>optional string longMessage = 4;</code>
      */
     boolean hasLongMessage();
-    /**
+    
+/**
      * <code>optional string longMessage = 4;</code>
      */
     java.lang.String getLongMessage();
-    /**
+    
+/**
      * <code>optional string longMessage = 4;</code>
      */
     com.google.protobuf.ByteString
         getLongMessageBytes();
   }
-  /**
+  
+/**
    * Protobuf type {@code feedback.Feedback}
    */
   public static final class Feedback extends
@@ -289,13 +311,15 @@ public final class LiveFeedback {
     private int bitField0_;
     public static final int TYPE_FIELD_NUMBER = 1;
     private com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackType type_;
-    /**
+    
+/**
      * <code>required .feedback.FeedbackType type = 1;</code>
      */
     public boolean hasType() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
-    /**
+    
+/**
      * <code>required .feedback.FeedbackType type = 1;</code>
      */
     public com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackType getType() {
@@ -304,13 +328,15 @@ public final class LiveFeedback {
 
     public static final int TIME_FIELD_NUMBER = 2;
     private long time_;
-    /**
+    
+/**
      * <code>required int64 time = 2;</code>
      */
     public boolean hasTime() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
-    /**
+    
+/**
      * <code>required int64 time = 2;</code>
      */
     public long getTime() {
@@ -319,13 +345,15 @@ public final class LiveFeedback {
 
     public static final int QUICKMESSAGE_FIELD_NUMBER = 3;
     private java.lang.Object quickMessage_;
-    /**
+    
+/**
      * <code>optional string quickMessage = 3;</code>
      */
     public boolean hasQuickMessage() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
-    /**
+    
+/**
      * <code>optional string quickMessage = 3;</code>
      */
     public java.lang.String getQuickMessage() {
@@ -342,7 +370,8 @@ public final class LiveFeedback {
         return s;
       }
     }
-    /**
+    
+/**
      * <code>optional string quickMessage = 3;</code>
      */
     public com.google.protobuf.ByteString
@@ -361,13 +390,15 @@ public final class LiveFeedback {
 
     public static final int LONGMESSAGE_FIELD_NUMBER = 4;
     private java.lang.Object longMessage_;
-    /**
+    
+/**
      * <code>optional string longMessage = 4;</code>
      */
     public boolean hasLongMessage() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
-    /**
+    
+/**
      * <code>optional string longMessage = 4;</code>
      */
     public java.lang.String getLongMessage() {
@@ -384,7 +415,8 @@ public final class LiveFeedback {
         return s;
       }
     }
-    /**
+    
+/**
      * <code>optional string longMessage = 4;</code>
      */
     public com.google.protobuf.ByteString
@@ -543,7 +575,8 @@ public final class LiveFeedback {
       Builder builder = new Builder(parent);
       return builder;
     }
-    /**
+    
+/**
      * Protobuf type {@code feedback.Feedback}
      */
     public static final class Builder extends
@@ -702,19 +735,22 @@ public final class LiveFeedback {
       private int bitField0_;
 
       private com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackType type_ = com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackType.ERROR;
-      /**
+      
+/**
        * <code>required .feedback.FeedbackType type = 1;</code>
        */
       public boolean hasType() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
-      /**
+      
+/**
        * <code>required .feedback.FeedbackType type = 1;</code>
        */
       public com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackType getType() {
         return type_;
       }
-      /**
+      
+/**
        * <code>required .feedback.FeedbackType type = 1;</code>
        */
       public Builder setType(com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackType value) {
@@ -726,7 +762,8 @@ public final class LiveFeedback {
         onChanged();
         return this;
       }
-      /**
+      
+/**
        * <code>required .feedback.FeedbackType type = 1;</code>
        */
       public Builder clearType() {
@@ -737,19 +774,22 @@ public final class LiveFeedback {
       }
 
       private long time_ ;
-      /**
+      
+/**
        * <code>required int64 time = 2;</code>
        */
       public boolean hasTime() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
-      /**
+      
+/**
        * <code>required int64 time = 2;</code>
        */
       public long getTime() {
         return time_;
       }
-      /**
+      
+/**
        * <code>required int64 time = 2;</code>
        */
       public Builder setTime(long value) {
@@ -758,7 +798,8 @@ public final class LiveFeedback {
         onChanged();
         return this;
       }
-      /**
+      
+/**
        * <code>required int64 time = 2;</code>
        */
       public Builder clearTime() {
@@ -769,13 +810,15 @@ public final class LiveFeedback {
       }
 
       private java.lang.Object quickMessage_ = "";
-      /**
+      
+/**
        * <code>optional string quickMessage = 3;</code>
        */
       public boolean hasQuickMessage() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
-      /**
+      
+/**
        * <code>optional string quickMessage = 3;</code>
        */
       public java.lang.String getQuickMessage() {
@@ -792,7 +835,8 @@ public final class LiveFeedback {
           return (java.lang.String) ref;
         }
       }
-      /**
+      
+/**
        * <code>optional string quickMessage = 3;</code>
        */
       public com.google.protobuf.ByteString
@@ -808,7 +852,8 @@ public final class LiveFeedback {
           return (com.google.protobuf.ByteString) ref;
         }
       }
-      /**
+      
+/**
        * <code>optional string quickMessage = 3;</code>
        */
       public Builder setQuickMessage(
@@ -821,7 +866,8 @@ public final class LiveFeedback {
         onChanged();
         return this;
       }
-      /**
+      
+/**
        * <code>optional string quickMessage = 3;</code>
        */
       public Builder clearQuickMessage() {
@@ -830,7 +876,8 @@ public final class LiveFeedback {
         onChanged();
         return this;
       }
-      /**
+      
+/**
        * <code>optional string quickMessage = 3;</code>
        */
       public Builder setQuickMessageBytes(
@@ -845,13 +892,15 @@ public final class LiveFeedback {
       }
 
       private java.lang.Object longMessage_ = "";
-      /**
+      
+/**
        * <code>optional string longMessage = 4;</code>
        */
       public boolean hasLongMessage() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
-      /**
+      
+/**
        * <code>optional string longMessage = 4;</code>
        */
       public java.lang.String getLongMessage() {
@@ -868,7 +917,8 @@ public final class LiveFeedback {
           return (java.lang.String) ref;
         }
       }
-      /**
+      
+/**
        * <code>optional string longMessage = 4;</code>
        */
       public com.google.protobuf.ByteString
@@ -884,7 +934,8 @@ public final class LiveFeedback {
           return (com.google.protobuf.ByteString) ref;
         }
       }
-      /**
+      
+/**
        * <code>optional string longMessage = 4;</code>
        */
       public Builder setLongMessage(
@@ -897,7 +948,8 @@ public final class LiveFeedback {
         onChanged();
         return this;
       }
-      /**
+      
+/**
        * <code>optional string longMessage = 4;</code>
        */
       public Builder clearLongMessage() {
@@ -906,7 +958,8 @@ public final class LiveFeedback {
         onChanged();
         return this;
       }
-      /**
+      
+/**
        * <code>optional string longMessage = 4;</code>
        */
       public Builder setLongMessageBytes(
@@ -935,45 +988,54 @@ public final class LiveFeedback {
       // @@protoc_insertion_point(interface_extends:feedback.MultiFeedback)
       com.google.protobuf.MessageOrBuilder {
 
-    /**
+    
+/**
      * <code>repeated .feedback.Feedback feedbacks = 1;</code>
      */
     java.util.List<com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback> 
         getFeedbacksList();
-    /**
+    
+/**
      * <code>repeated .feedback.Feedback feedbacks = 1;</code>
      */
     com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback getFeedbacks(int index);
-    /**
+    
+/**
      * <code>repeated .feedback.Feedback feedbacks = 1;</code>
      */
     int getFeedbacksCount();
-    /**
+    
+/**
      * <code>repeated .feedback.Feedback feedbacks = 1;</code>
      */
     java.util.List<? extends com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackOrBuilder> 
         getFeedbacksOrBuilderList();
-    /**
+    
+/**
      * <code>repeated .feedback.Feedback feedbacks = 1;</code>
      */
     com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackOrBuilder getFeedbacksOrBuilder(
         int index);
 
-    /**
+    
+/**
      * <code>required string istanceId = 2;</code>
      */
     boolean hasIstanceId();
-    /**
+    
+/**
      * <code>required string istanceId = 2;</code>
      */
     java.lang.String getIstanceId();
-    /**
+    
+/**
      * <code>required string istanceId = 2;</code>
      */
     com.google.protobuf.ByteString
         getIstanceIdBytes();
   }
-  /**
+  
+/**
    * Protobuf type {@code feedback.MultiFeedback}
    */
   public static final class MultiFeedback extends
@@ -1084,32 +1146,37 @@ public final class LiveFeedback {
     private int bitField0_;
     public static final int FEEDBACKS_FIELD_NUMBER = 1;
     private java.util.List<com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback> feedbacks_;
-    /**
+    
+/**
      * <code>repeated .feedback.Feedback feedbacks = 1;</code>
      */
     public java.util.List<com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback> getFeedbacksList() {
       return feedbacks_;
     }
-    /**
+    
+/**
      * <code>repeated .feedback.Feedback feedbacks = 1;</code>
      */
     public java.util.List<? extends com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackOrBuilder> 
         getFeedbacksOrBuilderList() {
       return feedbacks_;
     }
-    /**
+    
+/**
      * <code>repeated .feedback.Feedback feedbacks = 1;</code>
      */
     public int getFeedbacksCount() {
       return feedbacks_.size();
     }
-    /**
+    
+/**
      * <code>repeated .feedback.Feedback feedbacks = 1;</code>
      */
     public com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback getFeedbacks(int index) {
       return feedbacks_.get(index);
     }
-    /**
+    
+/**
      * <code>repeated .feedback.Feedback feedbacks = 1;</code>
      */
     public com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackOrBuilder getFeedbacksOrBuilder(
@@ -1119,13 +1186,15 @@ public final class LiveFeedback {
 
     public static final int ISTANCEID_FIELD_NUMBER = 2;
     private java.lang.Object istanceId_;
-    /**
+    
+/**
      * <code>required string istanceId = 2;</code>
      */
     public boolean hasIstanceId() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
-    /**
+    
+/**
      * <code>required string istanceId = 2;</code>
      */
     public java.lang.String getIstanceId() {
@@ -1142,7 +1211,8 @@ public final class LiveFeedback {
         return s;
       }
     }
-    /**
+    
+/**
      * <code>required string istanceId = 2;</code>
      */
     public com.google.protobuf.ByteString
@@ -1287,7 +1357,8 @@ public final class LiveFeedback {
       Builder builder = new Builder(parent);
       return builder;
     }
-    /**
+    
+/**
      * Protobuf type {@code feedback.MultiFeedback}
      */
     public static final class Builder extends
@@ -1472,7 +1543,8 @@ public final class LiveFeedback {
       private com.google.protobuf.RepeatedFieldBuilder<
           com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback, com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback.Builder, com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackOrBuilder> feedbacksBuilder_;
 
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public java.util.List<com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback> getFeedbacksList() {
@@ -1482,7 +1554,8 @@ public final class LiveFeedback {
           return feedbacksBuilder_.getMessageList();
         }
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public int getFeedbacksCount() {
@@ -1492,7 +1565,8 @@ public final class LiveFeedback {
           return feedbacksBuilder_.getCount();
         }
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback getFeedbacks(int index) {
@@ -1502,7 +1576,8 @@ public final class LiveFeedback {
           return feedbacksBuilder_.getMessage(index);
         }
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public Builder setFeedbacks(
@@ -1519,7 +1594,8 @@ public final class LiveFeedback {
         }
         return this;
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public Builder setFeedbacks(
@@ -1533,7 +1609,8 @@ public final class LiveFeedback {
         }
         return this;
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public Builder addFeedbacks(com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback value) {
@@ -1549,7 +1626,8 @@ public final class LiveFeedback {
         }
         return this;
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public Builder addFeedbacks(
@@ -1566,7 +1644,8 @@ public final class LiveFeedback {
         }
         return this;
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public Builder addFeedbacks(
@@ -1580,7 +1659,8 @@ public final class LiveFeedback {
         }
         return this;
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public Builder addFeedbacks(
@@ -1594,7 +1674,8 @@ public final class LiveFeedback {
         }
         return this;
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public Builder addAllFeedbacks(
@@ -1609,7 +1690,8 @@ public final class LiveFeedback {
         }
         return this;
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public Builder clearFeedbacks() {
@@ -1622,7 +1704,8 @@ public final class LiveFeedback {
         }
         return this;
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public Builder removeFeedbacks(int index) {
@@ -1635,14 +1718,16 @@ public final class LiveFeedback {
         }
         return this;
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback.Builder getFeedbacksBuilder(
           int index) {
         return getFeedbacksFieldBuilder().getBuilder(index);
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackOrBuilder getFeedbacksOrBuilder(
@@ -1652,7 +1737,8 @@ public final class LiveFeedback {
           return feedbacksBuilder_.getMessageOrBuilder(index);
         }
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public java.util.List<? extends com.xiaomitool.v2.logging.feedback.LiveFeedback.FeedbackOrBuilder> 
@@ -1663,14 +1749,16 @@ public final class LiveFeedback {
           return java.util.Collections.unmodifiableList(feedbacks_);
         }
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback.Builder addFeedbacksBuilder() {
         return getFeedbacksFieldBuilder().addBuilder(
             com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback.getDefaultInstance());
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback.Builder addFeedbacksBuilder(
@@ -1678,7 +1766,8 @@ public final class LiveFeedback {
         return getFeedbacksFieldBuilder().addBuilder(
             index, com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback.getDefaultInstance());
       }
-      /**
+      
+/**
        * <code>repeated .feedback.Feedback feedbacks = 1;</code>
        */
       public java.util.List<com.xiaomitool.v2.logging.feedback.LiveFeedback.Feedback.Builder> 
@@ -1701,13 +1790,15 @@ public final class LiveFeedback {
       }
 
       private java.lang.Object istanceId_ = "";
-      /**
+      
+/**
        * <code>required string istanceId = 2;</code>
        */
       public boolean hasIstanceId() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
-      /**
+      
+/**
        * <code>required string istanceId = 2;</code>
        */
       public java.lang.String getIstanceId() {
@@ -1724,7 +1815,8 @@ public final class LiveFeedback {
           return (java.lang.String) ref;
         }
       }
-      /**
+      
+/**
        * <code>required string istanceId = 2;</code>
        */
       public com.google.protobuf.ByteString
@@ -1740,7 +1832,8 @@ public final class LiveFeedback {
           return (com.google.protobuf.ByteString) ref;
         }
       }
-      /**
+      
+/**
        * <code>required string istanceId = 2;</code>
        */
       public Builder setIstanceId(
@@ -1753,7 +1846,8 @@ public final class LiveFeedback {
         onChanged();
         return this;
       }
-      /**
+      
+/**
        * <code>required string istanceId = 2;</code>
        */
       public Builder clearIstanceId() {
@@ -1762,7 +1856,8 @@ public final class LiveFeedback {
         onChanged();
         return this;
       }
-      /**
+      
+/**
        * <code>required string istanceId = 2;</code>
        */
       public Builder setIstanceIdBytes(

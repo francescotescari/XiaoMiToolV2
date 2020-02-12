@@ -83,7 +83,7 @@ public class DeviceAnswers {
                 DeviceManager.waitRefresh();
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                Log.debug(e);
+                /*Log.debug(e);*/
             }
             result = isInTwrpRecoveryInternal();
         }

@@ -45,7 +45,7 @@ public class UnlockRequest {
         signSha = XiaomiCrypto.cloudService_signSha1(key,"POST",path,params.toString());
         params.put("signature",signSha);
         String host = SettingsUtils.isGlobalRegion() ? HOST_INTL : HOST;
-        Log.debug("Unlock request on "+host+path);
+        /*Log.debug("Unlock request on "+host+path);*/
         EasyResponse response = new EasyHttp().url(host+path).fields(params).headers(headers).userAgent("XiaomiPCSuite").cookies(XiaomiKeystore.getInstance().requireServiceCookies(SERVICE_NAME)).exec();
         if (!response.isAllRight()){
             throw new XiaomiProcedureException("[UnlockRequest.exec] Invalid server respose: code: "+response.getCode()+", lenght: "+response.getBody().length() );
@@ -61,7 +61,7 @@ public class UnlockRequest {
         try {
             body = new String(Base64.getDecoder().decode(body));
         } catch (Throwable t){
-            Log.debug("Response body is not base64 encoded");
+            /*Log.debug("Response body is not base64 encoded");*/
 
         }
         Log.info("Unlock request ("+this.path+") response: "+body);

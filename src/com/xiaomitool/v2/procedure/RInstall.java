@@ -13,7 +13,7 @@ public abstract class RInstall {
      public abstract void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException;
 
      void runInternal(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-          Log.debug("Running now procedure: "+this.toString(2));
+          /*Log.debug("Running now procedure: "+this.toString(2));*/
           Log.info("Running now procedure: "+this.toString());
           boolean pushStack = !(this instanceof RNode);
           if (pushStack) {

@@ -26,7 +26,7 @@ public class InstallableChooser extends SomethingChooser<HashMap<Installable.Typ
             map = new HashMap<>();
             super.add(id, map);
         }
-        Log.debug("Add to installable chooser: "+id+", "+installable);
+        /*Log.debug("Add to installable chooser: "+id+", "+installable);*/
         map.put(installable.getType(), installable);
 
     }

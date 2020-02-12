@@ -56,7 +56,7 @@ public  class AdvancedUpdateListener extends UpdateListener {
                 speed = 0;
             }
             speed = (downloaded*1000/(double) millis);
-            Log.debug("SPEED: "+speed+"; DOW: "+downloaded+"; MILLIS: "+millis);
+            /*Log.debug("SPEED: "+speed+"; DOW: "+downloaded+"; MILLIS: "+millis);*/
         }
         public DownloadSpeed(double speed){
             this.speed = speed;

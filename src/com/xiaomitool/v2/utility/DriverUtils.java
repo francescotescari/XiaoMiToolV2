@@ -47,7 +47,7 @@ public class DriverUtils {
         }
         String output = runner.getOutputString();
         if (output.contains(SUCCESS)){
-            Log.debug("Driver "+cmdName+" success");
+            /*Log.debug("Driver "+cmdName+" success");*/
             return true;
         } else if (output.contains(FAIL)){
             Log.error("Driver "+cmdName+" failed. Tool fail message match");

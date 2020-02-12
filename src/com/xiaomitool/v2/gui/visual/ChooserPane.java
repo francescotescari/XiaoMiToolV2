@@ -102,7 +102,8 @@ public class ChooserPane extends StackPane {
 
         scrollPane.setFitToWidth(true);
 
-        /*scrollPane.setFitToHeight(true);
+        
+/*scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);*/
         scrollPane.setStyle("-fx-background: rgba(245,245,245,0); -fx-background-color: rgba(245,245,245,0);");
         super.getChildren().add(scrollPane);

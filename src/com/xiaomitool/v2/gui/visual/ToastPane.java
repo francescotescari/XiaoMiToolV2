@@ -39,7 +39,7 @@ public class ToastPane {
             this.overlayPane = overlayPane;
         }
         public void toast(String message){
-            Log.debug("Toasting message: "+message);
+            /*Log.debug("Toasting message: "+message);*/
             lowHeight+=TOAST_SPACING+TOAST_RADIUS;
             Text text = new Text(message);
             StackPane pane = new StackPane(text);
@@ -52,7 +52,7 @@ public class ToastPane {
             lowHeight+=textHeight;
             Pointer currentHeight = new Pointer();
             currentHeight.pointed = lowHeight;
-            Log.debug("Text height: "+textHeight+", lowHeight: "+lowHeight);
+            /*Log.debug("Text height: "+textHeight+", lowHeight: "+lowHeight);*/
             pane.setLayoutY(overlayPane.getHeight()-lowHeight);
 
             pane.setBorder(TOAST_BORDER);
@@ -66,7 +66,7 @@ public class ToastPane {
                             double current = (double) currentHeight.pointed;
                             double height = getParentPane().getHeight();
                             if (lowHeight == current || (current >= height/2 && lowHeight >= height/2) ){
-                                Log.debug("Resetting toast: low: "+lowHeight+", current: "+current);
+                                /*Log.debug("Resetting toast: low: "+lowHeight+", current: "+current);*/
                                 lowHeight = TOAST_OFFSET;
                             }
 

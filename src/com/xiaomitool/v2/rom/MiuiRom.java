@@ -219,7 +219,7 @@ public abstract class MiuiRom extends Installable {
             if (p == null){
                 return null;
             }
-            Log.debug("Specie from device and branch: "+p);
+            /*Log.debug("Specie from device and branch: "+p);*/
             p.setBranch(branch);
             return p;
         }

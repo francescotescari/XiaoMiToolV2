@@ -71,7 +71,7 @@ public class MiuiTgzRom extends MiuiRom {
 
     @Override
     protected  Object extractInternal(UpdateListener listener) throws Exception {
-        Log.debug("Extracting tgz rom: "+filename);
+        /*Log.debug("Extracting tgz rom: "+filename);*/
         ExtractionTask task = new ExtractionTask(listener, getDownloadedFile(), null, ExtractionTask.ExtractionType.TGZ, true);
         TaskManager manager = TaskManager.getInstance();
         manager.startSameThread(task);

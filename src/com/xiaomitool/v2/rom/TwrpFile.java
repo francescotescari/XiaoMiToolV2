@@ -51,7 +51,7 @@ public class TwrpFile extends Installable {
     @Override
     @NotNull
     protected File extractInternal(UpdateListener listener) throws Exception {
-        Log.debug("EXtracting twrp file");
+        /*Log.debug("EXtracting twrp file");*/
         File file = getDownloadedFile();
         if (file == null){
             throw new RomException("Missing downloaded file");

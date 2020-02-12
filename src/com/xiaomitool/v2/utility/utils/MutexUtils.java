@@ -110,7 +110,7 @@ public class MutexUtils {
         try {
             serverSocket.close();
         } catch (IOException e) {
-            Log.debug("Failed to close server socket");
+            /*Log.debug("Failed to close server socket");*/
             return false;
         }
         return true;

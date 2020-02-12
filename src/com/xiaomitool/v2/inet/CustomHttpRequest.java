@@ -113,7 +113,7 @@ public class CustomHttpRequest {
         if (this.url == null){
             throw new CustomHttpException("Missing request url");
         }
-        Log.debug("Http request on url: "+url);
+        /*Log.debug("Http request on url: "+url);*/
         HttpClientBuilder client = HttpClientBuilder.create();
         RequestConfig.Builder configBuilder = RequestConfig.custom();
         if (proxyPort > -1){
@@ -168,7 +168,7 @@ public class CustomHttpRequest {
             if (useTLS12 || !(e instanceof SSLHandshakeException)) {
                 throw new CustomHttpException("IOException: " + e.getMessage(), e);
             } else {
-                Log.debug("HandshakeException, retrying with new ssl context");
+                /*Log.debug("HandshakeException, retrying with new ssl context");*/
                 return execRequest(client, request, true);
             }
         }
@@ -183,7 +183,7 @@ public class CustomHttpRequest {
         MultiMap<String, String> map = new MultiMap<>();
         for (Header h : response.getAllHeaders()){
             map.putSingle(h.getName().toLowerCase(), h.getValue());
-            Log.debug("Response header: "+h.getName()+" - "+h.getValue());
+            /*Log.debug("Response header: "+h.getName()+" - "+h.getValue());*/
         }
         return map;
     }

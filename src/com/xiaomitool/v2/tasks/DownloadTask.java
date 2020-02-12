@@ -83,7 +83,7 @@ public class DownloadTask extends Task {
         if (this.destination.exists() && this.destination.length() == totalSize && totalSize != 0){
             request.abort();
             finished(this.destination);
-            Log.debug("File already downloaded");
+            /*Log.debug("File already downloaded");*/
             return;
         }
         InputStream downloadStream;

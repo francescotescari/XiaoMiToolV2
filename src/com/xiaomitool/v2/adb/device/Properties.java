@@ -21,7 +21,7 @@ public abstract class Properties {
 
     public Properties(){
         parsingSemaphore = new WaitSemaphore(1);
-        Log.debug("Properties created: "+this.getClass().getSimpleName()+"::"+this.hashCode()+" -> sem = "+parsingSemaphore.toString());
+        /*Log.debug("Properties created: "+this.getClass().getSimpleName()+"::"+this.hashCode()+" -> sem = "+parsingSemaphore.toString());*/
     }
 
     public boolean isFailed() {
@@ -29,20 +29,20 @@ public abstract class Properties {
     }
 
     public boolean parse(){
-        Log.debug("Parsing requested for "+this.getClass());
+        /*Log.debug("Parsing requested for "+this.getClass());*/
         return parse(false);
     }
     public boolean parse(boolean force){
         boolean res =false;
         synchronized (parsingSemaphore) {
-            Log.debug(this.hashCode());
+            /*Log.debug(this.hashCode());*/
             try {
                 //Log.debug("Parsing semaphore permits A");
-                Log.debug(parsingSemaphore.getPermitNumber());
+                /*Log.debug(parsingSemaphore.getPermitNumber());*/
                 parsingSemaphore.decrease();
                 parsingSemaphore.setPermits(0);
                 //Log.debug("Parsing semaphore permits B");
-                Log.debug(parsingSemaphore.getPermitNumber());
+                /*Log.debug(parsingSemaphore.getPermitNumber());*/
                 res = parse(force, true);
                 //Log.debug("Parsing finished");
             } catch (Exception e) {
@@ -60,15 +60,15 @@ public abstract class Properties {
     public boolean parse(boolean force, boolean internal){
 
 
-            Log.debug("Starting parsing: force: "+force+", class: "+this.getClass().getSimpleName());
+            /*Log.debug("Starting parsing: force: "+force+", class: "+this.getClass().getSimpleName());*/
             if (parsed && !force) {
-                Log.debug("Already parsed, returning");
+                /*Log.debug("Already parsed, returning");*/
                 return true;
 
             }
 
             parsed = true;
-            Log.debug("Parsing should be disabled");
+            /*Log.debug("Parsing should be disabled");*/
 
             if (failed && lastFailIntant != null && failedParsingAttempts > 3){
                 if (Duration.between(lastFailIntant, Instant.now()).getSeconds() < 10){
@@ -78,7 +78,7 @@ public abstract class Properties {
             }
 
             if (parseInternal()) {
-                Log.debug(this.toString());
+                /*Log.debug(this.toString());*/
                 Log.info("Properties parsed");
                 //Log.info(this.propertiesMap);
                 failedParsingAttempts = 0;

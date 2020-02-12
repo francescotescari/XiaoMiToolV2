@@ -54,7 +54,7 @@ public class StockRecoveryFetch {
                 DeviceRequestParams params = null;
                 try {
                     params = DeviceRequestParams.readFromDevice(device,true);
-                    Log.debug("SERIAL: " + params.getSerialNumber());
+                    /*Log.debug("SERIAL: " + params.getSerialNumber());*/
                 } catch (AdbException e) {
                     throw new InstallException(e);
                 }
@@ -302,7 +302,8 @@ public class StockRecoveryFetch {
                 if (installable == null){
                     throw new InstallException("Ota response doesn't contain an installable rom data", InstallException.Code.MISSING_PROPERTY);
                 }
-                /*if (!installable.hasInstallToken() && !UnlockStatus.UNLOCKED.equals(Procedures.requireDevice(runner).getAnswers().getUnlockStatus()) && installable.getMd5() != null && !installable.getMd5().isEmpty()){
+                
+/*if (!installable.hasInstallToken() && !UnlockStatus.UNLOCKED.equals(Procedures.requireDevice(runner).getAnswers().getUnlockStatus()) && installable.getMd5() != null && !installable.getMd5().isEmpty()){
                     runner.setContext(SRF_MD5, installable.getMd5());
                     this.run(runner);
                     return;

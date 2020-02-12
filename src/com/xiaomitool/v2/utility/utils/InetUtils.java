@@ -31,7 +31,7 @@ public class InetUtils {
     public static String getRedirectUrl(String url, String referer) throws CustomHttpException {
         EasyHttp request = new EasyHttp().url(url).setHeadOnly();
         if (referer != null){
-            Log.debug("Set referer: "+referer);
+            /*Log.debug("Set referer: "+referer);*/
             request = request.referer(referer);
         }
         EasyResponse response = request.exec();
@@ -39,7 +39,7 @@ public class InetUtils {
         if (list == null){
             return null;
         }
-        Log.debug("Redirect from "+url+" to "+list.get(0));
+        /*Log.debug("Redirect from "+url+" to "+list.get(0));*/
         return list.get(0);
     }
 
@@ -52,7 +52,7 @@ public class InetUtils {
                     return;
                 } catch (Exception e) {
                     Log.error("Failed to open url " + url + " using java.awt.Desktop: " + e.getMessage());
-                    Log.debug(e);
+                    /*Log.debug(e);*/
                 }
             }
             String cmd = "";
@@ -68,7 +68,7 @@ public class InetUtils {
                 runtime.exec(cmd);
             } catch (IOException e) {
                 Log.error("Failed to open url " + url + " using runtime command: " + e.getMessage());
-                Log.debug(e);
+                /*Log.debug(e);*/
             }
         } catch (Throwable t){
             Log.error("Failed to open url " + url + " : " + t.getMessage());

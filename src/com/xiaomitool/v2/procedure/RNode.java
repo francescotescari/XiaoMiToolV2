@@ -21,7 +21,7 @@ public abstract class RNode extends RInstall {
 
     public static RInstall setSkipOnException(RInstall install) {
         install.setFlag(FLAG_SKIPONEXCEPTION, true);
-        Log.debug("HF:"+install.hasFlag(FLAG_SKIPONEXCEPTION));
+        /*Log.debug("HF:"+install.hasFlag(FLAG_SKIPONEXCEPTION));*/
         return install;
     }
 
@@ -74,7 +74,7 @@ public abstract class RNode extends RInstall {
 
         @Override
         public void run(ProcedureRunner runner) throws RMessage, InstallException, InterruptedException {
-            Log.debug("Running sequence of procs: "+ Arrays.toString(chidren));
+            /*Log.debug("Running sequence of procs: "+ Arrays.toString(chidren));*/
             CommandClass.Command cmd = null;
                 for (RInstall install : chidren) {
                     do {
@@ -82,10 +82,10 @@ public abstract class RNode extends RInstall {
                             install.runInternal(runner);
                             break;
                         } catch (InstallException e) {
-                            Log.debug("PROCEDURE EXC: "+e.getMessage());
+                            /*Log.debug("PROCEDURE EXC: "+e.getMessage());*/
                             if (install.hasFlag(FLAG_SKIPONEXCEPTION)){
                                 Log.warn("Exception occurred, but skip on exception flag was enabled: "+e.toString());
-                                Log.debug("Skipped procedure: exception skipped: "+StrUtils.exceptionToString(e));
+                                /*Log.debug("Skipped procedure: exception skipped: "+StrUtils.exceptionToString(e));*/
                                 break;
                             } else if (install.hasFlag(FLAG_THROWEXCEPTION)) {
                                 throw new RMessage(e);
@@ -125,7 +125,7 @@ public abstract class RNode extends RInstall {
 
         @Override
         public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-            Log.debug("Running fallback of procs: "+ Arrays.toString(chidren));
+            /*Log.debug("Running fallback of procs: "+ Arrays.toString(chidren));*/
             InstallException exception = null;
             boolean allRight = false;
             if (chidren == null || chidren.length == 0){

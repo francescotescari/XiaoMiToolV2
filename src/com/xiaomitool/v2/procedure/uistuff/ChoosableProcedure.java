@@ -27,7 +27,8 @@ import java.util.function.Function;
 public abstract class ChoosableProcedure implements Choiceable, InstallObject {
 
     public static ChoosableProcedure UNOFFICIAL_MULTI_ROM_INSTALL = multipleZipProcedure(LRes.ROM_LOCAL.toString(), LRes.ROM_LOCAL_TEXT.toString(), false);
-       /*     new ChoosableProcedure() {
+       
+/*     new ChoosableProcedure() {
         @Override
         public String getTitle() {
             return LRes.ROM_LOCAL_OFFICIAL.toString();
@@ -142,7 +143,8 @@ public abstract class ChoosableProcedure implements Choiceable, InstallObject {
 
     //public static ChoosableProcedure UNOFFICIAL_ROM_INSTALL = multipleZipProcedure(LRes.ROM_LOCAL.toString(), LRes.ROM_LOCAL_TEXT.toString(), false);
 
-          /*  new ChoosableProcedure() {
+          
+/*  new ChoosableProcedure() {
         @Override
         public String getTitle() {
             return ;
@@ -359,7 +361,8 @@ public abstract class ChoosableProcedure implements Choiceable, InstallObject {
     }
 
     public static final ChoosableProcedure GENERIC_MOD_ZIP = multipleZipProcedure(LRes.MOD_LOCAL.toString(), LRes.MOD_LOCAL_TEXT.toString(), true);//new ChoosableProcedure() {
-      /*  @Override
+      
+/*  @Override
         public String getTitle() {
             return LRes.MOD_LOCAL.toString();
         }

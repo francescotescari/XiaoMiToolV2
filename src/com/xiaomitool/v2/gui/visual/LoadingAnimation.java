@@ -45,7 +45,7 @@ public class LoadingAnimation extends StackPane {
         transition.setAutoReverse(false);
         transition.setCycleCount(-1);
         double wait  =0.07+circleNumber*0.04;
-        Log.debug(wait);
+        /*Log.debug(wait);*/
         transition.setInterpolator(new BezierInterpolator.WaitBezierInterpolator(0,easeParameter,1-easeParameter,1,wait,wait));
         FadeTransition transition1 = new FadeTransition(Duration.millis(duration/2),circle);
         transition1.setFromValue(0);

@@ -31,7 +31,7 @@ public class VisiblePane {
         set(node,false);
     }
     public void saveStack(boolean b){
-        Log.debug("Set saving stack: "+b);
+        /*Log.debug("Set saving stack: "+b);*/
         keepStack = b;
     }
 
@@ -77,8 +77,8 @@ public class VisiblePane {
         }
         try {
             Node topChild = children.getLast();
-            Log.debug(children);
-            Log.debug(topChild);
+            /*Log.debug(children);*/
+            /*Log.debug(topChild);*/
             if (topChild == null) {
                 return;
             }
@@ -105,7 +105,7 @@ public class VisiblePane {
 
     private void set(Node node, boolean show){
         clearRemoveBuffer();
-        Log.debug("Adding node: "+node.toString());
+        /*Log.debug("Adding node: "+node.toString());*/
         synchronized (children) {
             if (!keepStack && show) {
                 children.clear();

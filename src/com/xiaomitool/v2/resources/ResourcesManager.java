@@ -76,10 +76,10 @@ public class ResourcesManager {
     public static boolean init(){
         if (initStatus == null) {
             Path p = getXiaomitoolPath();
-            Log.debug("XmtPath: "+p);
+            /*Log.debug("XmtPath: "+p);*/
             boolean res = setCurrentPath(p) || ToolManager.DEBUG_MODE;
             boolean b = findWritableTmpDir();
-            Log.debug("Found writable tmp dir: "+b);
+            /*Log.debug("Found writable tmp dir: "+b);*/
             Log.info("Temporary dir used: "+getTmpPath());
             initStatus = b && res;
         }
@@ -184,7 +184,7 @@ public class ResourcesManager {
                         return getResourcesPath();
                     }
                 }
-                Log.debug("Setting tmp path to easy val");
+                /*Log.debug("Setting tmp path to easy val");*/
                 tmpPath = p;
             }
             return tmpPath;
@@ -307,7 +307,7 @@ public class ResourcesManager {
                     }
                 }
             } catch (Exception e){
-                Log.debug(e);
+                /*Log.debug(e);*/
             }
             Log.info("Java launch path: "+javaLaunchExe);
         }
@@ -353,7 +353,7 @@ public class ResourcesManager {
                     tmp.toFile().mkdirs();
                 }
                 if (checkIfWritable(tmp)) {
-                    Log.debug("Setting tmp path to "+tmp);
+                    /*Log.debug("Setting tmp path to "+tmp);*/
                     tmpPath = tmp;
                     return true;
                 }

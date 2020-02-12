@@ -33,7 +33,7 @@ public class Test {
 
 
     public static void main(String[] argsv){
-        Log.debug(Charset.defaultCharset().toString());
+        /*Log.debug(Charset.defaultCharset().toString());*/
     }
 
 

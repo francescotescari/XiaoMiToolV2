@@ -26,7 +26,8 @@ public class AfhRequest {
         }
         HashMap<String, String> cookies = response.getCookies();
         HashMap<String, String> fields = new HashMap<>();
-        /*fields.put("w","waitingtime");
+        
+/*fields.put("w","waitingtime");
         response = new EasyHttp().url(AFH_CHECK).referer(url).cookies(cookies).fields(fields).userAgent(EasyHttp.CHROME_USERAGENT).header("X-MOD-SBB-CTYPE","xhr").header("X-REQUESTED-WITH","XMLHttpRequest").exec();
         if (!response.isAllRight()){
             throw new RomException("AfhRequest mirrors fetch failed: code: "+response.getCode());
@@ -68,7 +69,7 @@ public class AfhRequest {
                     list.add(new AfhEntry(filename, fid, up));
 
                 } catch (Throwable t) {
-                    Log.debug("Failed to parse Afh listDir entry: " + t.getMessage());
+                    /*Log.debug("Failed to parse Afh listDir entry: " + t.getMessage());*/
                 }
             }
         } catch (Throwable t){

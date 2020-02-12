@@ -91,9 +91,9 @@ public abstract class   InstallationRequirement implements StatedProcedure {
                 device.getAnswers().setAnswer(DeviceAnswers.HAS_TWRP, YesNoMaybe.NO);
                 return true;
             }
-            Log.debug("Checking if we know if twrp is installed");
+            /*Log.debug("Checking if we know if twrp is installed");*/
             YesNoMaybe answer = device.getAnswers().hasTwrpRecovery();
-            Log.debug("Is it? "+answer);
+            /*Log.debug("Is it? "+answer);*/
             return !(answer == null || YesNoMaybe.MAYBE.equals(answer));
         }
 
@@ -216,11 +216,11 @@ public abstract class   InstallationRequirement implements StatedProcedure {
         List<InstallationRequirement> requirementList = new LinkedList<>();
         switch (installable.getType()){
             case RECOVERY:
-                Log.debug("Trying get install recovery requirements...");
-                Log.debug("Has iToken? "+installable.hasInstallToken());
-                Log.debug("Is official? "+installable.isOfficial());
-                Log.debug("Bootloader status: "+device.getAnswers().getUnlockStatus());
-                Log.debug("Stock recovery reachable? "+STOCKRECOVERY_REACHABLE.isSatisfied(device));
+                /*Log.debug("Trying get install recovery requirements...");*/
+                /*Log.debug("Has iToken? "+installable.hasInstallToken());*/
+                /*Log.debug("Is official? "+installable.isOfficial());*/
+                /*Log.debug("Bootloader status: "+device.getAnswers().getUnlockStatus());*/
+                /*Log.debug("Stock recovery reachable? "+STOCKRECOVERY_REACHABLE.isSatisfied(device));*/
                 boolean hasStockRecovery = (!UnlockStatus.UNLOCKED.equals(device.getAnswers().getUnlockStatus()) || STOCKRECOVERY_REACHABLE.isSatisfied(device));
                 boolean isStockRecoveryInstallable = (installable.hasInstallToken() || installable.isOfficial()) && (installable instanceof MiuiZipRom);
                 boolean isUnsafeCrossRegionInstallation = false;
@@ -229,7 +229,7 @@ public abstract class   InstallationRequirement implements StatedProcedure {
                     MiuiRom.Specie wantToInstallSpecie = zipRom.getSpecie();
                     MiuiRom.Specie currentSpecie = device.getAnswers().getCurrentSpecie();
                     if (currentSpecie.getZone() != wantToInstallSpecie.getZone()){
-                        Log.debug("Different rom zone installation, this might be an unsafe cross region installation");
+                        /*Log.debug("Different rom zone installation, this might be an unsafe cross region installation");*/
                         String product = device.getDeviceProperties().getCodename(true);
                         isUnsafeCrossRegionInstallation = !DeviceGroups.isSafeToChangeRecoveryLocked(product);
                     }

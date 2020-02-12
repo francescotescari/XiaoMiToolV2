@@ -157,7 +157,7 @@ public class Procedures {
             for (FileEntry entry : items){
                 files.add(entry.file);
             }
-            Log.debug(files);
+            /*Log.debug(files);*/
             break;
         }
         WindowManager.removeTopContent();

@@ -189,7 +189,7 @@ public class ActionsDynamic {
             if (wantedStatus != null && wantedStatus.length > 0 && !ArrayUtils.in(wantedStatus, device.getStatus())){
                 continue;
             }
-            Log.debug("Displaying device "+device.getSerial()+", status: "+device.getStatus());
+            /*Log.debug("Displaying device "+device.getSerial()+", status: "+device.getStatus());*/
             DeviceTableEntry tableEntry = new DeviceTableEntry(device);
             observableList.add(tableEntry);
         }
@@ -665,7 +665,8 @@ public class ActionsDynamic {
                 RInstall main = main();
                 try {
                     try {
-                   /* RebootDevice.rebootNoWaitIfConnected().run(runner);
+                   
+/* RebootDevice.rebootNoWaitIfConnected().run(runner);
                     Log.debug("PRO0 CHOOSE CAT");
                     ChooseProcedure.chooseRomCategory().run(runner);
                     Log.debug("PRO0 CHOOSE ROM");
@@ -701,7 +702,7 @@ public class ActionsDynamic {
                         }
                     }
                 }catch (RMessage rMessage) {
-                    Log.debug("RMSG: "+rMessage.getCmd());
+                    /*Log.debug("RMSG: "+rMessage.getCmd());*/
                     rMessage.printStackTrace();
                     if (CommandClass.Command.ABORT.equals(rMessage.getCmd())){
                         new Thread(new Runnable() {
@@ -711,7 +712,7 @@ public class ActionsDynamic {
                                     ActionsStatic.ASK_FOR_FEEDBACK().run();
                                     ActionsStatic.MOD_CHOOSE_SCREEN().run();
                                 } catch (InterruptedException e) {
-                                    Log.debug(e.getMessage());
+                                    /*Log.debug(e.getMessage());*/
                                 }
                             }
                         }).start();

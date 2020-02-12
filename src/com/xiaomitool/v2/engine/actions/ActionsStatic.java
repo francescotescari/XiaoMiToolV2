@@ -76,7 +76,7 @@ public class ActionsStatic {
             int message = NOOP;
             while (message == NOOP) {
                 message = MOD_RECOVER_CHOICE().run();
-                Log.debug("Choice: "+message);
+                /*Log.debug("Choice: "+message);*/
                 //TODO
                 if (message == 1){
                     message = FEATURE_NOT_AVAILABLE().run();
@@ -124,7 +124,7 @@ public class ActionsStatic {
             if (!ResourcesConst.isWindows()){
                 return 0;
             }
-            Log.debug("Installing drivers");
+            /*Log.debug("Installing drivers");*/
             AdbCommunication.killServer();
             List<Path> driverPath;
             try {
@@ -167,7 +167,7 @@ public class ActionsStatic {
             AdbCommunication.restartServer();
             AdbCommunication.registerAutoScanDevices();
             ActionsDynamic.SEARCH_SELECT_DEVICES().run();
-            Log.debug("SEARCHING");
+            /*Log.debug("SEARCHING");*/
             ActionsDynamic.REQUIRE_DEVICE_ON(DeviceManager.getSelectedDevice()).run();
             ActionsDynamic.FIND_DEVICE_INFO(DeviceManager.getSelectedDevice()).run();
                 return 0;
@@ -218,7 +218,8 @@ public class ActionsStatic {
     public static RunnableMessage MAIN_RECOVER_DEVICE_TMP(){
         return  () -> {
             ButtonPane buttonPane = new ButtonPane(LRes.OK_UNDERSTAND);
-            Text instruction = new Text(""/*LRes.RECOVERY_RECOVER_TMP.toString()*/);
+            Text instruction = new Text(""
+/*LRes.RECOVERY_RECOVER_TMP.toString()*/);
             instruction.setFont(Font.font(15));
            // instruction.setTextAlignment(TextAlignment.CENTER);
             instruction.setWrappingWidth(WindowManager.getMainPane().getWidth()-180);
@@ -263,7 +264,8 @@ public class ActionsStatic {
             return NOOP;
         };
     }
-    /*public static RunnableMessage CHECK_FOR_UPDATES(){
+    
+/*public static RunnableMessage CHECK_FOR_UPDATES(){
         return () -> {
             ActionsStatic.REQUIRE_INTERNET_CONNECTION().run();
             int res = InetUtils.checkForUpdates(ToolManager.URL_UPDATE, ToolManager.TOOL_VERSION, SettingsUtils.requireHashedPCId());
@@ -506,7 +508,7 @@ public class ActionsStatic {
         p.setPadding(new Insets(20,100,20,100));
         buttonPane.setContent(p);
         WindowManager.setMainContent(buttonPane, true);
-        Log.debug(Thread.currentThread());
+        /*Log.debug(Thread.currentThread());*/
         return buttonPane.waitClick();
     };}
     public static RunnableMessage MOD_RECOVER_CHOICE() { return  () -> {

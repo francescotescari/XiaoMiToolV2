@@ -26,7 +26,8 @@ public class ButtonPane extends VBox {
     private StackPane contentPane;
     private List<CustomButton> buttons = new ArrayList<>();
 
-    /*public ButtonPane(String[] text){
+    
+/*public ButtonPane(String[] text){
         this(text,-1);
     }*/
     public ButtonPane(String ... text){
@@ -65,7 +66,7 @@ public class ButtonPane extends VBox {
         int i = 0;
         double fontSize = buttonHeight/3.333;
         double size = findButtonSize(buttonText, fontSize)+30;
-        Log.debug("BSIZE: "+size);
+        /*Log.debug("BSIZE: "+size);*/
         for (String text : buttonText){
 
             CustomButton button = new CustomButton(text);
@@ -76,7 +77,7 @@ public class ButtonPane extends VBox {
             button.setText(text);
             buttonPane.getChildren().add(button);
             buttons.add(button);
-            Log.debug(button.getBoundsInLocal().getWidth());
+            /*Log.debug(button.getBoundsInLocal().getWidth());*/
             idClickReceiver.addNode(button);
 
             ++i;
@@ -103,7 +104,7 @@ public class ButtonPane extends VBox {
             Text b = new Text(t);
             b.setFont(Font.font(fontSize));
             double w = b.getLayoutBounds().getWidth();
-            Log.debug("BW: "+w);
+            /*Log.debug("BW: "+w);*/
             max = Double.max(max,w);
         }
         return max;

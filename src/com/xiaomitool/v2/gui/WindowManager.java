@@ -57,7 +57,8 @@ public class WindowManager {
         mainVisiblePane = pane;
         mainVisiblePane.getPane().setMaxSize(PREF_WIN_WIDTH, PREF_WIN_HEIGHT-90);
     }
-    /*public static void setMainContent(Node node){
+    
+/*public static void setMainContent(Node node){
         setMainContent(node,true);
     }*/
     public static void removeTopContent(){
@@ -69,7 +70,7 @@ public class WindowManager {
         if (mainVisiblePane == null){
             return;
         }
-        Log.debug("WMA: removing top content");
+        /*Log.debug("WMA: removing top content");*/
         
         if (Platform.isFxApplicationThread()) {
             mainVisiblePane.removeTop(instant);
@@ -82,7 +83,7 @@ public class WindowManager {
     }
 
     public static void setMainContent(Node node, boolean deleteUnder){
-        Log.debug("WMA: set main content: "+node+", du: "+deleteUnder);
+        /*Log.debug("WMA: set main content: "+node+", du: "+deleteUnder);*/
         //new Exception().printStackTrace();
         if (mainVisiblePane == null){
             return;
@@ -278,7 +279,7 @@ public class WindowManager {
         Scene scene;
         realRoot = root;
         if (background != null) {
-            Log.debug("Dropping shadow on: "+root);
+            /*Log.debug("Dropping shadow on: "+root);*/
             StackPane pane = new StackPane(root);
             if (isMain){
                 pane.getChildren().add(mainOverlay);
@@ -286,7 +287,7 @@ public class WindowManager {
             }
             pane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.0);");
             root.setEffect(windowDropShadow);
-            Log.debug(root.getEffect());
+            /*Log.debug(root.getEffect());*/
             pane.setPadding(new Insets(10));
             realRoot = pane;
         }
@@ -306,7 +307,7 @@ public class WindowManager {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
 
         primaryStage.setScene(scene);
-        Log.debug(primaryStage.getWidth());
+        /*Log.debug(primaryStage.getWidth());*/
         ToolManager.showStage(primaryStage);
         if (!isMain){
             centerStage(primaryStage);

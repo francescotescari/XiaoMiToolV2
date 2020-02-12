@@ -93,7 +93,7 @@ public class Main2 {
     private static final Pattern P_IS_REDMI = Pattern.compile("^((xiao)?mi)?\\s*redmi(\\s)",Pattern.CASE_INSENSITIVE);
 
     public static void main(String[] args) throws Exception {
-        Log.debug(XiaomiEuRoms.latest(new DefaultRequestParams("davinci","9.8.7","9.0")).getDownloadUrl());
+        /*Log.debug(XiaomiEuRoms.latest(new DefaultRequestParams("davinci","9.8.7","9.0")).getDownloadUrl());*/
 
 
 

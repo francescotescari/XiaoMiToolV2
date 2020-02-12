@@ -91,7 +91,8 @@ public class GuiTest2 extends Application{
                     GenericInstall.main().run(runner);
 
                     //FastbootFetch.findAllLatestFastboot().run(runner);
-                    /*ChooseProcedure.chooseRomCategory().run(runner);
+                    
+/*ChooseProcedure.chooseRomCategory().run(runner);
                     ChooseProcedure.chooseRom().run(runner);
                     ConfirmationProcedure.confirmInstallableProcedure().run(runner);
                     ConfirmationProcedure.confirmInstallationStart().run(runner);
@@ -150,7 +151,8 @@ public class GuiTest2 extends Application{
         pane.setHappiness(75);
         DonationPane donationPane = new DonationPane();
 
-        /*WindowManager.getMainStage().getScene().addEventFilter(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
+        
+/*WindowManager.getMainStage().getScene().addEventFilter(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 double x = (mouseEvent.getSceneX()-350)/(WindowManager.getContentWidth()-700);
@@ -199,7 +201,8 @@ public class GuiTest2 extends Application{
                             WindowManager.setMainContent(installPane, true);
                             ProcedureRunner runner = new ProcedureRunner(installPane.getListener());
                             runner.setContext(Procedures.SELECTED_DEVICE, new Device("88eec8b5"));
-                            /*DeviceRequestParams params = new DeviceRequestParams("whyred_global","8.9.13","8.1.0",Branch.DEVELOPER,"0x1c01702d", 1);
+                            
+/*DeviceRequestParams params = new DeviceRequestParams("whyred_global","8.9.13","8.1.0",Branch.DEVELOPER,"0x1c01702d", 1);
                             HashMap<MiuiRom.Kind, MiuiZipRom> x = MiuiRomOta.otaV3_request(params);
                             Installable installable = null;
                             for (MiuiZipRom rom : x.values()){
@@ -213,7 +216,7 @@ public class GuiTest2 extends Application{
 
                             //runner.run(StockRecoveryInstall.recoverStuckDevice());
                             //runner.run(StockRecoveryInstall.sendFileViaMTP(Paths.get("F:\\Download\\sdattest\\whyred_images_8.9.6_20180906.0000.00_8.1_cn_efc57c7ee22\\whyred_images_8.9.6_20180906.0000.00_8.1_cn\\images\\system.img")));
-                            Log.debug(runner.getContext(StockRecoveryInstall.SELECTED_MTP_DEVICE));
+                            /*Log.debug(runner.getContext(StockRecoveryInstall.SELECTED_MTP_DEVICE));*/
                         } catch (Throwable t){
                             t.printStackTrace();
                         }
@@ -223,7 +226,8 @@ public class GuiTest2 extends Application{
             }
         });
 
-        /*Color color = Color.rgb(255,103, 0);
+        
+/*Color color = Color.rgb(255,103, 0);
         Effect effect = new DropShadow(2,1,1, Color.BLACK);
         Circle circle = new Circle(5);
 
@@ -252,7 +256,8 @@ public class GuiTest2 extends Application{
         circle4.setEffect(effect);*/
 
 
-        /*Pane drawPane = new Pane();
+        
+/*Pane drawPane = new Pane();
         BezierInterpolator bezierInterpolator =
         for (double i = 0; i<100; ++i){
             Pane p = new Pane();
@@ -263,7 +268,8 @@ public class GuiTest2 extends Application{
             drawPane.getChildren().add(p);
         }*/
 
-       /* Text text = new Text(Test.LOREM_IPSUM);
+       
+/* Text text = new Text(Test.LOREM_IPSUM);
 
         text.setWrappingWidth(200);
         Bounds box = text.getLayoutBounds();
@@ -275,7 +281,8 @@ public class GuiTest2 extends Application{
 
 
         PopupWindow popupWindow = new PopupWindow(text.getLayoutBounds().getWidth()+20,text.getLayoutBounds().getHeight()+60);*/
-       /*PopupWindow popupWindow = new PopupWindow.ImageTextPopup("This feature is not available yet", PopupWindow.Icon.INFO);
+       
+/*PopupWindow popupWindow = new PopupWindow.ImageTextPopup("This feature is not available yet", PopupWindow.Icon.INFO);
        // popupWindow.setContent(text);
         //WindowManager.launchPopup(popupWindow);
         TableView<DeviceTableEntry> testPane = new TableView<>();

@@ -19,6 +19,7 @@ public class MainWindow extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         ToolManager.init(primaryStage, arguments);
+
 /*
         FXMLLoader loader = new FXMLLoader(FxmlManager.getFxml(FXML_FILE));
         loader.setController(new MainWindowController(primaryStage));

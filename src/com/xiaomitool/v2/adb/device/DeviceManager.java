@@ -36,7 +36,7 @@ public class DeviceManager {
     public static void setSelectedDevice(Device device){
         selectedDevice = device;
         if (device != null){
-            Log.debug("Device selected: "+device.getSerial());
+            /*Log.debug("Device selected: "+device.getSerial());*/
             Platform.runLater(()->{WindowManager.toast(LRes.SELECTED_DEVICE.toString(device.getSerial()));});
 
         }
@@ -89,15 +89,15 @@ public class DeviceManager {
             updatingDevices.clear();
 
             AdbCommunication.refreshDevices(updatingDevices);
-            Log.debug("Updating devices: " + updatingDevices);
+            /*Log.debug("Updating devices: " + updatingDevices);*/
             for (Map.Entry<String, Device.Status> entry : updatingDevices.entrySet()) {
                 Log.info("Connected device: " + entry.getKey() + " -> " + entry.getValue());
-                Log.debug(entry.getKey() + " - " + entry.getValue());
+                /*Log.debug(entry.getKey() + " - " + entry.getValue());*/
             }
             for (Device d : deviceMap.values()) {
                 if (!Device.Status.EDL.equals(d.getStatus()) && updatingDevices.get(d.getSerial()) == null) {
                     d.setConnected(false);
-                    Log.debug(d.getSerial() + " is not in updating devices");
+                    /*Log.debug(d.getSerial() + " is not in updating devices");*/
                 }
             }
              toUpdate = new ArrayList<>(updatingDevices.size());
@@ -106,11 +106,11 @@ public class DeviceManager {
                 toUpdate.add(new Pair<>(entry.getKey(), entry.getValue()));
             }
         }
-        Log.debug("Setting devices statuses");
+        /*Log.debug("Setting devices statuses");*/
         for (Pair<String , Device.Status> entry : toUpdate){
             setDeviceStatus(entry.getFirst(), entry.getSecond(), blocking);
         }
-        Log.debug("Setted devices statuses");
+        /*Log.debug("Setted devices statuses");*/
         synchronized (refreshWaitSems){
             for (WaitSemaphore s : refreshWaitSems){
                 s.increase();
@@ -143,7 +143,7 @@ public class DeviceManager {
         return i;
     }
     protected static void setDeviceStatus(String serial, Device.Status status, boolean blocking){
-        Log.debug("Device status of "+serial+": "+status.toString());
+        /*Log.debug("Device status of "+serial+": "+status.toString());*/
         Device device = deviceMap.get(serial);
         if (device == null){
             device = new Device(serial, status, true);

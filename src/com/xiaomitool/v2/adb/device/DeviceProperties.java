@@ -48,7 +48,7 @@ public class DeviceProperties {
                 return false;
             }
             findFeatures(product,false);
-            Log.debug("Adb properties parsed");
+            /*Log.debug("Adb properties parsed");*/
 
             return true;
         }
@@ -200,7 +200,7 @@ public class DeviceProperties {
                     return true;
                 }
             } catch (Throwable t){
-                Log.debug(t.getMessage());
+                /*Log.debug(t.getMessage());*/
             }
             List<String> output = FastbootCommons.oemDeviceInfo(serial);
             if (output == null){

@@ -317,8 +317,8 @@ public enum  LRes  {
         try {
             return Lang.text(getKey(),args);
         } catch (Exception e) {
-            Log.debug(e);
-            Log.debug(e.getMessage());
+            /*Log.debug(e);*/
+            /*Log.debug(e.getMessage());*/
             StringBuilder builder = new StringBuilder(e.getMessage());
             for (Object o : args){
                 builder.append(',').append(o == null ? "null" : o.toString());
