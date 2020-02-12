@@ -8,46 +8,51 @@ import javafx.scene.layout.StackPane;
 import java.util.LinkedList;
 
 public class VisiblePane {
+    private final LinkedList<Node> children = new LinkedList<>();
+    private final LinkedList<Node> removeBuffer = new LinkedList<>();
     private Pane pane;
     private boolean keepStack = false;
-    public VisiblePane(){
+    private Pane onEmpty;
+
+    public VisiblePane() {
         this(null);
     }
-    public VisiblePane(Pane pane){
-        if (pane == null){
+
+    public VisiblePane(Pane pane) {
+        if (pane == null) {
             pane = new StackPane();
         } else {
             children.addAll(pane.getChildren());
         }
         this.pane = pane;
     }
-    private final LinkedList<Node> children = new LinkedList<>();
-    private final LinkedList<Node> removeBuffer = new LinkedList<>();
 
-    public void add(Node node){
-        set(node,true);
+    public void add(Node node) {
+        set(node, true);
     }
-    public void addHidden(Node node){
-        set(node,false);
+
+    public void addHidden(Node node) {
+        set(node, false);
     }
-    public void saveStack(boolean b){
-        /*Log.debug("Set saving stack: "+b);*/
+
+    public void saveStack(boolean b) {
         keepStack = b;
     }
 
-    public void removeTop(){
+    public void removeTop() {
         removeTop(true);
     }
-    private void clearRemoveBuffer(){
-        synchronized (removeBuffer){
-            for (Node n : removeBuffer){
+
+    private void clearRemoveBuffer() {
+        synchronized (removeBuffer) {
+            for (Node n : removeBuffer) {
                 removeLayer(n);
             }
             removeBuffer.clear();
         }
     }
 
-    private void removeLayer(Node layer){
+    private void removeLayer(Node layer) {
         Node addNext = null;
         try {
             synchronized (children) {
@@ -62,23 +67,20 @@ public class VisiblePane {
                     }
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             addNext = onEmpty;
         }
-        if (addNext != null){
+        if (addNext != null) {
             add(addNext);
         }
-
     }
 
-    public void removeTop(boolean instant){
-        if (instant){
+    public void removeTop(boolean instant) {
+        if (instant) {
             clearRemoveBuffer();
         }
         try {
             Node topChild = children.getLast();
-            /*Log.debug(children);*/
-            /*Log.debug(topChild);*/
             if (topChild == null) {
                 return;
             }
@@ -88,24 +90,21 @@ public class VisiblePane {
             if (instant) {
                 removeLayer(topChild);
             } else {
-                synchronized (removeBuffer){
+                synchronized (removeBuffer) {
                     removeBuffer.add(topChild);
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.exc(e);
         }
-
-
     }
 
     public Pane getPane() {
         return pane;
     }
 
-    private void set(Node node, boolean show){
+    private void set(Node node, boolean show) {
         clearRemoveBuffer();
-        /*Log.debug("Adding node: "+node.toString());*/
         synchronized (children) {
             if (!keepStack && show) {
                 children.clear();
@@ -129,16 +128,16 @@ public class VisiblePane {
         }
     }
 
-    public void remove(Node node){
+    public void remove(Node node) {
         children.remove(node);
         pane.getChildren().remove(node);
     }
-    public void clear(){
+
+    public void clear() {
         children.clear();
         pane.getChildren().clear();
     }
 
-    private Pane onEmpty;
     public void onEmpty(Pane pane) {
         this.onEmpty = onEmpty;
     }

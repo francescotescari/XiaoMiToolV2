@@ -9,32 +9,36 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.*;
-import javafx.scene.text.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import java.util.concurrent.Callable;
 
-public class TextScrollPane extends StackPane{
-        private Color bgColor = WindowManager.DEFAULT_BACKGROUND_COLOR;
-    public TextScrollPane(Text texts){
+public class TextScrollPane extends StackPane {
+    private Color bgColor = WindowManager.DEFAULT_BACKGROUND_COLOR;
+
+    public TextScrollPane(Text texts) {
         build(texts, null);
     }
-    public TextScrollPane(Text text, String title){
-        build(text,title);
+
+    public TextScrollPane(Text text, String title) {
+        build(text, title);
     }
-    public TextScrollPane(Color color, Text texts, String title){
+
+    public TextScrollPane(Color color, Text texts, String title) {
         bgColor = color;
         build(texts, title);
     }
 
-    private void build(Text text,  String title){
+    private void build(Text text, String title) {
         ScrollPane scrollPane = new ScrollPane();
-            text.wrappingWidthProperty().bind(scrollPane.widthProperty().subtract(20));
-
-        //textFlow.setBackground(GuiUtils.backgroundFromColor(bgColor));
+        text.wrappingWidthProperty().bind(scrollPane.widthProperty().subtract(20));
         scrollPane.setFitToWidth(true);
         Node toCenter;
-        if (title == null){
+        if (title == null) {
             toCenter = text;
         } else {
             VBox vbox = new VBox();
@@ -50,20 +54,14 @@ public class TextScrollPane extends StackPane{
                 return scrollPane.getViewportBounds().getHeight();
             }
         }, scrollPane.viewportBoundsProperty()));
-        //content.setBackground(GuiUtils.backgroundFromColor(Color.RED));
         scrollPane.setContent(content);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
         scrollPane.setStyle("-fx-background: rgba(245,245,245,0); -fx-background-color: rgba(245,245,245,0);");
-        //scrollPane.setBackground(GuiUtils.backgroundFromColor(Color.TRANSPARENT));
-
         super.setBackground(GuiUtils.backgroundFromColor(Color.TRANSPARENT));
-        //super.getChildren().add(scrollPane);
-        //super.setEffect(new InnerShadow(100,0,-100,Color.rgb(245,245,245)));
         super.getChildren().add(scrollPane);
-
     }
-    private Label buildTitle(String title){
+
+    private Label buildTitle(String title) {
         Label label = new Label(title);
         label.setFont(Font.font(null, FontWeight.SEMI_BOLD, 20));
         label.setPrefHeight(40);

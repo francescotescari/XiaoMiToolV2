@@ -7,7 +7,7 @@ import com.xiaomitool.v2.procedure.RMessage;
 import com.xiaomitool.v2.procedure.install.InstallException;
 
 public class OtherProcedures {
-    public static RInstall sleep(long millis){
+    public static RInstall sleep(long millis) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -16,7 +16,7 @@ public class OtherProcedures {
         };
     }
 
-    public static RInstall restoreInstallPane(){
+    public static RInstall restoreInstallPane() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -25,7 +25,7 @@ public class OtherProcedures {
         };
     }
 
-    public static RInstall text(String t){
+    public static RInstall text(String t) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {

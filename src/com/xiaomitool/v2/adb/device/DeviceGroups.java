@@ -1,7 +1,5 @@
 package com.xiaomitool.v2.adb.device;
 
-import com.xiaomitool.v2.logging.Log;
-
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,23 +10,24 @@ public class DeviceGroups {
     private static final HashSet<String> ANDROID_ONE_DEVICES = getAndroidOneDevices();
     private static final HashSet<String> RECOVERY_SAFE = removeUnsafeDevices(getCurrentDevices());
     private static final HashSet<String> BIREGION_DEVICES = removeMultiRegionDevice(getCurrentDevices());
+    private static final Pattern CODENAME_STRIPPER = Pattern.compile("^([a-z]+(_xhdpi|_sprout)?)((_[a-z]+)*_global)*$", Pattern.CASE_INSENSITIVE);
 
-    public static boolean isMultiRegionDevice(String codename){
+    public static boolean isMultiRegionDevice(String codename) {
         codename = stripCodename(codename);
         return !BIREGION_DEVICES.contains(codename);
     }
 
-    public static boolean isSafeToChangeRecoveryLocked(String codename){
+    public static boolean isSafeToChangeRecoveryLocked(String codename) {
         codename = stripCodename(codename);
-        for (String c : RECOVERY_SAFE){
-            if (codename.startsWith(c)){
+        for (String c : RECOVERY_SAFE) {
+            if (codename.startsWith(c)) {
                 return true;
             }
         }
         return false;
     }
 
-    private static final HashSet<String> removeMultiRegionDevice(HashSet<String> toRemove){
+    private static final HashSet<String> removeMultiRegionDevice(HashSet<String> toRemove) {
         toRemove.remove("cepheus");
         toRemove.remove("onc");
         toRemove.remove("onclite");
@@ -49,7 +48,7 @@ public class DeviceGroups {
         return toRemove;
     }
 
-    private static final HashSet<String> removeUnsafeDevices(HashSet<String> toRemove){
+    private static final HashSet<String> removeUnsafeDevices(HashSet<String> toRemove) {
         toRemove.remove("ugg");
         toRemove.remove("ugglite");
         toRemove.remove("rosy");
@@ -87,7 +86,7 @@ public class DeviceGroups {
         return toRemove;
     }
 
-    private static final HashSet<String> getCurrentDevices(){
+    private static final HashSet<String> getCurrentDevices() {
         HashSet<String> set = new HashSet<>();
         set.add("mione");
         set.add("aries");
@@ -160,20 +159,21 @@ public class DeviceGroups {
         return set;
     }
 
-    private static final HashSet<String> getAndroidOneDevices(){
+    private static final HashSet<String> getAndroidOneDevices() {
         HashSet<String> set = new HashSet<>();
         set.add("tiare");
         set.add("tissot_sprout");
         set.add("jasmine_sprout");
         return set;
     }
-    private static HashSet<String> getEeaRegionDevices(){
+
+    private static HashSet<String> getEeaRegionDevices() {
         HashSet<String> set = new HashSet<>();
         set.add("cepheus");
         return set;
     }
 
-    private static HashSet<String> getAlwaysUnlockedSet(){
+    private static HashSet<String> getAlwaysUnlockedSet() {
         HashSet<String> set = new HashSet<>();
         set.add("mione_plus");
         set.add("aries");
@@ -196,52 +196,50 @@ public class DeviceGroups {
         set.add("wt88047");
         set.add("gucci");
         set.add("ferrari");
-        //set.add("leo");
         set.add("hermes");
         set.add("latte");
         return set;
-
     }
-    private static final Pattern CODENAME_STRIPPER = Pattern.compile("^([a-z]+(_xhdpi|_sprout)?)((_[a-z]+)*_global)*$", Pattern.CASE_INSENSITIVE);
-    private static String stripCodenamePro(String codename){
-        if (codename == null){
+
+    private static String stripCodenamePro(String codename) {
+        if (codename == null) {
             return null;
         }
-        codename = codename.replace("_alpha","");
-        Matcher matcher =  CODENAME_STRIPPER.matcher(codename);
-        if (!matcher.matches()){
+        codename = codename.replace("_alpha", "");
+        Matcher matcher = CODENAME_STRIPPER.matcher(codename);
+        if (!matcher.matches()) {
             return null;
         }
         return matcher.group(1);
     }
 
-    public static String stripCodename(String codename){
-        if (codename == null){
+    public static String stripCodename(String codename) {
+        if (codename == null) {
             return null;
         }
         String cn = stripCodenamePro(codename);
-        if (cn != null){
+        if (cn != null) {
             return cn;
         }
-        return codename.replace("_eea_global","").replace("_ru_global","").replace("_india_global","").replace("_global","").replace("_alpha","");
+        return codename.replace("_eea_global", "").replace("_ru_global", "").replace("_india_global", "").replace("_global", "").replace("_alpha", "");
     }
 
-    public static boolean hasUnlockedBootloader(String codename){
-        if (codename == null){
+    public static boolean hasUnlockedBootloader(String codename) {
+        if (codename == null) {
             return false;
         }
         return ALWAYS_UNLOCKED_DEVICES.contains(stripCodename(codename));
     }
 
-    public static boolean hasEEARegion(String codename){
-        if (codename == null){
+    public static boolean hasEEARegion(String codename) {
+        if (codename == null) {
             return false;
         }
         return EEA_REGION_DEVICES.contains(stripCodename(codename));
     }
 
-    public static boolean isAndroidOneDevice(String codename){
-        if (codename == null){
+    public static boolean isAndroidOneDevice(String codename) {
+        if (codename == null) {
             return false;
         }
         codename = stripCodename(codename);

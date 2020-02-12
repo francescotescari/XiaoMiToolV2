@@ -2,7 +2,6 @@ package com.xiaomitool.v2.procedure.fetch;
 
 import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.device.Device;
-import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.engine.actions.ActionsDynamic;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.inet.CustomHttpException;
@@ -37,51 +36,46 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 public class GenericFetch {
-
     public static final String SELECTED_FILE = "gen_sel_file";
     public static final String FILE_MD5 = "gen_file_md5";
     public static final String PACKAGE_NAME = "apk_package_name";
 
-
-
-
-    public static RInstall fetchAllOfficial(Device device){
+    public static RInstall fetchAllOfficial(Device device) {
         SettingsUtils.Region region = SettingsUtils.getRegion();
         String codename = device.getDeviceProperties().getCodename(false);
-        LinkedHashSet<MiuiRom.Specie> speciesToSearch = MiuiRom.Specie.listToSearchSpecies(region,codename);
-        return RNode.sequence(FastbootFetch.findAllLatestFastboot(speciesToSearch),StockRecoveryFetch.allLatestOta(speciesToSearch));
+        LinkedHashSet<MiuiRom.Specie> speciesToSearch = MiuiRom.Specie.listToSearchSpecies(region, codename);
+        return RNode.sequence(FastbootFetch.findAllLatestFastboot(speciesToSearch), StockRecoveryFetch.allLatestOta(speciesToSearch));
     }
 
     public static RInstall computeMD5File() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-
                 File file = (File) runner.requireContext(SELECTED_FILE);
-                Log.info("Computing MD5 hash of file: "+file);
-                if (!file.exists()){
-                    throw new InstallException("File not found: "+file.toString(), InstallException.Code.FILE_NOT_FOUND);
+                Log.info("Computing MD5 hash of file: " + file);
+                if (!file.exists()) {
+                    throw new InstallException("File not found: " + file.toString(), InstallException.Code.FILE_NOT_FOUND);
                 }
                 String md5 = "";
                 runner.text(LRes.CALCULATING_MD5);
                 try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                     md5 = DigestUtils.md5Hex(in);
                 } catch (IOException e) {
-                    throw new InstallException("Failed to calculate file md5: "+file, InstallException.Code.HASH_FAILED, e);
+                    throw new InstallException("Failed to calculate file md5: " + file, InstallException.Code.HASH_FAILED, e);
                 }
-                if (StrUtils.isNullOrEmpty(md5)){
-                    throw new InstallException("Failed to calculate file md5: "+file.toString(), InstallException.Code.HASH_FAILED, "Null or empty result hash");
+                if (StrUtils.isNullOrEmpty(md5)) {
+                    throw new InstallException("Failed to calculate file md5: " + file.toString(), InstallException.Code.HASH_FAILED, "Null or empty result hash");
                 }
                 runner.setContext(FILE_MD5, md5);
             }
         };
     }
 
-    public static RInstall getPackageName(){
+    public static RInstall getPackageName() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                if (runner.getContext(PACKAGE_NAME) != null){
+                if (runner.getContext(PACKAGE_NAME) != null) {
                     return;
                 }
                 File apk = (File) runner.requireContext(SELECTED_FILE);
@@ -91,11 +85,11 @@ public class GenericFetch {
         };
     }
 
-    public static RInstall fetchXiaomieuRom(Branch branch){
+    public static RInstall fetchXiaomieuRom(Branch branch) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Log.info("Fetching latest xiaomi.eu rom: branch: "+branch);
+                Log.info("Fetching latest xiaomi.eu rom: branch: " + branch);
                 Device device = Procedures.requireDevice(runner);
                 try {
                     DeviceRequestParams requestParams = DeviceRequestParams.readFromDevice(device, false);
@@ -112,58 +106,51 @@ public class GenericFetch {
                 } catch (CustomHttpException e) {
                     throw new InstallException(e);
                 }
-
-
             }
         };
-
     }
 
-    public static RInstall fetchAllUnofficial(){
+    public static RInstall fetchAllUnofficial() {
         return RNode.skipOnException(RNode.sequence(GenericFetch.fetchXiaomieuRom(Branch.STABLE), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Installable installable = Procedures.requireInstallable(runner);
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 chooser.add(InstallableChooser.ID_XIAOMIEU_STABLE, installable);
-                Procedures.setInstallable(runner,null);
+                Procedures.setInstallable(runner, null);
             }
-        }),RNode.sequence(GenericFetch.fetchXiaomieuRom(Branch.DEVELOPER), new RInstall() {
+        }), RNode.sequence(GenericFetch.fetchXiaomieuRom(Branch.DEVELOPER), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Installable installable = Procedures.requireInstallable(runner);
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 chooser.add(InstallableChooser.ID_XIAOMIEU_DEV, installable);
-                Procedures.setInstallable(runner,null);
+                Procedures.setInstallable(runner, null);
             }
         }));
     }
 
-
-    public static RInstall fetchAllMods(){
+    public static RInstall fetchAllMods() {
         return RNode.skipOnException(RNode.sequence(TwrpFetch.fetchTwrp(), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                /*Log.debug("Checking if twrp auto found");*/
                 Installable installable = Procedures.requireInstallable(runner);
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
-                chooser.add(InstallableChooser.ID_INSTALL_TWRP,installable);
-                Procedures.setInstallable(runner,null);
-                /*Log.debug("Auto twrp added");*/
+                chooser.add(InstallableChooser.ID_INSTALL_TWRP, installable);
+                Procedures.setInstallable(runner, null);
             }
         }), RNode.sequence(ModFetch.fetchMagiskStable(), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Installable installable = Procedures.requireInstallable(runner);
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
-                chooser.add(InstallableChooser.ID_INSTALL_MAGISK,installable);
-                Procedures.setInstallable(runner,null);
+                chooser.add(InstallableChooser.ID_INSTALL_MAGISK, installable);
+                Procedures.setInstallable(runner, null);
             }
         }), Procedures.doNothing());
     }
 
-
-    public static RInstall fetchDeviceCodename(String keyDest){
+    public static RInstall fetchDeviceCodename(String keyDest) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -173,7 +160,7 @@ public class GenericFetch {
                 try {
                     data = MiuiRomOta.deviceNames_request();
                 } catch (XiaomiProcedureException | CustomHttpException e) {
-                    Log.error("Failed to get updated devices list: "+e.getMessage());
+                    Log.error("Failed to get updated devices list: " + e.getMessage());
                 }
                 if (data != null) {
                     for (String key : data.keySet()) {
@@ -193,16 +180,15 @@ public class GenericFetch {
                         }
                     }
                 }
-                for (Map.Entry<String, String> e : XiaomiUtilities.getDeviceCodenames().entrySet()){
+                for (Map.Entry<String, String> e : XiaomiUtilities.getDeviceCodenames().entrySet()) {
                     res.put(e.getKey(), e.getValue());
                 }
                 WindowManager.removeTopContent(false);
-                if (res.isEmpty()){
+                if (res.isEmpty()) {
                     throw new InstallException("Empty codename list from api", InstallException.Code.INFO_RETRIVE_FAILED);
                 }
                 runner.setContext(keyDest, res);
             }
         };
     }
-
 }

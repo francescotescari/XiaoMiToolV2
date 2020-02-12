@@ -14,48 +14,42 @@ import java.util.List;
 
 public class AfhRequest {
     private static final String AFH_HOST = "https://androidfilehost.com";
-    private static final String AFH_MIRRORS = AFH_HOST+"/libs/otf/mirrors.otf.php";
-    private static final String AFH_CHECK = AFH_HOST+"/libs/otf/checks.otf.php";
-    private static final String AFH_API = AFH_HOST+"/api/";
+    private static final String AFH_MIRRORS = AFH_HOST + "/libs/otf/mirrors.otf.php";
+    private static final String AFH_CHECK = AFH_HOST + "/libs/otf/checks.otf.php";
+    private static final String AFH_API = AFH_HOST + "/api/";
+
     public static String getDownloadLink(String fid) throws CustomHttpException, RomException {
-        Log.info("Searching download link of android file host file: "+fid);
-        String url = AFH_HOST+"/?fid="+fid;
+        Log.info("Searching download link of android file host file: " + fid);
+        String url = AFH_HOST + "/?fid=" + fid;
         EasyResponse response = new EasyHttp().url(url).referer(AFH_HOST).userAgent(EasyHttp.CHROME_USERAGENT).exec();
-        if (!response.isAllRight()){
-            throw new RomException("AfhRequest fid failed: code: "+response.getCode());
+        if (!response.isAllRight()) {
+            throw new RomException("AfhRequest fid failed: code: " + response.getCode());
         }
         HashMap<String, String> cookies = response.getCookies();
         HashMap<String, String> fields = new HashMap<>();
-        
-/*fields.put("w","waitingtime");
-        response = new EasyHttp().url(AFH_CHECK).referer(url).cookies(cookies).fields(fields).userAgent(EasyHttp.CHROME_USERAGENT).header("X-MOD-SBB-CTYPE","xhr").header("X-REQUESTED-WITH","XMLHttpRequest").exec();
-        if (!response.isAllRight()){
-            throw new RomException("AfhRequest mirrors fetch failed: code: "+response.getCode());
-        }
-        fields = new HashMap<>();*/
-        fields.put("submit","submit");
-        fields.put("action","getdownloadmirrors");
-        fields.put("fid",fid);
-        response = new EasyHttp().url(AFH_MIRRORS).referer(url).cookies(cookies).fields(fields).userAgent(EasyHttp.CHROME_USERAGENT).header("X-MOD-SBB-CTYPE","xhr").header("X-REQUESTED-WITH","XMLHttpRequest").exec();
-        if (!response.isAllRight()){
-            throw new RomException("AfhRequest mirrors fetch failed: code: "+response.getCode());
+        fields.put("submit", "submit");
+        fields.put("action", "getdownloadmirrors");
+        fields.put("fid", fid);
+        response = new EasyHttp().url(AFH_MIRRORS).referer(url).cookies(cookies).fields(fields).userAgent(EasyHttp.CHROME_USERAGENT).header("X-MOD-SBB-CTYPE", "xhr").header("X-REQUESTED-WITH", "XMLHttpRequest").exec();
+        if (!response.isAllRight()) {
+            throw new RomException("AfhRequest mirrors fetch failed: code: " + response.getCode());
         }
         try {
             String body = response.getBody();
             JSONObject json = new JSONObject(body);
             JSONArray array = json.getJSONArray("MIRRORS");
             return array.getJSONObject(0).getString("url").trim();
-        } catch (Throwable t){
-            throw new RomException("Failed to parse AfhRequest fid: "+t.getMessage());
+        } catch (Throwable t) {
+            throw new RomException("Failed to parse AfhRequest fid: " + t.getMessage());
         }
     }
 
     public static List<AfhEntry> listDirFiles(String dirId) throws CustomHttpException, RomException {
-        Log.info("Searching files in android file host directory: "+dirId);
-        String url = AFH_API+"?action=folder&flid="+dirId;
+        Log.info("Searching files in android file host directory: " + dirId);
+        String url = AFH_API + "?action=folder&flid=" + dirId;
         EasyResponse response = new EasyHttp().url(url).userAgent(EasyHttp.CHROME_USERAGENT).referer(AFH_HOST).exec();
-        if (!response.isAllRight()){
-            throw new RomException("AfhRequest listDir failed: code: "+response.getCode());
+        if (!response.isAllRight()) {
+            throw new RomException("AfhRequest listDir failed: code: " + response.getCode());
         }
         List<AfhEntry> list = new ArrayList<>();
         try {
@@ -67,13 +61,11 @@ public class AfhRequest {
                     String filename = obj.getString("name"), fid = obj.getString("fid"), upload = obj.getString("upload_date");
                     Long up = Long.parseLong(upload);
                     list.add(new AfhEntry(filename, fid, up));
-
                 } catch (Throwable t) {
-                    /*Log.debug("Failed to parse Afh listDir entry: " + t.getMessage());*/
                 }
             }
-        } catch (Throwable t){
-            throw new RomException("Failed to parse AfhRequest listDir: "+t.getMessage());
+        } catch (Throwable t) {
+            throw new RomException("Failed to parse AfhRequest listDir: " + t.getMessage());
         }
         return list;
     }
@@ -81,7 +73,8 @@ public class AfhRequest {
     public static class AfhEntry {
         private String filename, fid;
         private Long uploadDate;
-        AfhEntry(String filename, String fid, Long uploadDate){
+
+        AfhEntry(String filename, String fid, Long uploadDate) {
             this.filename = filename;
             this.fid = fid;
             this.uploadDate = uploadDate;
@@ -99,5 +92,4 @@ public class AfhRequest {
             return filename;
         }
     }
-
 }

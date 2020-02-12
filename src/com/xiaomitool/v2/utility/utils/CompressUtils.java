@@ -8,18 +8,19 @@ public class CompressUtils {
     public static byte[] compress(byte[] data) throws IOException {
         return paddedCompress(data, 0);
     }
+
     public static byte[] paddedCompress(byte[] data, int padding) throws IOException {
         Deflater deflater = new Deflater(Deflater.BEST_COMPRESSION, true);
         deflater.setInput(data);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length+padding);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length + padding);
         deflater.finish();
         byte[] buffer = new byte[1024];
-        while (padding > 0){
+        while (padding > 0) {
             outputStream.write(0);
             padding--;
         }
         while (!deflater.finished()) {
-            int count = deflater.deflate(buffer); // returns the generated code... index
+            int count = deflater.deflate(buffer);
             outputStream.write(buffer, 0, count);
         }
         outputStream.close();

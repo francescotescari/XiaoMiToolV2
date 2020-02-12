@@ -1,15 +1,17 @@
 package com.xiaomitool.v2.rom;
 
-import com.xiaomitool.v2.rom.MultiInstallable;
 import javafx.scene.image.Image;
 
 import java.io.File;
 
 public abstract class MultiZipRom extends MultiInstallable {
+    public MultiZipRom(File... files) {
+        super(fromFileZipRom(files));
+    }
 
-    private static ZipRom[] fromFileZipRom(File... files){
+    private static ZipRom[] fromFileZipRom(File... files) {
         ZipRom[] zipRoms = new ZipRom[files.length];
-        for (int i = 0; i<files.length; ++i){
+        for (int i = 0; i < files.length; ++i) {
             zipRoms[i] = new ZipRom(files[i]) {
                 @Override
                 public String getTitle() {
@@ -28,9 +30,5 @@ public abstract class MultiZipRom extends MultiInstallable {
             };
         }
         return zipRoms;
-    }
-
-    public MultiZipRom(File... files){
-        super(fromFileZipRom(files));
     }
 }

@@ -16,10 +16,13 @@ public abstract class Task {
     private LocalDateTime timeLatestUpdate, timeStart;
     private WaitSemaphore isNotRunning = new WaitSemaphore();
     private long latestUpdate = -1;
-    public Task(){
+    private int nextLogStep = 0;
+
+    public Task() {
         this.listener = new UpdateListener.Debug();
     }
-    public Task(UpdateListener listener){
+
+    public Task(UpdateListener listener) {
         this.listener = listener;
     }
 
@@ -27,57 +30,50 @@ public abstract class Task {
         return listener;
     }
 
-    public enum STATUS {
-        READY,
-        RUNNING,
-        PAUSED,
-        ERROR,
-        FINISHED,
-        ABORTED
+    public void setListener(UpdateListener listener) {
+        this.listener = listener;
     }
 
-     void restart() throws InterruptedException {
-         Log.info("Restarting task: "+this);
-        if (runningThread != null){
+    void restart() throws InterruptedException {
+        Log.info("Restarting task: " + this);
+        if (runningThread != null) {
             runningThread.join(2000);
             start(false);
         } else {
             start(true);
         }
-
     }
 
-    void start(){
+    void start() {
         start(false);
     }
-     private void start(boolean sameThread){
+
+    private void start(boolean sameThread) {
         status = STATUS.RUNNING;
         timeStart = LocalDateTime.now();
         timeLatestUpdate = LocalDateTime.now();
-        Log.info("Starting task: same thread: "+sameThread+" : "+this);
-         Runnable runnable = () -> {
-             try {
-                 startInternal();
-             } catch (Exception e){
-
-                 error(e);
-             }
-         };
-        if (sameThread){
+        Log.info("Starting task: same thread: " + sameThread + " : " + this);
+        Runnable runnable = () -> {
+            try {
+                startInternal();
+            } catch (Exception e) {
+                error(e);
+            }
+        };
+        if (sameThread) {
             runnable.run();
-        }else {
+        } else {
             runningThread = new Thread(runnable);
             runningThread.start();
         }
     }
-    private int nextLogStep = 0;
 
-    protected void update(long done){
-        if (done >=0 || totalSize > 0){
-            long percent = done/totalSize;
-            if (percent>= nextLogStep){
-                Log.info("Task completed at "+percent+"%");
-                nextLogStep+=10;
+    protected void update(long done) {
+        if (done >= 0 || totalSize > 0) {
+            long percent = done / totalSize;
+            if (percent >= nextLogStep) {
+                Log.info("Task completed at " + percent + "%");
+                nextLogStep += 10;
             }
         }
         this.latestUpdate = done;
@@ -86,11 +82,13 @@ public abstract class Task {
         Duration durationTotal = Duration.between(timeStart, timeLatestUpdate);
         listener.onUpdate(done, totalSize, durationLatest, durationTotal);
     }
-    public long getLatestUpdate(){
+
+    public long getLatestUpdate() {
         return this.latestUpdate;
     }
-    protected void finished(Object subject){
-        Log.info("Task finished: result: "+subject+" : "+this);
+
+    protected void finished(Object subject) {
+        Log.info("Task finished: result: " + subject + " : " + this);
         update(totalSize);
         result = subject;
         this.status = STATUS.FINISHED;
@@ -100,8 +98,9 @@ public abstract class Task {
             runningThread.interrupt();
         }
     }
-    protected void error(Exception e){
-        Log.error("Task error: exception: "+e.getMessage()+" : "+this);
+
+    protected void error(Exception e) {
+        Log.error("Task error: exception: " + e.getMessage() + " : " + this);
         this.status = STATUS.ERROR;
         this.error = e;
         listener.onError(e);
@@ -109,40 +108,45 @@ public abstract class Task {
     }
 
     protected abstract void startInternal() throws Exception;
-    protected void setTotalSize(long size){
-        this.totalSize = size;
-        listener.onStart(totalSize);
-    }
-    public long getTotalSize(){
+
+    public long getTotalSize() {
         return this.totalSize;
     }
 
-    public boolean pause(){
-        if(!canPause()){
+    protected void setTotalSize(long size) {
+        this.totalSize = size;
+        listener.onStart(totalSize);
+    }
+
+    public boolean pause() {
+        if (!canPause()) {
             return false;
         }
-        if( pauseInternal()){
-            Log.info("Task paused: "+this);
+        if (pauseInternal()) {
+            Log.info("Task paused: " + this);
             status = STATUS.PAUSED;
             return true;
         }
         return false;
     }
-    public boolean stop(){
-        if(!canStop()){
+
+    public boolean stop() {
+        if (!canStop()) {
             return false;
         }
-        if(stopInternal()){
-            Log.info("Task aborted: "+this);
+        if (stopInternal()) {
+            Log.info("Task aborted: " + this);
             status = STATUS.ABORTED;
             return true;
         }
         return false;
     }
-    protected void abort(){
+
+    protected void abort() {
         this.status = STATUS.ABORTED;
         isNotRunning.increase();
     }
+
     public STATUS waitFinished() throws InterruptedException {
         isNotRunning.waitOnce();
         return status;
@@ -155,32 +159,38 @@ public abstract class Task {
     public Exception getError() {
         return error;
     }
-    public String getStatusString(){
+
+    public String getStatusString() {
         return this.status.toString();
     }
 
-    public boolean isFinished(){
+    public boolean isFinished() {
         return STATUS.FINISHED.equals(status);
     }
 
     protected abstract boolean canPause();
+
     protected abstract boolean canStop();
+
     protected abstract boolean pauseInternal();
+
     protected abstract boolean stopInternal();
 
-    public void setListener(UpdateListener listener) {
-        this.listener = listener;
-    }
-
-    void startSameThread(){
+    void startSameThread() {
         start(true);
     }
 
     @Override
-    public String toString(){
-        return this.getClass().getSimpleName()+" -> status: "+this.status;
+    public String toString() {
+        return this.getClass().getSimpleName() + " -> status: " + this.status;
     }
 
-
-
+    public enum STATUS {
+        READY,
+        RUNNING,
+        PAUSED,
+        ERROR,
+        FINISHED,
+        ABORTED
+    }
 }

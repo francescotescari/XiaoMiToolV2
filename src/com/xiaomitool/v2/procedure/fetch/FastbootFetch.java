@@ -25,13 +25,11 @@ import java.util.Set;
 import static com.xiaomitool.v2.rom.chooser.InstallableChooser.idBySpecie;
 
 public class FastbootFetch {
-
-
-    public static RInstall findLatestFastboot(MiuiRom.Specie specie){
+    public static RInstall findLatestFastboot(MiuiRom.Specie specie) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Log.info("Searching latest fastboot rom: specie: "+specie);
+                Log.info("Searching latest fastboot rom: specie: " + specie);
                 MiuiRom.Specie sp = specie;
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
                 Device device = Procedures.requireDevice(runner);
@@ -41,9 +39,9 @@ public class FastbootFetch {
                 } catch (AdbException e) {
                     throw new InstallException(e);
                 }
-                if (sp == null){
+                if (sp == null) {
                     sp = params.getSpecie();
-                    if (sp == null){
+                    if (sp == null) {
                         throw new InstallException("Failed to obtain device branch and region: null specie", InstallException.Code.MISSING_PROPERTY);
                     }
                 } else {
@@ -64,36 +62,34 @@ public class FastbootFetch {
                                 throw new InstallException(e2);
                             }
                         }
-                        Log.info("Fastboot rom for specie "+specie+" found: "+rom);
+                        Log.info("Fastboot rom for specie " + specie + " found: " + rom);
                         chooser.add(id, rom);
                     }
                 } catch (CustomHttpException e) {
                     throw new InstallException(e);
                 }
-                Procedures.setInstallable(runner,rom);
-
+                Procedures.setInstallable(runner, rom);
             }
         };
-
     }
 
-    public static RInstall findAllLatestFastboot(Set<MiuiRom.Specie> speciesToSearch){
+    public static RInstall findAllLatestFastboot(Set<MiuiRom.Specie> speciesToSearch) {
         RInstall[] procedures = new RInstall[speciesToSearch.size()];
         int i = 0;
-        for (MiuiRom.Specie specie : speciesToSearch){
-            procedures[i++] =findLatestFastboot(specie);
+        for (MiuiRom.Specie specie : speciesToSearch) {
+            procedures[i++] = findLatestFastboot(specie);
         }
         return RNode.skipOnException(procedures);
     }
 
-    public static RInstall findBestRecoveryFastboot(){
+    public static RInstall findBestRecoveryFastboot() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
                 SettingsUtils.Region region = SettingsUtils.getRegion();
-                List<SettingsUtils.Region> tryRegions =new ArrayList<>();
-                if (SettingsUtils.Region.CN.equals(region)){
+                List<SettingsUtils.Region> tryRegions = new ArrayList<>();
+                if (SettingsUtils.Region.CN.equals(region)) {
                     tryRegions.add(SettingsUtils.Region.CN);
                     tryRegions.add(SettingsUtils.Region.GLOBAL);
                 } else if (SettingsUtils.Region.EU.equals(region)) {
@@ -101,7 +97,7 @@ public class FastbootFetch {
                     tryRegions.add(SettingsUtils.Region.GLOBAL);
                     tryRegions.add(SettingsUtils.Region.CN);
                 } else {
-                    if (!SettingsUtils.Region.GLOBAL.equals(region) && !SettingsUtils.Region.OTHER.equals(region)){
+                    if (!SettingsUtils.Region.GLOBAL.equals(region) && !SettingsUtils.Region.OTHER.equals(region)) {
                         tryRegions.add(region);
                     }
                     tryRegions.add(SettingsUtils.Region.GLOBAL);
@@ -134,7 +130,7 @@ public class FastbootFetch {
                         } catch (CustomHttpException e) {
                             throw new InstallException(e);
                         }
-                        if (rom != null){
+                        if (rom != null) {
                             InstallableChooser c = Procedures.requireInstallableChooser(runner);
                             c.add(idBySpecie(sp), rom);
                             Procedures.setInstallable(runner, rom);
@@ -142,7 +138,7 @@ public class FastbootFetch {
                         }
                     }
                 }
-                throw new InstallException("Failed to get a fastboot image for this device: "+device.getDeviceProperties().getCodename(true), InstallException.Code.INFO_RETRIVE_FAILED);
+                throw new InstallException("Failed to get a fastboot image for this device: " + device.getDeviceProperties().getCodename(true), InstallException.Code.INFO_RETRIVE_FAILED);
             }
         };
     }

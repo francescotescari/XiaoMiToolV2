@@ -39,6 +39,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class SettingsController extends DefaultController {
+    private static final OverlayPane settingsOverlayPane = new OverlayPane();
+    private static final ToastPane settingsToastPane = new ToastPane(settingsOverlayPane);
+    private static PopupWindow feedbackPopup;
     @FXML
     private ImageView IMG_CLOSE;
     @FXML
@@ -58,8 +61,74 @@ public class SettingsController extends DefaultController {
     @FXML
     private ComboBox<String> REGION_COMBO;
 
-    private static final OverlayPane settingsOverlayPane = new OverlayPane();
-    private static final ToastPane settingsToastPane = new ToastPane(settingsOverlayPane);
+    public static PopupWindow getFeedbackPopupWindow() {
+        if (feedbackPopup == null) {
+            feedbackPopup = new PopupWindow(500, 400);
+            Text title = new Text(LRes.SEND_FEEDBACK.toString());
+            title.setFont(Font.font(20));
+            TextArea textArea = new TextArea();
+            textArea.setPrefHeight(180);
+            textArea.setFont(Font.font(14));
+            textArea.setPromptText("Please explain your problem here.\r\nWrite in English or leave blank if you just want to send the log.\r\n" + LRes.FEEDBACK_ONLY_ONE.toEnglish());
+            textArea.setTextFormatter(new TextFormatter<String>(change ->
+                    change.getControlNewText().length() <= 500 ? change : null));
+            CustomButton button = new CustomButton(LRes.SEND_FEEDBACK);
+            button.setFont(Font.font(15));
+            textArea.setFocusTraversable(false);
+            CheckBox checkBox = new CheckBox(LRes.INCLUDE_LOG_FILES.toString());
+            checkBox.setSelected(true);
+            checkBox.setFont(Font.font(15));
+            VBox vBox = new VBox(18, title, textArea, checkBox, button);
+            HBox hBox = new HBox(20, new Pane(), vBox, new Pane());
+            hBox.setAlignment(Pos.CENTER);
+            vBox.setAlignment(Pos.CENTER);
+            feedbackPopup.setContent(hBox);
+            button.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    feedbackPopup.getController().setOnBeforeClose(new RunnableMessage() {
+                        @Override
+                        public int run() throws InterruptedException {
+                            textArea.setText("");
+                            return 0;
+                        }
+                    });
+                    String text = textArea.getText();
+                    boolean sendLogFile = checkBox.isSelected();
+                    if ((text == null || text.isEmpty()) && !sendLogFile) {
+                        textArea.setText("");
+                        textArea.setPromptText("You have to either send a text log or include the log file or both");
+                    } else {
+                        button.setDisable(true);
+                        button.setText(LRes.UPLOADING_FEEDBACK.toString());
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastPane feedbackToast = feedbackPopup.getToastPane();
+                                ToastPane settingsToast = settingsToastPane;
+                                try {
+                                    if (!LogSender.uploadFeedback(text, sendLogFile)) {
+                                        throw new Exception("Failed to uplaod the feedback, check the log file");
+                                    }
+                                    WindowManager.setOnExitAskForFeedback(false);
+                                    feedbackPopup.getController().closeWindow();
+                                    Platform.runLater(() -> settingsToast.toast(LRes.FEEDBACK_SENT.toString()));
+                                } catch (Exception e) {
+                                    Log.error("Failed to send the feedback: " + e.getMessage());
+                                    Log.exc(e);
+                                    if (feedbackToast != null) {
+                                        Platform.runLater(() -> feedbackToast.toast(LRes.FEEDBACK_ERROR.toString()));
+                                    }
+                                }
+                                LogSender.cooldownCounter(button);
+                            }
+                        }).start();
+                    }
+                }
+            });
+        }
+        return feedbackPopup;
+    }
 
     @Override
     protected void initialize() {
@@ -72,7 +141,7 @@ public class SettingsController extends DefaultController {
         WHOLE.getChildren().add(settingsOverlayPane);
     }
 
-    private void initCss(){
+    private void initCss() {
         TEXT_EXTRACT.setStyle("-fx-text-overrun: leading-ellipsis;");
         TEXT_DOWNLOAD.setStyle("-fx-text-overrun: leading-ellipsis;");
         INSTANCE_VALUE.setStyle("-fx-text-box-border: transparent; -fx-focus-color: transparent;");
@@ -98,7 +167,6 @@ public class SettingsController extends DefaultController {
                 settingsToastPane.toast(LRes.COPIED_TO_CLIPBOARD.toString());
             }
         });
-
         REGION_COMBO.setButtonCell(new ListCell<String>() {
             @Override
             public void updateItem(String item, boolean empty) {
@@ -106,7 +174,6 @@ public class SettingsController extends DefaultController {
                 if (item != null) {
                     setText(LRes.SELECTED_REGION.toString(item));
                     setAlignment(Pos.CENTER_LEFT);
-
                     setFont(Font.font(this.getFont().getName(), 14));
                 }
             }
@@ -131,10 +198,10 @@ public class SettingsController extends DefaultController {
                             }
                         };
                     }
-
                 });
     }
-    private void initTexts(){
+
+    private void initTexts() {
         LABEL_DOWNLOAD.setText(LRes.SETTINGS_DOWNLOAD_DIR.toString());
         LABEL_EXTRACT.setText(LRes.SETTINGS_EXTRACT_DIR.toString());
         BUTTON_DOWNLOAD.setText(LRes.CHOOSE.toString());
@@ -142,8 +209,8 @@ public class SettingsController extends DefaultController {
         BUTTON_EXTRACT.setText(LRes.CHOOSE.toString());
         CHECK_SAVE_LOGIN.setText(LRes.SETTINGS_SAVE_SESSION.toString());
         BUTTON_FEEDBACK.setText(LRes.SEND_FEEDBACK.toString());
-        INSTANCE_ID.setText(LRes.INSTANCE_ID.toString()+": ");
-        INSTANCE_VALUE.setText(Hash.md5Hex(ToolManager.getRunningInstanceId()).substring(0,8));
+        INSTANCE_ID.setText(LRes.INSTANCE_ID.toString() + ": ");
+        INSTANCE_VALUE.setText(Hash.md5Hex(ToolManager.getRunningInstanceId()).substring(0, 8));
         REGION_COMBO.setPromptText(LRes.PLEASE_SELECT_REGION.toString());
         REGION_COMBO.setItems(new ObservableListBase<String>() {
             @Override
@@ -156,12 +223,9 @@ public class SettingsController extends DefaultController {
                 return SettingsUtils.Region.values()[index].toHuman();
             }
         });
-
-
-
     }
 
-    private void loadSettings(){
+    private void loadSettings() {
         SettingsUtils.load();
         Path downloadDir = SettingsUtils.getDownloadPath();
         Path extractDir = SettingsUtils.getExtractPath();
@@ -174,21 +238,18 @@ public class SettingsController extends DefaultController {
             edir = extractDir.toString();
         }
         TEXT_DOWNLOAD.setText(ddir);
-        /*Log.debug(TEXT_DOWNLOAD.getLayoutBounds().getWidth());*/
         TEXT_EXTRACT.setText(edir);
         String saveSession = SettingsUtils.getOpt(SettingsUtils.PREF_SAVE_SESSION);
         boolean bool = "true".equalsIgnoreCase(saveSession);
         CHECK_SAVE_LOGIN.setSelected(bool);
-
-
     }
 
-    private void initOnClick(){
+    private void initOnClick() {
         SettingsUtils.Region region = SettingsUtils.getRegion();
         if (region != null) {
             int i = 0;
             for (SettingsUtils.Region r : SettingsUtils.Region.values()) {
-                if (region.equals(r)){
+                if (region.equals(r)) {
                     REGION_COMBO.getSelectionModel().select(i);
                 }
                 ++i;
@@ -200,18 +261,17 @@ public class SettingsController extends DefaultController {
                 SettingsUtils.Region[] regions = SettingsUtils.Region.values();
                 int index = REGION_COMBO.getSelectionModel().getSelectedIndex();
                 SettingsUtils.Region region = regions[index];
-                Log.info("Selected region: "+region);
+                Log.info("Selected region: " + region);
                 SettingsUtils.setRegion(region);
             }
         });
-
         BUTTON_EXTRACT.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 DirectoryChooser directoryChooser = new DirectoryChooser();
                 directoryChooser.setInitialDirectory(SettingsUtils.getExtractPath().toFile());
                 File choice = directoryChooser.showDialog(WindowManager.mainWindow());
-                if (choice == null){
+                if (choice == null) {
                     return;
                 }
                 String path;
@@ -230,7 +290,7 @@ public class SettingsController extends DefaultController {
                 DirectoryChooser directoryChooser = new DirectoryChooser();
                 directoryChooser.setInitialDirectory(SettingsUtils.getDownloadPath().toFile());
                 File choice = directoryChooser.showDialog(WindowManager.mainWindow());
-                if (choice == null){
+                if (choice == null) {
                     return;
                 }
                 String path;
@@ -247,17 +307,15 @@ public class SettingsController extends DefaultController {
             @Override
             public void handle(ActionEvent event) {
                 String val = CHECK_SAVE_LOGIN.isSelected() ? "true" : "false";
-                SettingsUtils.saveOpt(SettingsUtils.PREF_SAVE_SESSION,val);
+                SettingsUtils.saveOpt(SettingsUtils.PREF_SAVE_SESSION, val);
             }
         });
         BUTTON_FEEDBACK.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
                 WindowManager.launchPopup(getFeedbackPopupWindow());
             }
         });
-
         BUTTON_RESET.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -265,7 +323,6 @@ public class SettingsController extends DefaultController {
                 SettingsUtils.unset(SettingsUtils.PREF_DOWNLOAD_DIR);
                 SettingsUtils.unset(SettingsUtils.PREF_EXTRACT_DIR);
                 String dp, ep;
-
                 try {
                     dp = SettingsUtils.getDownloadPath().toFile().getCanonicalPath();
                     ep = SettingsUtils.getExtractPath().toFile().getCanonicalPath();
@@ -278,86 +335,5 @@ public class SettingsController extends DefaultController {
                 CHECK_SAVE_LOGIN.setSelected(false);
             }
         });
-
-
-    }
-    private static PopupWindow feedbackPopup;
-
-
-    public static PopupWindow getFeedbackPopupWindow(){
-        if (feedbackPopup == null){
-            feedbackPopup = new PopupWindow(500, 400);
-            Text title = new Text(LRes.SEND_FEEDBACK.toString());
-            title.setFont(Font.font(20));
-            TextArea textArea = new TextArea();
-            textArea.setPrefHeight(180);
-            textArea.setFont(Font.font(14));
-            textArea.setPromptText("Please explain your problem here.\r\nWrite in English or leave blank if you just want to send the log.\r\n"+LRes.FEEDBACK_ONLY_ONE.toEnglish());
-            textArea.setTextFormatter(new TextFormatter<String>(change ->
-                    change.getControlNewText().length() <= 500 ? change : null));
-            CustomButton button = new CustomButton(LRes.SEND_FEEDBACK);
-            button.setFont(Font.font(15));
-            textArea.setFocusTraversable(false);
-            CheckBox checkBox = new CheckBox(LRes.INCLUDE_LOG_FILES.toString());
-            checkBox.setSelected(true);
-            checkBox.setFont(Font.font(15));
-            VBox vBox = new VBox(18, title, textArea, checkBox, button);
-            HBox hBox = new HBox(20, new Pane(),vBox, new Pane());
-            hBox.setAlignment(Pos.CENTER);
-            vBox.setAlignment(Pos.CENTER);
-            feedbackPopup.setContent(hBox);
-
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    feedbackPopup.getController().setOnBeforeClose(new RunnableMessage() {
-                        @Override
-                        public int run() throws InterruptedException {
-                            /*Log.debug("Closing");*/
-                            textArea.setText("");
-                            return 0;
-                        }
-                    });
-                    String text = textArea.getText();
-
-                    boolean sendLogFile = checkBox.isSelected();
-                    if ((text == null || text.isEmpty()) && !sendLogFile){
-                        textArea.setText("");
-                        textArea.setPromptText("You have to either send a text log or include the log file or both");
-                    } else {
-                        button.setDisable(true);
-                        button.setText(LRes.UPLOADING_FEEDBACK.toString());
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastPane feedbackToast = feedbackPopup.getToastPane();
-                                ToastPane settingsToast = settingsToastPane;
-                                try {
-                                    if (!LogSender.uploadFeedback(text, sendLogFile)){
-                                        throw new Exception("Failed to uplaod the feedback, check the log file");
-                                    }
-
-                                        WindowManager.setOnExitAskForFeedback(false);
-                                        feedbackPopup.getController().closeWindow();
-                                        Platform.runLater(() -> settingsToast.toast(LRes.FEEDBACK_SENT.toString()));
-
-
-                                } catch (Exception e) {
-                                    Log.error("Failed to send the feedback: "+e.getMessage());
-                                    Log.exc(e);
-                                    if (feedbackToast != null) {
-                                        Platform.runLater(() -> feedbackToast.toast(LRes.FEEDBACK_ERROR.toString()));
-                                    }
-                                }
-                                LogSender.cooldownCounter(button);
-
-                            }
-                        }).start();
-                    }
-                }
-            });
-        }
-
-        return feedbackPopup;
     }
 }

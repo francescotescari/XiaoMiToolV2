@@ -8,41 +8,26 @@ import java.util.List;
 import static com.xiaomitool.v2.xiaomi.miuithings.MiuiVersion.CompareStatus.NEWER;
 
 public class MiuiVersion extends KeepOriginClass {
-
-    public static MiuiVersion fromObject(Object miuiVersion){
-        if (miuiVersion instanceof  String){
-            return new MiuiVersion((String) miuiVersion);
-        } else if (miuiVersion instanceof MiuiVersion){
-            return (MiuiVersion) miuiVersion;
-        } else {
-            return null;
-        }
-    }
-
     private Branch branch;
     private List<Integer> numbers;
     private int bigversion;
     private String charCode;
     private boolean isValid = true;
 
-    public List<Integer> getNumbers() {
-        return numbers;
-    }
-
-    public MiuiVersion(String version){
+    public MiuiVersion(String version) {
         super(version);
-        if (version == null){
+        if (version == null) {
             return;
         }
         String[] parts = version.split("\\.");
         int numnum = parts.length;
-        if (numnum == 3){
+        if (numnum == 3) {
             branch = Branch.DEVELOPER;
-        } else if(numnum == 5) {
+        } else if (numnum == 5) {
             branch = Branch.STABLE;
-        } else if (numnum == 6){
+        } else if (numnum == 6) {
             branch = Branch.FAKE;
-        } else if (numnum == 4){
+        } else if (numnum == 4) {
             branch = parts[0].charAt(0) == 'V' ? Branch.STABLE : Branch.UNKNOWN;
         } else {
             isValid = false;
@@ -50,11 +35,26 @@ public class MiuiVersion extends KeepOriginClass {
         }
         numbers = parseNums(parts);
     }
-    private List<Integer> parseNums(String[] parts){
+
+    public static MiuiVersion fromObject(Object miuiVersion) {
+        if (miuiVersion instanceof String) {
+            return new MiuiVersion((String) miuiVersion);
+        } else if (miuiVersion instanceof MiuiVersion) {
+            return (MiuiVersion) miuiVersion;
+        } else {
+            return null;
+        }
+    }
+
+    public List<Integer> getNumbers() {
+        return numbers;
+    }
+
+    private List<Integer> parseNums(String[] parts) {
         List<Integer> nums = new ArrayList<>();
-        for (int i = 0; i<parts.length; ++i){
+        for (int i = 0; i < parts.length; ++i) {
             String res = parts[i].replaceAll("[^0-9]", "");
-            if (!res.isEmpty()){
+            if (!res.isEmpty()) {
                 nums.add(Integer.parseInt(res));
             } else {
                 charCode = parts[i];
@@ -62,27 +62,21 @@ public class MiuiVersion extends KeepOriginClass {
         }
         return nums;
     }
-    public static enum CompareStatus{
-        NEWER,
-        OLDER,
-        CANNOT_COMPARE,
-        EQUAL
-    }
 
-    public CompareStatus compareTo(MiuiVersion v2){
+    public CompareStatus compareTo(MiuiVersion v2) {
         List<Integer> numbers2 = v2.getNumbers();
-        if (numbers2.size() != numbers.size()){
+        if (numbers2.size() != numbers.size()) {
             return CompareStatus.CANNOT_COMPARE;
         }
-        if (!v2.isValid || !this.isValid){
+        if (!v2.isValid || !this.isValid) {
             return CompareStatus.CANNOT_COMPARE;
         }
-        for (int i = 0; i<numbers.size(); ++i){
+        for (int i = 0; i < numbers.size(); ++i) {
             int a1 = numbers.get(i);
             int a2 = numbers2.get(i);
-            if (a1 > a2){
+            if (a1 > a2) {
                 return CompareStatus.NEWER;
-            } else if (a2 > a1){
+            } else if (a2 > a1) {
                 return CompareStatus.OLDER;
             }
         }
@@ -92,13 +86,15 @@ public class MiuiVersion extends KeepOriginClass {
     public Branch getBranch() {
         return branch;
     }
-    public String getBigVersion(){
+
+    public String getBigVersion() {
         boolean lon = branch == Branch.STABLE || branch == Branch.FAKE || charCode != null;
-        return lon && numbers.size() > 0 ? numbers.get(0)+"" : "";
+        return lon && numbers.size() > 0 ? numbers.get(0) + "" : "";
     }
-    public int getBigVersionNumber(){
-        if(isValid){
-            if (Branch.STABLE.equals(this.branch) || Branch.FAKE.equals(this.branch) && numbers.size() > 0){
+
+    public int getBigVersionNumber() {
+        if (isValid) {
+            if (Branch.STABLE.equals(this.branch) || Branch.FAKE.equals(this.branch) && numbers.size() > 0) {
                 return numbers.get(0);
             } else {
                 return this.compareTo(new MiuiVersion("8.5.25")).equals(NEWER) ? (this.compareTo(new MiuiVersion("9.8.30")).equals(NEWER) ? 11 : 10) : 9;
@@ -110,18 +106,25 @@ public class MiuiVersion extends KeepOriginClass {
 
     @Override
     public String toString() {
-        if (!isValid){
+        if (!isValid) {
             return this.getOrigin();
         }
         boolean lon = branch == Branch.STABLE || branch == Branch.FAKE || charCode != null;
         String r = lon ? "V" : "";
-        for (int i = 0; i<numbers.size(); ++i){
-            r+=numbers.get(i)+".";
+        for (int i = 0; i < numbers.size(); ++i) {
+            r += numbers.get(i) + ".";
         }
-        if (lon && charCode != null){
-            r+=charCode+".";
+        if (lon && charCode != null) {
+            r += charCode + ".";
         }
-        return r.substring(0,r.length()-1);
+        return r.substring(0, r.length() - 1);
+    }
+
+    public enum CompareStatus {
+        NEWER,
+        OLDER,
+        CANNOT_COMPARE,
+        EQUAL
     }
 }
 

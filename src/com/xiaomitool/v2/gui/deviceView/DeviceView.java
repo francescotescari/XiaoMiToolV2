@@ -1,16 +1,13 @@
 package com.xiaomitool.v2.gui.deviceView;
 
-import com.mortennobel.imagescaling.AdvancedResizeOp;
 import com.mortennobel.imagescaling.MultiStepRescaleOp;
 import com.mortennobel.imagescaling.ResampleFilters;
 import com.mortennobel.imagescaling.ResampleOp;
 import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.visual.OverlayPane;
-import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.Nullable;
 import com.xiaomitool.v2.utility.Pointer;
-
 import com.xiaomitool.v2.utility.utils.NumberUtils;
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -34,29 +31,24 @@ import javafx.util.Duration;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 
 public class DeviceView extends StackPane {
+    public static final DeviceImage DEVICE_16_9 = new DeviceImage(new Image(DrawableManager.getPng("device16_9").toString()), 220, 35, 1920, 1080, 2360, 1160, new DeviceView.ButtonPosition(410, 1150, 10, 200), new DeviceView.ButtonPosition(610, 1150, 10, 200), new DeviceView.ButtonPosition(880, 1150, 10, 200));
+    public static final DeviceImage DEVICE_18_9 = new DeviceImage(new Image(DrawableManager.getPng("device18_9").toString()), 130, 25, 2160, 1080, 2420, 1140, new DeviceView.ButtonPosition(300, 1130, 10, 200), new DeviceView.ButtonPosition(500, 1130, 10, 200), new DeviceView.ButtonPosition(800, 1130, 10, 200));
+    private final ConcurrentLinkedQueue<Transition> circlesAnimation = new ConcurrentLinkedQueue<>();
     protected DeviceImage deviceImage;
-    private ImageView deviceBorders, displayedImageView;
     protected double wantedHeight, scaleRatio;
+    protected Pane containerPane, imageWrapPane;
+    protected double contentScaleRatio;
+    protected double imageOffsetX, imageOffsetY;
+    protected boolean keepRatio;
+    private ImageView deviceBorders, displayedImageView;
     private Color background = Color.rgb(49, 53, 57), innerShadow = Color.BLACK;
     private StackPane contentPane;
     private Image displayedImage;
-    protected Pane containerPane, imageWrapPane;
-
-    public static final DeviceImage DEVICE_16_9 =  new DeviceImage(new Image(DrawableManager.getPng("device16_9").toString()),220,35,1920,1080,2360, 1160, new DeviceView.ButtonPosition(410,1150,10,200),new DeviceView.ButtonPosition(610,1150,10,200),new DeviceView.ButtonPosition(880,1150,10,200));
-    public static final DeviceImage DEVICE_18_9 =  new DeviceImage(new Image(DrawableManager.getPng("device18_9").toString()),130,25,2160,1080,2420, 1140, new DeviceView.ButtonPosition(300,1130,10,200),new DeviceView.ButtonPosition(500,1130,10,200),new DeviceView.ButtonPosition(800,1130,10,200));
-
-    public static Pane crop(DeviceView deviceView, double height, double top){
-        return  GuiUtils.crop(deviceView,0,top,deviceView.getWantedHeight()/deviceView.getOuterAspectRatio(),height);
-    }
-    public static Pane crop(DeviceView deviceView, double height){
-        return crop(deviceView,height,0);
-    }
 
     public DeviceView(DeviceImage deviceImage, double wantedHeight) {
         this(deviceImage, wantedHeight, null, null);
@@ -73,9 +65,15 @@ public class DeviceView extends StackPane {
         this.wantedHeight = wantedHeight;
         super.setPrefHeight(wantedHeight);
         build();
-
     }
 
+    public static Pane crop(DeviceView deviceView, double height, double top) {
+        return GuiUtils.crop(deviceView, 0, top, deviceView.getWantedHeight() / deviceView.getOuterAspectRatio(), height);
+    }
+
+    public static Pane crop(DeviceView deviceView, double height) {
+        return crop(deviceView, height, 0);
+    }
 
     public double getWantedHeight() {
         return wantedHeight;
@@ -86,99 +84,92 @@ public class DeviceView extends StackPane {
         deviceBorders.setPreserveRatio(true);
         deviceBorders.setFitHeight(wantedHeight);
         scaleRatio = wantedHeight / deviceImage.getOuterHeight();
-
         contentPane = new StackPane();
         contentPane.setBackground(GuiUtils.backgroundFromColor(background));
-        contentPane.setPrefHeight((scaleRatio * deviceImage.getInnerHeight())+4);
-        contentPane.setPrefWidth((scaleRatio * deviceImage.getInnerWidth())+4);
-       // contentPane.setAlignment(Pos.CENTER);
+        contentPane.setPrefHeight((scaleRatio * deviceImage.getInnerHeight()) + 4);
+        contentPane.setPrefWidth((scaleRatio * deviceImage.getInnerWidth()) + 4);
         contentPane.setEffect(new InnerShadow(0.1 * deviceImage.getInnerWidth() * scaleRatio, innerShadow));
-        contentPane.setLayoutX(deviceImage.getLeftOffset() * scaleRatio-2);
-        contentPane.setLayoutY(deviceImage.getTopOffset() * scaleRatio-2);
-        contentPane.setPadding(new Insets(2,0,0,2));
+        contentPane.setLayoutX(deviceImage.getLeftOffset() * scaleRatio - 2);
+        contentPane.setLayoutY(deviceImage.getTopOffset() * scaleRatio - 2);
+        contentPane.setPadding(new Insets(2, 0, 0, 2));
         Pane paddingPane = new Pane(contentPane);
-
-
-        // paddingPane.setAlignment(Pos.TOP_LEFT);
         StackPane superStack = new StackPane(paddingPane, deviceBorders);
         containerPane = new Pane(superStack);
-        containerPane.setPrefHeight(wantedHeight+4);
+        containerPane.setPrefHeight(wantedHeight + 4);
         super.getChildren().add(containerPane);
-
-    }
-    protected double contentScaleRatio;
-    public void setContent(ImageView image){
-        setContent(image,false);
     }
 
-    public void setContent(Image image){
+    public void setContent(ImageView image) {
+        setContent(image, false);
+    }
+
+    public void setContent(Image image) {
         setContent(new ImageView(image));
     }
-    public void setContent(Image image, boolean keepratio){
+
+    public void setContent(Image image, boolean keepratio) {
         setContent(new ImageView(image), keepratio);
     }
-    public void setContent(URL url){
+
+    public void setContent(URL url) {
         setContent(new Image(url.toString()));
     }
-    public void setContent(URL url, boolean keepratio){
-        setContent(new Image(url.toString(), false),keepratio);
-    }
-        public double getOuterAspectRatio(){
-        return deviceImage.getOuterHeight()/deviceImage.getOuterWidth();
-        }
-        public double getInnerAspectRatio(){
-        return deviceImage.getInnerHeight()/deviceImage.getInnerWidth();
-        }
-        private double getInnerHeight(){
-            return this.deviceImage.getInnerHeight()*this.scaleRatio;
-        }
-    private double getInnerWidth(){
-        return this.deviceImage.getInnerWidth()*this.scaleRatio;
+
+    public void setContent(URL url, boolean keepratio) {
+        setContent(new Image(url.toString(), false), keepratio);
     }
 
-    protected double imageOffsetX, imageOffsetY;
-    protected boolean keepRatio;
-    public void setContent(Color color){
-        java.awt.Color cCol =  new java.awt.Color((float) color.getRed(),
+    public double getOuterAspectRatio() {
+        return deviceImage.getOuterHeight() / deviceImage.getOuterWidth();
+    }
+
+    public double getInnerAspectRatio() {
+        return deviceImage.getInnerHeight() / deviceImage.getInnerWidth();
+    }
+
+    private double getInnerHeight() {
+        return this.deviceImage.getInnerHeight() * this.scaleRatio;
+    }
+
+    private double getInnerWidth() {
+        return this.deviceImage.getInnerWidth() * this.scaleRatio;
+    }
+
+    public void setContent(Color color) {
+        java.awt.Color cCol = new java.awt.Color((float) color.getRed(),
                 (float) color.getGreen(),
                 (float) color.getBlue(),
                 (float) color.getOpacity());
-
         BufferedImage image = new BufferedImage((int) deviceImage.getInnerWidth(), (int) deviceImage.getInnerHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D graph = image.createGraphics();
-        graph.setPaint (cCol);
-        graph.fillRect ( 0, 0, image.getWidth(), image.getHeight() );
+        graph.setPaint(cCol);
+        graph.fillRect(0, 0, image.getWidth(), image.getHeight());
         setContent(SwingFXUtils.toFXImage(image, null));
     }
 
     public void setContent(ImageView image, boolean keepRatio) {
         this.keepRatio = keepRatio;
         displayedImage = image.getImage();
-        /*Log.debug("Original image size: "+displayedImage.getHeight()+"x"+displayedImage.getWidth());*/
-        double origImgRatio = displayedImage.getHeight()/displayedImage.getWidth();
+        double origImgRatio = displayedImage.getHeight() / displayedImage.getWidth();
         int resizeWidth, resizeHeight;
         Rectangle2D viewport;
-        if (origImgRatio < this.getInnerAspectRatio()){
+        if (origImgRatio < this.getInnerAspectRatio()) {
             resizeWidth = NumberUtils.double2int(this.getInnerWidth());
-            resizeHeight = NumberUtils.double2int(keepRatio ? resizeWidth*origImgRatio : this.getInnerHeight());
-            imageOffsetY = keepRatio ? (this.getInnerHeight()-resizeHeight)/2 : 0;
+            resizeHeight = NumberUtils.double2int(keepRatio ? resizeWidth * origImgRatio : this.getInnerHeight());
+            imageOffsetY = keepRatio ? (this.getInnerHeight() - resizeHeight) / 2 : 0;
             imageOffsetX = 0;
-            viewport = keepRatio ? new Rectangle2D(0,-1*imageOffsetY,this.getInnerWidth(), this.getInnerHeight()) : null;
-
+            viewport = keepRatio ? new Rectangle2D(0, -1 * imageOffsetY, this.getInnerWidth(), this.getInnerHeight()) : null;
         } else {
             resizeHeight = NumberUtils.double2int(this.getInnerHeight());
-            resizeWidth = NumberUtils.double2int(keepRatio ? resizeHeight/origImgRatio : this.getInnerWidth());
-            imageOffsetX = keepRatio ? (this.getInnerWidth()-resizeWidth)/2 : 0;
+            resizeWidth = NumberUtils.double2int(keepRatio ? resizeHeight / origImgRatio : this.getInnerWidth());
+            imageOffsetX = keepRatio ? (this.getInnerWidth() - resizeWidth) / 2 : 0;
             imageOffsetY = 0;
-            viewport = keepRatio ? new Rectangle2D(-1*imageOffsetX,0,this.getInnerWidth(), this.getInnerHeight()) : null;
+            viewport = keepRatio ? new Rectangle2D(-1 * imageOffsetX, 0, this.getInnerWidth(), this.getInnerHeight()) : null;
         }
-        /*Log.debug("Viewport: "+viewport);*/
-        /*Log.debug("iOX = "+imageOffsetX+", iOY = "+imageOffsetY);*/
-        contentScaleRatio = ((double) resizeHeight)/displayedImage.getHeight();
-        /*Log.debug("RSW: "+resizeWidth+", RSH: "+resizeHeight+", CSR: "+contentScaleRatio+", DIH:"+displayedImage.getHeight());*/
+        contentScaleRatio = ((double) resizeHeight) / displayedImage.getHeight();
         BufferedImage srcImg = SwingFXUtils.fromFXImage(image.getImage(), null);
         BufferedImage img = new BufferedImage(resizeWidth, resizeHeight, srcImg.getType());
-        if (true){
+        if (true) {
             MultiStepRescaleOp resampleOp = new MultiStepRescaleOp(resizeWidth, resizeHeight, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             resampleOp.doFilter(srcImg, img, resizeWidth, resizeHeight);
         } else {
@@ -186,109 +177,22 @@ public class DeviceView extends StackPane {
             resampleOp.setFilter(ResampleFilters.getBiCubicFilter());
             resampleOp.doFilter(srcImg, img, resizeWidth, resizeHeight);
         }
-        /*Log.debug("Raw resized img: "+img.getHeight()+"x"+img.getWidth());*/
-
-        //
-
         Image resizedImage = SwingFXUtils.toFXImage(img, null);
         image.setImage(resizedImage);
-        if (viewport != null){
+        if (viewport != null) {
             image.setViewport(viewport);
         }
         image.setFitWidth(NumberUtils.double2int(this.getInnerWidth()));
         image.setFitHeight(NumberUtils.double2int(this.getInnerHeight()));
-        /*Log.debug("Result: "+image.getFitHeight()+"x"+image.getFitWidth()+" -img-> "+image.getImage().getHeight()+"x"+image.getImage().getWidth());*/
-
         contentPane.getChildren().clear();
-
         displayedImageView = image;
-
         imageWrapPane = new Pane(image);
-
-
         contentPane.getChildren().clear();
         contentPane.getChildren().add(GuiUtils.center(imageWrapPane));
-
-
-        
-/*        //image.setSmooth(true);
-        double offsetX = 0, offsetY =0 , height, width;
-        image.setPreserveRatio(true);
-        if (keepRatio){
-
-            Log.debug("KEEEPRATIIOOO");
-            height =  deviceImage.getInnerHeight();
-            width = displayedImage.getWidth();
-
-            offsetX = 0;
-            offsetY = -1*(deviceImage.getInnerHeight()-displayedImage.getHeight())/2;
-            image.setViewport(new Rectangle2D(offsetX,offsetY,width,height));
-        } else {
-            Log.debug("DONTT KEEEPRATIIOOO");
-            height = displayedImage.getHeight();
-            Log.debug("Height: "+displayedImage.getHeight());
-            width = displayedImage.getWidth();
-        }
-        Log.debug("Width: "+width+", height: "+height);
-        double setHeight = height-offsetY;
-        double setWidth = width-offsetX;
-        double innerRatio = deviceImage.getInnerHeight()/deviceImage.getInnerWidth();
-        double imgRatio = setHeight/setWidth;
-        double wantedH = -1, wantedW = -1;
-        if (innerRatio < imgRatio){
-            Log.debug("Image is taller than frame: height -> "+setHeight);
-            wantedH = Double.min(setHeight, deviceImage.getInnerHeight()*scaleRatio);
-            //h = keepRatio ? Double.min(h, displayedImage.getHeight()) : h;
-            Log.debug("Wanted height: "+wantedH);
-
-        } else {
-            wantedW = Double.min(setWidth, deviceImage.getInnerWidth()*scaleRatio);
-           //w = keepRatio ? Double.min(w, displayedImage.getWidth()) : w;
-            Log.debug("Image is wider than frame: width -> "+(deviceImage.getInnerWidth()*scaleRatio));
-            Log.debug("Wanted width: "+wantedW);
-
-        }
-        int dstH = new Double(wantedH).intValue(), dstW = new Double(wantedW).intValue();
-        if (dstH < 0){
-            Log.debug(keepRatio);
-            Log.debug("DstH: "+dstH+", DstW: "+dstW);
-            Log.debug(displayedImage.impl_getUrl());
-            Log.debug("Dst ration: "+(displayedImage.getHeight()/displayedImage.getWidth()));
-            dstH = new Double(keepRatio ? (dstW*displayedImage.getHeight()/displayedImage.getWidth()) : dstW*getInnerAspectRatio()).intValue();
-        } else if (dstW <0){
-            Log.debug("DstH: "+dstH+", DstW: "+dstW);
-            Log.debug(displayedImage.impl_getUrl());
-            Log.debug("Dst ration: "+(displayedImage.getWidth()/displayedImage.getHeight()));
-            dstW = new Double(keepRatio ? (dstH*displayedImage.getWidth()/displayedImage.getHeight()) : dstH/getInnerAspectRatio()).intValue();
-        }
-        Log.debug("DstH: "+dstH+", DstW: "+dstW);
-
-        BufferedImage srcImg = SwingFXUtils.fromFXImage(image.getImage(), null);
-        BufferedImage img = new BufferedImage(dstW, dstH, srcImg.getType());
-        new ResampleOp(dstW, dstH).doFilter(srcImg, img, dstW, dstH);
-        Image dstImg = SwingFXUtils.toFXImage(img, null);
-            image.setSmooth(false);
-            image.setImage(dstImg);
-
-
-        if (wantedW >= 0){
-            image.setFitWidth(wantedW);
-        }
-        if (wantedH >= 0){
-            image.setFitHeight(wantedH);
-        }
-        //image.setFitHeight(wantedHeight * deviceImage.getInnerHeight() / deviceImage.getOuterHeight());
-        contentPane.getChildren().clear();
-
-        displayedImageView = image;
-
-        imageWrapPane = new Pane(image);
-        contentPane.getChildren().add(GuiUtils.center(imageWrapPane));*/
-
     }
 
     public void setLenOverlay(OverlayPane pane, double size, double lensZoomRatio) {
-        if (displayedImageView == null){
+        if (displayedImageView == null) {
             return;
         }
         Pane len = new Pane();
@@ -296,7 +200,6 @@ public class DeviceView extends StackPane {
         len.setPickOnBounds(false);
         len.setLayoutX(-size);
         len.setLayoutY(-size);
-        //len.setStyle("-fx-background-radius: "+size/2+";");
         len.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(1))));
         len.setVisible(false);
         ImageView imageView = new ImageView(displayedImage);
@@ -323,7 +226,6 @@ public class DeviceView extends StackPane {
             }
         });
         displayedImageView.setCursor(Cursor.CROSSHAIR);
-
         displayedImageView.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -352,17 +254,18 @@ public class DeviceView extends StackPane {
         ButtonPosition pos = deviceImage.getVolumeDown();
         return setClick(pos, times);
     }
-    public Pane getImagePane(){
+
+    public Pane getImagePane() {
         return containerPane;
     }
 
-    public void setImageBackground(Background background){
-        if (contentPane != null){
+    public void setImageBackground(Background background) {
+        if (contentPane != null) {
             contentPane.setBackground(background);
         }
     }
 
-    public void setBackgroundColor(Color color){
+    public void setBackgroundColor(Color color) {
         setImageBackground(new Background(new BackgroundFill(color, null, null)));
     }
 
@@ -381,51 +284,43 @@ public class DeviceView extends StackPane {
             return null;
         }
         Rectangle rectangle = new Rectangle(pos.left * scaleRatio, pos.top * scaleRatio, pos.width * scaleRatio, pos.height * scaleRatio);
-        double centerX = (pos.left + pos.width / 2) ;
-        double centerY = (pos.top + pos.height / 2) ;
+        double centerX = (pos.left + pos.width / 2);
+        double centerY = (pos.top + pos.height / 2);
         rectangle.setFill(Color.RED);
         containerPane.getChildren().add(rectangle);
-        Transition transition = buildCircleTransition(centerX,centerY,times,false,false);
+        Transition transition = buildCircleTransition(centerX, centerY, times, false, false);
         transition.statusProperty().addListener((observable, oldValue, newValue) -> {
-            /*Log.debug(oldValue.toString()+" -> "+newValue.toString());*/
-            if (Animation.Status.STOPPED.equals(newValue)){
+            if (Animation.Status.STOPPED.equals(newValue)) {
                 containerPane.getChildren().removeAll(rectangle);
             }
         });
         return transition;
-
-
     }
 
     public double getScaleRatio() {
         return scaleRatio;
     }
 
-    public Transition buildCircleTransition(double x, double y, int times){
-        return buildCircleTransition(x,y,times,true, true);
+    public Transition buildCircleTransition(double x, double y, int times) {
+        return buildCircleTransition(x, y, times, true, true);
     }
 
-    private final ConcurrentLinkedQueue<Transition> circlesAnimation = new ConcurrentLinkedQueue<>();
-    public void removeCircleAnimation(){
-        /*Log.debug("Clearing anims");*/
+    public void removeCircleAnimation() {
         synchronized (circlesAnimation) {
             for (Transition transition : circlesAnimation) {
-                /*Log.debug("Clearing trans: "+transition.toString());*/
                 transition.stop();
             }
             circlesAnimation.clear();
         }
     }
 
-    public Transition buildCircleTransition(double x, double y, int times, boolean addBorder, boolean unique){
-        if (!Platform.isFxApplicationThread()){
+    public Transition buildCircleTransition(double x, double y, int times, boolean addBorder, boolean unique) {
+        if (!Platform.isFxApplicationThread()) {
             CompletableFuture<Transition> future = new CompletableFuture<>();
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-
-
-                    future.complete(buildCircleTransition(x,y,times,addBorder, unique));
+                    future.complete(buildCircleTransition(x, y, times, addBorder, unique));
                 }
             });
             try {
@@ -438,33 +333,31 @@ public class DeviceView extends StackPane {
                 return null;
             }
         }
-        if(unique){
+        if (unique) {
             removeCircleAnimation();
         }
-        Circle circle = new Circle(x*scaleRatio+(addBorder ? deviceImage.getLeftOffset()*scaleRatio+imageOffsetX : 0), y*scaleRatio+(addBorder ? imageOffsetY+deviceImage.getTopOffset() * scaleRatio : 0), wantedHeight / 12);
+        Circle circle = new Circle(x * scaleRatio + (addBorder ? deviceImage.getLeftOffset() * scaleRatio + imageOffsetX : 0), y * scaleRatio + (addBorder ? imageOffsetY + deviceImage.getTopOffset() * scaleRatio : 0), wantedHeight / 12);
         circle.setStroke(Color.RED);
         circle.setStrokeWidth(3);
         circle.setFill(Color.TRANSPARENT);
         circle.setVisible(false);
         circle.setOpacity(0);
         circle.setMouseTransparent(true);
-
         Transition transition = getCircleTransition(circle, times);
         containerPane.getChildren().add(circle);
         transition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
             @Override
             public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-                /*Log.debug(oldValue.toString()+" -> "+newValue.toString());*/
-                if (Animation.Status.STOPPED.equals(newValue)){
+                if (Animation.Status.STOPPED.equals(newValue)) {
                     circle.setVisible(false);
                     containerPane.getChildren().remove(circle);
-                } else if (Animation.Status.RUNNING.equals(newValue)){
+                } else if (Animation.Status.RUNNING.equals(newValue)) {
                     circle.setVisible(true);
                 }
             }
         });
         transition.play();
-        synchronized (circlesAnimation){
+        synchronized (circlesAnimation) {
             this.circlesAnimation.add(transition);
         }
         return transition;
@@ -486,16 +379,11 @@ public class DeviceView extends StackPane {
         fadeTransition.setInterpolator(new Interpolator() {
             @Override
             protected double curve(double t) {
-                return t*t;
+                return t * t;
             }
         });
-
-
-        return new ParallelTransition(transition,fadeTransition);
+        return new ParallelTransition(transition, fadeTransition);
     }
-
-
-
 
     public static class ButtonPosition {
         public double top, left, width, height;
@@ -506,10 +394,5 @@ public class DeviceView extends StackPane {
             this.width = width;
             this.height = height;
         }
-
     }
-
-
-
-
 }

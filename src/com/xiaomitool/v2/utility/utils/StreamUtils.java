@@ -1,11 +1,9 @@
 package com.xiaomitool.v2.utility.utils;
 
-import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.RunnableWithArg;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Scanner;
 
 public class StreamUtils {
     private Exception error = null;
@@ -20,7 +18,6 @@ public class StreamUtils {
             @Override
             public void run() {
                 try {
-                    /*Log.debug("Bytes available:" + stream.available());*/
                     byte[] data = new byte[1024];
                     while (stream.read(data) > 0) {
                         String str = new String(data);
@@ -29,7 +26,7 @@ public class StreamUtils {
                             read.run(sa);
                         }
                     }
-                } catch (Exception e){
+                } catch (Exception e) {
                     error = e;
                 }
             }

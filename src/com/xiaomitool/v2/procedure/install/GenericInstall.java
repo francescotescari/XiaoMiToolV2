@@ -43,89 +43,87 @@ import java.util.Objects;
 import static com.xiaomitool.v2.engine.CommonsMessages.NOOP;
 
 public class GenericInstall {
+    private static final String KEY_STASHED_INSTALLABLE = "stashed_installable";
+    private static final String KEY_BOOL_SHOULD_SKIP_INSTALL = "bool_should_skip_install";
+    private static HashMap<String, Object> context;
 
-    public static RInstall resourceDownload(){
+    public static RInstall resourceDownload() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                /*Log.debug("Downloading resource");*/
                 Installable installable = Procedures.requireInstallable(runner);
                 Log.info("Starting required resource download");
-                if(!installable.isNeedDownload()){
+                if (!installable.isNeedDownload()) {
                     Log.info("No need to download resources, skip");
-                    /*Log.debug("No need to download");*/
                     return;
                 }
-                if (StrUtils.isNullOrEmpty(installable.getDownloadUrl())){
-                    throw new InstallException("Download failed: empty or null download url", InstallException.Code.DOWNLOAD_FAILED, "Installable "+installable+" has no download url but it is market as it should have");
+                if (StrUtils.isNullOrEmpty(installable.getDownloadUrl())) {
+                    throw new InstallException("Download failed: empty or null download url", InstallException.Code.DOWNLOAD_FAILED, "Installable " + installable + " has no download url but it is market as it should have");
                 }
-                Log.info("Starting download from: "+installable.getDownloadUrl());
+                Log.info("Starting download from: " + installable.getDownloadUrl());
                 ProgressPane.DefProgressPane defProgressPane = new ProgressPane.DefProgressPane();
-                defProgressPane.setContentText(LRes.DOWNLOADING_ROM_FILE.toString()+"\n"+FilenameUtils.getName(installable.getDownloadUrl()));
+                defProgressPane.setContentText(LRes.DOWNLOADING_ROM_FILE.toString() + "\n" + FilenameUtils.getName(installable.getDownloadUrl()));
                 UpdateListener listener = defProgressPane.getUpdateListener(1000);
-                WindowManager.setMainContent(defProgressPane,false);
+                WindowManager.setMainContent(defProgressPane, false);
                 try {
                     installable.download(listener);
                     Log.info("Download was success");
-                }catch (Exception e){
-                    throw new InstallException("Download task failed: "+e.getMessage(), InstallException.Code.DOWNLOAD_FAILED, e);
+                } catch (Exception e) {
+                    throw new InstallException("Download task failed: " + e.getMessage(), InstallException.Code.DOWNLOAD_FAILED, e);
                 } finally {
                     WindowManager.removeTopContent();
                 }
-
             }
         };
     }
-    public static RInstall resourceExtract(){
+
+    public static RInstall resourceExtract() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                /*Log.debug("Extracting resource");*/
                 Installable installable = Procedures.requireInstallable(runner);
                 Log.info("Starting extraction of resources");
-                if(!installable.isNeedExtraction()){
-                    /*Log.debug("No need to extract");*/
+                if (!installable.isNeedExtraction()) {
                     Log.info("There is no need to extract, skip");
                     return;
                 }
-                if (installable.getDownloadedFile() == null){
-                    throw new InstallException("Extract failed: null downloaded file", InstallException.Code.EXTRACTION_FAILED, "Installable "+installable+" has no extract file but it is market as it should have");
+                if (installable.getDownloadedFile() == null) {
+                    throw new InstallException("Extract failed: null downloaded file", InstallException.Code.EXTRACTION_FAILED, "Installable " + installable + " has no extract file but it is market as it should have");
                 }
-                Log.info("Extracting file: "+installable.getDownloadedFile());
+                Log.info("Extracting file: " + installable.getDownloadedFile());
                 ProgressPane.DefProgressPane defProgressPane = new ProgressPane.DefProgressPane();
-                defProgressPane.setContentText(LRes.EXTRACTING_ROM_FILE+"\n"+installable.getDownloadedFile().toString());
+                defProgressPane.setContentText(LRes.EXTRACTING_ROM_FILE + "\n" + installable.getDownloadedFile().toString());
                 UpdateListener listener = defProgressPane.getUpdateListener(333);
-                WindowManager.setMainContent(defProgressPane,false);
+                WindowManager.setMainContent(defProgressPane, false);
                 try {
                     installable.extract(listener);
                     Log.info("Extraction was success");
-                }catch (Exception e){
-                    throw new InstallException("Extraction task failed: "+e.getMessage(), InstallException.Code.EXTRACTION_FAILED, e);
+                } catch (Exception e) {
+                    throw new InstallException("Extraction task failed: " + e.getMessage(), InstallException.Code.EXTRACTION_FAILED, e);
                 } finally {
                     WindowManager.removeTopContent();
                 }
-
             }
         };
     }
 
-    public static RInstall resourceFetchWait(){
-        return RNode.sequence(resourceDownload(),resourceExtract());
+    public static RInstall resourceFetchWait() {
+        return RNode.sequence(resourceDownload(), resourceExtract());
     }
 
-    public static RInstall runInstallProcedure(){
+    public static RInstall runInstallProcedure() {
         return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Installable installable = (Installable) runner.getContext(Procedures.INSTALLABLE);
                 Boolean isProcedure = (Boolean) runner.getContext(ChooseProcedure.IS_CHOOSEN_PROCEDURE);
-                if (installable == null && isProcedure != null && isProcedure == true){
+                if (installable == null && isProcedure != null && isProcedure == true) {
                     Log.warn("There is no installable, a procedure was selected, this probably means that a procedure has already finished, skip the installation part");
                     return;
                 }
                 installable = Procedures.requireInstallable(runner);
-                Procedures.pushRInstallOnStack(runner,installable.getInstallProcedure());
-                Log.info("Installation procedure to run: "+installable.getInstallProcedure().toString(1));
+                Procedures.pushRInstallOnStack(runner, installable.getInstallProcedure());
+                Log.info("Installation procedure to run: " + installable.getInstallProcedure().toString(1));
             }
         }, Procedures.runStackedProcedures());
     }
@@ -136,7 +134,7 @@ public class GenericInstall {
             public void run(ProcedureRunner runner) throws InstallException, InterruptedException {
                 WindowManager.setOnExitAskForFeedback(false);
                 Installable installable = (Installable) runner.getContext(Procedures.INSTALLABLE);
-                LiveFeedbackEasy.sendSuccess(String.valueOf(installable),runner.getStackStrace());
+                LiveFeedbackEasy.sendSuccess(String.valueOf(installable), runner.getStackStrace());
                 Log.info("Installation succesful, showing donation message");
                 DeviceManager.stopScanThreads();
                 DonationPane donationPane = new DonationPane();
@@ -168,8 +166,8 @@ public class GenericInstall {
             }
         });
     }
-    private static final String KEY_STASHED_INSTALLABLE = "stashed_installable";
-    public static RInstall satisfyAllRequirements(){
+
+    public static RInstall satisfyAllRequirements() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -177,104 +175,93 @@ public class GenericInstall {
                 Installable stashed = (Installable) runner.getContext(KEY_STASHED_INSTALLABLE);
                 Installable installable = Procedures.requireInstallable(runner);
                 Device device = Procedures.requireDevice(runner);
-                if (stashed == null){
-                    Log.info("Stashing the installable to satisfy the requirements: "+installable.toLogString());
+                if (stashed == null) {
+                    Log.info("Stashing the installable to satisfy the requirements: " + installable.toLogString());
                     runner.setContext(KEY_STASHED_INSTALLABLE, installable);
                 }
-                /*Log.debug("Satisfying all requirements");*/
-                StatedProcedure toSatisfy = InstallationRequirement.satisfyNextRequirement(Procedures.requireDevice(runner),installable);
+                StatedProcedure toSatisfy = InstallationRequirement.satisfyNextRequirement(Procedures.requireDevice(runner), installable);
                 StatedProcedure copy = null;
-                while (toSatisfy != null){
+                while (toSatisfy != null) {
                     if (toSatisfy.getInstallProcedure() != null) {
                         if (YesNoMaybe.YES.equals(device.getAnswers().isNeedDeviceDebug()) && Procedures.stillNeedUsbDebug(runner, toSatisfy)) {
                             Log.warn("Satisfying the requirement resetted the phone, you need to enable usb debug again");
                             RebootDevice.rebootNoWaitIfConnected().run(runner);
                             ActionsDynamic.WAIT_USB_DEBUG_ENABLE(device).run();
                         }
-                        /*Log.debug("Statisfying requrement: " + toSatisfy.toString());*/
                         Log.info("Next procedure to satisfy: " + toSatisfy.getInstallProcedure().toString(2));
                         toSatisfy.getInstallProcedure().run(runner);
                         copy = toSatisfy;
                     }
-                    toSatisfy = InstallationRequirement.satisfyNextRequirement(Procedures.requireDevice(runner),installable);
-                    if (Objects.equals(copy, toSatisfy)){
-                        throw new InstallException("Trying to satisfy a requirement that should had been just satisfied: "+copy, InstallException.Code.INTERNAL_ERROR, "Past requirement: "+copy+", current requirement: "+toSatisfy);
+                    toSatisfy = InstallationRequirement.satisfyNextRequirement(Procedures.requireDevice(runner), installable);
+                    if (Objects.equals(copy, toSatisfy)) {
+                        throw new InstallException("Trying to satisfy a requirement that should had been just satisfied: " + copy, InstallException.Code.INTERNAL_ERROR, "Past requirement: " + copy + ", current requirement: " + toSatisfy);
                     }
                     try {
                         Log.info("The device might be rebooting right now, lets wait it for 30 seconds");
                         ManageDevice.waitDevice(30, Device.Status.DEVICE).setFlag(RNode.FLAG_THROWRAWEXCEPTION, true).run(runner);
-                    } catch (InstallException e){
+                    } catch (InstallException e) {
                         Log.warn("Starting next requirement satisfaction without device active");
                     }
                 }
-                /*Log.debug("Stasfied all requirments");*/
                 stashed = (Installable) runner.getContext(KEY_STASHED_INSTALLABLE);
-
-
-                if (stashed != null){
+                if (stashed != null) {
                     if (YesNoMaybe.YES.equals(device.getAnswers().isNeedDeviceDebug()) && Procedures.stillNeedUsbDebug(runner, stashed)) {
                         Log.warn("Satisfying the requirement resetted the phone, you need to enable usb debug again before installing stashed installable");
                         RebootDevice.rebootNoWaitIfConnected().run(runner);
                         ActionsDynamic.WAIT_USB_DEBUG_ENABLE(device).run();
                     }
-
-                    Log.info("Reloading the stashed installable: "+stashed.toLogString());
-                    /*Log.debug("Reloading stashed installable: "+stashed);*/
+                    Log.info("Reloading the stashed installable: " + stashed.toLogString());
                     Procedures.setInstallable(runner, stashed);
                 }
             }
         };
     }
 
-    public static RInstall updateDeviceStatus(Boolean isUnlocked, Boolean hasTwrp, Boolean hasUsbDebug){
+    public static RInstall updateDeviceStatus(Boolean isUnlocked, Boolean hasTwrp, Boolean hasUsbDebug) {
         return updateDeviceStatus(isUnlocked, hasTwrp, hasUsbDebug, null);
     }
 
-
-    public static RInstall updateDeviceStatus(Boolean isUnlocked, Boolean hasTwrp, Boolean hasUsbDebug, Boolean hasStockMiui){
+    public static RInstall updateDeviceStatus(Boolean isUnlocked, Boolean hasTwrp, Boolean hasUsbDebug, Boolean hasStockMiui) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                Log.info("Updating the device status: isUnlocked: "+isUnlocked+", hasTwrp: "+hasTwrp+", hasUsbDebug: "+hasUsbDebug+", hasStockMiui: "+hasStockMiui);
+                Log.info("Updating the device status: isUnlocked: " + isUnlocked + ", hasTwrp: " + hasTwrp + ", hasUsbDebug: " + hasUsbDebug + ", hasStockMiui: " + hasStockMiui);
                 Device device = Procedures.requireDevice(runner);
-                if (isUnlocked != null){
+                if (isUnlocked != null) {
                     device.getDeviceProperties().getFastbootProperties().put(DeviceProperties.X_LOCKSTATUS, isUnlocked ? UnlockStatus.UNLOCKED : UnlockStatus.LOCKED);
                 }
-                if (hasTwrp != null){
+                if (hasTwrp != null) {
                     device.getAnswers().setAnswer(DeviceAnswers.HAS_TWRP, hasTwrp ? YesNoMaybe.YES : YesNoMaybe.NO);
                 }
-                if (hasUsbDebug != null){
+                if (hasUsbDebug != null) {
                     device.getAnswers().setNeedDeviceDebug(hasUsbDebug ? YesNoMaybe.NO : YesNoMaybe.YES);
                 }
-                if (hasStockMiui != null){
+                if (hasStockMiui != null) {
                     device.getAnswers().setAnswer(DeviceAnswers.HAS_STOCK_MIUI, hasStockMiui ? YesNoMaybe.YES : YesNoMaybe.NO);
                 }
             }
         };
     }
 
-    static final RInstall checkIfProcedureDone(){
+    static final RInstall checkIfProcedureDone() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Installable installable = (Installable) runner.getContext(Procedures.INSTALLABLE);
                 Boolean isProcedure = (Boolean) runner.getContext(ChooseProcedure.IS_CHOOSEN_PROCEDURE);
                 Boolean skip = installable == null && isProcedure != null && isProcedure == true;
-                Log.info("Has a procedure already run and we should skip installable procedure? "+skip);
+                Log.info("Has a procedure already run and we should skip installable procedure? " + skip);
                 runner.setContext(KEY_BOOL_SHOULD_SKIP_INSTALL, skip);
             }
         };
     }
 
-    private static final String KEY_BOOL_SHOULD_SKIP_INSTALL = "bool_should_skip_install";
-
-    public static RInstall restartMain(RInstall startFromHere){
-
+    public static RInstall restartMain(RInstall startFromHere) {
         final RInstall start = startFromHere;
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                if (start == null){
+                if (start == null) {
                     throw new InstallException("Cannot restart procedure from null", InstallException.Code.INTERNAL_ERROR);
                 }
                 final Device device = Procedures.requireDevice(runner);
@@ -285,33 +272,32 @@ public class GenericInstall {
                         try {
                             ActionsDynamic.MAIN_SCREEN_LOADING(LRes.LOADING).run();
                             lastThread.interrupt();
-
                             ActionsDynamic.START_PROCEDURE(device, RNode.sequence(unstashContext(), start), runner, start).run();
                         } catch (InterruptedException e) {
-                            Log.warn("Main tool runner thread interrutped: "+e.getMessage());
+                            Log.warn("Main tool runner thread interrutped: " + e.getMessage());
                         }
                     }
                 }).start();
-                Thread.sleep(1000*3600*24);
+                Thread.sleep(1000 * 3600 * 24);
                 Log.error("Not interrupted :(");
             }
         };
     }
 
-    public static RInstall showUserAndRestart(String message, boolean throwUplevel){
+    public static RInstall showUserAndRestart(String message, boolean throwUplevel) {
         return showUserAndRestart(message, throwUplevel, null);
     }
 
-    public static RInstall showUserAndRestart(String message, boolean throwUplevel, RInstall startFromHere){
+    public static RInstall showUserAndRestart(String message, boolean throwUplevel, RInstall startFromHere) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                ButtonPane buttonPane = new ButtonPane(throwUplevel ? new LRes[]{LRes.OK_UNDERSTAND, LRes.TRY_AGAIN} : new LRes[]{LRes.OK_UNDERSTAND} );
+                ButtonPane buttonPane = new ButtonPane(throwUplevel ? new LRes[]{LRes.OK_UNDERSTAND, LRes.TRY_AGAIN} : new LRes[]{LRes.OK_UNDERSTAND});
                 buttonPane.setContentText(message);
                 WindowManager.setMainContent(buttonPane, false);
                 int click = buttonPane.waitClick();
                 WindowManager.removeTopContent();
-                if (click != 0){
+                if (click != 0) {
                     throw new RMessage(CommandClass.Command.UPLEVEL);
                 }
                 restartMain(runner.getRestarter()).run(runner);
@@ -319,42 +305,23 @@ public class GenericInstall {
         };
     }
 
-
-
-    public static RInstall recoverMain(){
+    public static RInstall recoverMain() {
         return RNode.sequence(ManageDevice.requireAdbCheckService(), ConfirmationProcedure.confirmPhoneCharged(), ManageDevice.recoverSelectDevice(), recoverDeviceStart());
     }
 
-    public static RInstall recoverDeviceStart(){
+    public static RInstall recoverDeviceStart() {
         return RNode.sequence(OtherProcedures.restoreInstallPane(), OtherProcedures.text(LRes.STARTING_RECOVERY_PROC.toString()), ManageDevice.selectDeviceCodename(), stashContext());
     }
 
-    public static RInstall main(){
+    public static RInstall main() {
         return RNode.sequence(
                 RebootDevice.rebootNoWaitIfConnected(),
                 ChooseProcedure.chooseRomCategory(),
                 selectRomAndGo()
-            );
-        
-/*RebootDevice.rebootNoWaitIfConnected().run(runner);
-        Log.debug("PRO0 CHOOSE CAT");
-        ChooseProcedure.chooseRomCategory().run(runner);
-        Log.debug("PRO0 CHOOSE ROM");
-        ChooseProcedure.chooseRom().run(runner);
-        Log.debug("PRO0 FETCH RESOURCE");
-        ConfirmationProcedure.confirmInstallableProcedure().run(runner);
-        ConfirmationProcedure.confirmInstallationStart().run(runner);
-        runner.text(LRes.WAITING_DEVICE_ACTIVE);
-        ManageDevice.waitDevice(60);
-        GenericInstall.satisfyAllRequirements().run(runner);
-        GenericInstall.resourceFetchWait().run(runner);
-        DeviceManager.refresh();
-        GenericInstall.runInstallProcedure().run(runner);
-        GenericInstall.installationSuccess().run(runner);*/
+        );
     }
 
-    private static HashMap<String, Object> context;
-    private static RInstall stashContext(){
+    private static RInstall stashContext() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -364,11 +331,11 @@ public class GenericInstall {
         };
     }
 
-    private static RInstall unstashContext(){
+    private static RInstall unstashContext() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                if (context == null){
+                if (context == null) {
                     return;
                 }
                 runner.reloadContext(context);

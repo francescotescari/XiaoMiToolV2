@@ -11,38 +11,36 @@ import java.util.List;
 import java.util.Map;
 
 public class AdbCommunication {
-    public static Thread trackDevicesThread, refreshDevicesThread;
-    private static int cannotInterruptCount = 0; private static boolean isTrackDeviceActive=false;
-    private static final int REFRESH_TIME_MS  = 2500;
-    private static AdbRunner trackDeviceProcess;
+    private static final int REFRESH_TIME_MS = 2500;
     private static final Object sync = new Object();
-    public static boolean canInterrupt(){
+    public static Thread trackDevicesThread, refreshDevicesThread;
+    private static int cannotInterruptCount = 0;
+    private static boolean isTrackDeviceActive = false;
+    private static AdbRunner trackDeviceProcess;
+
+    public static boolean canInterrupt() {
         return cannotInterruptCount == 0;
     }
 
-    public static void startServer(){
-        if (!canInterrupt()){
-            /*Log.debug("Cannot interrupt adb connection");*/
+    public static void startServer() {
+        if (!canInterrupt()) {
         }
         AdbCommons.start_server();
-
     }
-    public static void killServer(){
-        if (!canInterrupt()){
-            /*Log.debug("Cannot interrupt adb connection");*/
+
+    public static void killServer() {
+        if (!canInterrupt()) {
             return;
         }
         AdbCommons.kill_server();
     }
-    public static void restartServer(){
+
+    public static void restartServer() {
         killServer();
         startServer();
     }
 
-
-
-
-    public static void registerAutoScanDevices(){
+    public static void registerAutoScanDevices() {
         Log.info("Starting autoscan threads");
         synchronized (sync) {
             if (refreshDevicesThread != null) {
@@ -52,7 +50,7 @@ public class AdbCommunication {
         Runnable trackDevices = new Runnable() {
             @Override
             public void run() {
-                 trackDeviceProcess = new AdbRunner();
+                trackDeviceProcess = new AdbRunner();
                 trackDeviceProcess.addArgument("track-devices");
                 trackDeviceProcess.addSyncCallback(new RunnableWithArg() {
                     @Override
@@ -75,16 +73,13 @@ public class AdbCommunication {
             @Override
             public void run() {
                 while (true) {
-                    /*Log.debug("R start");*/
                     DeviceManager.refresh(true);
-                    /*Log.debug("R fin");*/
                     try {
                         Thread.sleep(REFRESH_TIME_MS);
                     } catch (InterruptedException e) {
                         Log.error("Refresh thread interrupted");
                         Log.printStackTrace(e);
                     }
-                    /*Log.debug("Refreshing nowwwww");*/
                 }
             }
         };
@@ -92,29 +87,27 @@ public class AdbCommunication {
         refreshDevicesThread.start();
     }
 
-    private static void refereshAdbDevices(Map<String, Device.Status> updatingDevices){
-            List<String> cmdOut = AdbCommons.devices();
-            if (cmdOut == null){
-                return;
-            }
-
-            synchronized (updatingDevices){
-                updatingDevices.putAll(AdbUtils.parseDevices(cmdOut));
-            }
-
-    }
-    private static void  refreshFastbootDevices(Map<String, Device.Status> updatingDevices){
-            List<String> cmdOut = FastbootCommons.devices();
-            if (cmdOut == null){
-                return;
-            }
-            synchronized (updatingDevices){
-                updatingDevices.putAll(AdbUtils.parseDevices(cmdOut));
-            }
-
+    private static void refereshAdbDevices(Map<String, Device.Status> updatingDevices) {
+        List<String> cmdOut = AdbCommons.devices();
+        if (cmdOut == null) {
+            return;
+        }
+        synchronized (updatingDevices) {
+            updatingDevices.putAll(AdbUtils.parseDevices(cmdOut));
+        }
     }
 
-    public static void refreshDevices(Map<String, Device.Status> updatingDevices){
+    private static void refreshFastbootDevices(Map<String, Device.Status> updatingDevices) {
+        List<String> cmdOut = FastbootCommons.devices();
+        if (cmdOut == null) {
+            return;
+        }
+        synchronized (updatingDevices) {
+            updatingDevices.putAll(AdbUtils.parseDevices(cmdOut));
+        }
+    }
+
+    public static void refreshDevices(Map<String, Device.Status> updatingDevices) {
         refereshAdbDevices(updatingDevices);
         refreshFastbootDevices(updatingDevices);
     }
@@ -123,24 +116,26 @@ public class AdbCommunication {
         cannotInterruptCount++;
         unregisterAutoScanDevices();
     }
-    public static void giveAllAccess(){
-        if (cannotInterruptCount > 0){
+
+    public static void giveAllAccess() {
+        if (cannotInterruptCount > 0) {
             cannotInterruptCount--;
         }
         if (canInterrupt()) {
             registerAutoScanDevices();
         }
     }
-    public static void unregisterAutoScanDevices(){
+
+    public static void unregisterAutoScanDevices() {
         Log.info("Stopping autoscan threads");
-        if (trackDeviceProcess != null){
+        if (trackDeviceProcess != null) {
             trackDeviceProcess.kill();
         }
-        if (refreshDevicesThread != null && refreshDevicesThread.isAlive()){
+        if (refreshDevicesThread != null && refreshDevicesThread.isAlive()) {
             refreshDevicesThread.interrupt();
         }
         refreshDevicesThread = null;
-        if (trackDevicesThread != null && trackDevicesThread.isAlive()){
+        if (trackDevicesThread != null && trackDevicesThread.isAlive()) {
             trackDevicesThread.interrupt();
         }
         trackDevicesThread = null;

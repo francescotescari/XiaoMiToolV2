@@ -6,7 +6,6 @@ import com.xiaomitool.v2.logging.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.file.Path;
 
 public class ApkUtils {
@@ -22,8 +21,8 @@ public class ApkUtils {
             ApkManifestParser manifestParser = new ApkManifestParser();
             manifestParser.open(inputStream);
             return manifestParser.getPackageName();
-        } catch (Throwable t){
-            Log.warn("Failed to get apk package name for "+apkFile+": "+t.getMessage());
+        } catch (Throwable t) {
+            Log.warn("Failed to get apk package name for " + apkFile + ": " + t.getMessage());
             return null;
         }
     }

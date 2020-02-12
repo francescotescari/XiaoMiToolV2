@@ -1,7 +1,5 @@
 package com.xiaomitool.v2.gui.visual;
 
-
-
 import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.deviceView.Animatable;
 import com.xiaomitool.v2.gui.deviceView.AnimatableDeviceView;
@@ -23,28 +21,25 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DeviceImgInstructionPane extends SidePane {
-
-
     private String[] texts;
     private Image[] images;
     private HashMap<Integer, Animatable.AnimationPayload> animations;
-
-    public DeviceImgInstructionPane(double wantedHeight, double maxHeight, String[] texts, Image[] images, HashMap<Integer, Animatable.AnimationPayload> animations){
-        this.texts = texts;
-        this.images = images;
-        this.animations = animations;
-        build(wantedHeight,maxHeight);
-    }
-
-
     private int index = 0;
     private Button prevButton, nextButton;
     private Text instructionText;
     private AnimatableDeviceView deviceView;
     private ButtonPane closeButtonPane;
     private Transition currentAnimation = null;
-    private void build(double wantedHeight, double maxHeight){
-        if (texts == null || images == null || texts.length != images.length || texts.length == 0){
+
+    public DeviceImgInstructionPane(double wantedHeight, double maxHeight, String[] texts, Image[] images, HashMap<Integer, Animatable.AnimationPayload> animations) {
+        this.texts = texts;
+        this.images = images;
+        this.animations = animations;
+        build(wantedHeight, maxHeight);
+    }
+
+    private void build(double wantedHeight, double maxHeight) {
+        if (texts == null || images == null || texts.length != images.length || texts.length == 0) {
             throw new IllegalArgumentException("Please, pass not null, not empty arrays with same num of elements");
         }
         ButtonPane buttonPane = new ButtonPane(LRes.PREV_STEP, LRes.NEXT_STEP);
@@ -69,7 +64,7 @@ public class DeviceImgInstructionPane extends SidePane {
                         deviceView.removeCircleAnimation();
                     }
                 }
-                return index < texts.length -1;
+                return index < texts.length - 1;
             }
         };
         deviceView.setContent(images[index]);
@@ -77,7 +72,7 @@ public class DeviceImgInstructionPane extends SidePane {
             @Override
             public void run(Object arg) {
                 int click = (int) arg;
-                if (click == 0){
+                if (click == 0) {
                     index--;
                 } else {
                     index++;
@@ -87,43 +82,41 @@ public class DeviceImgInstructionPane extends SidePane {
         });
         closeButtonPane.setContent(buttonPane);
         StackPane stackPane = new StackPane(closeButtonPane);
-        stackPane.setPadding(new Insets(20,0,30,20));
+        stackPane.setPadding(new Insets(20, 0, 30, 20));
         loadStep();
         this.setLeft(stackPane);
-        this.setRight(GuiUtils.center(DeviceView.crop(deviceView, wantedHeight, wantedHeight > maxHeight ? (wantedHeight - maxHeight)/2 : 0)));
+        this.setRight(GuiUtils.center(DeviceView.crop(deviceView, wantedHeight, wantedHeight > maxHeight ? (wantedHeight - maxHeight) / 2 : 0)));
     }
 
     public void animate() throws InterruptedException {
         deviceView.animate(index);
     }
 
-    public void setOverlayLen(OverlayPane pane, double zoomRatio){
+    public void setOverlayLen(OverlayPane pane, double zoomRatio) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                deviceView.setLenOverlay(pane,300, zoomRatio);
+                deviceView.setLenOverlay(pane, 300, zoomRatio);
             }
         };
-        if (!Platform.isFxApplicationThread()){
+        if (!Platform.isFxApplicationThread()) {
             Platform.runLater(runnable);
         } else {
             runnable.run();
         }
-
     }
 
-    private void loadStep(){
+    private void loadStep() {
         Image toLoadImg = images[index];
-        String toLoadText = LRes.STEP.toString()+" ["+(index+1)+"/"+(texts.length)+"]:\n"+texts[index];
-
-        if (index == 0){
+        String toLoadText = LRes.STEP.toString() + " [" + (index + 1) + "/" + (texts.length) + "]:\n" + texts[index];
+        if (index == 0) {
             prevButton.setDisable(true);
         } else {
             prevButton.setDisable(false);
         }
-        if (index == texts.length -1){
+        if (index == texts.length - 1) {
             nextButton.setDisable(true);
-        } else{
+        } else {
             nextButton.setDisable(false);
         }
         instructionText.setText(toLoadText);
@@ -131,7 +124,7 @@ public class DeviceImgInstructionPane extends SidePane {
         try {
             animate();
         } catch (InterruptedException e) {
-            Log.warn("Animation error: "+e.getMessage());
+            Log.warn("Animation error: " + e.getMessage());
         }
     }
 
@@ -139,11 +132,7 @@ public class DeviceImgInstructionPane extends SidePane {
         return this.closeButtonPane.waitClick();
     }
 
-    public IDClickReceiver getIdClickReceiver(){
+    public IDClickReceiver getIdClickReceiver() {
         return this.closeButtonPane.getIdClickReceiver();
     }
-
-
-
-
 }

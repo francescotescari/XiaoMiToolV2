@@ -15,8 +15,9 @@ import java.util.List;
 
 public class MTPUtils {
     private static String WIN_MTP_EXE = "mtp";
-    private static ProcessRunner winMtpRunner(){
-        return new ProcessRunner(ResourcesManager.getToolPath(WIN_MTP_EXE,true));
+
+    private static ProcessRunner winMtpRunner() {
+        return new ProcessRunner(ResourcesManager.getToolPath(WIN_MTP_EXE, true));
     }
 
     public static HashMap<String, MTPDevice> list() throws IOException {
@@ -25,16 +26,16 @@ public class MTPUtils {
         ProcessRunner runner = winMtpRunner();
         runner.addArgument("list");
         runner.runWait();
-        if (runner.getExitValue() != 0){
+        if (runner.getExitValue() != 0) {
             return map;
         }
         List<String> out = runner.getOutputLines();
         out = stripOutput(out);
-        for (String line : out){
+        for (String line : out) {
             try {
                 String id = new String(Base64.getDecoder().decode(line));
                 map.put(id, new MTPDevice(id));
-            } catch (Throwable t){
+            } catch (Throwable t) {
                 continue;
             }
         }
@@ -47,13 +48,13 @@ public class MTPUtils {
         runner.addArgument("getroot");
         runner.addArgument(Base64.getEncoder().encodeToString(device.id.getBytes(ResourcesConst.interalCharset())));
         runner.runWait();
-        if (runner.getExitValue() != 0){
+        if (runner.getExitValue() != 0) {
             return "";
         }
         return runner.getOutputLines().get(0);
     }
 
-    public static Task getPushTask(MTPDevice device, Path fileToPush, String destination){
+    public static Task getPushTask(MTPDevice device, Path fileToPush, String destination) {
         OSNotSupportedException.requireWindows();
         ProcessRunner runner = winMtpRunner();
         runner.addArgument("push");
@@ -67,11 +68,11 @@ public class MTPUtils {
                 runner.addSyncCallback(new RunnableWithArg() {
                     @Override
                     public void run(Object arg) {
-                        if (((String) arg).startsWith("*")){
+                        if (((String) arg).startsWith("*")) {
                             return;
                         }
                         long[] data = StrUtils.parseProgress((String) arg);
-                        if (data == null){
+                        if (data == null) {
                             update(-1);
                             return;
                         }
@@ -83,12 +84,11 @@ public class MTPUtils {
                 } catch (IOException e) {
                     error(e);
                 }
-                if (runner.getExitValue() != 0){
-                    error(new Exception("Return code of file push not zero: "+runner.getExitValue()));
+                if (runner.getExitValue() != 0) {
+                    error(new Exception("Return code of file push not zero: " + runner.getExitValue()));
                     return;
                 }
                 finished(fileToPush);
-
             }
 
             @Override
@@ -113,10 +113,10 @@ public class MTPUtils {
         };
     }
 
-    private static List<String> stripOutput(List<String> output){
+    private static List<String> stripOutput(List<String> output) {
         ArrayList<String> list = new ArrayList<>();
-        for (String line : output){
-            if (line.startsWith("*")){
+        for (String line : output) {
+            if (line.startsWith("*")) {
                 continue;
             }
             list.add(line);
@@ -124,11 +124,11 @@ public class MTPUtils {
         return list;
     }
 
-
     public static class MTPDevice {
         public String id;
         public String root;
-        public MTPDevice(String id ){
+
+        public MTPDevice(String id) {
             this.id = id;
         }
     }

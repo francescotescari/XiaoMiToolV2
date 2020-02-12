@@ -2,9 +2,7 @@ package com.xiaomitool.v2.procedure.fetch;
 
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
-import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.inet.CustomHttpException;
-import com.xiaomitool.v2.inet.CustomHttpRequest;
 import com.xiaomitool.v2.inet.EasyHttp;
 import com.xiaomitool.v2.inet.EasyResponse;
 import com.xiaomitool.v2.language.LRes;
@@ -20,7 +18,8 @@ import org.json.JSONObject;
 
 public class ModFetch {
     private static final String MAGISK_UPDATE_URL = "https://raw.githubusercontent.com/topjohnwu/magisk_files/master/stable.json";
-    public static RInstall fetchMagiskStable(){
+
+    public static RInstall fetchMagiskStable() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -28,10 +27,10 @@ public class ModFetch {
                     Log.info("Fetching latest magisk stable");
                     runner.text(LRes.SEARCHING_LATEST_MAGISK);
                     EasyResponse response = EasyHttp.get(MAGISK_UPDATE_URL);
-                    if (!response.isAllRight()){
-                        throw new InstallException("Failed to get latest stable magisk data from static url", InstallException.Code.INFO_RETRIVE_FAILED, new Exception("Returned status code: "+response.getCode()));
+                    if (!response.isAllRight()) {
+                        throw new InstallException("Failed to get latest stable magisk data from static url", InstallException.Code.INFO_RETRIVE_FAILED, new Exception("Returned status code: " + response.getCode()));
                     }
-                    Log.info("Magisk latest response: "+response.getBody());
+                    Log.info("Magisk latest response: " + response.getBody());
                     JSONObject jsonObject = new JSONObject(response.getBody());
                     JSONObject magiskObj = jsonObject.getJSONObject("magisk");
                     JSONObject appObj = jsonObject.getJSONObject("app");
@@ -54,12 +53,11 @@ public class ModFetch {
                         public Image getIcon() {
                             return DrawableManager.getResourceImage("magiskround.png");
                         }
-
                     };
-                    mZip.setDownloadFilename("magisk_"+mVersion+".zip");
-                    ApkFileInstallable app = new ApkFileInstallable("MagiskManager "+aVersion, aUrl, Device.Status.RECOVERY){
+                    mZip.setDownloadFilename("magisk_" + mVersion + ".zip");
+                    ApkFileInstallable app = new ApkFileInstallable("MagiskManager " + aVersion, aUrl, Device.Status.RECOVERY) {
                         @Override
-                        public RInstall getInstallProcedure(){
+                        public RInstall getInstallProcedure() {
                             return RNode.sequence(new RInstall() {
                                 @Override
                                 public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -69,7 +67,7 @@ public class ModFetch {
                         }
                     };
                     app.setPackageName("com.topjohnwu.magisk");
-                    app.setDownloadFilename("magiskMg_"+aVersion+".apk");
+                    app.setDownloadFilename("magiskMg_" + aVersion + ".apk");
                     MultiInstallable multiInstallable = new MultiInstallable(mZip, app) {
                         @Override
                         public String getTitle() {
@@ -85,15 +83,11 @@ public class ModFetch {
                         public Image getIcon() {
                             return mZip.getIcon();
                         }
-
-
-
                     };
-                    /*Log.debug(mZip.getDownloadUrl());*/
-                    Procedures.setInstallable(runner,multiInstallable);
+                    Procedures.setInstallable(runner, multiInstallable);
                 } catch (CustomHttpException e) {
                     throw new InstallException(e);
-                } catch (JSONException e){
+                } catch (JSONException e) {
                     throw new InstallException("Failed to parse latest stable magisk data", InstallException.Code.INFO_RETRIVE_FAILED, e);
                 }
             }

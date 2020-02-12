@@ -17,8 +17,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ExtractionTask extends Task {
-    private static final int READ_BLOCK_SIZE = 16*1024;
-    private static final int FILE_READ_BLOCK_SIZE = 128*1024;
+    private static final int READ_BLOCK_SIZE = 16 * 1024;
+    private static final int FILE_READ_BLOCK_SIZE = 128 * 1024;
     private File fileToExtract;
     private File dirExtractTo;
     private long fileSize = -1;
@@ -26,18 +26,17 @@ public class ExtractionTask extends Task {
     private ExtractionType type;
     private boolean keepPath;
 
-
-    public ExtractionTask(UpdateListener listener, File filename, File destinationDir, ExtractionType type, boolean keepPath){
+    public ExtractionTask(UpdateListener listener, File filename, File destinationDir, ExtractionType type, boolean keepPath) {
         super(listener);
         this.fileToExtract = filename;
         this.dirExtractTo = destinationDir;
         this.type = type;
         this.keepPath = keepPath;
     }
-    public ExtractionTask(UpdateListener listener, String filename, String destinationDir, ExtractionType type, boolean keepPath ){
+
+    public ExtractionTask(UpdateListener listener, String filename, String destinationDir, ExtractionType type, boolean keepPath) {
         this(listener, new File(filename), new File(destinationDir), type, keepPath);
     }
-
 
     @Override
     protected boolean canPause() {
@@ -59,25 +58,13 @@ public class ExtractionTask extends Task {
         return false;
     }
 
-    //public ExtractionTask(File )
-
-
-    public enum ExtractionType {
-        GZIP,
-        ZIP,
-        TAR,
-        TGZ,
-        NONE
-    }
     @Override
-    public void startInternal(){
+    public void startInternal() {
         int index = 0;
         boolean validOutputDir = dirExtractTo != null;
         do {
             if (!validOutputDir) {
-
                 dirExtractTo = SettingsUtils.getExtractFile(fileToExtract, index);
-                /*Log.debug("Finding new extraction directory: "+dirExtractTo.toString());*/
             }
             validOutputDir = true;
             if (dirExtractTo.exists()) {
@@ -118,26 +105,24 @@ public class ExtractionTask extends Task {
                     finished(fileToExtract);
                     return;
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             error(e);
             return;
         }
         String fn = getExtractionHash();
         File hashFile = new File(dirExtractTo, fn);
-        if (!hashFile.exists()){
+        if (!hashFile.exists()) {
             try {
-                FileUtils.writeAll(hashFile,this.toString());
+                FileUtils.writeAll(hashFile, this.toString());
             } catch (IOException e) {
-                Log.warn("Failed to write file "+hashFile+": "+e.getMessage());
+                Log.warn("Failed to write file " + hashFile + ": " + e.getMessage());
             }
         }
-
         finished(out);
     }
 
     private File extractGzip() throws IOException {
-
-        InputStream stream = new GZIPInputStream(new FeedbackInputStream(new BufferedInputStream(new FileInputStream(fileToExtract),FILE_READ_BLOCK_SIZE), new RunnableWithArg() {
+        InputStream stream = new GZIPInputStream(new FeedbackInputStream(new BufferedInputStream(new FileInputStream(fileToExtract), FILE_READ_BLOCK_SIZE), new RunnableWithArg() {
             @Override
             public void run(Object arg) {
                 onUpdateInternal((int) arg);
@@ -145,14 +130,14 @@ public class ExtractionTask extends Task {
         }));
         File output = new File(dirExtractTo, FilenameUtils.removeExtension(fileToExtract.getName()));
         OutputStream ostream = new FileOutputStream(output);
-        ioRead(stream,ostream);
+        ioRead(stream, ostream);
         stream.close();
         ostream.close();
         return output;
     }
-    private File extractZip(boolean keepPath) throws IOException {
 
-        ZipInputStream zis = new ZipInputStream(new FeedbackInputStream(new BufferedInputStream(new FileInputStream(fileToExtract),FILE_READ_BLOCK_SIZE), new RunnableWithArg() {
+    private File extractZip(boolean keepPath) throws IOException {
+        ZipInputStream zis = new ZipInputStream(new FeedbackInputStream(new BufferedInputStream(new FileInputStream(fileToExtract), FILE_READ_BLOCK_SIZE), new RunnableWithArg() {
             @Override
             public void run(Object arg) {
                 onUpdateInternal((int) arg);
@@ -162,13 +147,13 @@ public class ExtractionTask extends Task {
         while ((zipEntry = zis.getNextEntry()) != null) {
             String fileName = zipEntry.getName();
             File newFile = new File(dirExtractTo, keepPath ? fileName : FilenameUtils.getName(fileName));
-            if (zipEntry.isDirectory()){
+            if (zipEntry.isDirectory()) {
                 if (!newFile.exists()) {
                     Files.createDirectories(newFile.toPath());
                 }
                 continue;
             } else {
-                if (!newFile.getParentFile().exists()){
+                if (!newFile.getParentFile().exists()) {
                     Files.createDirectories(newFile.getParentFile().toPath());
                 }
             }
@@ -179,12 +164,13 @@ public class ExtractionTask extends Task {
         zis.close();
         return dirExtractTo;
     }
+
     private File extractTar(boolean keepPath) throws IOException {
         TarArchiveInputStream tarIn = new TarArchiveInputStream(new FeedbackInputStream(new BufferedInputStream(new FileInputStream(fileToExtract), FILE_READ_BLOCK_SIZE), arg -> onUpdateInternal((int) arg)));
         return extractTarInternal(tarIn, keepPath);
     }
-    private File extractTgz(boolean keepPath) throws IOException {
 
+    private File extractTgz(boolean keepPath) throws IOException {
         TarArchiveInputStream tarIn = new TarArchiveInputStream(new GZIPInputStream(new FeedbackInputStream(new BufferedInputStream(new FileInputStream(fileToExtract), FILE_READ_BLOCK_SIZE), arg -> onUpdateInternal((int) arg))));
         return extractTarInternal(tarIn, keepPath);
     }
@@ -193,7 +179,7 @@ public class ExtractionTask extends Task {
         ArchiveEntry entry;
         while ((entry = tarIn.getNextEntry()) != null) {
             File tmpFile = new File(dirExtractTo, keepPath ? entry.getName() : FilenameUtils.getName(entry.getName()));
-            if (entry.isDirectory()){
+            if (entry.isDirectory()) {
                 tmpFile.mkdirs();
                 continue;
             }
@@ -207,9 +193,9 @@ public class ExtractionTask extends Task {
 
     private void ioRead(InputStream stream, OutputStream ostream) throws IOException {
         byte[] buffer = new byte[READ_BLOCK_SIZE];
-        int  read = stream.read(buffer);
-        while (read > 0 && !STATUS.ABORTED.equals(status)){
-            if (STATUS.PAUSED.equals(status)){
+        int read = stream.read(buffer);
+        while (read > 0 && !STATUS.ABORTED.equals(status)) {
+            if (STATUS.PAUSED.equals(status)) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -222,30 +208,36 @@ public class ExtractionTask extends Task {
         }
     }
 
-    private void onUpdateInternal(int read){
-        totalRead+=read;
-        if (totalRead-lastTotal > 1024*1024){
+    private void onUpdateInternal(int read) {
+        totalRead += read;
+        if (totalRead - lastTotal > 1024 * 1024) {
             update(totalRead);
             lastTotal = totalRead;
         }
-
     }
 
-    private String getExtractionHash(){
-        String toHash = fileToExtract.toString()+type.toString()+fileToExtract.length();
-        return "."+Hash.md5Hex(toHash);
+    private String getExtractionHash() {
+        String toHash = fileToExtract.toString() + type.toString() + fileToExtract.length();
+        return "." + Hash.md5Hex(toHash);
     }
+
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder builder = new StringBuilder();
         String n = System.lineSeparator();
         try {
             builder.append("Extraction entry").append(n).append("Input file: ").append(fileToExtract.toString()).append(n).append("Output dir: ").append(dirExtractTo.toString()).append(n).append("Extraction type: ").append(type.toString()).append(n).append("File size: ").append(fileToExtract.length());
-        } catch (Throwable t){
-            return "Extraction entry"+n+"Failed to get all info: "+t.getMessage();
+        } catch (Throwable t) {
+            return "Extraction entry" + n + "Failed to get all info: " + t.getMessage();
         }
         return builder.toString();
     }
 
-
+    public enum ExtractionType {
+        GZIP,
+        ZIP,
+        TAR,
+        TGZ,
+        NONE
+    }
 }

@@ -3,41 +3,38 @@ package com.xiaomitool.v2.tasks;
 import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.inet.CustomHttpRequest;
 import com.xiaomitool.v2.inet.EasyHttp;
-
-import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import org.apache.http.HttpEntity;
 
 import java.io.*;
 import java.util.Map;
 
-
-
 public class DownloadTask extends Task {
-    private static final int DOWNLOAD_CHUNCK = 1024*16;
-    private static final int WRITE_CHUNCK = 1024*256;
+    private static final int DOWNLOAD_CHUNCK = 1024 * 16;
+    private static final int WRITE_CHUNCK = 1024 * 256;
     private String url;
     private File destination;
     private Map<String, String> headers;
     private long totalSize = 0, downloaded;
 
-
     public DownloadTask(UpdateListener listener, String url, String fileOutput) {
-        this(listener,url,fileOutput == null ? null : new File(fileOutput));
+        this(listener, url, fileOutput == null ? null : new File(fileOutput));
     }
-    public DownloadTask(UpdateListener listener, String url, File fileOutput){
+
+    public DownloadTask(UpdateListener listener, String url, File fileOutput) {
         super(listener);
         this.url = url;
         this.destination = fileOutput;
     }
-    public void setHeaders(Map<String, String> headers){
+
+    public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
     }
 
     @Override
     protected void startInternal() {
         EasyHttp easyRequest = new EasyHttp().url(url);
-        if (headers != null){
+        if (headers != null) {
             easyRequest.headers(headers);
         }
         CustomHttpRequest request = easyRequest.getHttpRequestObj();
@@ -60,10 +57,10 @@ public class DownloadTask extends Task {
         } catch (CustomHttpException e) {
             error(e);
         }
-        if (responseCode == 302){
+        if (responseCode == 302) {
             String location;
             try {
-                location= request.getResponseHeaders().get("location").get(0);
+                location = request.getResponseHeaders().get("location").get(0);
             } catch (Exception e) {
                 error(e);
                 return;
@@ -71,29 +68,27 @@ public class DownloadTask extends Task {
             url = location;
             startInternal();
             return;
-        } else if (responseCode != 200){
-            error(new CustomHttpException("Response code is not valid: "+responseCode));
+        } else if (responseCode != 200) {
+            error(new CustomHttpException("Response code is not valid: " + responseCode));
             return;
         }
-        if (this.destination == null){
+        if (this.destination == null) {
             this.destination = SettingsUtils.getDownloadFile(url);
         }
         totalSize = entity.getContentLength();
         setTotalSize(totalSize);
-        if (this.destination.exists() && this.destination.length() == totalSize && totalSize != 0){
+        if (this.destination.exists() && this.destination.length() == totalSize && totalSize != 0) {
             request.abort();
             finished(this.destination);
-            /*Log.debug("File already downloaded");*/
             return;
         }
         InputStream downloadStream;
         try {
-           downloadStream = entity.getContent();
+            downloadStream = entity.getContent();
         } catch (IOException e) {
             error(e);
             return;
         }
-
         BufferedOutputStream outputStream;
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(destination));
@@ -101,10 +96,9 @@ public class DownloadTask extends Task {
             error(e);
             return;
         }
-
         byte[] buffer = new byte[DOWNLOAD_CHUNCK];
-        while (!STATUS.ABORTED.equals(status)){
-            if (STATUS.PAUSED.equals(status)){
+        while (!STATUS.ABORTED.equals(status)) {
+            if (STATUS.PAUSED.equals(status)) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -114,12 +108,11 @@ public class DownloadTask extends Task {
             }
             try {
                 int read = downloadStream.read(buffer);
-                if (read < 0){
+                if (read < 0) {
                     break;
                 }
-                outputStream.write(buffer,0,read);
-                downloaded+=read;
-                //Log.debug(downloaded+"/"+totalSize);
+                outputStream.write(buffer, 0, read);
+                downloaded += read;
                 update(downloaded);
             } catch (IOException e) {
                 error(e);
@@ -133,10 +126,9 @@ public class DownloadTask extends Task {
             error(e);
             return;
         }
-        if (!STATUS.ABORTED.equals(status)){
+        if (!STATUS.ABORTED.equals(status)) {
             finished(destination);
         }
-
     }
 
     @Override
@@ -158,6 +150,4 @@ public class DownloadTask extends Task {
     protected boolean stopInternal() {
         return true;
     }
-
-
 }

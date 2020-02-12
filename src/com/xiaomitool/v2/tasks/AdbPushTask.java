@@ -2,7 +2,6 @@ package com.xiaomitool.v2.tasks;
 
 import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.language.LRes;
-import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.process.AdbRunner;
 import com.xiaomitool.v2.utility.Pointer;
 import com.xiaomitool.v2.utility.RunnableWithArg;
@@ -16,9 +15,11 @@ public class AdbPushTask extends Task {
     private AdbRunner runner;
     private String device, destinationPath;
     private File sourceFile;
-    public AdbPushTask(UpdateListener listener, String sourceFile, String destinationPath, String device){
+
+    public AdbPushTask(UpdateListener listener, String sourceFile, String destinationPath, String device) {
         this(listener, new File(sourceFile), destinationPath, device);
     }
+
     public AdbPushTask(UpdateListener listener, File sourceFile, String destinationPath, String device) {
         super(listener);
         this.sourceFile = sourceFile;
@@ -28,7 +29,7 @@ public class AdbPushTask extends Task {
 
     @Override
     protected void startInternal() {
-         runner = new AdbRunner();
+        runner = new AdbRunner();
         runner.setDeviceSerial(device);
         runner.addArgument("push");
         runner.addArgument(sourceFile.getAbsolutePath());
@@ -50,10 +51,9 @@ public class AdbPushTask extends Task {
                 if (lastLine.pointed == null || line.contains("error") || line.contains("failed")) {
                     lastLine.pointed = arg;
                 }
-
                 Matcher m = pattern.matcher(line);
                 long totalSize = fileSize;
-                if (!m.find()){
+                if (!m.find()) {
                     m = alternativePattern.matcher(line);
                     if (!m.find()) {
                         update(-1);
@@ -61,17 +61,15 @@ public class AdbPushTask extends Task {
                     }
                     totalSize = 100;
                 }
-
                 if (getTotalSize() <= 0 && totalSize > 0) {
                     setTotalSize(totalSize);
                 }
                 try {
                     long done = Long.parseLong(m.group(1));
                     update(done);
-                } catch (Throwable t){
+                } catch (Throwable t) {
                     update(-1);
                 }
-                /*Log.debug(arg.toString());*/
             }
         });
         try {
@@ -80,12 +78,12 @@ public class AdbPushTask extends Task {
             error(e);
             return;
         }
-        if (runner.getExitValue() != 0){
-            String mot = lastLine.pointed != null ? lastLine.pointed.toString() : ("exit code "+runner.getExitValue());
-            if (mot.toLowerCase().contains("no space left on device")){
+        if (runner.getExitValue() != 0) {
+            String mot = lastLine.pointed != null ? lastLine.pointed.toString() : ("exit code " + runner.getExitValue());
+            if (mot.toLowerCase().contains("no space left on device")) {
                 mot = LRes.NO_SPACE_LEFT_DEVICE.toString();
             }
-            error(new AdbException("Failed to push file to the device: "+mot));
+            error(new AdbException("Failed to push file to the device: " + mot));
             return;
         }
         finished(sourceFile);
@@ -109,7 +107,7 @@ public class AdbPushTask extends Task {
     @Override
     protected boolean stopInternal() {
         abort();
-        if (runner != null){
+        if (runner != null) {
             return runner.kill();
         }
         return true;

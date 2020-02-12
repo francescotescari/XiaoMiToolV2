@@ -1,6 +1,5 @@
 package com.xiaomitool.v2.inet;
 
-import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.MultiMap;
 
 import java.util.HashMap;
@@ -15,7 +14,8 @@ public class EasyResponse {
     MultiMap<String, String> headers;
     String body;
     int code;
-    public EasyResponse(MultiMap<String,String> headers, String body, int code){
+
+    public EasyResponse(MultiMap<String, String> headers, String body, int code) {
         this.headers = headers;
         this.body = body;
         this.code = code;
@@ -33,25 +33,22 @@ public class EasyResponse {
         return headers;
     }
 
-    public HashMap<String, String> getCookies(){
+    public HashMap<String, String> getCookies() {
         HashMap<String, String> toReturn = new HashMap<>();
         List<String> rawCookies = headers.get("set-cookie");
-        if (rawCookies == null){
+        if (rawCookies == null) {
             return toReturn;
         }
         Pattern cformat = Pattern.compile("\\s*([^=]+)\\s*=\\s*([^;]*)");
-
-        for (String raw : rawCookies){
+        for (String raw : rawCookies) {
             Matcher m = cformat.matcher(raw);
-            if (m.find()){
+            if (m.find()) {
                 String key = m.group(1);
                 String value = m.group(2);
-                /*Log.debug("Cookie found: "+key+" - "+value);*/
-
                 toReturn.merge(key, value, new BiFunction<String, String, String>() {
                     @Override
                     public String apply(String s, String s2) {
-                        if (s.length() < s2.length()){
+                        if (s.length() < s2.length()) {
                             return s2;
                         }
                         return s;
@@ -62,11 +59,11 @@ public class EasyResponse {
         return toReturn;
     }
 
-    public boolean isAllRight(){
+    public boolean isAllRight() {
         return !body.isEmpty() && code == SC_OK;
     }
-    public boolean isCodeRight(){
+
+    public boolean isCodeRight() {
         return code == SC_OK;
     }
-
 }

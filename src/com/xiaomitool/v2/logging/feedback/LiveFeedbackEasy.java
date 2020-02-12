@@ -15,30 +15,32 @@ import java.time.Instant;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LiveFeedbackEasy {
-    private static boolean isOpen = false;
-
-    private LiveFeedbackEasy(){}
-
     private static final ConcurrentLinkedQueue<LiveFeedback.Feedback> QUEUED_FEEDBACKS = new ConcurrentLinkedQueue<>();
+    private static boolean isOpen = false;
+    private static Instant lastFeedbackInstant = null;
+    private static WaitSemaphore feedbackSent = new WaitSemaphore(1);
 
-    public static void sendError(String error, String additionalInfo){
+    private LiveFeedbackEasy() {
+    }
+
+    public static void sendError(String error, String additionalInfo) {
         send(error, additionalInfo, LiveFeedback.FeedbackType.ERROR);
     }
 
-    public static void sendSuccess(String message, String additionalInfo){
+    public static void sendSuccess(String message, String additionalInfo) {
         send(message, additionalInfo, LiveFeedback.FeedbackType.SUCCESS);
     }
 
-    public static void sendOpen(String message, String additionalInfo){
+    public static void sendOpen(String message, String additionalInfo) {
         isOpen = true;
         send(message, additionalInfo, LiveFeedback.FeedbackType.OPEN);
     }
 
-    public static void sendClose(){
+    public static void sendClose() {
         sendClose(null, null);
     }
 
-    public static void sendClose(String message, String additionalInfo){
+    public static void sendClose(String message, String additionalInfo) {
         send(message, additionalInfo, LiveFeedback.FeedbackType.CLOSE);
         isOpen = false;
     }
@@ -47,18 +49,15 @@ public class LiveFeedbackEasy {
         send(message, additionalInfo, LiveFeedback.FeedbackType.LOG);
     }
 
-    public static void sendInstallException(InstallException e, ProcedureRunner runner){
-        sendError(e.getCode().toString(), e.getMessage()+ StrUtils.exceptionToString(e)+"\n\n"+runner.getStackStrace());
+    public static void sendInstallException(InstallException e, ProcedureRunner runner) {
+        sendError(e.getCode().toString(), e.getMessage() + StrUtils.exceptionToString(e) + "\n\n" + runner.getStackStrace());
     }
-
-    private static Instant lastFeedbackInstant = null;
-    private static WaitSemaphore feedbackSent = new WaitSemaphore(1);
 
     public static void waitFeedbackSent() throws InterruptedException {
         feedbackSent.waitOnce();
     }
 
-    public static  void runOnFeedbackSent(Runnable runnable, boolean newThread){
+    public static void runOnFeedbackSent(Runnable runnable, boolean newThread) {
         Runnable exec = new Runnable() {
             @Override
             public void run() {
@@ -70,7 +69,7 @@ public class LiveFeedbackEasy {
                 runnable.run();
             }
         };
-        if (newThread){
+        if (newThread) {
             new Thread(exec).start();
         } else {
             exec.run();
@@ -112,32 +111,28 @@ public class LiveFeedbackEasy {
                     }
                 }
             }).start();
-        } catch (Throwable t){
-            Log.warn("Failed to send live feedback: "+t.getMessage());
+        } catch (Throwable t) {
+            Log.warn("Failed to send live feedback: " + t.getMessage());
         }
-
     }
 
     private static LiveFeedback.Feedback newMessage(String message, String additionalInfo, LiveFeedback.FeedbackType type) {
         LiveFeedback.Feedback.Builder liveFeedback = LiveFeedback.Feedback.newBuilder().setTime(System.currentTimeMillis());
-        if (message != null){
+        if (message != null) {
             liveFeedback.setQuickMessage(message);
         }
-        if (additionalInfo != null){
+        if (additionalInfo != null) {
             liveFeedback.setLongMessage(additionalInfo);
         }
         liveFeedback.setType(type);
         return liveFeedback.build();
-
     }
 
     private static byte[] getsendableMessage(byte[] originalMessage) throws IOException {
-        byte[] compressed = CompressUtils.paddedCompress(originalMessage,4);
-        int len = compressed.length-4;
+        byte[] compressed = CompressUtils.paddedCompress(originalMessage, 4);
+        int len = compressed.length - 4;
         ByteBuffer buffer = ByteBuffer.wrap(compressed, 0, 4);
         buffer.putInt(len);
         return compressed;
     }
-
-
 }

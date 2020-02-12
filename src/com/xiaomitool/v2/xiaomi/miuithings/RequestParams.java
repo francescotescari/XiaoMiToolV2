@@ -44,7 +44,7 @@ public abstract class RequestParams implements Cloneable {
         clone.is_cts = this.is_cts;
         clone.a = this.a;
         clone.isR = this.isR;
-        clone.serialNumber= this.serialNumber;
+        clone.serialNumber = this.serialNumber;
         clone.sys = this.sys;
         clone.unlockStatus = this.unlockStatus;
         clone.packageHash = this.packageHash;
@@ -61,61 +61,66 @@ public abstract class RequestParams implements Cloneable {
     public MiuiRom.Specie getSpecie() {
         return specie;
     }
-    public void setVersion(MiuiVersion version){
+
+    public void setSpecie(MiuiRom.Specie specie) {
+        this.specie = specie;
+        this.branch = specie.getBranch();
+    }
+
+    public void setVersion(MiuiVersion version) {
         this.version = version;
     }
 
     public abstract String buildJson() throws Exception;
-    public void setId(String id){
+
+    public void setId(String id) {
         this.id = id;
-    }
-
-    public void setSpecie(MiuiRom.Specie specie){
-        this.specie = specie;
-        this.branch = specie.getBranch();
-
     }
 
     public Codebase getCodebase() {
         return codebase;
     }
-    public String getDevice(){
+
+    public void setCodebase(Codebase codebase) {
+        this.codebase = codebase;
+    }
+
+    public String getDevice() {
         return device;
     }
-    public String getRegion(){
+
+    public String getRegion() {
         return region;
     }
 
     public String getCarrier() {
         return carrier;
     }
-    public String getLanguage(){
+
+    public String getLanguage() {
         return language;
     }
-    public Branch getBranch(){
+
+    public Branch getBranch() {
         return specie.getBranch();
     }
-    public void setPkg(String pkgMd5){
-        this.packageHash = pkgMd5;
-    }
-    public String getModDevice(){
+
+    public String getModDevice() {
         return this.specie.buildModDevice(this.device);
     }
 
-    public boolean isInternational(){
-        if (this.specie == null){
+    public boolean isInternational() {
+        if (this.specie == null) {
             return isInternationalBadMethod();
         }
         return !specie.isChinese();
     }
 
-    public String getFastbootRegion(){
+    public String getFastbootRegion() {
         return specie == null ? (isInternationalBadMethod() ? "global" : "cn") : specie.getFastbootRegion();
     }
 
-
-
-    private boolean isInternationalBadMethod(){
+    private boolean isInternationalBadMethod() {
         return MiuiRom.Specie.getZone(this.device) != 1;
     }
 
@@ -131,7 +136,7 @@ public abstract class RequestParams implements Cloneable {
         return this.packageHash;
     }
 
-    public void setCodebase(Codebase codebase){
-        this.codebase = codebase;
-    };
+    public void setPkg(String pkgMd5) {
+        this.packageHash = pkgMd5;
+    }
 }

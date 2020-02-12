@@ -6,24 +6,27 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class FastbootRunner extends ProcessRunner {
-    private String deviceSerial = null;
     private static long feedbackDisabled = 0;
+    private String deviceSerial = null;
+
     public FastbootRunner() {
         super(ResourcesManager.getFastbootPath());
     }
+
     public void setDeviceSerial(String deviceSerial) {
         this.deviceSerial = deviceSerial;
     }
+
     @Override
-    protected List<String> buildFinalArgumentsList(){
+    protected List<String> buildFinalArgumentsList() {
         LinkedList<String> list = new LinkedList<>();
         list.add(executable.toString());
-        if (deviceSerial != null){
+        if (deviceSerial != null) {
             list.add("-s");
             list.add(deviceSerial);
         }
         isFeedback = !arguments.contains("devices");
-        if (!isFeedback){
+        if (!isFeedback) {
             isFeedback = feedbackDisabled++ % 10 == 0;
         }
         list.addAll(arguments);

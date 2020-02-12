@@ -36,18 +36,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
-
 public class StockRecoveryInstall {
     public static final String SELECTED_MTP_DEVICE = "selected_mtp_device";
-
 
     static RInstall enableMtp() {
         return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner procedureRunner) throws InstallException, InterruptedException, RMessage {
                 Device device = (Device) procedureRunner.requireContext(Procedures.SELECTED_DEVICE);
-
                 HashMap<String, MTPUtils.MTPDevice> initDeviceMap;
                 procedureRunner.text(LRes.SEARCHING_CONNECTED_MTP_DEVICES);
                 Log.info("Searching MTP devices before mtp enable");
@@ -60,7 +56,7 @@ public class StockRecoveryInstall {
                 Log.info("Enabling MTP on the device");
                 String out = AdbCommons.raw(device.getSerial(), "enablemtp:");
                 if (out == null) {
-                    throw new InstallException("Adb enablemtp command failed, maybe your device doesn't support it or device is not connected", InstallException.Code.ADB_EXCEPTION, "Last error: "+AdbCommons.getLastError(device.getSerial()));
+                    throw new InstallException("Adb enablemtp command failed, maybe your device doesn't support it or device is not connected", InstallException.Code.ADB_EXCEPTION, "Last error: " + AdbCommons.getLastError(device.getSerial()));
                 }
                 Thread.sleep(2000);
                 procedureRunner.text(LRes.SEARCHING_CONNECTED_MTP_DEVICES);
@@ -79,13 +75,13 @@ public class StockRecoveryInstall {
                         newDeviceKey = key;
                     }
                     if (key.toLowerCase().contains("vid_2717")) {
-                        Log.info("New xiaomi MTP device found: "+key);
+                        Log.info("New xiaomi MTP device found: " + key);
                         xiaomiDevices.add(afterDeviceMap.get(key));
                     }
-                    Log.info("Skipping MTP device "+key+", it was already in list");
+                    Log.info("Skipping MTP device " + key + ", it was already in list");
                 }
                 if (newDeviceKey != null && newDeviceKey.toLowerCase().contains("vid_2717")) {
-                    Log.info("Using new MTP device found: "+newDeviceKey);
+                    Log.info("Using new MTP device found: " + newDeviceKey);
                     procedureRunner.text(LRes.MTP_DEVICE_SELECTED);
                     procedureRunner.setContext(SELECTED_MTP_DEVICE, afterDeviceMap.get(newDeviceKey));
                     return;
@@ -95,7 +91,7 @@ public class StockRecoveryInstall {
                     try {
                         String root = MTPUtils.getRoot(device1);
                         if (root != null && "data".equals(root.toLowerCase().trim())) {
-                            Log.info("Xiaomi device with data == root name found: "+device1.id);
+                            Log.info("Xiaomi device with data == root name found: " + device1.id);
                             procedureRunner.text(LRes.MTP_DEVICE_SELECTED);
                             procedureRunner.setContext(SELECTED_MTP_DEVICE, device1);
                             return;
@@ -120,10 +116,8 @@ public class StockRecoveryInstall {
                     }
                 }
                 throw new InstallException("Cannot detect recovery mtp device, try updating the mtp driver on the device", InstallException.Code.MTP_FAILED);
-
-
             }
-        }, GenericInstall.updateDeviceStatus(null,null,false));
+        }, GenericInstall.updateDeviceStatus(null, null, false));
     }
 
     static RInstall fixMtpDevices() {
@@ -136,7 +130,6 @@ public class StockRecoveryInstall {
                 procedureRunner.setContext("FIXMTP", res);
             }
         };
-
     }
 
     static RInstall sendFileViaMTP() {
@@ -153,12 +146,11 @@ public class StockRecoveryInstall {
                 if (!Files.exists(file)) {
                     throw new InstallException("File " + file.toString() + " doesn't exists!", InstallException.Code.FILE_NOT_FOUND);
                 }
-                Log.info("Sending file: "+file+" to the device using MTP");
+                Log.info("Sending file: " + file + " to the device using MTP");
                 MTPUtils.MTPDevice device = (MTPUtils.MTPDevice) procedureRunner.requireContext(SELECTED_MTP_DEVICE);
                 Task task = MTPUtils.getPushTask(device, file, "/");
                 ProgressPane.DefProgressPane progressPane = new ProgressPane.DefProgressPane();
                 progressPane.setContentText(LRes.MTP_SENDING_FILE);
-
                 UpdateListener listener = progressPane.getUpdateListener(150);
                 task.setListener(listener);
                 WindowManager.setMainContent(progressPane, false);
@@ -171,7 +163,6 @@ public class StockRecoveryInstall {
                 procedureRunner.text(LRes.FILE_SENT_TO_DEVICE);
                 Log.info("File MTP sent to the device succesfully");
             }
-
         };
     }
 
@@ -183,11 +174,11 @@ public class StockRecoveryInstall {
                 Installable installable = Procedures.requireInstallable(runner);
                 String token = installable.getInstallToken();
                 runner.text(LRes.STARTING_MIUI_SIDELOAD);
-                if (StrUtils.isNullOrEmpty(token)){
-                    throw new InstallException("Empty install token", InstallException.Code.SIDELOAD_INSTALL_FAILED, "Installable "+installable+" has no install token");
+                if (StrUtils.isNullOrEmpty(token)) {
+                    throw new InstallException("Empty install token", InstallException.Code.SIDELOAD_INSTALL_FAILED, "Installable " + installable + " has no install token");
                 }
-                Log.info("Starting miui sidelaod of file: "+installable.getFinalFile());
-                Log.info("Install token: "+token);
+                Log.info("Starting miui sidelaod of file: " + installable.getFinalFile());
+                Log.info("Install token: " + token);
                 AdbSideloadTask sideloadTask = new AdbSideloadTask(installable.getFinalFile(), token, device.getSerial());
                 ProgressPane.DefProgressPane defProgressPane = new ProgressPane.DefProgressPane();
                 UpdateListener listener = defProgressPane.getUpdateListener(300);
@@ -196,27 +187,24 @@ public class StockRecoveryInstall {
                 listener.addOnUpdate(new UpdateListener.OnUpdate() {
                     @Override
                     public void run(long downloaded, long totalSize, Duration latestDuration, Duration totalDuration) {
-                        if (downloaded/totalSize >= 0.5 && !((boolean) textInstalling.pointed)){
+                        if (downloaded / totalSize >= 0.5 && !((boolean) textInstalling.pointed)) {
                             textInstalling.pointed = true;
-                            defProgressPane.setContentText(LRes.SIDELOAD_INSTALLING_FILE.toString()+"\n"+ LRes.DONT_REBOOT_DEVICE);
+                            defProgressPane.setContentText(LRes.SIDELOAD_INSTALLING_FILE.toString() + "\n" + LRes.DONT_REBOOT_DEVICE);
                         }
                     }
                 });
                 sideloadTask.setListener(listener);
-                defProgressPane.setContentText(LRes.ADB_PUSHING_FILE+"\n"+LRes.DONT_REBOOT_DEVICE);
+                defProgressPane.setContentText(LRes.ADB_PUSHING_FILE + "\n" + LRes.DONT_REBOOT_DEVICE);
                 defProgressPane.setText(LRes.STARTING_MIUI_SIDELOAD);
-
-                WindowManager.setMainContent(defProgressPane,false);
+                WindowManager.setMainContent(defProgressPane, false);
                 TaskManager.getInstance().startSameThread(sideloadTask);
                 WindowManager.removeTopContent();
-                Log.info("Sideload finished with progress: "+sideloadTask.getLatestUpdate()+"/"+sideloadTask.getTotalSize());
-                if (!sideloadTask.isFinished()){
+                Log.info("Sideload finished with progress: " + sideloadTask.getLatestUpdate() + "/" + sideloadTask.getTotalSize());
+                if (!sideloadTask.isFinished()) {
                     Exception e = sideloadTask.getError();
-                    throw new InstallException("MIUI sideload failed: "+e.getMessage(), InstallException.Code.SIDELOAD_INSTALL_FAILED, e);
+                    throw new InstallException("MIUI sideload failed: " + e.getMessage(), InstallException.Code.SIDELOAD_INSTALL_FAILED, e);
                 }
                 Log.info("Sideload task finished succesfully");
-
-
             }
         };
     }
@@ -229,14 +217,12 @@ public class StockRecoveryInstall {
                 Installable installable = Procedures.requireInstallable(runner);
                 runner.text(LRes.MTP_PREPARE_INSTALL);
                 Thread.sleep(2000);
-
-
                 String token = installable.getInstallToken();
                 if (token == null || token.isEmpty()) {
                     throw new InstallException("Empty install token", InstallException.Code.MTP_INSTALL_FAILED);
                 }
                 Log.info("Starting MTP installation");
-                Log.info("Install token: "+token);
+                Log.info("Install token: " + token);
                 AdbRunner adbRunner = new AdbRunner("raw", "mtpinstall:" + token);
                 adbRunner.setDeviceSerial(device.getSerial());
                 runner.text(LRes.MTP_INSTALLING_FILE);
@@ -254,13 +240,13 @@ public class StockRecoveryInstall {
                 AdbCommunication.giveAllAccess();
                 WindowManager.removeTopContent();
                 Duration timeElapsed = Duration.between(startTime, LocalDateTime.now());
-                Log.info("MTP installation duration: "+timeElapsed.getSeconds()+" seconds");
+                Log.info("MTP installation duration: " + timeElapsed.getSeconds() + " seconds");
                 if (adbRunner.getExitValue() != 0) {
                     throw new InstallException("MtpInstall process returned with code " + adbRunner.getExitValue(), InstallException.Code.MTP_INSTALL_FAILED, adbRunner.getOutputString());
                 }
                 String output = adbRunner.getOutputString();
                 output = output == null ? "" : output.toLowerCase();
-                Log.info("MTP installation output: "+output);
+                Log.info("MTP installation output: " + output);
                 if (output.contains("installation_aborted")) {
                     throw new InstallException("MtpInstallation was aborted by the device: probably wrong token", InstallException.Code.MTP_INSTALL_FAILED);
                 }
@@ -269,7 +255,6 @@ public class StockRecoveryInstall {
                     throw new InstallException("MtpInstallation took only " + seconds + " seconds to complete, thus it can't be successful", InstallException.Code.MTP_INSTALL_FAILED, adbRunner.getOutputString());
                 }
                 runner.text(LRes.ROM_INSTALLED_ON_DEVICE);
-
             }
         };
     }
@@ -296,11 +281,11 @@ public class StockRecoveryInstall {
         return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
-                if (!ResourcesConst.isWindows()){
+                if (!ResourcesConst.isWindows()) {
                     throw new InstallException("This operation is not supported by this os", InstallException.Code.OS_NOT_SUPPORTED);
                 }
             }
-        },RebootDevice.requireStockRecovery(), enableMtp(), sendFileViaMTP(), installMtpFile(), formatData());
+        }, RebootDevice.requireStockRecovery(), enableMtp(), sendFileViaMTP(), installMtpFile(), formatData());
     }
 
     public static RInstall getStockRecoveryInfo() {
@@ -321,7 +306,7 @@ public class StockRecoveryInstall {
                     throw new InstallException("Failed to retrieve recovery information: null param", InstallException.Code.INFO_RETRIVE_FAILED);
                 }
                 int z;
-                if (zone == null){
+                if (zone == null) {
                     z = 0;
                 } else {
                     try {
@@ -339,20 +324,17 @@ public class StockRecoveryInstall {
         };
     }
 
-
     @ExportFunction("side_stockrecovery_install")
-    static RInstall sideloadFlash(){
+    static RInstall sideloadFlash() {
         return RNode.sequence(RebootDevice.requireStockRecovery(), sidelaodFile(), formatData());
     }
 
     @ExportFunction("stockrecovery_install")
     public static RInstall stockRecoveryInstall() {
-        if (ResourcesConst.isWindows()){
+        if (ResourcesConst.isWindows()) {
             return RNode.fallback(sideloadFlash(), mtpFlashRom());
         } else {
             return sideloadFlash();
         }
     }
-
-
 }

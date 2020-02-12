@@ -14,21 +14,21 @@ public class ApkFileInstallable extends Installable {
     private String name, packageName;
     private Device.Status installStatus;
 
-    public ApkFileInstallable(String name, File apkFile, Device.Status installStatus){
-        super(Type.APK, false, "apk"+name, false, false, apkFile);
-        this.name =name;
-        this.installStatus = installStatus;
-    }
-    public ApkFileInstallable(String name, String downloadUrl, Device.Status installStatus){
-        super(Type.APK, false, "apk"+name, true, false, downloadUrl);
-        this.name =name;
+    public ApkFileInstallable(String name, File apkFile, Device.Status installStatus) {
+        super(Type.APK, false, "apk" + name, false, false, apkFile);
+        this.name = name;
         this.installStatus = installStatus;
     }
 
+    public ApkFileInstallable(String name, String downloadUrl, Device.Status installStatus) {
+        super(Type.APK, false, "apk" + name, true, false, downloadUrl);
+        this.name = name;
+        this.installStatus = installStatus;
+    }
 
     @Override
     public LinkedHashSet<Device.Status> getRequiredStates() {
-        if (Device.Status.RECOVERY.equals(this.installStatus)){
+        if (Device.Status.RECOVERY.equals(this.installStatus)) {
             return SET_RECOVERY;
         } else {
             return SET_DEVICE;
@@ -52,17 +52,18 @@ public class ApkFileInstallable extends Installable {
 
     @Override
     public RInstall getInstallProcedure() {
-        if (Device.Status.RECOVERY.equals(this.installStatus)){
+        if (Device.Status.RECOVERY.equals(this.installStatus)) {
             return TwrpInstall.installApkViaTwrp();
         } else {
-            return Procedures.featureNotAvailable(); //TODO APK DEVICE INSTALLATION
+            return Procedures.featureNotAvailable();
         }
     }
 
-    public String getPackageName(){
+    public String getPackageName() {
         return this.packageName;
     }
-    public void setPackageName(String packageName){
+
+    public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
 }

@@ -3,48 +3,39 @@ package com.xiaomitool.v2.adb.device;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.RunnableWithArg;
 import com.xiaomitool.v2.utility.WaitSemaphore;
-import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
 
 public abstract class Properties {
-    private int failedParsingAttempts = 0;
     private final ConcurrentHashMap<String, Object> propertiesMap = new ConcurrentHashMap<String, Object>();
     private final WaitSemaphore parsingSemaphore;
+    private int failedParsingAttempts = 0;
     private RunnableWithArg onFailedAttemptThree = null;
     private boolean parsed = false, failed = false;
+    private Instant lastFailIntant = null;
 
-    public Properties(){
+    public Properties() {
         parsingSemaphore = new WaitSemaphore(1);
-        /*Log.debug("Properties created: "+this.getClass().getSimpleName()+"::"+this.hashCode()+" -> sem = "+parsingSemaphore.toString());*/
     }
 
     public boolean isFailed() {
         return !parsed && failed;
     }
 
-    public boolean parse(){
-        /*Log.debug("Parsing requested for "+this.getClass());*/
+    public boolean parse() {
         return parse(false);
     }
-    public boolean parse(boolean force){
-        boolean res =false;
+
+    public boolean parse(boolean force) {
+        boolean res = false;
         synchronized (parsingSemaphore) {
-            /*Log.debug(this.hashCode());*/
             try {
-                //Log.debug("Parsing semaphore permits A");
-                /*Log.debug(parsingSemaphore.getPermitNumber());*/
                 parsingSemaphore.decrease();
                 parsingSemaphore.setPermits(0);
-                //Log.debug("Parsing semaphore permits B");
-                /*Log.debug(parsingSemaphore.getPermitNumber());*/
                 res = parse(force, true);
-                //Log.debug("Parsing finished");
             } catch (Exception e) {
                 Log.error("Failed waiting for parsing");
             } finally {
@@ -52,53 +43,36 @@ public abstract class Properties {
             }
         }
         return res;
-
-
     }
-    private Instant lastFailIntant = null;
 
-    public boolean parse(boolean force, boolean internal){
-
-
-            /*Log.debug("Starting parsing: force: "+force+", class: "+this.getClass().getSimpleName());*/
-            if (parsed && !force) {
-                /*Log.debug("Already parsed, returning");*/
-                return true;
-
+    public boolean parse(boolean force, boolean internal) {
+        if (parsed && !force) {
+            return true;
+        }
+        parsed = true;
+        if (failed && lastFailIntant != null && failedParsingAttempts > 3) {
+            if (Duration.between(lastFailIntant, Instant.now()).getSeconds() < 10) {
+                Log.warn("Parsing failed more than three times less than 10 seconds ago, waiting");
+                return false;
             }
-
-            parsed = true;
-            /*Log.debug("Parsing should be disabled");*/
-
-            if (failed && lastFailIntant != null && failedParsingAttempts > 3){
-                if (Duration.between(lastFailIntant, Instant.now()).getSeconds() < 10){
-                    Log.warn("Parsing failed more than three times less than 10 seconds ago, waiting");
-                    return false;
-                }
+        }
+        if (parseInternal()) {
+            Log.info("Properties parsed");
+            failedParsingAttempts = 0;
+            return true;
+        }
+        lastFailIntant = Instant.now();
+        failed = true;
+        ++failedParsingAttempts;
+        Log.warn("Failed to parse properties: " + this.toString() + ", attempt: " + failedParsingAttempts);
+        if (failedParsingAttempts > 3) {
+            Log.warn("Failed to parse properties for three times");
+            if (onFailedAttemptThree != null) {
+                onFailedAttemptThree.run(this);
             }
-
-            if (parseInternal()) {
-                /*Log.debug(this.toString());*/
-                Log.info("Properties parsed");
-                //Log.info(this.propertiesMap);
-                failedParsingAttempts = 0;
-                return true;
-            }
-            lastFailIntant = Instant.now();
-            failed = true;
-            ++failedParsingAttempts;
-            Log.warn("Failed to parse properties: "+this.toString()+", attempt: "+failedParsingAttempts);
-            if (failedParsingAttempts > 3) {
-                Log.warn("Failed to parse properties for three times");
-                if (onFailedAttemptThree != null) {
-                    onFailedAttemptThree.run(this);
-
-                }
-                //failedParsingAttempts = 0;
-            }
-            parsed = false;
-            return false;
-
+        }
+        parsed = false;
+        return false;
     }
 
     public void setOnFailedAttemptThree(RunnableWithArg onFailedAttemptThree) {
@@ -110,30 +84,35 @@ public abstract class Properties {
     }
 
     protected abstract boolean parseInternal();
-    public synchronized Object put(String key, Object value){
+
+    public synchronized Object put(String key, Object value) {
         synchronized (propertiesMap) {
             return propertiesMap.put(key, value);
         }
     }
-    public synchronized Object get(String key){
+
+    public synchronized Object get(String key) {
         synchronized (propertiesMap) {
             return propertiesMap.get(key);
         }
     }
-    public synchronized Object get(String key, Object defaultObject){
+
+    public synchronized Object get(String key, Object defaultObject) {
         synchronized (propertiesMap) {
             return propertiesMap.getOrDefault(key, defaultObject);
         }
     }
-    public synchronized void putAll(Map<String, ?> map){
+
+    public synchronized void putAll(Map<String, ?> map) {
         synchronized (propertiesMap) {
             propertiesMap.putAll(map);
         }
     }
+
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder builder = new StringBuilder();
-        for (Map.Entry<String, Object> entry : propertiesMap.entrySet()){
+        for (Map.Entry<String, Object> entry : propertiesMap.entrySet()) {
             builder.append(entry.getKey()).append(" -> ").append(entry.getValue()).append(System.lineSeparator());
         }
         return builder.toString();

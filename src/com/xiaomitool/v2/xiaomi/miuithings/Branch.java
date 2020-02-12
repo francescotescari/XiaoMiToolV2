@@ -10,7 +10,8 @@ public enum Branch {
     ALPHA("A"),
     FAKE("F");
     private String code;
-    private Branch(String code){
+
+    Branch(String code) {
         this.code = code;
     }
 
@@ -18,15 +19,8 @@ public enum Branch {
         return !Branch.STABLE.equals(branch);
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
-    public static Branch fromCode(String code){
-        switch (code){
+    public static Branch fromCode(String code) {
+        switch (code) {
             case "F":
                 return Branch.STABLE;
             case "X":
@@ -41,23 +35,30 @@ public enum Branch {
                 return Branch.ALPHA;
             default:
                 return Branch.UNKNOWN;
+        }
+    }
 
-        }
-    }
-    public  Branch getDual(){
-        if (STABLE.equals(this)){
-            return this;
-        }
-        return DEVELOPER;
-    }
-    public static Branch fromMiuiVersion(String version){
+    public static Branch fromMiuiVersion(String version) {
         String[] parts = version.split("\\.");
-        if (parts.length <= 3){
+        if (parts.length <= 3) {
             return Branch.DEVELOPER;
         } else {
             return Branch.STABLE;
         }
     }
 
+    public String getCode() {
+        return code;
+    }
 
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Branch getDual() {
+        if (STABLE.equals(this)) {
+            return this;
+        }
+        return DEVELOPER;
+    }
 }

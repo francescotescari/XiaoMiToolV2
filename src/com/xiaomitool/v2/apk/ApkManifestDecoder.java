@@ -16,48 +16,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ApkManifestDecoder implements Closeable {
+    private static final String DEFAULT_MANIFEST_PATH = "AndroidManifest.xml";
+    private static final String PROPERTY_SERIALIZER_INDENTATION = "http://xmlpull.org/v1/doc/properties.html#serializer-indentation";
+    private static final String PROPERTY_SERIALIZER_LINE_SEPARATOR = "http://xmlpull.org/v1/doc/properties.html#serializer-line-separator";
+    private static final String PROPERTY_DEFAULT_ENCODING = "DEFAULT_ENCODING";
     private Path zipFile;
     private FileSystem mountedFileSystem;
+    private boolean isOpen = false;
+    private XmlPullStreamDecoder decoder;
 
-    public ApkManifestDecoder(String file){
+    public ApkManifestDecoder(String file) {
         this(Paths.get(file));
     }
-    public ApkManifestDecoder(Path file){
+
+    public ApkManifestDecoder(Path file) {
         this.zipFile = file;
-    }
-
-    public void open() throws IOException {
-        if (mountedFileSystem != null){
-            return;
-        }
-        mountedFileSystem = FileUtils.openZipFileSystem(zipFile, false);
-        isOpen = true;
-    }
-
-    public void close() throws IOException {
-        if (this.mountedFileSystem == null){
-            return;
-        }
-        this.mountedFileSystem.close();
-        this.mountedFileSystem = null;
-        isOpen = false;
-    }
-
-    private boolean isOpen = false;
-
-    public boolean isOpen() {
-        return isOpen;
-    }
-
-    private XmlPullStreamDecoder decoder;
-    private XmlPullStreamDecoder getDecoder(){
-        if (this.decoder == null){
-            AXmlResourceParser axmlParser = new AXmlResourceParser();
-            axmlParser.setAttrDecoder(new ResAttrDecoder());
-            axmlParser.getAttrDecoder().setCurrentPackage(new ResPackage(new ResTable(), 0,null));
-            decoder = new XmlPullStreamDecoder(axmlParser,getResXmlSerializer());
-        }
-        return decoder;
     }
 
     public static ExtMXSerializer getResXmlSerializer() {
@@ -68,10 +41,40 @@ public class ApkManifestDecoder implements Closeable {
         serial.setDisabledAttrEscape(true);
         return serial;
     }
-    private static final String DEFAULT_MANIFEST_PATH = "AndroidManifest.xml";
+
+    public void open() throws IOException {
+        if (mountedFileSystem != null) {
+            return;
+        }
+        mountedFileSystem = FileUtils.openZipFileSystem(zipFile, false);
+        isOpen = true;
+    }
+
+    public void close() throws IOException {
+        if (this.mountedFileSystem == null) {
+            return;
+        }
+        this.mountedFileSystem.close();
+        this.mountedFileSystem = null;
+        isOpen = false;
+    }
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    private XmlPullStreamDecoder getDecoder() {
+        if (this.decoder == null) {
+            AXmlResourceParser axmlParser = new AXmlResourceParser();
+            axmlParser.setAttrDecoder(new ResAttrDecoder());
+            axmlParser.getAttrDecoder().setCurrentPackage(new ResPackage(new ResTable(), 0, null));
+            decoder = new XmlPullStreamDecoder(axmlParser, getResXmlSerializer());
+        }
+        return decoder;
+    }
 
     public void decode(OutputStream destination) throws IOException {
-        if (!isOpen()){
+        if (!isOpen()) {
             throw new IOException("Closed decoder");
         }
         Path file = mountedFileSystem.getPath("/").resolve(DEFAULT_MANIFEST_PATH);
@@ -80,13 +83,8 @@ public class ApkManifestDecoder implements Closeable {
             try {
                 decoder.decode(inputStream, destination);
             } catch (AndrolibException e) {
-                throw new IOException("AndroidLibException: "+e.getMessage(), e);
+                throw new IOException("AndroidLibException: " + e.getMessage(), e);
             }
         }
     }
-
-    private static final String PROPERTY_SERIALIZER_INDENTATION = "http://xmlpull.org/v1/doc/properties.html#serializer-indentation";
-    private static final String PROPERTY_SERIALIZER_LINE_SEPARATOR = "http://xmlpull.org/v1/doc/properties.html#serializer-line-separator";
-    private static final String PROPERTY_DEFAULT_ENCODING = "DEFAULT_ENCODING";
-
 }

@@ -1,10 +1,8 @@
 package com.xiaomitool.v2.language;
 
-import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.xiaomi.miuithings.Branch;
 
-public enum  LRes  {
+public enum LRes {
     TIP_WINDOW_CLOSE("Close"),
     TIP_WINDOW_MINIMIZE("Minimize"),
     TIP_WINDOW_SETTINGS("Settings"),
@@ -51,7 +49,6 @@ public enum  LRes  {
     FASTBOOT_PARSED("Complete fastboot information"),
     RECOVERY_PARSED("Complete recovery information"),
     FINDING_INFO_TEXT("Collecting information from your device to determine which procedures can be executed.\nPlease wait for this operation to finish or any messages from this tool.\nThe device will reboot a few times during this operation."),
-    //RECOVERY_RECOVER_TMP("You are about to use an exclusive feature of this tool that should be used only in one of these scenarios:\n-Your device doesn't boot and goes to recovery menu with this message: \"This MIUI version can't be installed on this device\" or\n-Your device has locked bootloader and when you get to the region selection screen during first device configuration you can select only \"China\" and by pressing that your device reboots and goes into bootloop.\nYou should not use this feature if your device has not one of these problems, because it is a risky operation that could brick your device by leading to such problems or worse.\nThis feature is not official and depends on Xiaomi servers and Xiaomi recovery and thus could be disabled by Xiaomi in the future. Please make sure you are connected to Internet.\nThis procedure will wipe the device data."),
     NO_DEVICE_CONNECTED_MODE("No devices in %s mode found.\nPlease put your device in %s mode and try again.\nMake sure your device is connected to the PC with a valid USB cable."),
     HT_GO_RECOVERY("How to enter recovery mode?"),
     HT_GO_FASTBOOT("How to enter fastboot mode?"),
@@ -269,70 +266,26 @@ public enum  LRes  {
     DATA_ENCRYPTED_DETECT("Detected encrypted data partition"),
     SELECTED_FILE_LIST("Selected file list"),
     FILE_SELECT_MULTIPLE_TITLE("Please select rom files to install"),
-    FILE_SELECT_MULTIPLE_TEXT( "Select one or more files to install.\nMake sure they are ordered correctly (from top to bottom) following the wanted installation order.\nA wrong installation order can lead to device bricking or unwanted results."),
+    FILE_SELECT_MULTIPLE_TEXT("Select one or more files to install.\nMake sure they are ordered correctly (from top to bottom) following the wanted installation order.\nA wrong installation order can lead to device bricking or unwanted results."),
     SINGLE_FILE("Single file"),
     MULTIPLE_FILES("Multiple files"),
-    //MULTI_ZIP_INSTALL_CHOICE_TEXT("Please choose installation f")
     RECOVER_PHONE_CHARGED("Please make sure your device is charged.\nSometimes it might seem bricked when it is just discharged.\nA red blinking notification light can also indicate an empty battery.\nIf you are not sure that your phone is charged, leave it attached to the original charger for at least 10 minutes before continuing"),
     FAILED_TO_DO_THAT("Failed to do that"),
     ENTER_FASTBOOT_MODE("To enter fastboot mode, press the volume down and power for several seconds, until the screen turns on.\nYou should see the fastboot logo as shown beside.\nIt is not necessary to turn off the device before pressing the buttons.\nIf the device reboots normally, you are not keeping the buttons pressed for long enough."),
     PLEASE_SELECT_DEVICE("Please select your device"),
     STARTING_RECOVERY_PROC("Starting recovery procedure"),
-    SEARCHING_BEST_ROM_TO_RECOVER("Searching the best rom to recover the device")
-    ;
+    SEARCHING_BEST_ROM_TO_RECOVER("Searching the best rom to recover the device");
     private String text;
 
-    LRes(String defaultText){
+    LRes(String defaultText) {
         this.text = defaultText;
     }
 
-    public String getKey() {
-        return this.name().toLowerCase();
-    }
-
-    public String toEnglish(){
-        return text;
-    }
-
-    public String toEnglish(Object... args){
-        return String.format(text, args);
-    }
-
-    public String toString(){
-        //TODO remove only english
-        if (true) {
-            return toEnglish();
-        }
-        try {
-            return Lang.text(getKey());
-        } catch (Exception e) {
-            return this.text;
-        }
-    }
-    public String toString(Object... args){
-        //TODO remove only english
-        if (true) {
-            return toEnglish(args);
-        }
-        try {
-            return Lang.text(getKey(),args);
-        } catch (Exception e) {
-            /*Log.debug(e);*/
-            /*Log.debug(e.getMessage());*/
-            StringBuilder builder = new StringBuilder(e.getMessage());
-            for (Object o : args){
-                builder.append(',').append(o == null ? "null" : o.toString());
-            }
-            return builder.toString();
-        }
-
-    }
-
-    public static String branchToString(Branch branch){
-        if (branch == null){
+    public static String branchToString(Branch branch) {
+        if (branch == null) {
             return "null branch";
         }
-        switch (branch){
+        switch (branch) {
             case STABLE:
                 return LRes.BRANCH_STABLE.toString();
             case DEVELOPER:
@@ -343,5 +296,41 @@ public enum  LRes  {
         }
     }
 
+    public String getKey() {
+        return this.name().toLowerCase();
+    }
 
+    public String toEnglish() {
+        return text;
+    }
+
+    public String toEnglish(Object... args) {
+        return String.format(text, args);
+    }
+
+    public String toString() {
+        if (true) {
+            return toEnglish();
+        }
+        try {
+            return Lang.text(getKey());
+        } catch (Exception e) {
+            return this.text;
+        }
+    }
+
+    public String toString(Object... args) {
+        if (true) {
+            return toEnglish(args);
+        }
+        try {
+            return Lang.text(getKey(), args);
+        } catch (Exception e) {
+            StringBuilder builder = new StringBuilder(e.getMessage());
+            for (Object o : args) {
+                builder.append(',').append(o == null ? "null" : o.toString());
+            }
+            return builder.toString();
+        }
+    }
 }

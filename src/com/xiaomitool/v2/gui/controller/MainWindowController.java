@@ -5,7 +5,6 @@ import com.xiaomitool.v2.engine.ToolRunner;
 import com.xiaomitool.v2.gui.GuiObjects;
 import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.WindowManager;
-
 import com.xiaomitool.v2.gui.visual.VisiblePane;
 import com.xiaomitool.v2.language.LRes;
 import javafx.event.EventHandler;
@@ -24,10 +23,8 @@ public class MainWindowController extends DefaultController {
     private double stageX, stageY;
     @FXML
     private HBox HEADER;
-
     @FXML
     private ImageView IMG_SETTINGS, IMG_CLOSE, IMG_MIN;
-
     @FXML
     private Hyperlink TRANSLATED_LINK, LOGIN_LINK;
     @FXML
@@ -35,15 +32,16 @@ public class MainWindowController extends DefaultController {
     @FXML
     private BorderPane BORDER_PANE;
 
-    public MainWindowController(){}
-    public MainWindowController(Stage primaryStage){
+    public MainWindowController() {
+    }
+
+    public MainWindowController(Stage primaryStage) {
         super(primaryStage);
         this.primaryStage = primaryStage;
     }
 
     @FXML
-    protected void initialize()
-    {
+    protected void initialize() {
         saveNodes();
         initHeaderDrag(HEADER);
         setSettingsImage(IMG_SETTINGS);
@@ -53,42 +51,40 @@ public class MainWindowController extends DefaultController {
         initVisiblePane();
         initDisclaimer();
         initText();
-
-
     }
-    private void initText(){
+
+    private void initText() {
         TEXT_TRANSLATED_BY.setText(LRes.TRANSLATED_BY.toString());
-        String version  ="V"+ToolManager.TOOL_VERSION;
-        if (ToolManager.TOOL_VERSION_EX != null && !ToolManager.TOOL_VERSION_EX.isEmpty()){
-            version+=" ("+ToolManager.TOOL_VERSION_EX+")";
+        String version = "V" + ToolManager.TOOL_VERSION;
+        if (ToolManager.TOOL_VERSION_EX != null && !ToolManager.TOOL_VERSION_EX.isEmpty()) {
+            version += " (" + ToolManager.TOOL_VERSION_EX + ")";
         }
         VERSION_NUMBER.setText(version);
     }
 
-    private void initVisiblePane(){
+    private void initVisiblePane() {
         VisiblePane pane = new VisiblePane();
         WindowManager.setMainVisiblePane(pane);
         BORDER_PANE.setCenter(pane.getPane());
     }
 
-    private void initDisclaimer(){
+    private void initDisclaimer() {
         ToolRunner.start();
-
     }
 
-    private void saveNodes(){
+    private void saveNodes() {
         GuiObjects.set(GuiObjects.IMG_CLOSE, IMG_CLOSE);
-        GuiObjects.set(GuiObjects.IMG_MINIFY,IMG_MIN);
-        GuiObjects.set(GuiObjects.IMG_SETTINGS,IMG_SETTINGS);
+        GuiObjects.set(GuiObjects.IMG_MINIFY, IMG_MIN);
+        GuiObjects.set(GuiObjects.IMG_SETTINGS, IMG_SETTINGS);
         GuiObjects.set(GuiObjects.LOGIN_LINK, LOGIN_LINK);
         GuiObjects.set(GuiObjects.LOGIN_NUMBER, LOGIN_NUMBER);
     }
 
-    private void setSettingsImage(ImageView IMG_SETTINGS){
+    private void setSettingsImage(ImageView IMG_SETTINGS) {
         GuiUtils.setViewportChange(IMG_SETTINGS, new GuiUtils.GetViewport() {
             @Override
             public Rectangle2D get(int index) {
-                return new Rectangle2D(5+index*24,0,14,14);
+                return new Rectangle2D(5 + index * 24, 0, 14, 14);
             }
         });
         GuiUtils.tooltip(IMG_SETTINGS, LRes.TIP_WINDOW_SETTINGS);
@@ -96,22 +92,16 @@ public class MainWindowController extends DefaultController {
             @Override
             public void handle(MouseEvent event) {
                 WindowManager.launchSettings();
-
             }
         });
     }
-    private void initOnClick(){
+
+    private void initOnClick() {
         LOGIN_LINK.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 LoginController.loginClick();
-
-
             }
         });
     }
-
-
-
-
 }

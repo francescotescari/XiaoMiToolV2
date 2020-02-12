@@ -1,8 +1,8 @@
 package com.xiaomitool.v2.gui.controller;
 
+import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.language.LRes;
-import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.RunnableMessage;
 import com.xiaomitool.v2.utility.WaitSemaphore;
@@ -15,21 +15,23 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public abstract class DefaultController {
+    protected Stage primaryStage;
     private WaitSemaphore waitCloseSemaphre = new WaitSemaphore(0);
+    private double stageX, stageY;
+    private RunnableMessage onBeforeClose = null;
 
-    public WaitSemaphore getWaitCloseSemaphre(){
+    public DefaultController() {
+    }
+
+    public DefaultController(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
+    public WaitSemaphore getWaitCloseSemaphre() {
         return waitCloseSemaphre;
     }
 
-    public DefaultController(){}
-    public DefaultController(Stage primaryStage){
-      this.primaryStage = primaryStage;
-    }
-    protected Stage primaryStage;
-    private double stageX, stageY;
-
-
-    protected void initHeaderDrag(Node HEADER){
+    protected void initHeaderDrag(Node HEADER) {
         HEADER.setOnMousePressed(event -> {
             HEADER.setCursor(Cursor.CLOSED_HAND);
             stageX = event.getSceneX();
@@ -50,28 +52,27 @@ public abstract class DefaultController {
         this.primaryStage = primaryStage;
     }
 
-    private RunnableMessage onBeforeClose = null;
-
     public void setOnBeforeClose(RunnableMessage onBeforeClose) {
         this.onBeforeClose = onBeforeClose;
     }
-    public void closeWindow(){
+
+    public void closeWindow() {
         closeWindow(false);
     }
-    public void closeWindow(boolean exit){
-        Runnable close = new Runnable() {
 
+    public void closeWindow(boolean exit) {
+        Runnable close = new Runnable() {
             @Override
             public void run() {
                 try {
-                    if (onBeforeClose != null){
+                    if (onBeforeClose != null) {
                         int run = onBeforeClose.run();
-                        if (run != 0){
+                        if (run != 0) {
                             return;
                         }
                     }
                 } catch (InterruptedException e) {
-                    Log.warn("Interrupted exception: "+e.getMessage());
+                    Log.warn("Interrupted exception: " + e.getMessage());
                 }
                 Platform.runLater(new Runnable() {
                     @Override
@@ -86,17 +87,18 @@ public abstract class DefaultController {
                 });
             }
         };
-        if (Platform.isFxApplicationThread()){
+        if (Platform.isFxApplicationThread()) {
             new Thread(close).start();
         } else {
             close.run();
         }
     }
 
-    protected void setCloseImage(ImageView IMG_CLOSE){
+    protected void setCloseImage(ImageView IMG_CLOSE) {
         setCloseImage(IMG_CLOSE, false);
     }
-    protected void setCloseImage(ImageView IMG_CLOSE, boolean exit){
+
+    protected void setCloseImage(ImageView IMG_CLOSE, boolean exit) {
         IMG_CLOSE.setOnMouseClicked(event -> {
             closeWindow(exit);
         });
@@ -104,20 +106,22 @@ public abstract class DefaultController {
         GuiUtils.setViewportChange(IMG_CLOSE, new GuiUtils.GetViewport() {
             @Override
             public Rectangle2D get(int index) {
-                return new Rectangle2D(index*11,-1,11,13);
+                return new Rectangle2D(index * 11, -1, 11, 13);
             }
         });
     }
-    protected void setMinifyImage(ImageView IMG_MIN){
+
+    protected void setMinifyImage(ImageView IMG_MIN) {
         IMG_MIN.setOnMouseClicked(event -> primaryStage.setIconified(true));
-        GuiUtils.tooltip(IMG_MIN,LRes.TIP_WINDOW_MINIMIZE);
+        GuiUtils.tooltip(IMG_MIN, LRes.TIP_WINDOW_MINIMIZE);
         GuiUtils.setViewportChange(IMG_MIN, new GuiUtils.GetViewport() {
             @Override
             public Rectangle2D get(int index) {
-                return new Rectangle2D(index*11,-1,11,13);
+                return new Rectangle2D(index * 11, -1, 11, 13);
             }
         });
     }
+
     @FXML
     protected abstract void initialize();
 }

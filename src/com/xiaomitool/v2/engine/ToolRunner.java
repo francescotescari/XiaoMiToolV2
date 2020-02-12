@@ -12,7 +12,8 @@ public class ToolRunner {
     private static int last_msg = 0;
     private static ExecutorService runner = Executors.newSingleThreadExecutor();
     private static WaitSemaphore semaphore = new WaitSemaphore();
-    public static void run(RunnableMessage runnableMessage){
+
+    public static void run(RunnableMessage runnableMessage) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -28,11 +29,13 @@ public class ToolRunner {
         };
         runner.submit(runnable);
     }
-    public static int runWait(RunnableMessage runnableMessage){
+
+    public static int runWait(RunnableMessage runnableMessage) {
         run(runnableMessage);
         return waitMessage();
     }
-    public static int waitMessage(){
+
+    public static int waitMessage() {
         try {
             semaphore.waitOnce();
         } catch (InterruptedException e) {
@@ -40,16 +43,14 @@ public class ToolRunner {
         }
         return last_msg;
     }
-    public static void start(){
+
+    public static void start() {
         runner.submit(() -> {
             try {
                 ActionsStatic.MAIN().run();
             } catch (InterruptedException e) {
-                Log.warn("Main tool runner thread interrutped: "+e.getMessage());
+                Log.warn("Main tool runner thread interrutped: " + e.getMessage());
             }
         });
-
-
-
     }
 }

@@ -1,6 +1,6 @@
 package com.xiaomitool.v2.rom.chooser;
 
-public enum  InstallationType {
+public enum InstallationType {
     STOCK_RECOVERY,
     TWRP_RECOVERY,
     FASTBOOT_ALL,
