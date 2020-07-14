@@ -4,7 +4,27 @@ import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.utility.CommandClass;
 
-public abstract class GuiListener extends CommandClass {
+public abstract class GuiListener extends CommandClass implements GuiListenerAbstract {
+
+    public static GuiListener implement(GuiListenerAbstract listenerAbstract){
+        return new GuiListener() {
+            @Override
+            public void toast(String message) {
+                listenerAbstract.toast(message);
+            }
+
+            @Override
+            public void text(String message) {
+                listenerAbstract.text(message);
+            }
+
+            @Override
+            public void onException(InstallException exception) {
+                listenerAbstract.onException(exception);
+            }
+        };
+    }
+
     public abstract void toast(String message);
 
     public void toast(LRes msg) {
@@ -25,7 +45,7 @@ public abstract class GuiListener extends CommandClass {
         return this.waitCommand();
     }
 
-    protected abstract void onException(InstallException exception);
+    public abstract void onException(InstallException exception);
 
     public static class Debug extends GuiListener {
         @Override
@@ -37,7 +57,7 @@ public abstract class GuiListener extends CommandClass {
         }
 
         @Override
-        protected void onException(InstallException exception) {
+        public void onException(InstallException exception) {
             exception.printStackTrace();
         }
     }

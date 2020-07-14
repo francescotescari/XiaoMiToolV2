@@ -147,7 +147,7 @@ public class ProcedureRunner extends GuiListener {
     }
 
     @Override
-    protected void onException(InstallException exception) {
+    public void onException(InstallException exception) {
         listener.onException(exception);
     }
 
@@ -216,18 +216,18 @@ public class ProcedureRunner extends GuiListener {
     public void setInstallPane(InstallPane installPane) {
         this.installPane = installPane;
         if (installPane != null) {
-            setListener(installPane.getListener());
+            setListener(installPane);
         } else {
             setListener(null);
         }
         setAfterExceptionPane(installPane);
     }
 
-    private void setListener(GuiListener listener) {
+    private void setListener(GuiListenerAbstract listener) {
         if (listener == null) {
             this.listener = new GuiListener.Debug();
         } else {
-            this.listener = listener;
+            this.listener = GuiListener.implement(listener);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.xiaomitool.v2.utility;
 
-public class CommandClass {
+public class CommandClass implements CommandClassAbstract {
     private WaitSemaphore semaphore = new WaitSemaphore();
     private Command command = null;
     private boolean isWaitingCommand = false;
@@ -10,7 +10,7 @@ public class CommandClass {
         semaphore.setPermits(1);
     }
 
-    public Command waitCommand() throws InterruptedException {
+    public synchronized Command waitCommand() throws InterruptedException {
         isWaitingCommand = true;
         semaphore.decrease();
         isWaitingCommand = false;
@@ -19,7 +19,7 @@ public class CommandClass {
         return out;
     }
 
-    protected boolean isWaitingCommand() {
+    public boolean isWaitingCommand() {
         return isWaitingCommand;
     }
 
@@ -31,4 +31,6 @@ public class CommandClass {
         EXCEPTION,
         SINKED
     }
+
+
 }
