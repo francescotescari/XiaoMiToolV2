@@ -282,7 +282,12 @@ public class FastbootInstall {
                         String encryptData = json.optString("encryptData", null);
                         if (code != 0 || encryptData == null) {
                             ButtonPane unlockButtonPane = new ButtonPane(LRes.TRY_AGAIN, LRes.ABORT);
-                            unlockButtonPane.setContentText(LRes.UNLOCK_ERROR_TEXT.toString(code, UnlockCommonRequests.getUnlockCodeMeaning(code, json)));
+                            String additionalDesc = UnlockCommonRequests.getErrorDescription(json);
+                            String text = LRes.UNLOCK_ERROR_TEXT.toString(code, UnlockCommonRequests.getUnlockCodeMeaning(code, json));
+                            if (!StrUtils.isNullOrEmpty(additionalDesc)){
+                                text+="\n\n"+LRes.API_DESCRIPTION.toString(additionalDesc);
+                            }
+                            unlockButtonPane.setContentText(text);
                             WindowManager.setMainContent(unlockButtonPane, false);
                             int choice = unlockButtonPane.waitClick();
                             WindowManager.removeTopContent();

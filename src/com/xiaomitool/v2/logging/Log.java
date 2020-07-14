@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class Log {
-    public static final boolean ADVANCED_LOG = false;
+    public static final boolean ADVANCED_LOG = true;
     private static final String PREFIX_DEBUG = "DEBUG";
     private static final String PREFIX_INFO = "INFO";
     private static final String PREFIX_WARN = "WARN";

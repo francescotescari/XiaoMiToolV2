@@ -12,17 +12,36 @@ import org.json.JSONObject;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class UnlockCommonRequests {
     private static final HashMap<Integer, LRes> UNLOCK_CODE_MEANING = buildUnlockCodeMeaning();
     private static final String SID = "miui_unlocktool_client";
-    private static final String CLIENT_VERSION = "3.5.1108.44";
+    private static final String CLIENT_VERSION = "3.5.1128.45";
     private static final String NONCEV2 = "/api/v2/nonce";
     private static final String USERINFOV3 = "/api/v3/unlock/userinfo";
     private static final String DEVICECLEARV3 = "/api/v2/unlock/device/clear";
     private static final String AHAUNLOCKV3 = "/api/v3/ahaUnlock";
     private static final String FLASHUSERSTATUS = "/api/v2/flash/userStatus";
     private static final String AHAFLASH = "/api/v1/flash/ahaFlash";
+
+    private static String OVERRIDE_CLIENT_VERSION = null;
+    private static Map<String, Object> OVERRIDE_UNLOCK_REQUEST = null;
+
+    private static String getClientVersion(){
+        if (OVERRIDE_CLIENT_VERSION != null){
+            return OVERRIDE_CLIENT_VERSION;
+        }
+        return CLIENT_VERSION;
+    }
+
+    public static void overrideClientVersion(String version){
+        OVERRIDE_CLIENT_VERSION = version;
+    }
+
+    public static void overrideUnlockOptions(Map<String, Object> overrideFields){
+        OVERRIDE_UNLOCK_REQUEST = overrideFields;
+    }
 
     public static String getUnlockCodeMeaning(int code, JSONObject object) {
         LRes languageResource = UNLOCK_CODE_MEANING.get(code);
@@ -50,6 +69,11 @@ public class UnlockCommonRequests {
             toReturn = languageResource.toString();
         }
         return toReturn;
+    }
+
+    public static String getErrorDescription(JSONObject data){
+        //TODO
+        return "";
     }
 
     private static HashMap<Integer, LRes> buildUnlockCodeMeaning() {
@@ -85,7 +109,7 @@ public class UnlockCommonRequests {
         UnlockRequest request = new UnlockRequest(USERINFOV3);
         HashMap<String, String> pp = new LinkedHashMap<>();
         pp.put("clientId", "1");
-        pp.put("clientVersion", CLIENT_VERSION);
+        pp.put("clientVersion", getClientVersion());
         pp.put("language", "en");
         pp.put("pcId", keystore.getPcId());
         pp.put("region", "");
@@ -103,7 +127,7 @@ public class UnlockCommonRequests {
         UnlockRequest request = new UnlockRequest(DEVICECLEARV3);
         HashMap<String, String> pp = new LinkedHashMap<>();
         pp.put("clientId", "1");
-        pp.put("clientVersion", CLIENT_VERSION);
+        pp.put("clientVersion", getClientVersion());
         pp.put("language", "en");
         pp.put("pcId", keystore.getPcId());
         pp.put("product", product);
@@ -122,7 +146,7 @@ public class UnlockCommonRequests {
         UnlockRequest request = new UnlockRequest(FLASHUSERSTATUS);
         HashMap<String, String> pp = new HashMap<>();
         pp.put("clientId", "qcomFlash");
-        pp.put("clientVersion", CLIENT_VERSION);
+        pp.put("clientVersion", getClientVersion());
         pp.put("pcId", keystore.getPcId());
         JSONObject object = new JSONObject(pp);
         String data = object.toString();
@@ -138,7 +162,7 @@ public class UnlockCommonRequests {
         UnlockRequest request = new UnlockRequest(AHAFLASH);
         HashMap<String, String> pp = new HashMap<>();
         pp.put("pcId", keystore.getPcId());
-        pp.put("clientVersion", CLIENT_VERSION);
+        pp.put("clientVersion", getClientVersion());
         pp.put("clientId", "qcomFlash");
         pp.put("flashToken", flashToken);
         String data = new JSONObject(pp).toString();
@@ -162,7 +186,7 @@ public class UnlockCommonRequests {
         p2.put("socId", socId);
         HashMap<String, Object> pp = new LinkedHashMap<>();
         pp.put("clientId", "2");
-        pp.put("clientVersion", CLIENT_VERSION);
+        pp.put("clientVersion", getClientVersion());
         pp.put("deviceInfo", p2);
         pp.put("deviceToken", token);
         pp.put("language", "en");
@@ -170,6 +194,11 @@ public class UnlockCommonRequests {
         pp.put("pcId", keystore.getPcId());
         pp.put("region", "");
         pp.put("uid", keystore.getUserId());
+        if (OVERRIDE_UNLOCK_REQUEST != null){
+            for (Map.Entry<String, Object> entry : OVERRIDE_UNLOCK_REQUEST.entrySet()){
+                pp.put(entry.getKey(), entry.getValue());
+            }
+        }
         String data = StrUtils.map2json(pp, 3);
         data = Base64.getEncoder().encodeToString(data.getBytes(ResourcesConst.interalCharset()));
         request.addParam("appId", "1");

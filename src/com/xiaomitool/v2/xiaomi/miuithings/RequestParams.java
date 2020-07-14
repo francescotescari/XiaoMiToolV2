@@ -29,8 +29,13 @@ public abstract class RequestParams implements Cloneable {
     protected Branch branch;
 
     @Override
-    public RequestParams clone() throws CloneNotSupportedException {
-        RequestParams clone = (RequestParams) super.clone();
+    public RequestParams clone() {
+        RequestParams clone = null;
+        try {
+            clone = (RequestParams) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
         clone.device = this.device;
         clone.codebase = this.codebase;
         clone.version = this.version;

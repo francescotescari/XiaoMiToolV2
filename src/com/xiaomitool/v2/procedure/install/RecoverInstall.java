@@ -12,7 +12,7 @@ import com.xiaomitool.v2.procedure.uistuff.ConfirmationProcedure;
 public class RecoverInstall {
     public static RInstall recoverFastboot() {
         return RNode.sequence(
-                ConfirmationProcedure.suggestUnlockBootloader("Want to unlock boot?"),
+                ConfirmationProcedure.suggestUnlockBootloader("Want to unlock boot?"), //TODO text
                 RNode.conditional(
                         ConfirmationProcedure.IS_DEVICE_UNLOCKED,
                         Procedures.doNothing(),

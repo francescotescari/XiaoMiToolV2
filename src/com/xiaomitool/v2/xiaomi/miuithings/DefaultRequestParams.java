@@ -80,13 +80,11 @@ public class DefaultRequestParams extends RequestParams implements Cloneable {
         JSONObject optJson = new JSONObject(options);
         map.put("options", optJson);
         JSONObject json = new JSONObject(map);
-        String ret = json.toString();
-        return ret;
+        return json.toString();
     }
 
-    public DefaultRequestParams clone() throws CloneNotSupportedException {
-        DefaultRequestParams clone = (DefaultRequestParams) super.clone();
-        return clone;
+    public DefaultRequestParams clone() {
+        return (DefaultRequestParams) super.clone();
     }
 
     public void setSerialNumber(SerialNumber sn) {

@@ -269,12 +269,14 @@ public enum LRes {
     FILE_SELECT_MULTIPLE_TEXT("Select one or more files to install.\nMake sure they are ordered correctly (from top to bottom) following the wanted installation order.\nA wrong installation order can lead to device bricking or unwanted results."),
     SINGLE_FILE("Single file"),
     MULTIPLE_FILES("Multiple files"),
-    RECOVER_PHONE_CHARGED("Please make sure your device is charged.\nSometimes it might seem bricked when it is just discharged.\nA red blinking notification light can also indicate an empty battery.\nIf you are not sure that your phone is charged, leave it attached to the original charger for at least 10 minutes before continuing"),
+    RECOVER_PHONE_CHARGED("Please make sure your device is charged.\nSometimes it might seem bricked when it is just discharged.\nA red blinking notification light can also indicate an empty battery.\nIf you are not sure that your phone is charged, leave it attached to the original charger for at least 10 minutes before continuing."),
     FAILED_TO_DO_THAT("Failed to do that"),
     ENTER_FASTBOOT_MODE("To enter fastboot mode, press the volume down and power for several seconds, until the screen turns on.\nYou should see the fastboot logo as shown beside.\nIt is not necessary to turn off the device before pressing the buttons.\nIf the device reboots normally, you are not keeping the buttons pressed for long enough."),
     PLEASE_SELECT_DEVICE("Please select your device"),
     STARTING_RECOVERY_PROC("Starting recovery procedure"),
-    SEARCHING_BEST_ROM_TO_RECOVER("Searching the best rom to recover the device");
+    SEARCHING_BEST_ROM_TO_RECOVER("Searching the best rom to recover the device"),
+    API_DESCRIPTION("Api description: %s"),
+    RECOVERY_MODE_EXP("This is the recovery procedure of XiaoMiTool, you should use only if your device is bricked\n(if it doesn't boot normally to the operating system)\nThis procedure tries to flash a stock, official rom back to the device, cleaning the data and cache partition.\nPlease note that not all of the bricked devices can be fixed with this tool,\nin particular it DOESN'T work if:\n- Your device has the \"this miui version can't be installed on this device\" error message\n- Your device cannot reach fastboot and recovery mode (hard brick)\n\nPlease proceed if you want to try to fix your bricked device.");
     private String text;
 
     LRes(String defaultText) {

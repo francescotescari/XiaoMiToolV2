@@ -15,7 +15,7 @@ import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import java.util.List;
 
 public class ConfirmationProcedure {
-    public static final String KEY_BOOL_CONFIRM_STEPS = "bool_confirm_steps";
+    private static final String KEY_BOOL_CONFIRM_STEPS = "bool_confirm_steps";
     private static final String KEY_BOOL_CONFIRM_INSTALL = "bool_confirm_install";
     public static String WANT_TO_UNLOCK = "want_to_unlock";
     public static String IS_DEVICE_UNLOCKED = "device_is_unlocked";
@@ -89,19 +89,19 @@ public class ConfirmationProcedure {
                 if (click != 0) {
                     runner.setContext(KEY_BOOL_CONFIRM_INSTALL, Boolean.FALSE);
                 } else {
-                    Log.info("Installation confrimation accepted");
+                    Log.info("Installation confirmation accepted");
                 }
             }
         }, RNode.conditional(KEY_BOOL_CONFIRM_INSTALL, null, RNode.sequence(ChooseProcedure.chooseRom(), confirmInstallableProcedure(), Procedures.runSavedProcedure("confirmInstallationStart"))));
     }
 
-    public static RInstall confirmPhoneCharged() {
+    public static RInstall confirmPhoneCharged(boolean deleteUnder) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 ButtonPane buttonPane = new ButtonPane(LRes.OK_UNDERSTAND);
                 buttonPane.setContentText(LRes.RECOVER_PHONE_CHARGED);
-                WindowManager.setMainContent(buttonPane, false);
+                WindowManager.setMainContent(buttonPane, deleteUnder);
                 buttonPane.waitClick();
                 WindowManager.removeTopContent();
             }
@@ -114,8 +114,8 @@ public class ConfirmationProcedure {
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
                 UnlockStatus status = device.getAnswers().getUnlockStatus();
-                runner.setContext(IS_DEVICE_UNLOCKED, true);
                 if (UnlockStatus.UNLOCKED.equals(status)) {
+                    runner.setContext(IS_DEVICE_UNLOCKED, true);
                     return;
                 }
                 runner.setContext(IS_DEVICE_UNLOCKED, false);

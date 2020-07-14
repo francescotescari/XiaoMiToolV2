@@ -116,187 +116,266 @@ public class XiaomiUtilities {
             codename = "HM4Pro";
         } else if (codename.equalsIgnoreCase("santoni")) {
             codename = "HM4X";
-        } else {
-            String str = "MI5c";
-            if (codename.equalsIgnoreCase("meri")) {
-                codename = str;
-            } else if (codename.equalsIgnoreCase("song")) {
-                codename = str;
-            } else if (codename.equalsIgnoreCase("sagit")) {
-                codename = "MI6";
-            } else if (codename.equalsIgnoreCase("cappu")) {
-                codename = "MIPAD3";
-            } else if (codename.equalsIgnoreCase("jason")) {
-                codename = "MINote3";
-            } else if (codename.equalsIgnoreCase("oxygen")) {
-                codename = "MIMAX2";
-            } else if (codename.equalsIgnoreCase("tiffany")) {
-                codename = "MI5X";
-            } else if (codename.equalsIgnoreCase("ugg")) {
-                codename = "HMNote5A";
-            } else if (codename.equalsIgnoreCase("ugglite")) {
-                codename = "HMNote5ALITE";
-            } else if (codename.equalsIgnoreCase("chiron")) {
-                codename = "MIMix2";
-            } else if (codename.equalsIgnoreCase("riva")) {
-                codename = "HM5A";
-            } else if (codename.equalsIgnoreCase("rosy")) {
-                codename = "HM5";
-            } else if (codename.equalsIgnoreCase("vince")) {
-                codename = "HM5Plus";
-            } else if (codename.equalsIgnoreCase("whyred")) {
-                codename = "HMNote5Pro";
-            } else if (codename.equalsIgnoreCase("polaris")) {
-                codename = "MIMix2S";
-            } else if (codename.equalsIgnoreCase("wayne")) {
-                codename = "MI6X";
-            } else if (codename.equalsIgnoreCase("sirius")) {
-                codename = "MI8SE";
-            } else if (codename.equalsIgnoreCase("dipper")) {
-                codename = "MI8";
-            } else if (codename.equalsIgnoreCase("cactus")) {
-                codename = "HM6A";
-            } else if (codename.equalsIgnoreCase("cereus")) {
-                codename = "HM6";
-            } else if (codename.equalsIgnoreCase("sakura")) {
-                codename = "HM6Pro";
-            } else if (codename.equalsIgnoreCase("ursa")) {
-                codename = "MI8Explorer";
-            } else if (codename.equalsIgnoreCase("beryllium")) {
-                codename = "POCOF1";
-            } else if (codename.equalsIgnoreCase("clover")) {
-                codename = "MIPAD4";
-            } else if (codename.equalsIgnoreCase("perseus")) {
-                codename = "MIMix3";
-            } else if (codename.equalsIgnoreCase("platina")) {
-                codename = "MI8LITE";
-            } else if (codename.equalsIgnoreCase("tulip")) {
-                codename = "HMNote6Pro";
-            } else if (codename.equalsIgnoreCase("equuleus")) {
-                codename = "MI8Pro";
-            } else if (codename.equalsIgnoreCase("lavender")) {
-                codename = "HMNote7";
-            } else if (codename.equalsIgnoreCase("cepheus")) {
-                codename = "MI9";
-            } else if (codename.equalsIgnoreCase("grus")) {
-                codename = "MI9SE";
-            } else if (codename.equalsIgnoreCase("onclite")) {
-                codename = "HM7";
-            } else if (codename.equalsIgnoreCase("violet")) {
-                codename = "HMNote7Pro";
-            } else if (codename.equalsIgnoreCase("andromeda")) {
-                codename = "MIMix35G";
-            } else if (codename.equalsIgnoreCase("davinci")) {
-                codename = "HMK20MI9T";
-            } else if (codename.equalsIgnoreCase("raphael")) {
-                codename = "HMK20ProMI9TPro";
-            } else if (codename.equalsIgnoreCase("pine")) {
-                codename = "HM7A";
-            } else if (codename.equalsIgnoreCase("nitrogen")) {
-                codename = "MIMAX3";
-            } else if (codename.equalsIgnoreCase("pyxis")) {
-                codename = "MICC9";
-            }
+        } else if (codename.equalsIgnoreCase("meri")) {
+            codename = "MI5c";
+        } else if (codename.equalsIgnoreCase("song")) {
+            codename = "MI5c";
+        } else if (codename.equalsIgnoreCase("sagit")) {
+            codename = "MI6";
+        } else if (codename.equalsIgnoreCase("cappu")) {
+            codename = "MIPAD3";
+        } else if (codename.equalsIgnoreCase("jason")) {
+            codename = "MINote3";
+        } else if (codename.equalsIgnoreCase("oxygen")) {
+            codename = "MIMAX2";
+        } else if (codename.equalsIgnoreCase("tiffany")) {
+            codename = "MI5X";
+        } else if (codename.equalsIgnoreCase("ugg")) {
+            codename = "HMNote5A";
+        } else if (codename.equalsIgnoreCase("ugglite")) {
+            codename = "HMNote5ALITE";
+        } else if (codename.equalsIgnoreCase("chiron")) {
+            codename = "MIMix2";
+        } else if (codename.equalsIgnoreCase("riva")) {
+            codename = "HM5A";
+        } else if (codename.equalsIgnoreCase("rosy")) {
+            codename = "HM5";
+        } else if (codename.equalsIgnoreCase("vince")) {
+            codename = "HM5Plus";
+        } else if (codename.equalsIgnoreCase("whyred")) {
+            codename = "HMNote5Pro";
+        } else if (codename.equalsIgnoreCase("polaris")) {
+            codename = "MIMix2S";
+        } else if (codename.equalsIgnoreCase("wayne")) {
+            codename = "MI6X";
+        } else if (codename.equalsIgnoreCase("sirius")) {
+            codename = "MI8SE";
+        } else if (codename.equalsIgnoreCase("dipper")) {
+            codename = "MI8";
+        } else if (codename.equalsIgnoreCase("cactus")) {
+            codename = "HM6A";
+        } else if (codename.equalsIgnoreCase("cereus")) {
+            codename = "HM6";
+        } else if (codename.equalsIgnoreCase("sakura")) {
+            codename = "HM6Pro";
+        } else if (codename.equalsIgnoreCase("ursa")) {
+            codename = "MI8Explorer";
+        } else if (codename.equalsIgnoreCase("beryllium")) {
+            codename = "POCOF1";
+        } else if (codename.equalsIgnoreCase("clover")) {
+            codename = "MIPAD4";
+        } else if (codename.equalsIgnoreCase("perseus")) {
+            codename = "MIMix3";
+        } else if (codename.equalsIgnoreCase("platina")) {
+            codename = "MI8LITE";
+        } else if (codename.equalsIgnoreCase("tulip")) {
+            codename = "HMNote6Pro";
+        } else if (codename.equalsIgnoreCase("equuleus")) {
+            codename = "MI8Pro";
+        } else if (codename.equalsIgnoreCase("lavender")) {
+            codename = "HMNote7";
+        } else if (codename.equalsIgnoreCase("cepheus")) {
+            codename = "MI9";
+        } else if (codename.equalsIgnoreCase("grus")) {
+            codename = "MI9SE";
+        } else if (codename.equalsIgnoreCase("onc")) {
+            codename = "HM7";
+        } else if (codename.equalsIgnoreCase("onclite")) {
+            codename = "HM7LITE";
+        } else if (codename.equalsIgnoreCase("violet")) {
+            codename = "HMNote7Pro";
+        } else if (codename.equalsIgnoreCase("andromeda")) {
+            codename = "MIMix35G";
+        } else if (codename.equalsIgnoreCase("davinci")) {
+            codename = "HMK20MI9T";
+        } else if (codename.equalsIgnoreCase("raphael")) {
+            codename = "HMK20ProMI9TPro";
+        } else if (codename.equalsIgnoreCase("pine")) {
+            codename = "HM7A";
+        } else if (codename.equalsIgnoreCase("nitrogen")) {
+            codename = "MIMAX3";
+        } else if (codename.equalsIgnoreCase("pyxis")) {
+            codename = "MICC9";
+        } else if (codename.equalsIgnoreCase("begonia")) {
+            codename = "HMNote8Pro";
+        } else if (codename.equalsIgnoreCase("ginkgo")) {
+            codename = "HMNote8";
+        } else if (codename.equalsIgnoreCase("crux")) {
+            codename = "MI9Pro5G";
+        } else if (codename.equalsIgnoreCase("pyxis")) {
+            codename = "MI9LiteMICC9";
+        } else if (codename.equalsIgnoreCase("olive")) {
+            codename = "HM8";
+        } else if (codename.equalsIgnoreCase("olivelite")) {
+            codename = "HM8A";
+        } else if (codename.equalsIgnoreCase("raphaels")) {
+            codename = "HMK20ProPremium";
+        } else if (codename.equalsIgnoreCase("tucana")) {
+            codename = "MiNote10_MICC9Pro";
+        } else if (codename.equalsIgnoreCase("phoenix")) {
+            codename = "HMK30";
+        } else if (codename.equalsIgnoreCase("willow")) {
+            codename = "HMNote8T";
+        } else if (codename.equalsIgnoreCase("picasso")) {
+            codename = "HMK305G";
+        } else if (codename.equalsIgnoreCase("cmi")) {
+            codename = "MI10Pro";
+        } else if (codename.equalsIgnoreCase("umi")) {
+            codename = "MI10";
+        } else if (codename.equalsIgnoreCase("lmi")) {
+            codename = "HMK30Pro";
+        } else if (codename.equalsIgnoreCase("lmipro")) {
+            codename = "HMK30ProZE";
+        } else if (codename.equalsIgnoreCase("curtana")) {
+            codename = "HMNote9Pro_HMNote9S";
+        } else if (codename.equalsIgnoreCase("excalibur")) {
+            codename = "HMNote9ProMax";
+        } else if (codename.equalsIgnoreCase("toco")) {
+            codename = "MINote10LITE";
+        } else if (codename.equalsIgnoreCase("joyeuse")) {
+            codename = "HMNote9ProEU";
+        } else if (codename.equalsIgnoreCase("merlin")) {
+            codename = "HM10X_HMNote9";
+        } else if (codename.equalsIgnoreCase("vangogh")) {
+            codename = "MI10LiteZoom";
+        } else if (codename.equalsIgnoreCase("atom")) {
+            codename = "HM10X5G";
+        } else if (codename.equalsIgnoreCase("bomb")) {
+            codename = "HM10XPro";
+        } else if (codename.equalsIgnoreCase("lancelot")) {
+            codename = "HM9";
+        } else if (codename.equalsIgnoreCase("monet")) {
+            codename = "MI10LITE5G";
+        } else if (codename.equalsIgnoreCase("picasso_48m")) {
+            codename = "HMK30i5G";
         }
         return codename;
     }
 
     public static HashMap<String, String> getDeviceCodenames() {
         HashMap<String, String> map = new HashMap<>();
-        map.put("equuleus", "MI 8 PRO");
-        map.put("armani", "Redmi 1S");
-        map.put("cactus", "Redmi 6A");
-        map.put("laurus", "MI A3");
-        map.put("dior", "Redmi Note 1LTE");
-        map.put("gucci", "Redmi Note 1S");
-        map.put("taurus", "MI 2A");
-        map.put("aries", "MI 2S");
-        map.put("pisces", "MI 3");
-        map.put("cancro", "MI 3W / MI 4W");
-        map.put("libra", "MI 4c");
-        map.put("ferrari", "MI 4I");
-        map.put("aqua", "MI 4S");
-        map.put("gemini", "MI 5");
-        map.put("meri", "MI 5C");
-        map.put("capricorn", "MI 5s");
-        map.put("natrium", "MI 5s Plus");
-        map.put("tiffany", "MI 5X");
-        map.put("sagit", "MI 6");
-        map.put("wayne", "MI 6X");
-        map.put("dipper", "MI 8");
-        map.put("ursa", "MI 8 Explorer Edition");
-        map.put("sirius", "MI 8 SE");
-        map.put("cepheus", "MI 9");
-        map.put("crux", "MI 9 PRO 5G");
-        map.put("grus", "MI 9 SE");
-        map.put("tissot", "MI A1");
-        map.put("pyxis", "MI CC 9");
-        map.put("vela", "MI CC9 MEITU");
-        map.put("hydrogen", "MI MAX");
-        map.put("oxygen", "MI MAX 2");
-        map.put("nitrogen", "MI MAX3");
-        map.put("helium", "MI Max Prime");
-        map.put("chiron", "MI MIX 2");
-        map.put("polaris", "MI MIX 2S");
-        map.put("perseus", "MI MIX 3");
-        map.put("scorpio", "MI Note 2");
-        map.put("jason", "MI Note 3");
-        map.put("virgo", "MI Note");
-        map.put("leo", "MI Note PRO");
-        map.put("mione_plus", "MI ONE Plus");
-        map.put("latte", "MI PAD 2");
-        map.put("cappu", "MI PAD 3");
-        map.put("clover", "MI PAD 4");
-        map.put("lotus", "MI Play");
-        map.put("lithium", "MI MIX");
-        map.put("platina", "MI 8 Lite");
-        map.put("ido_xhdpi", "Redmi 3");
-        map.put("land", "Redmi 3S");
-        map.put("prada", "Redmi 4");
-        map.put("rolex", "Redmi 4A");
-        map.put("markw", "Redmi 4 Prime");
-        map.put("santoni", "Redmi 4X");
-        map.put("rosy", "Redmi 5");
-        map.put("riva", "Redmi 5A");
-        map.put("riva_fs", "Redmi 5A FS");
-        map.put("vince", "Redmi 5 Plus");
-        map.put("cereus", "Redmi 6");
-        map.put("sakura", "Redmi 6 Pro");
-        map.put("onclite", "Redmi 7");
-        map.put("pine", "Redmi 7A");
-        map.put("davinci", "Redmi K20");
-        map.put("raphael", "Redmi K20 Pro");
-        map.put("raphaels", "Redmi K20 Pro Premium Edition");
-        map.put("hermes", "Redmi Note 2");
-        map.put("kenzo", "Redmi Note 3");
-        map.put("nikel", "Redmi Note 4 MTK");
-        map.put("whyred", "Redmi Note 5");
-        map.put("ugg", "Redmi Note 5A");
-        map.put("ugglite", "Redmi Note 5A Lite");
-        map.put("lavender", "Redmi Note 7");
-        map.put("violet", "Redmi Note 7 Pro");
-        map.put("ginkgo", "Redmi Note 8");
-        map.put("begonia", "Redmi Note 8 Pro");
-        map.put("ysl", "Redmi S2");
-        map.put("wt98007", "Redmi 1");
-        map.put("virgo_lte_ct", "小米Note 全网通版");
-        map.put("mocha", "MI Pad");
-        map.put("cancro_lte_ct", "小米手机4 电信4G版");
-        map.put("hermes_pro", "Redmi Note 2 PRO");
-        map.put("hennessy", "Redmi Note 3 MTK");
-        map.put("mido", "Redmi Note 4X/Redmi Note 4");
-        map.put("lcsh92_wet_tdd", "红米Note TD版");
-        map.put("lcsh92_wet_jb9", "红米Note WCDMA版");
-        map.put("omega", "Redmi PRO");
-        map.put("HM2014011", "红米手机1S TD 3G版");
-        map.put("HM2014501", "红米手机1S TD 4G版");
-        map.put("lte26007", "红米手机2A 标准版/增强版");
-        map.put("wt86047_pro", "红米手机2 移动增强版 / 红米手机2A 高配版");
-        map.put("wt86047", "红米手机2 移动版");
-        map.put("wt88047_pro", "红米手机2 联通版/电信 增强版");
-        map.put("wt88047", "红米手机2 联通版/电信版");
-        map.put("HM2013022", "红米手机 TD版");
-        map.put("HM2013023", "红米手机 WCDMA版");
+        map.put("aquila","AQUILA");
+        map.put("begonia_p70","BEGONIA-P70-GLOBAL");
+        map.put("comet","COMET-GLOBAL");
+        map.put("equuleus","EQUULEUS");
+        map.put("gemini_android","gemini_android");
+        map.put("hammerhead","Google Nexus 5");
+        map.put("armani","HM 1S");
+        map.put("dior","HM NOTE 1LTE");
+        map.put("gucci","HM NOTE 1S");
+        map.put("laurus","HM-LAURUS");
+        map.put("cactus","HM6A");
+        map.put("leo_android","leo_android");
+        map.put("lte26007","LTE26007-GLOBAL");
+        map.put("cmi","Mi 10 Pro");
+        map.put("taurus","MI 2A");
+        map.put("aries","MI 2S");
+        map.put("pisces","MI 3");
+        map.put("ferrari","Mi 4i");
+        map.put("aqua","MI 4S");
+        map.put("cancro","MI 4W");
+        map.put("gemini","MI 5");
+        map.put("meri","MI 5C");
+        map.put("capricorn","MI 5s");
+        map.put("natrium","MI 5s Plus");
+        map.put("tiffany","MI 5X");
+        map.put("sagit","Mi 6");
+        map.put("wayne","MI 6X");
+        map.put("dipper","MI 8");
+        map.put("sirius","MI 8 SE");
+        map.put("cepheus","MI 9");
+        map.put("grus","MI 9 SE");
+        map.put("crux","Mi 9Pro 5G");
+        map.put("davinci","MI 9T RU");
+        map.put("tissot","MI A1");
+        map.put("laurel_sprout","MI A3");
+        map.put("pyxis","MI CC 9");
+        map.put("tucana","MI CC 9 Pro");
+        map.put("vela","MI CC9 MEITU");
+        map.put("hydrogen","MI MAX");
+        map.put("oxygen","MI MAX 2");
+        map.put("helium","Mi Max Prime");
+        map.put("nitrogen","MI MAX3");
+        map.put("chiron","Mi MIX 2");
+        map.put("perseus","MI MIX3");
+        map.put("virgo_android","MI Note");
+        map.put("scorpio","Mi Note 2");
+        map.put("jason","Mi Note 3");
+        map.put("virgo","MI NOTE LTE");
+        map.put("leo","MI Note Pro");
+        map.put("mocha","MI PAD");
+        map.put("latte","MI PAD 2");
+        map.put("cappu","MI PAD 3");
+        map.put("clover","MI PAD 4");
+        map.put("lotus","MI Play");
+        map.put("libra","Mi-4c");
+        map.put("mione_plus","MI-ONE Plus");
+        map.put("umi","Mi10");
+        map.put("ursa","MI8Explorer");
+        map.put("polaris","MIMIX2S");
+        map.put("lithium","MIX");
+        map.put("peony","PEONY");
+        map.put("platina","PLATINA");
+        map.put("beryllium","POCO F1");
+        map.put("atom","Redmi 10X");
+        map.put("merlin","Redmi 10X 4G");
+        map.put("bomb","Redmi 10X Pro");
+        map.put("ido_xhdpi","Redmi 3");
+        map.put("land","Redmi 3S");
+        map.put("prada","Redmi 4");
+        map.put("markw","Redmi 4 Prime");
+        map.put("rolex","Redmi 4A");
+        map.put("santoni_liuniu","Redmi 4X");
+        map.put("santoni","Redmi 4X");
+        map.put("rosy","Redmi 5");
+        map.put("vince","Redmi 5 Plus");
+        map.put("riva","Redmi 5A");
+        map.put("riva_fs","Redmi 5A FS");
+        map.put("cereus","Redmi 6");
+        map.put("sakura","Redmi 6 Pro");
+        map.put("onclite","Redmi 7");
+        map.put("pine","Redmi 7A");
+        map.put("olive","Redmi 8");
+        map.put("olivelite","Redmi 8A");
+        map.put("lancelot","Redmi 9");
+        map.put("davinciin","Redmi K20  INDIA");
+        map.put("raphael","Redmi K20 Pro");
+        map.put("raphaelin","Redmi K20 Pro  india");
+        map.put("raphaels","Redmi K20 Pro Premium Edition");
+        map.put("phoenix","Redmi K30");
+        map.put("picasso","Redmi K30  5G");
+        map.put("lmi","Redmi K30 Pro");
+        map.put("picasso_48m","Redmi K30i 5G");
+        map.put("lcsh92_wet_jb9","Redmi Note");
+        map.put("hermes","Redmi Note 2");
+        map.put("kenzo","Redmi Note 3");
+        map.put("nikel","Redmi Note 4");
+        map.put("mido","Redmi Note 4X/Redmi Note 4");
+        map.put("whyred","Redmi Note 5");
+        map.put("ugg","Redmi Note 5A");
+        map.put("ugglite","Redmi Note 5A");
+        map.put("violet","Redmi Note 7 Pro");
+        map.put("ginkgo","Redmi Note 8");
+        map.put("begonia","Redmi Note 8 Pro");
+        map.put("lavender","Redmi Note7");
+        map.put("omega","Redmi Pro");
+        map.put("ysl","Redmi S2");
+        map.put("HM2013023_sg","Redmi1");
+        map.put("wt86047","WT86047");
+        map.put("wt98007","WT98007");
+        map.put("vangogh","XM-VANGOGH");
+        map.put("virgo_lte_ct","小米Note 全网通版");
+        map.put("cancro_lte_ct","小米手机4 电信4G版");
+        map.put("lcsh92_wet_tdd","红米Note TD版");
+        map.put("hermes_pro","红米Note2 Pro 高配版");
+        map.put("hennessy","红米Note3");
+        map.put("HM2013022","红米手机 TD版");
+        map.put("HM2013023","红米手机 WCDMA版");
+        map.put("HM2014011","红米手机1S TD 3G版");
+        map.put("HM2014501","红米手机1S TD 4G版");
+        map.put("wt88047","红米手机2 国际版");
+        map.put("wt86047_pro","红米手机2 移动增强版 / 红米手机2A 高配版");
+        map.put("wt88047_pro","红米手机2 高配 国际版");
         return map;
     }
 

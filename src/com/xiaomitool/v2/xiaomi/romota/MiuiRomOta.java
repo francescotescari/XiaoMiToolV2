@@ -114,7 +114,7 @@ public class MiuiRomOta {
         } catch (JSONException e) {
             throw new XiaomiProcedureException("[otaV3_request] Json parse failed: " + e.getMessage());
         }
-        Kind[] entries = new Kind[]{Kind.LATEST, Kind.CURRENT, Kind.INCREMENTAL, Kind.PACKAGE};
+        Kind[] entries = new Kind[]{Kind.LATEST, Kind.CURRENT, Kind.INCREMENTAL, Kind.PACKAGE, Kind.CROSS};
         HashMap<Kind, MiuiZipRom> map = new HashMap<>();
         JSONArray array = jsonData.optJSONArray(Mirrors.DEFAULT_MIRROR_ENTRY);
         Mirrors mirrors = new Mirrors();
@@ -165,7 +165,8 @@ public class MiuiRomOta {
             String token = object.getString(OTA_TOKEN);
             String branch = object.getString(OTA_BRANCH);
             String descriptionUrl = object.optString(OTA_DESCRIPTION_URL, null);
-            return new MiuiZipRom(filename, new MiuiVersion(s_version), Branch.fromCode(branch), new Codebase(s_codebase), md5, token, kind, descriptionUrl, specie);
+            Branch bbranch  = Branch.fromCode(branch);
+            return new MiuiZipRom(filename, new MiuiVersion(s_version), bbranch, new Codebase(s_codebase), md5, token, kind, descriptionUrl, specie.toBranch(bbranch));
         } catch (Exception e) {
             return new MiuiZipRom(true);
         }
@@ -182,56 +183,6 @@ public class MiuiRomOta {
         } catch (Exception e) {
             throw new XiaomiProcedureException("Missing response rom data: " + e.getMessage());
         }
-    }
-
-    public static void latestTest(RequestParams params) throws XiaomiProcedureException, CustomHttpException {
-        String device = params.getModDevice();
-        Branch branch = params.getBranch();
-        String region = params.getFastbootRegion();
-        String n = params.getCarrier();
-        String lang = params.getLanguage();
-        HashMap<String, String> map = new HashMap<>();
-        map.put("d", device);
-        map.put("b", branch.toString());
-        map.put("r", region);
-        map.put("n", n);
-        map.put("l", lang);
-        JSONObject object = new JSONObject(map);
-        String[] tokens = XiaomiKeystore.getInstance().requireServiceKeyAndToken(params.isInternational() ? "miuiota_intl" : "miuiromota");
-        String key = tokens[0];
-        String serviceToken = tokens[1];
-        String userId = XiaomiKeystore.getInstance().getUserId();
-        EasyHttp request = null;
-        if (userId != null && !userId.isEmpty()) {
-            try {
-                params.setId(userId);
-                String cuserId = XiaomiCrypto.cloudService_encrypt(userId, XiaomiKeystore.KEY_MIOTAV3);
-                String url = "http://update.miui.com/updates/mi-update-full-romV2.php?uid=" + InetUtils.urlEncode(userId) + "&token=" + InetUtils.urlEncode(serviceToken) + "&b=X&c=9.0&d=dipper&i=5bca40358906bb0b088e39eba3c95364&l=en_US&security=" + key + "&v=MIUI-8.8.30";
-                request = new EasyHttp().url(url);
-                request.cookie("uid", InetUtils.urlEncode(cuserId));
-            } catch (Exception e) {
-                throw new XiaomiProcedureException(String.format("[otaV3_request] Encryption of user id failed: %s key=%s", e.getMessage(), XiaomiKeystore.KEY_MIOTAV3));
-            }
-        }
-        if (!serviceToken.isEmpty()) {
-            request.cookie("serviceToken", serviceToken);
-        }
-        String postData;
-        String json = null;
-        try {
-            json = params.buildJson();
-        } catch (Exception e) {
-            throw new XiaomiProcedureException(e.getMessage());
-        }
-        try {
-            postData = XiaomiCrypto.cloudService_encrypt(json, XiaomiKeystore.KEY_MIOTAV3);
-        } catch (Exception e) {
-            throw new XiaomiProcedureException(String.format("[otaV3_request] Encryption failed: %s key=%s", e.getMessage(), key));
-        }
-        request.field("q", postData);
-        request.field("t", "");
-        EasyResponse response;
-        response = request.exec();
     }
 
     public static MiuiTgzRom latestFastboot_request(RequestParams params) throws XiaomiProcedureException, CustomHttpException {

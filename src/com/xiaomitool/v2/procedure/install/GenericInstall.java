@@ -306,7 +306,7 @@ public class GenericInstall {
     }
 
     public static RInstall recoverMain() {
-        return RNode.sequence(ManageDevice.requireAdbCheckService(), ConfirmationProcedure.confirmPhoneCharged(), ManageDevice.recoverSelectDevice(), recoverDeviceStart());
+        return RNode.sequence(ManageDevice.requireAdbCheckService(), ConfirmationProcedure.confirmPhoneCharged(true), ManageDevice.recoverSelectDevice(), recoverDeviceStart());
     }
 
     public static RInstall recoverDeviceStart() {

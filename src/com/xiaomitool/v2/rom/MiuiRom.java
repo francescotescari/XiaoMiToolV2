@@ -108,7 +108,8 @@ public abstract class MiuiRom extends Installable {
         LATEST("LatestRom"),
         CURRENT("CurrentRom"),
         PACKAGE("PkgRom"),
-        INCREMENTAL("IncrementRom");
+        INCREMENTAL("IncrementRom"),
+        CROSS("CrossRom");
         private String toStr;
 
         Kind(String str) {
@@ -166,10 +167,10 @@ public abstract class MiuiRom extends Installable {
             species.add(CHINA_DEVELOPER);
             species.add(GLOBAL_STABLE);
             species.add(GLOBAL_DEVELOPER);
-            Specie currentSpecie = fromStringBranch(device, Branch.STABLE);
             if (!DeviceGroups.isMultiRegionDevice(device)) {
                 return species;
             }
+            Specie currentSpecie = fromStringBranch(device, Branch.STABLE);
             for (Specie sp : Specie.values()) {
                 if (sp.parentRegion.equals(region)) {
                     species.add(sp);

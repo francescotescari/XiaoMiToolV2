@@ -69,7 +69,7 @@ public class DeviceRequestParams extends DefaultRequestParams implements Cloneab
         return new DeviceRequestParams(codename, version, codebase, branch, sn, z);
     }
 
-    public DeviceRequestParams clone() throws CloneNotSupportedException {
+    public DeviceRequestParams clone() {
         return (DeviceRequestParams) super.clone();
     }
 }

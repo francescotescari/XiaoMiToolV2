@@ -93,6 +93,9 @@ public class WindowManager {
     }
 
     public static void setMainContent(Node node, boolean deleteUnder) {
+        if (node == null){
+            throw new NullPointerException("Cannot set null node");
+        }
         if (mainVisiblePane == null) {
             return;
         }
@@ -308,4 +311,6 @@ public class WindowManager {
     public static OverlayPane requireOverlayPane() {
         return mainOverlay;
     }
+
+
 }

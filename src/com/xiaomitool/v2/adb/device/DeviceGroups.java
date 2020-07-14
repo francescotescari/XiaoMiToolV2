@@ -1,16 +1,33 @@
 package com.xiaomitool.v2.adb.device;
 
+import com.xiaomitool.v2.inet.CustomHttpException;
+import com.xiaomitool.v2.xiaomi.XiaomiProcedureException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.xiaomitool.v2.xiaomi.romota.MiuiRomOta.deviceNames_request;
 
 public class DeviceGroups {
     private static final HashSet<String> ALWAYS_UNLOCKED_DEVICES = getAlwaysUnlockedSet();
     private static final HashSet<String> EEA_REGION_DEVICES = getEeaRegionDevices();
     private static final HashSet<String> ANDROID_ONE_DEVICES = getAndroidOneDevices();
-    private static final HashSet<String> RECOVERY_SAFE = removeUnsafeDevices(getCurrentDevices());
-    private static final HashSet<String> BIREGION_DEVICES = removeMultiRegionDevice(getCurrentDevices());
+    private static final HashSet<String> RECOVERY_SAFE = getRecoverySafeDevices();
+    private static final HashSet<String> BIREGION_DEVICES = getBiRegionDevices();
+    private static final HashSet<String> ADD_EEA_REGION_DEVICES = new HashSet<>();
     private static final Pattern CODENAME_STRIPPER = Pattern.compile("^([a-z]+(_xhdpi|_sprout)?)((_[a-z]+)*_global)*$", Pattern.CASE_INSENSITIVE);
+
+    public static void init() throws XiaomiProcedureException, CustomHttpException {
+        JSONObject obj = deviceNames_request();
+        for (String name : obj.keySet()) {
+            if (name.contains("_eea")) {
+                ADD_EEA_REGION_DEVICES.add(DeviceGroups.stripCodename(name));
+            }
+        }
+    }
 
     public static boolean isMultiRegionDevice(String codename) {
         codename = stripCodename(codename);
@@ -27,139 +44,117 @@ public class DeviceGroups {
         return false;
     }
 
-    private static final HashSet<String> removeMultiRegionDevice(HashSet<String> toRemove) {
-        toRemove.remove("cepheus");
-        toRemove.remove("onc");
-        toRemove.remove("onclite");
-        toRemove.remove("lavender");
-        toRemove.remove("grus");
-        toRemove.remove("violet");
-        toRemove.remove("davinci");
-        toRemove.remove("raphael");
-        toRemove.remove("dipper");
-        toRemove.remove("platina");
-        toRemove.remove("polaris");
-        toRemove.remove("ysl");
-        toRemove.remove("whyred");
-        toRemove.remove("rosy");
-        toRemove.remove("cactus");
-        toRemove.remove("cereus");
-        toRemove.remove("sakura");
-        return toRemove;
+    private static HashSet<String> getBiRegionDevices() {
+        return hashSet(
+                "perseus",
+                "prada",
+                "dior",
+                "nikel",
+                "mocha",
+                "lotus",
+                "aries",
+                "hydrogen",
+                "vince",
+                "aqua",
+                "lithium",
+                "mido",
+                "ugg",
+                "taurus",
+                "leo",
+                "riva",
+                "ugglite",
+                "beryllium",
+                "hermes",
+                "kenzo",
+                "tiffany",
+                "oxygen",
+                "ursa",
+                "clover",
+                "ferrari",
+                "scorpio",
+                "omega",
+                "gemini",
+                "capricorn",
+                "ido",
+                "rolex",
+                "gucci",
+                "natrium",
+                "sagit",
+                "latte",
+                "sirius",
+                "hennessy",
+                "tissot",
+                "libra",
+                "land",
+                "hammerhead",
+                "wayne",
+                "santoni",
+                "equuleus",
+                "nitrogen",
+                "markw",
+                "cancro",
+                "pisces",
+                "helium",
+                "virgo",
+                "cappu",
+                "chiron",
+                "jason",
+                "mione",
+                "meri",
+                "armani"
+        );
     }
 
-    private static final HashSet<String> removeUnsafeDevices(HashSet<String> toRemove) {
-        toRemove.remove("ugg");
-        toRemove.remove("ugglite");
-        toRemove.remove("rosy");
-        toRemove.remove("riva");
-        toRemove.remove("vince");
-        toRemove.remove("whyred");
-        toRemove.remove("versace");
-        toRemove.remove("wayne");
-        toRemove.remove("ysl");
-        toRemove.remove("sirius");
-        toRemove.remove("polaris");
-        toRemove.remove("sakura");
-        toRemove.remove("sakura_india");
-        toRemove.remove("ursa");
-        toRemove.remove("beryllium");
-        toRemove.remove("comet");
-        toRemove.remove("clover");
-        toRemove.remove("cactus");
-        toRemove.remove("cereus");
-        toRemove.remove("nitrogen");
-        toRemove.remove("dipper");
-        toRemove.remove("tulip");
-        toRemove.remove("platina");
-        toRemove.remove("lilium");
-        toRemove.remove("equuleus");
-        toRemove.remove("perseus");
-        toRemove.remove("cepheus");
-        toRemove.remove("onc");
-        toRemove.remove("onclite");
-        toRemove.remove("lavender");
-        toRemove.remove("grus");
-        toRemove.remove("violet");
-        toRemove.remove("davinci");
-        toRemove.remove("raphael");
-        return toRemove;
+    private static HashSet<String> getRecoverySafeDevices() {
+        return hashSet(
+                "prada",
+                "dior",
+                "nikel",
+                "mocha",
+                "lotus",
+                "aries",
+                "hydrogen",
+                "aqua",
+                "lithium",
+                "mido",
+                "taurus",
+                "leo",
+                "hermes",
+                "kenzo",
+                "tiffany",
+                "oxygen",
+                "ferrari",
+                "scorpio",
+                "omega",
+                "gemini",
+                "capricorn",
+                "ido",
+                "rolex",
+                "gucci",
+                "natrium",
+                "sagit",
+                "latte",
+                "hennessy",
+                "tissot",
+                "libra",
+                "land",
+                "hammerhead",
+                "santoni",
+                "markw",
+                "cancro",
+                "pisces",
+                "helium",
+                "virgo",
+                "cappu",
+                "chiron",
+                "jason",
+                "mione",
+                "meri",
+                "armani"
+        );
     }
 
-    private static final HashSet<String> getCurrentDevices() {
-        HashSet<String> set = new HashSet<>();
-        set.add("mione");
-        set.add("aries");
-        set.add("taurus");
-        set.add("pisces");
-        set.add("cancro");
-        set.add("armani");
-        set.add("mocha");
-        set.add("hammerhead");
-        set.add("dior");
-        set.add("virgo");
-        set.add("gucci");
-        set.add("ferrari");
-        set.add("leo");
-        set.add("hermes");
-        set.add("libra");
-        set.add("latte");
-        set.add("ido");
-        set.add("hennessy");
-        set.add("aqua");
-        set.add("gemini");
-        set.add("kenzo");
-        set.add("capricorn");
-        set.add("scorpio");
-        set.add("hydrogen");
-        set.add("land");
-        set.add("omega");
-        set.add("markw");
-        set.add("nikel");
-        set.add("natrium");
-        set.add("lithium");
-        set.add("helium");
-        set.add("prada");
-        set.add("mido");
-        set.add("rolex");
-        set.add("meri");
-        set.add("sagit");
-        set.add("santoni");
-        set.add("cappu");
-        set.add("oxygen");
-        set.add("tiffany");
-        set.add("jason");
-        set.add("ugglite");
-        set.add("ugg");
-        set.add("tissot");
-        set.add("chiron");
-        set.add("riva");
-        set.add("vince");
-        set.add("rosy");
-        set.add("dipper");
-        set.add("whyred");
-        set.add("polaris");
-        set.add("wayne");
-        set.add("nitrogen");
-        set.add("ysl");
-        set.add("sirius");
-        set.add("sakura");
-        set.add("cactus");
-        set.add("cereus");
-        set.add("beryllium");
-        set.add("clover");
-        set.add("ursa");
-        set.add("platina");
-        set.add("perseus");
-        set.add("equuleus");
-        set.add("cepheus");
-        set.add("lotus");
-        set.add("lavender");
-        set.add("grus");
-        return set;
-    }
-
-    private static final HashSet<String> getAndroidOneDevices() {
+    private static HashSet<String> getAndroidOneDevices() {
         HashSet<String> set = new HashSet<>();
         set.add("tiare");
         set.add("tissot_sprout");
@@ -173,32 +168,36 @@ public class DeviceGroups {
         return set;
     }
 
+    private static HashSet<String> hashSet(String... entries) {
+        return new HashSet<>(Arrays.asList(entries));
+    }
+
     private static HashSet<String> getAlwaysUnlockedSet() {
-        HashSet<String> set = new HashSet<>();
-        set.add("mione_plus");
-        set.add("aries");
-        set.add("taurus");
-        set.add("pisces");
-        set.add("HM2013022");
-        set.add("HM2013023");
-        set.add("cancro");
-        set.add("armani");
-        set.add("lcsh92_wet_tdd");
-        set.add("lcsh92_wet_jb9");
-        set.add("HM2014011");
-        set.add("mocha");
-        set.add("hammerhead");
-        set.add("dior");
-        set.add("HM2014501");
-        set.add("lte26007");
-        set.add("virgo");
-        set.add("wt86047");
-        set.add("wt88047");
-        set.add("gucci");
-        set.add("ferrari");
-        set.add("hermes");
-        set.add("latte");
-        return set;
+        return hashSet(
+            "mione_plus",
+            "aries",
+            "taurus",
+            "pisces",
+            "HM2013022",
+            "HM2013023",
+            "cancro",
+            "armani",
+            "lcsh92_wet_tdd",
+            "lcsh92_wet_jb9",
+            "HM2014011",
+            "mocha",
+            "hammerhead",
+            "dior",
+            "HM2014501",
+            "lte26007",
+            "virgo",
+            "wt86047",
+            "wt88047",
+            "gucci",
+            "ferrari",
+            "hermes",
+            "latte"
+        );
     }
 
     private static String stripCodenamePro(String codename) {
@@ -235,7 +234,8 @@ public class DeviceGroups {
         if (codename == null) {
             return false;
         }
-        return EEA_REGION_DEVICES.contains(stripCodename(codename));
+        codename = stripCodename(codename);
+        return EEA_REGION_DEVICES.contains(codename) || ADD_EEA_REGION_DEVICES.contains(codename);
     }
 
     public static boolean isAndroidOneDevice(String codename) {

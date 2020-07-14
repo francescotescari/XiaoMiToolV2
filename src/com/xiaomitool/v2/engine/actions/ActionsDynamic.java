@@ -600,7 +600,7 @@ public class ActionsDynamic {
                 ProcedureRunner thisRunner;
                 if (runner == null) {
                     installPane = new InstallPane();
-                    thisRunner = new ProcedureRunner(installPane.getListener());
+                    thisRunner = new ProcedureRunner(installPane);
                 } else {
                     installPane = runner.getInstallPane();
                     if (installPane == null) {

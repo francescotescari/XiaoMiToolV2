@@ -1,16 +1,20 @@
 package com.xiaomitool.v2.utility.utils;
 
 import com.xiaomitool.v2.engine.actions.ActionsStatic;
+import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.inet.EasyHttp;
 import com.xiaomitool.v2.process.ProcessRunner;
 import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
+import com.xiaomitool.v2.xiaomi.unlock.UnlockCommonRequests;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -130,6 +134,21 @@ public class UpdateUtils {
     private static void printAlive() {
         System.out.println(ALIVE_YEAH);
         System.out.flush();
+    }
+
+    public static void overrideUnlockOptions(String host) throws CustomHttpException, JSONException {
+        String url = host+"/override_unlock.php";
+        String res = EasyHttp.get(url).getBody();
+        JSONObject object = new JSONObject(res);
+        UnlockCommonRequests.overrideClientVersion(object.optString("client", null));
+        JSONObject unlock = object.optJSONObject("unlock");
+        if (unlock != null){
+            HashMap<String, Object> hm = new HashMap<>();
+            for (String k : unlock.keySet()){
+                hm.put(k, object.get(k));
+            }
+            UnlockCommonRequests.overrideUnlockOptions(hm);
+        }
     }
 
     public enum UpdateStatus {

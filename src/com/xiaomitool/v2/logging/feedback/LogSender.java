@@ -128,24 +128,6 @@ public class LogSender {
         return httpRequest.getResponseCode() == 200;
     }
 
-    private static String encodeB64Url(byte[] data) throws UnsupportedEncodingException {
-        return URLEncoder.encode(Base64.encodeBase64String(data), ResourcesConst.interalCharset().name());
-    }
-
-    private static void test(byte[] data, byte[] ending) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    InflaterInputStream inflaterInputStream = new InflaterInputStream(new ByteArrayInputStream(byteMerge(data, ending)), new Inflater(true));
-                    IOUtils.copy(inflaterInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
-                } catch (IOException e) {
-                    Log.printStackTrace(e);
-                }
-            }
-        }).start();
-    }
-
     private static byte[] byteMerge(byte[]... toMerge) {
         int size = 0;
         for (byte[] d : toMerge) {

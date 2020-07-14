@@ -15,6 +15,7 @@ import com.xiaomitool.v2.gui.visual.*;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
+import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.tasks.DownloadTask;
@@ -60,13 +61,29 @@ public class ActionsStatic {
             message = FIRST_DISCLAIMER().run();
             if (message != 1) {
                 ToolManager.exit(0);
+                System.exit(0);
+                return 0;
             }
             LiveFeedbackEasy.sendOpen(ResourcesConst.getLogString(), null);
-            Log.info("Discalimer accepted");
+            Log.info("Disclaimer accepted");
             CHECK_FOR_UPDATES_V2().run();
+            OVERRIDE_UNLOCK().run();
             REQUIRE_REGION().run();
             INSTALL_DRIVERS().run();
             return MOD_CHOOSE_SCREEN().run();
+        };
+    }
+
+    public static RunnableMessage OVERRIDE_UNLOCK(){
+        return () -> {
+            try {
+                UpdateUtils.overrideUnlockOptions(ToolManager.XMT_HOST);
+            } catch (Exception e){
+                Log.error("Failed to override unlock options: "+e.getMessage());
+                Log.exc(e);
+                return 1;
+            }
+            return 0;
         };
     }
 
@@ -76,9 +93,9 @@ public class ActionsStatic {
             int message = NOOP;
             while (message == NOOP) {
                 message = MOD_RECOVER_CHOICE().run();
-                if (message == 1) {
+                /*if (message == 1) {
                     message = FEATURE_NOT_AVAILABLE().run();
-                }
+                }*/
                 nextMain = message == 0 ? MAIN_MOD_DEVICE() : MAIN_RECOVER_DEVICE();
             }
             return nextMain.run();
@@ -191,7 +208,22 @@ public class ActionsStatic {
 
     public static RunnableMessage MAIN_RECOVER_DEVICE() {
         return () -> {
-            return 0;
+            int accept = RECOVERY_MODE_EXP().run();
+            if (accept == 0){
+                return MOD_CHOOSE_SCREEN().run();
+            }
+            return ActionsDynamic.START_PROCEDURE(null, GenericInstall.recoverMain(), null, null).run();
+        };
+    }
+
+    private static RunnableMessage RECOVERY_MODE_EXP(){
+        return () -> {
+            ButtonPane buttonPane = new ButtonPane(LRes.CANCEL, LRes.OK_UNDERSTAND);
+            buttonPane.setContentText(LRes.RECOVERY_MODE_EXP);
+            WindowManager.setMainContent(buttonPane, false);
+            int click = buttonPane.waitClick();
+            WindowManager.removeTopContent(false);
+            return click;
         };
     }
 

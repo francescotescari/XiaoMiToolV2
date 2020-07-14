@@ -22,10 +22,7 @@ import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import com.xiaomitool.v2.xiaomi.romota.MiuiRomOta;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.xiaomitool.v2.rom.chooser.InstallableChooser.idBySpecie;
 
@@ -34,7 +31,7 @@ public class StockRecoveryFetch {
     private static final String SRF_MD5 = "SFR_md5_key";
 
     public static RInstall findInstallWay(MiuiRom.Specie specie) {
-        return RNode.fallback(basicOta(specie), RNode.sequence(otaLatestRecovery(specie), new RInstall() {
+        return RNode.fallback(basicOta(specie, true), RNode.sequence(otaLatestRecovery(specie, true), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Installable installable = Procedures.requireInstallable(runner);
@@ -46,7 +43,7 @@ public class StockRecoveryFetch {
         }, otaPkgRom(specie)), Procedures.doNothing());
     }
 
-    public static RInstall basicOta(MiuiRom.Specie specie) {
+    public static RInstall basicOta(MiuiRom.Specie specie, boolean enforceSameSpecie) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -59,9 +56,8 @@ public class StockRecoveryFetch {
                     throw new InstallException(e);
                 }
                 params.setSpecie(specie);
-                MiuiZipRom installable;
-                HashMap<MiuiRom.Kind, MiuiZipRom> rom;
                 runner.text(LRes.SEARCHING_LATEST_RECOVERY_ROM.toString(params.getSpecie().toHuman()));
+                HashMap<MiuiRom.Kind, MiuiZipRom> rom;
                 try {
                     rom = MiuiRomOta.otaV3_request(params);
                 } catch (XiaomiProcedureException e) {
@@ -71,16 +67,7 @@ public class StockRecoveryFetch {
                 }
                 Log.info("Basic ota request found " + rom.size() + " valid roms");
                 Log.info(rom);
-                installable = rom.get(MiuiRom.Kind.PACKAGE);
-                if (installable == null) {
-                    installable = rom.get(MiuiRom.Kind.LATEST);
-                }
-                if (installable == null) {
-                    installable = rom.get(MiuiRom.Kind.CURRENT);
-                }
-                if (installable == null) {
-                    installable = rom.get(MiuiRom.Kind.INCREMENTAL);
-                }
+                MiuiZipRom installable = chooseBestMiuiZipRom(rom, specie);
                 Log.info("Choosen preferred rom: " + installable);
                 if (installable == null || (!installable.hasInstallToken() && !UnlockStatus.UNLOCKED.equals(Procedures.requireDevice(runner).getAnswers().getUnlockStatus()))) {
                     throw new InstallException("Ota response doesn't contain an installable rom data", InstallException.Code.MISSING_PROPERTY);
@@ -89,9 +76,32 @@ public class StockRecoveryFetch {
                 MiuiRom.Specie romSpecie = specie.toBranch(installable.getBranch());
                 String id = idBySpecie(romSpecie == null ? specie : romSpecie);
                 chooser.add(id, installable);
+                if (enforceSameSpecie){
+                    if (!specie.equals(installable.getSpecie())){
+                        throw new InstallException("Best rom found is not of the wanted specie", InstallException.Code.ROM_OTA_ERROR);
+                    }
+                }
                 Procedures.setInstallable(runner, installable);
             }
         };
+    }
+
+
+    private static MiuiZipRom chooseBestMiuiZipRom(Map<MiuiRom.Kind, MiuiZipRom> roms, MiuiRom.Specie wantedSpecie){
+        MiuiRom.Kind[] kinds = new MiuiRom.Kind[]{MiuiRom.Kind.PACKAGE, MiuiRom.Kind.LATEST, MiuiRom.Kind.CURRENT, MiuiRom.Kind.CROSS, MiuiRom.Kind.INCREMENTAL};
+        MiuiZipRom chosenRom = null, bestRom = null;
+        for (MiuiRom.Kind kind : kinds){
+            chosenRom = roms.get(kind);
+            if (chosenRom != null && chosenRom.hasInstallToken()){
+                if (wantedSpecie == null || wantedSpecie.equals(chosenRom.getSpecie())){
+                    return chosenRom;
+                }
+                if (bestRom == null){
+                    bestRom = chosenRom;
+                }
+            }
+        }
+        return bestRom;
     }
 
     public static RInstall allLatestOta(Set<MiuiRom.Specie> speciesToSearch) {
@@ -133,8 +143,8 @@ public class StockRecoveryFetch {
                         builder.append(++i).append(") ").append(o.toString()).append('\n');
                     }
                     output = builder.toString();
+                    logServer.clear();
                 }
-                logServer.clear();
                 GenericInstall.showUserAndRestart(LRes.ROM_INSTALL_NOT_ALLOWED_EXP.toString(output), true).run(runner);
             }
         }));
@@ -215,7 +225,7 @@ public class StockRecoveryFetch {
         };
     }
 
-    public static RInstall otaLatestRecovery(MiuiRom.Specie specie) {
+    public static RInstall otaLatestRecovery(MiuiRom.Specie specie, boolean enforceSameSpecie) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -256,7 +266,7 @@ public class StockRecoveryFetch {
                 }
                 if (version == null) {
                     Log.warn("No version available to request ota, using apis to get latest rom");
-                    findLatestRecovery(sp).run(runner);
+                    findLatestRecovery(params, sp).run(runner);
                     installable = Procedures.requireInstallable(runner);
                     version = installable.getMiuiVersion();
                 }
@@ -279,53 +289,38 @@ public class StockRecoveryFetch {
                     throw new InstallException(e);
                 }
                 Log.info("Found latest possible roms number: " + rom.size());
-                installable = rom.get(MiuiRom.Kind.PACKAGE);
-                if (installable == null) {
-                    installable = rom.get(MiuiRom.Kind.LATEST);
-                }
-                if (installable == null) {
-                    installable = rom.get(MiuiRom.Kind.CURRENT);
-                }
-                if (installable == null) {
-                    installable = rom.get(MiuiRom.Kind.INCREMENTAL);
-                }
-                Log.info("Preffered latest rom choosen: " + installable);
-                if (installable == null) {
+                MiuiZipRom zipinstallable = chooseBestMiuiZipRom(rom, specie);
+                Log.info("Preferred latest rom chosen: " + installable);
+                if (zipinstallable == null) {
                     throw new InstallException("Ota response doesn't contain an installable rom data", InstallException.Code.MISSING_PROPERTY);
                 }
-                Procedures.setInstallable(runner, installable);
+                if (enforceSameSpecie){
+                    if (!specie.equals(zipinstallable.getSpecie())){
+                        throw new InstallException("Best rom found is not of the wanted specie", InstallException.Code.ROM_OTA_ERROR);
+                    }
+                }
+                Procedures.setInstallable(runner, zipinstallable);
             }
         };
     }
 
-    public static RInstall findLatestRecovery(MiuiRom.Specie specie) {
+    private static RInstall findLatestRecovery(DeviceRequestParams params, MiuiRom.Specie specie) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Log.info("Looking for latest recovery rom version using apis");
-                MiuiRom.Specie sp = specie;
+                if (specie == null) {
+                    throw new InstallException("Failed to obtain device branch and region: null specie", InstallException.Code.MISSING_PROPERTY);
+                }
                 InstallableChooser chooser = Procedures.requireInstallableChooser(runner);
-                Device device = Procedures.requireDevice(runner);
-                DeviceRequestParams params;
-                try {
-                    params = DeviceRequestParams.readFromDevice(device);
-                } catch (AdbException e) {
-                    throw new InstallException(e);
-                }
-                if (sp == null) {
-                    sp = params.getSpecie();
-                    if (sp == null) {
-                        throw new InstallException("Failed to obtain device branch and region: null specie", InstallException.Code.MISSING_PROPERTY);
-                    }
-                } else {
-                    params.setSpecie(sp);
-                }
+                DeviceRequestParams requestParams = params.clone();
+                requestParams.setSpecie(specie);
                 String id = idBySpecie(specie);
                 Installable rom = chooser.getByType(id, Installable.Type.RECOVERY);
                 try {
                     if (rom == null) {
                         try {
-                            rom = MiuiRomOta.latestRecovery_request(params);
+                            rom = MiuiRomOta.latestRecovery_request(requestParams);
                         } catch (XiaomiProcedureException e) {
                             throw new InstallException(e);
                         }
@@ -362,7 +357,7 @@ public class StockRecoveryFetch {
                 } catch (AdbException e) {
                     throw new InstallException(e);
                 }
-                basicOta(params.getSpecie()).run(runner);
+                basicOta(params.getSpecie(), false).run(runner);
             }
         };
     }
