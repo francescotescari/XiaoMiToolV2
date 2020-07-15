@@ -17,7 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class InstallPane extends StackPane implements GuiListenerAbstract, CommandClassAbstract {
+public class InstallPane extends StackPane implements GuiListenerAbstract {
 
     private TextStackPane textStackPane;
 
@@ -85,6 +85,15 @@ public class InstallPane extends StackPane implements GuiListenerAbstract, Comma
         } else {
             this.sendCommand(CommandClass.Command.RETRY);
         }
+    }
+
+    @Override
+    public CommandClass.Command exception(InstallException exception, Runnable beforeWaitCommand) throws InterruptedException {
+        onException(exception);
+        if (beforeWaitCommand != null) {
+            beforeWaitCommand.run();
+        }
+        return this.waitCommand();
     }
 
     private final CommandClass commandManager = new CommandClass();

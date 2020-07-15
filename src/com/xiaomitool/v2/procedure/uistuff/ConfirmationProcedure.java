@@ -19,6 +19,7 @@ public class ConfirmationProcedure {
     private static final String KEY_BOOL_CONFIRM_INSTALL = "bool_confirm_install";
     public static String WANT_TO_UNLOCK = "want_to_unlock";
     public static String IS_DEVICE_UNLOCKED = "device_is_unlocked";
+    public static String IS_THIS_MIUI_CANT_INSTALL_MSG = "is_this_miui_cant_install_msg";
 
     public static RInstall confirmInstallableProcedure() {
         return RNode.sequence(new RInstall() {
@@ -133,6 +134,12 @@ public class ConfirmationProcedure {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                ButtonPane buttonPane = new ButtonPane(LRes.YES, LRes.NO);
+                buttonPane.setContentText(LRes.IS_THIS_MIUI_VERSION);
+                WindowManager.setMainContent(buttonPane, false);
+                int click = buttonPane.waitClick();
+                WindowManager.removeTopContent();
+                runner.setContext(IS_THIS_MIUI_CANT_INSTALL_MSG, click == 0);
             }
         };
     }

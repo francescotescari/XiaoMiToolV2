@@ -9,11 +9,13 @@ import com.xiaomitool.v2.gui.visual.DragAndDropPane;
 import com.xiaomitool.v2.gui.visual.SidePane;
 import com.xiaomitool.v2.gui.visual.SortableTableView;
 import com.xiaomitool.v2.language.LRes;
+import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.chooser.InstallableChooser;
 import com.xiaomitool.v2.rom.chooser.ProcedureChooser;
 import com.xiaomitool.v2.rom.interfaces.StatedProcedure;
+import com.xiaomitool.v2.utility.CommandClass;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -172,7 +174,18 @@ public class Procedures {
             stack = new LinkedList();
             runner.setContext(TO_DO_STACK, stack);
         }
+        if (stack.size() > 0){
+            Log.warn("Multiple procedures on the stack: "+stack);
+        }
         stack.addLast(install);
+    }
+    public static RInstall throwRMessage(CommandClass.Command cmd){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                throw new RMessage(cmd);
+            }
+        };
     }
 
     public static RInstall runSavedProcedure(String name) {

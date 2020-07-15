@@ -3,6 +3,7 @@ package com.xiaomitool.v2.procedure.uistuff;
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
+import com.xiaomitool.v2.gui.visual.ButtonPane;
 import com.xiaomitool.v2.gui.visual.ChooserPane;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
@@ -12,6 +13,7 @@ import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.chooser.InstallableChooser;
 import com.xiaomitool.v2.rom.chooser.ProcedureChooser;
+import com.xiaomitool.v2.utility.CommandClass;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -146,5 +148,32 @@ public class ChooseProcedure {
                 Procedures.pushRInstallOnStack(runner, toDoNext);
             }
         }.next();
+    }
+
+    public static RInstall alternativeBackupMethod(RInstall originalProcedure, RInstall backupProcedure, String text){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                try {
+                    originalProcedure.setFlag(RNode.FLAG_THROWRAWEXCEPTION, true).run(runner);
+                } catch (InstallException exception) {
+                    ButtonPane buttonPane = new ButtonPane(LRes.DETAILS, LRes.ALTERNATIVE);
+                    buttonPane.setContentText(text+"\n\n"+LRes.PROCEDURE_EXC_DETAILS.toString(exception.getCode().toString(), exception.getMessage())+"\n\n"+LRes.ALTERNATIVE_PROCEDURE_EXP.toString(LRes.DETAILS, LRes.ALTERNATIVE));
+                    WindowManager.setMainContent(buttonPane, false);
+                    int click = buttonPane.waitClick();
+                    WindowManager.removeTopContent();
+                    if (click == 0){
+                        throw exception;
+                    } else {
+                        backupProcedure.run(runner);
+                    }
+                } catch (RMessage msg){
+                    if (!CommandClass.Command.ALTERNATIVE.equals(msg.getCmd())){
+                        throw msg;
+                    }
+                    backupProcedure.run(runner);
+                }
+            }
+        };
     }
 }

@@ -642,7 +642,7 @@ public class ActionsDynamic {
                             @Override
                             public void run() {
                                 try {
-                                    ActionsStatic.ASK_FOR_FEEDBACK().run();
+                                    //ActionsStatic.ASK_FOR_FEEDBACK().run();
                                     ActionsStatic.MOD_CHOOSE_SCREEN().run();
                                 } catch (InterruptedException e) {
                                 }
@@ -712,17 +712,18 @@ public class ActionsDynamic {
             ButtonPane buttonPane = new ButtonPane(LRes.OK_FINISHED);
             SidePane sidePane = new SidePane();
             DeviceRecoveryView deviceRecoveryView = new DeviceRecoveryView(DeviceView.DEVICE_18_9, 640);
-            deviceRecoveryView.animateSelectThird(3000);
             String nText;
-            if (!rebootingText) {
-                nText = "1) " + LRes.BTN_VOLUP_POW.toString() + "\n2) " + LRes.HT_RECOVERY_TEXT_1.toString();
-            } else {
+            if (rebootingText){
+                deviceRecoveryView.animateSelectThird(3000);
                 nText = LRes.ENTER_STOCK_RECOVERY_MODE.toString(LRes.OK_FINISHED.toString());
+            } else {
+                deviceRecoveryView.animateTurnOnSelectThird(3000);
+                nText = "1) " + LRes.BTN_VOLUP_POW.toString() + "\n2) " + LRes.HT_RECOVERY_TEXT_1.toString();
             }
-            Text t = new Text(nText);
-            t.setWrappingWidth(400);
-            t.setFont(Font.font(15));
-            sidePane.setLeft(t);
+            Text text = new Text(nText);
+            text.setWrappingWidth(400);
+            text.setFont(Font.font(15));
+            sidePane.setLeft(text);
             Pane p = DeviceView.crop(deviceRecoveryView, 410);
             sidePane.setRight(GuiUtils.center(p));
             buttonPane.setContent(sidePane);
@@ -810,12 +811,7 @@ public class ActionsDynamic {
                 tableView.getColumns().addAll(codename, model);
                 ObservableList<DeviceCodenameEntry> observableList = tableView.getItems();
                 ArrayList<Map.Entry<String, String>> sortingList = new ArrayList<>(devices.entrySet());
-                sortingList.sort(new Comparator<Map.Entry<String, String>>() {
-                    @Override
-                    public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
-                        return Collator.getInstance().compare(o1.getValue(), o2.getValue());
-                    }
-                });
+                sortingList.sort((o1, o2) -> Collator.getInstance().compare(o1.getValue(), o2.getValue()));
                 for (Map.Entry<String, String> device : sortingList) {
                     DeviceCodenameEntry tableEntry = new DeviceCodenameEntry(device.getKey(), device.getValue());
                     observableList.add(tableEntry);

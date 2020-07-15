@@ -4,26 +4,8 @@ import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.utility.CommandClass;
 
-public abstract class GuiListener extends CommandClass implements GuiListenerAbstract {
+public abstract class GuiListener implements GuiListenerAbstract {
 
-    public static GuiListener implement(GuiListenerAbstract listenerAbstract){
-        return new GuiListener() {
-            @Override
-            public void toast(String message) {
-                listenerAbstract.toast(message);
-            }
-
-            @Override
-            public void text(String message) {
-                listenerAbstract.text(message);
-            }
-
-            @Override
-            public void onException(InstallException exception) {
-                listenerAbstract.onException(exception);
-            }
-        };
-    }
 
     public abstract void toast(String message);
 
@@ -37,13 +19,30 @@ public abstract class GuiListener extends CommandClass implements GuiListenerAbs
         text(msg.toString());
     }
 
-    public Command exception(InstallException exception, Runnable beforeWaitCommand) throws InterruptedException {
+    public CommandClass.Command exception(InstallException exception, Runnable beforeWaitCommand) throws InterruptedException {
         onException(exception);
         if (beforeWaitCommand != null) {
             beforeWaitCommand.run();
         }
         return this.waitCommand();
     }
+    private final CommandClass msgManager = new CommandClass();
+
+    @Override
+    public void sendCommand(CommandClass.Command cmd) {
+        msgManager.sendCommand(cmd);
+    }
+
+    @Override
+    public CommandClass.Command waitCommand() throws InterruptedException {
+        return msgManager.waitCommand();
+    }
+
+    @Override
+    public boolean isWaitingCommand() {
+        return msgManager.isWaitingCommand();
+    }
+
 
     public abstract void onException(InstallException exception);
 
@@ -60,6 +59,8 @@ public abstract class GuiListener extends CommandClass implements GuiListenerAbs
         public void onException(InstallException exception) {
             exception.printStackTrace();
         }
+
+
     }
 }
 

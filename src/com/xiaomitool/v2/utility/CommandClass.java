@@ -29,8 +29,8 @@ public class CommandClass implements CommandClassAbstract {
         NOCMD,
         UPLEVEL,
         EXCEPTION,
-        SINKED
+        SINKED,
+        ALTERNATIVE;
     }
-
 
 }

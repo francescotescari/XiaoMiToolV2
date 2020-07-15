@@ -212,7 +212,7 @@ public class ActionsStatic {
             if (accept == 0){
                 return MOD_CHOOSE_SCREEN().run();
             }
-            return ActionsDynamic.START_PROCEDURE(null, GenericInstall.recoverMain(), null, null).run();
+            return ActionsDynamic.START_PROCEDURE(null, GenericInstall.recoverMain(), null, GenericInstall.goBackToHome()).run();
         };
     }
 
@@ -227,24 +227,7 @@ public class ActionsStatic {
         };
     }
 
-    public static RunnableMessage MAIN_RECOVER_DEVICE_TMP() {
-        return () -> {
-            ButtonPane buttonPane = new ButtonPane(LRes.OK_UNDERSTAND);
-            Text instruction = new Text(""
-            );
-            instruction.setFont(Font.font(15));
-            instruction.setWrappingWidth(WindowManager.getMainPane().getWidth() - 180);
-            buttonPane.setContent(instruction);
-            WindowManager.setMainContent(buttonPane, true);
-            buttonPane.waitClick();
-            ActionsDynamic.MAIN_SCREEN_LOADING(LRes.LOADING).run();
-            AdbCommunication.restartServer();
-            AdbCommunication.registerAutoScanDevices();
-            Thread.sleep(500);
-            SEARCH_SELECT_DEVICES(Device.Status.SIDELOAD).run();
-            return 0;
-        };
-    }
+
 
     public static RunnableMessage REQUIRE_INTERNET_CONNECTION() {
         return () -> {

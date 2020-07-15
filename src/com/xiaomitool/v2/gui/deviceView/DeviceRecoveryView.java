@@ -4,6 +4,9 @@ import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.utility.utils.NumberUtils;
+import javafx.animation.Animation;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -39,8 +42,7 @@ public class DeviceRecoveryView extends DeviceView implements Animatable {
         selectRectangle.setLayoutY(layoutY);
     }
 
-    public void animateSelectThird(long duration) {
-        DeviceRecoveryView view = this;
+    public void animateSelectThird(long duration, Runnable callback) {
         setContent(recoveryImage, true);
         this.selectOption(0);
         this.setClickVolumeDown(1).setOnFinished(event -> {
@@ -49,16 +51,51 @@ public class DeviceRecoveryView extends DeviceView implements Animatable {
                 selectOption(2);
                 setClickPower(1).setOnFinished(event2 -> {
                     setContent(pcsuiteImage, true);
-                    GuiUtils.waitGui(duration, new Runnable() {
-                        @Override
-                        public void run() {
-                            if (GuiUtils.hasParent(view, WindowManager.getMainPane())) {
-                                animateSelectThird(duration);
-                            }
-                        }
-                    });
+                    GuiUtils.waitGui(duration, callback);
                 });
             });
+        });
+    }
+
+    public void animateSelectThird(long duration){
+        final DeviceRecoveryView view = this;
+        this.animateSelectThird(duration, new Runnable() {
+            @Override
+            public void run() {
+                if (GuiUtils.hasParent(view, WindowManager.getMainPane())) {
+                    animateSelectThird(duration);
+                }
+            }
+        });
+    }
+
+    public void animateTurnOnSelectThird(long duration, Runnable callback){
+        setContent(Color.BLACK);
+        Animation anim = this.setClickPower(3);
+        Animation anim2 = this.setClickVolumeUp(3);
+        anim.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                setContent(recoveryImage, true);
+                GuiUtils.waitGui(500, new Runnable() {
+                    @Override
+                    public void run() {
+                        animateSelectThird(duration, callback);
+                    }
+                });
+            }
+        });
+    }
+
+    public void animateTurnOnSelectThird(long duration){
+        final DeviceRecoveryView view = this;
+        animateTurnOnSelectThird(duration, new Runnable() {
+            @Override
+            public void run() {
+                if (GuiUtils.hasParent(view, WindowManager.getMainPane())) {
+                    animateTurnOnSelectThird(duration);
+                }
+            }
         });
     }
 

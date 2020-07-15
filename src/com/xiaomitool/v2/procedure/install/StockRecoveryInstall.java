@@ -266,7 +266,7 @@ public class StockRecoveryInstall {
                 Device device = (Device) runner.requireContext(Procedures.SELECTED_DEVICE);
                 runner.text(LRes.PARTITION_FORMATTING.toString("data"));
                 Log.info("Formatting data via stock recovery");
-                String out = AdbCommons.raw(device.getSerial(), "format-data:");
+                String out = AdbCommons.raw(device.getSerial(), "format-data:", 120);
                 if (out == null) {
                     throw new InstallException("Failed to wipe data: null output", InstallException.Code.ADB_EXCEPTION, AdbCommons.getLastError(device.getSerial()));
                 }

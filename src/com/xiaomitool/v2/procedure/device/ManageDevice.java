@@ -129,6 +129,19 @@ public class ManageDevice {
         };
     }
 
+    public static RInstall requireDeviceCodename(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Device device = Procedures.requireDevice(runner);
+                if (device.getDeviceProperties().getCodename(true) != null){
+                    return;
+                }
+                selectDeviceCodename().run(runner);
+            }
+        };
+    }
+
     public static RInstall selectDeviceCodename() {
         return RNode.sequence(GenericFetch.fetchDeviceCodename(DEIVCE_CODENAME_KEY), new RInstall() {
             @Override

@@ -88,6 +88,28 @@ public class RebootDevice {
         };
     }
 
+    public static RInstall rebootStockRecoveryManual(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Device device = Procedures.requireDevice(runner);
+                ActionsDynamic.HOWTO_GO_RECOVERY(false, device).run();
+            }
+        };
+    }
+
+    public static RInstall requireStockRecoveryManual(){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                Device device = Procedures.requireDevice(runner);
+                while (!Device.Status.SIDELOAD.equals(device.getStatus()) && !Device.Status.RECOVERY.equals(device.getStatus())){
+                    rebootStockRecoveryManual().run(runner);
+                }
+            }
+        };
+    }
+
     public static RInstall requireRecovery() {
         return RNode.sequence(new RInstall() {
             @Override

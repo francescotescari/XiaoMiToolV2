@@ -8,6 +8,8 @@ import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.Installable;
+import com.xiaomitool.v2.utility.CommandClass;
+import com.xiaomitool.v2.utility.CommandClass.Command;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import javafx.scene.layout.Pane;
 
@@ -20,7 +22,7 @@ public class ProcedureRunner extends GuiListener {
     private final HashMap<String, Object> stashedValues = new HashMap<>();
     private final List<String> stackLog = new ArrayList<>();
     private InstallException exception;
-    private GuiListener listener;
+    private GuiListenerAbstract listener;
     private Pane afterExeptionPane;
     private RInstall runnableInstall;
     private boolean sendFeedback = true;
@@ -227,7 +229,7 @@ public class ProcedureRunner extends GuiListener {
         if (listener == null) {
             this.listener = new GuiListener.Debug();
         } else {
-            this.listener = GuiListener.implement(listener);
+            this.listener = listener;
         }
     }
 

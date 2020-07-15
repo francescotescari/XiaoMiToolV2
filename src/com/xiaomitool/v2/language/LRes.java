@@ -276,7 +276,14 @@ public enum LRes {
     STARTING_RECOVERY_PROC("Starting recovery procedure"),
     SEARCHING_BEST_ROM_TO_RECOVER("Searching the best rom to recover the device"),
     API_DESCRIPTION("Api description: %s"),
-    RECOVERY_MODE_EXP("This is the recovery procedure of XiaoMiTool, you should use only if your device is bricked\n(if it doesn't boot normally to the operating system)\nThis procedure tries to flash a stock, official rom back to the device, cleaning the data and cache partition.\nPlease note that not all of the bricked devices can be fixed with this tool,\nin particular it DOESN'T work if:\n- Your device has the \"this miui version can't be installed on this device\" error message\n- Your device cannot reach fastboot and recovery mode (hard brick)\n\nPlease proceed if you want to try to fix your bricked device.");
+    RECOVERY_MODE_EXP("This is the recovery procedure of XiaoMiTool, you should use only if your device is bricked\n(if it doesn't boot normally to the operating system)\nThis procedure tries to flash a stock, official rom back to the device, cleaning the data and cache partition.\nPlease note that not all of the bricked devices can be fixed with this tool,\nin particular it DOESN'T work if your device cannot reach fastboot and recovery mode (hard brick)\n\nPlease proceed if you want to try to fix your bricked device."),
+    DETAILS("Details"),
+    ALTERNATIVE("Alternative"),
+    ERROR_WHILE_RECOVERING("An error occurred during the device recovery procedure.\nThere is an alternative procedure that could recover the device."),
+    ALTERNATIVE_PROCEDURE_EXP("Press %s if you want to read the details of the error and retry the current procedure.\nPress %s if you want to try with the alternative procedure instead."),
+    IS_THIS_MIUI_VERSION("Do you have the brick issue where the device only reboots to recovery mode displaying the \"This MIUI version can't be installed on this device\" message?"),
+    SUGGEST_UNLOCK_BL_RECOVER("The bootloader of the selected device seems to be locked.\nIn order to recover the device it's strongly suggested to unlock the bootloader if possible.\nIn order to unlock the bootloader your Mi account has to be bound to the device from the Developer Options in the Settings menu of the device when it is on for about 15 days.\nIf you did not bind your device and now it can be turned on, just click \"No\".\n\nDo you want to unlock the bootloader now?")
+    ;
     private String text;
 
     LRes(String defaultText) {
@@ -335,4 +342,4 @@ public enum LRes {
             return builder.toString();
         }
     }
-}
+    }
