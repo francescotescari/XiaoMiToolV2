@@ -331,7 +331,7 @@ public class GenericInstall {
     }
 
     public static RInstall recoverDeviceStart() {
-        return RNode.sequence(OtherProcedures.restoreInstallPane(), OtherProcedures.text(LRes.STARTING_RECOVERY_PROC.toString()), stashContext(), ManageDevice.requireDeviceCodename(), RecoverInstall.recoverDeviceOrderSubProcedures());
+        return RNode.sequence(OtherProcedures.restoreInstallPane(), OtherProcedures.text(LRes.STARTING_RECOVERY_PROC.toString()), stashContext(), ManageDevice.requireDeviceCodename(), RecoverInstall.recoverDeviceOrderSubProcedures(), GenericInstall.installationSuccess());
     }
 
 

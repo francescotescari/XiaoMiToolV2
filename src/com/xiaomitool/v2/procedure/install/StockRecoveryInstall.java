@@ -331,10 +331,13 @@ public class StockRecoveryInstall {
 
     @ExportFunction("stockrecovery_install")
     public static RInstall stockRecoveryInstall() {
+        return sideloadFlash();
+        //TODO want to mtp flash on windows maybe
+        /*
         if (ResourcesConst.isWindows()) {
             return RNode.fallback(sideloadFlash(), mtpFlashRom());
         } else {
             return sideloadFlash();
-        }
+        }*/
     }
 }

@@ -8,6 +8,7 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.procedure.install.InstallException;
+import com.xiaomitool.v2.procedure.uistuff.ConfirmationProcedure;
 import com.xiaomitool.v2.rom.Installable;
 import com.xiaomitool.v2.rom.MiuiRom;
 import com.xiaomitool.v2.rom.MiuiZipRom;
@@ -30,8 +31,8 @@ public class StockRecoveryFetch {
     private static final String ROM_LOG_SB = "rom_log_sb";
     private static final String SRF_MD5 = "SFR_md5_key";
 
-    public static RInstall findInstallWay(MiuiRom.Specie specie) {
-        return RNode.fallback(basicOta(specie, true), RNode.sequence(otaLatestRecovery(specie, true), new RInstall() {
+    public static RInstall findInstallWay(MiuiRom.Specie specie, boolean enforceSameSpecie) {
+        return RNode.fallback(basicOta(specie, enforceSameSpecie), RNode.sequence(otaLatestRecovery(specie, enforceSameSpecie), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Installable installable = Procedures.requireInstallable(runner);
@@ -40,7 +41,7 @@ public class StockRecoveryFetch {
                 }
                 runner.setContext(GenericFetch.FILE_MD5, installable.getMd5());
             }
-        }, otaPkgRom(specie)), Procedures.doNothing());
+        }, otaPkgRom(specie)));
     }
 
     public static RInstall basicOta(MiuiRom.Specie specie, boolean enforceSameSpecie) {
@@ -108,7 +109,7 @@ public class StockRecoveryFetch {
         RInstall[] procedures = new RInstall[speciesToSearch.size()];
         int i = 0;
         for (MiuiRom.Specie specie : speciesToSearch) {
-            procedures[i++] = fetchOnlyIfDeviceLockedOrNoFastboot(specie, findInstallWay(specie));
+            procedures[i++] = fetchOnlyIfDeviceLockedOrNoFastboot(specie, findInstallWay(specie, true));
         }
         return RNode.skipOnException(procedures);
     }
@@ -184,9 +185,9 @@ public class StockRecoveryFetch {
                 } catch (CustomHttpException e) {
                     throw new InstallException(e);
                 }
-                Installable installable = rom.get(MiuiRom.Kind.PACKAGE);
+                MiuiZipRom installable = rom.get(MiuiRom.Kind.PACKAGE);
                 Log.info("Found pkg rom: " + installable);
-                if (installable == null) {
+                if (installable == null || !installable.hasInstallToken()) {
                     throw new InstallException("Failed to validate rom pkg. Xiaomi server doesn't allow installation of this rom with locked bootloader", InstallException.Code.CANNOT_INSTALL);
                 }
                 String id = idBySpecie(specie);
@@ -247,7 +248,6 @@ public class StockRecoveryFetch {
                 } else {
                     params.setSpecie(sp);
                 }
-                params.setZone(specie.getZone());
                 String id = idBySpecie(sp);
                 Installable installable = chooser.getByType(id, Installable.Type.RECOVERY);
                 MiuiVersion version = null;
@@ -357,8 +357,34 @@ public class StockRecoveryFetch {
                 } catch (AdbException e) {
                     throw new InstallException(e);
                 }
-                basicOta(params.getSpecie(), false).run(runner);
+                Boolean isThisMiuiProblem = (Boolean) runner.getContext(ConfirmationProcedure.IS_THIS_MIUI_CANT_INSTALL_MSG);
+                if (isThisMiuiProblem == null){
+                    isThisMiuiProblem = false;
+                }
+                LinkedHashSet<MiuiRom.Specie> suitableSpecies = new LinkedHashSet<>();
+                MiuiRom.Specie deviceSpecie = params.getSpecie();
+                if (!isThisMiuiProblem) {
+                    suitableSpecies.add(MiuiRom.Specie.GLOBAL_STABLE);
+                    suitableSpecies.add(MiuiRom.Specie.GLOBAL_DEVELOPER);
+                }
+                suitableSpecies.add(MiuiRom.Specie.CHINA_STABLE);
+                suitableSpecies.add(MiuiRom.Specie.CHINA_DEVELOPER);
+                if (!isThisMiuiProblem){
+                    suitableSpecies.add(deviceSpecie);
+                    suitableSpecies.add(deviceSpecie.toOppositeBranch());
+                }
+                RInstall procedure = RNode.fallback(findFirstSuitableRom(suitableSpecies), Procedures.throwInstallException(new InstallException("Cannot find any rom that can recover your device", InstallException.Code.ROM_SELECTION_ERROR)));
+                Procedures.pushRInstallOnStack(runner, procedure);
             }
-        };
+        }.next();
+    }
+
+    private static RNode findFirstSuitableRom(Set<MiuiRom.Specie> suitableSpecies){
+        RInstall[] fetchProcedures = new RInstall[suitableSpecies.size()];
+        int i = 0;
+        for (MiuiRom.Specie specie : suitableSpecies){
+            fetchProcedures[i++] = findInstallWay(specie, false);
+        }
+        return RNode.fallback(fetchProcedures);
     }
 }

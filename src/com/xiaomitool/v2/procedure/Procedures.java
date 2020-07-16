@@ -188,6 +188,15 @@ public class Procedures {
         };
     }
 
+    public static RInstall throwInstallException(InstallException exception){
+        return new RInstall() {
+            @Override
+            public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                throw exception;
+            }
+        };
+    }
+
     public static RInstall runSavedProcedure(String name) {
         return new RInstall() {
             @Override

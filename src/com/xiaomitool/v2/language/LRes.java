@@ -39,7 +39,7 @@ public enum LRes {
     AUTH_DEVICE_TEXT("Your device is offline or not authorized. Please authorize your device by clicking on the popup window that is displayed on its screen.\nIf the device is in recovery mode or doesn't have the popup, try unplugging and pluggin back in the cable"),
     YES("Yes"),
     NO("No"),
-    IRRELEVANT("Irrilevant"),
+    IRRELEVANT("Irrelevant"),
     UNLOCKED("Unlocked"),
     LOCKED("Locked"),
     MIUI_VERSION("MIUI version"),
@@ -282,8 +282,7 @@ public enum LRes {
     ERROR_WHILE_RECOVERING("An error occurred during the device recovery procedure.\nThere is an alternative procedure that could recover the device."),
     ALTERNATIVE_PROCEDURE_EXP("Press %s if you want to read the details of the error and retry the current procedure.\nPress %s if you want to try with the alternative procedure instead."),
     IS_THIS_MIUI_VERSION("Do you have the brick issue where the device only reboots to recovery mode displaying the \"This MIUI version can't be installed on this device\" message?"),
-    SUGGEST_UNLOCK_BL_RECOVER("The bootloader of the selected device seems to be locked.\nIn order to recover the device it's strongly suggested to unlock the bootloader if possible.\nIn order to unlock the bootloader your Mi account has to be bound to the device from the Developer Options in the Settings menu of the device when it is on for about 15 days.\nIf you did not bind your device and now it can be turned on, just click \"No\".\n\nDo you want to unlock the bootloader now?")
-    ;
+    SUGGEST_UNLOCK_BL_RECOVER("The bootloader of the selected device seems to be locked.\nIn order to recover the device it's strongly suggested to unlock the bootloader if possible.\nIn order to unlock the bootloader your Mi account has to be bound to the device from the Developer Options in the Settings menu of the device for about 15 days.\nIf you did not bind your device before bricking it and now it can be turned on, just click \"%s\".\n\nDo you want to unlock the bootloader now?");
     private String text;
 
     LRes(String defaultText) {
@@ -324,7 +323,7 @@ public enum LRes {
         try {
             return Lang.text(getKey());
         } catch (Exception e) {
-            return this.text;
+            return toEnglish();
         }
     }
 
@@ -335,11 +334,7 @@ public enum LRes {
         try {
             return Lang.text(getKey(), args);
         } catch (Exception e) {
-            StringBuilder builder = new StringBuilder(e.getMessage());
-            for (Object o : args) {
-                builder.append(',').append(o == null ? "null" : o.toString());
-            }
-            return builder.toString();
+            return toEnglish(args);
         }
     }
-    }
+}

@@ -9,13 +9,26 @@ public abstract class RNode extends RInstall {
     private static final int FLAG_THROWEXCEPTION = 0x00000001;
     private static final int FLAG_SORTRANDOM = 0x00000002;
     private static final int FLAG_SKIPONEXCEPTION = 0x00000004;
-    protected RInstall[] chidren;
+    protected RInstall[] children;
     protected NodeType type;
     protected boolean throwException = false;
 
-    private RNode(NodeType type, RInstall... chidren) {
+    private RNode(NodeType type, RInstall... children) {
         this.type = type;
-        this.chidren = chidren;
+        this.children = children;
+    }
+
+    public RInstall[] pushChildren(RInstall... children){
+        RInstall[] newChildren = new RInstall[this.children.length+children.length];
+        int i = 0;
+        for (RInstall child : this.children){
+            newChildren[i++] = child;
+        }
+        for (RInstall child : children){
+            newChildren[i++] = child;
+        }
+        this.children = newChildren;
+        return newChildren;
     }
 
     public static RInstall setSkipOnException(RInstall install) {
@@ -68,7 +81,7 @@ public abstract class RNode extends RInstall {
     public RInstall setFlag(int flag, boolean recursive) {
         super.setFlag(flag, recursive);
         if (recursive) {
-            for (RInstall install : chidren) {
+            for (RInstall install : children) {
                 install.setFlag(flag, true);
             }
         }
@@ -89,7 +102,7 @@ public abstract class RNode extends RInstall {
         @Override
         public void run(ProcedureRunner runner) throws RMessage, InstallException, InterruptedException {
             CommandClass.Command cmd = null;
-            for (RInstall install : chidren) {
+            for (RInstall install : children) {
                 do {
                     try {
                         install.runInternal(runner);
@@ -137,11 +150,11 @@ public abstract class RNode extends RInstall {
         public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
             InstallException exception = null;
             boolean allRight = false;
-            if (chidren == null || chidren.length == 0) {
+            if (children == null || children.length == 0) {
                 return;
             }
             RInstall cause = null;
-            for (RInstall install : chidren) {
+            for (RInstall install : children) {
                 exception = null;
                 if (allRight) {
                     break;

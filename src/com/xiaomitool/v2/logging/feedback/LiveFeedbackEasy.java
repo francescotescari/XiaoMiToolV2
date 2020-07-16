@@ -77,6 +77,13 @@ public class LiveFeedbackEasy {
     }
 
     private static synchronized void send(String quickMessage, String additionalInfo, LiveFeedback.FeedbackType type) {
+        feedbackSent.setPermits(0);
+        feedbackSent.increase();
+        if (true){
+            //TODO live feedback is not wanted anymore
+            return;
+        }
+
         try {
             if (!isOpen) {
                 return;
@@ -102,7 +109,7 @@ public class LiveFeedbackEasy {
                             multiFeedback = LiveFeedback.MultiFeedback.newBuilder().addAllFeedbacks(QUEUED_FEEDBACKS).setIstanceId(ToolManager.getRunningInstanceId()).build();
                             QUEUED_FEEDBACKS.clear();
                         }
-                        final byte[] dataToSend = getsendableMessage(multiFeedback.toByteArray());
+                        final byte[] dataToSend = getSendableMessage(multiFeedback.toByteArray());
                         LogSender.sendSingleLog(dataToSend);
                     } catch (Exception e) {
                         Log.log("LOG", "Failed to send single log: " + e.getMessage(), false);
@@ -128,7 +135,7 @@ public class LiveFeedbackEasy {
         return liveFeedback.build();
     }
 
-    private static byte[] getsendableMessage(byte[] originalMessage) throws IOException {
+    private static byte[] getSendableMessage(byte[] originalMessage) throws IOException {
         byte[] compressed = CompressUtils.paddedCompress(originalMessage, 4);
         int len = compressed.length - 4;
         ByteBuffer buffer = ByteBuffer.wrap(compressed, 0, 4);
