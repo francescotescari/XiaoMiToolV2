@@ -109,7 +109,8 @@ public enum LRes {
     LOGIN_CANCELED("Login canceled or failed"),
     LOGIN_SUCCESS("Logged in successfully"),
     PROCEDURE_EXC_TITLE("Procedure error occurred"),
-    PROCEDURE_EXC_TEXT("There was an error during the installation procedure.\n%s\nPress \"%s\" to try again the failed procedure.\nPress \"%s\" to go a step back and try again the entire latest step\nPress \"%s\" to cancel the procedure and abort the installation process"),
+    PROCEDURE_EXC_TEXT("There was an error during the installation procedure.\nError description:"),
+    PROCEDURE_EXC_TEXT_2("Error family code:%s\nError origin:%s\n\nPress \"%s\" to try again the failed procedure.\nPress \"%s\" to go a step back and try again the entire latest step\nPress \"%s\" to cancel the procedure and abort the installation process"),
     PROCEDURE_EXC_DETAILS("Error type: %s\nError description: %s"),
     PROCEDURE_EXC_ADV_DETAILS("Advanced error details"),
     CANCEL("Cancel"),
@@ -229,7 +230,7 @@ public enum LRes {
     UNL_ERR_20036_NOHOURS("You have to wait %d days and %d hours before you can unlock your device"),
     UNL_ERR_20037("Unlock number has reached the upper limit"),
     UNL_ERR_20041("Your account isn't associated with a phone number\nGo to account.xiaomi.com and associate it with your phone number"),
-    UNLOCK_ERROR_TEXT("Failed to unlock your device, Xiaomi server returned error %d:\nError description: %s"),
+    UNLOCK_ERROR_TEXT("Failed to unlock your device, Xiaomi server returned error %d:\nError description: %s\nServer description: %s"),
     UNLOCK_CHECKING_ACCOUNT("Checking account unlock availability"),
     UNLOCK_CHECKING_DEVICE("Checking device unlock capability"),
     UNLOCK_REQUESTING_TOKEN("Requesting device unlock token"),
@@ -282,7 +283,7 @@ public enum LRes {
     ERROR_WHILE_RECOVERING("An error occurred during the device recovery procedure.\nThere is an alternative procedure that could recover the device."),
     ALTERNATIVE_PROCEDURE_EXP("Press %s if you want to read the details of the error and retry the current procedure.\nPress %s if you want to try with the alternative procedure instead."),
     IS_THIS_MIUI_VERSION("Do you have the brick issue where the device only reboots to recovery mode displaying the \"This MIUI version can't be installed on this device\" message?"),
-    SUGGEST_UNLOCK_BL_RECOVER("The bootloader of the selected device seems to be locked.\nIn order to recover the device it's strongly suggested to unlock the bootloader if possible.\nIn order to unlock the bootloader your Mi account has to be bound to the device from the Developer Options in the Settings menu of the device for about 15 days.\nIf you did not bind your device before bricking it and now it can be turned on, just click \"%s\".\n\nDo you want to unlock the bootloader now?");
+    SUGGEST_UNLOCK_BL_RECOVER("The bootloader of the selected device seems to be locked.\nIn order to recover the device it's strongly suggested to unlock the bootloader if possible.\nIn order to unlock the bootloader your Mi Account has to be bound to the device from the Developer Options in the Settings menu of the device for about 15 days.\nIf you did not bind your device before bricking it and now it can be turned on, just click \"%s\".\n\nDo you want to unlock the bootloader now?");
     private String text;
 
     LRes(String defaultText) {

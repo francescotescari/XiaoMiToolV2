@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.gui.visual;
 
+import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.language.LRes;
@@ -21,7 +22,7 @@ import javafx.scene.text.TextAlignment;
 public class ErrorPane extends ButtonPane {
     private static Image ERROR_IMAGE;
     private StackPane textZone, titleZone;
-    private VBox vBox;
+    private final VBox children = new VBox();
 
     public ErrorPane(String... texts) {
         super(texts);
@@ -46,9 +47,10 @@ public class ErrorPane extends ButtonPane {
         errImg.setFitHeight(100);
         titleZone = new StackPane();
         textZone = new StackPane();
-        vBox = new VBox(new StackPane(errImg), titleZone, textZone);
-        vBox.setSpacing(30);
+        VBox vBox = new VBox(new StackPane(errImg), titleZone, textZone, children);
+        vBox.setSpacing(5);
         vBox.setAlignment(Pos.CENTER);
+        children.setAlignment(Pos.CENTER);
         ScrollPane scrollPane = new ScrollPane(vBox);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
@@ -71,7 +73,7 @@ public class ErrorPane extends ButtonPane {
     }
 
     public void appendContent(Node node) {
-        vBox.getChildren().add(node);
+        children.getChildren().add(node);
     }
 
     public void setTitle(String text) {

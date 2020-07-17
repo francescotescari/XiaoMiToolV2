@@ -28,6 +28,9 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -311,6 +314,21 @@ public class WindowManager {
     public static OverlayPane requireOverlayPane() {
         return mainOverlay;
     }
+
+    public static Text newText(String textValue, boolean center, double fontSize){
+        Text text = new Text(textValue);
+        text.setWrappingWidth(getContentWidth()-100);
+        if (center){
+            text.setTextAlignment(TextAlignment.CENTER);
+        }
+        text.setFont(Font.font(fontSize));
+        return text;
+    }
+
+    public static Text newText(String textValue, boolean center) {
+        return newText(textValue, center, 15);
+    }
+
 
 
 }

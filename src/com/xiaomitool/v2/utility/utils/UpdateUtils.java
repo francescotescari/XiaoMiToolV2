@@ -136,7 +136,11 @@ public class UpdateUtils {
         System.out.flush();
     }
 
+    private static boolean OPTIONS_OVERRODE = false;
     public static void overrideUnlockOptions(String host) throws CustomHttpException, JSONException {
+        if (OPTIONS_OVERRODE){
+            return;
+        }
         String url = host+"/override_unlock.php";
         String res = EasyHttp.get(url).getBody();
         JSONObject object = new JSONObject(res);
@@ -149,6 +153,7 @@ public class UpdateUtils {
             }
             UnlockCommonRequests.overrideUnlockOptions(hm);
         }
+        OPTIONS_OVERRODE = true;
     }
 
     public enum UpdateStatus {

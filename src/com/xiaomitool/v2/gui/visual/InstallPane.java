@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.gui.visual;
 
+import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
@@ -9,11 +10,14 @@ import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.utility.CommandClass;
 import com.xiaomitool.v2.utility.CommandClassAbstract;
 import com.xiaomitool.v2.utility.utils.StrUtils;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
@@ -58,18 +62,19 @@ public class InstallPane extends StackPane implements GuiListenerAbstract {
         Log.exc(exception);
         Log.exc(new Exception("TraceBackException"));
         Log.printStackTrace(exception);
-        String stackTrace = StrUtils.exceptionToString(exception);
-        int len = stackTrace.length();
-        stackTrace = StrUtils.firstNLines(stackTrace, 5);
+        String stackTrace = StrUtils.exceptionToOriginString(exception);
         ErrorPane errorPane = new ErrorPane(LRes.CANCEL, LRes.STEP_BACK, LRes.TRY_AGAIN);
         errorPane.setTitle(LRes.PROCEDURE_EXC_TITLE.toString(), Color.rgb(128, 0, 0));
-        errorPane.setText(LRes.PROCEDURE_EXC_TEXT.toString(LRes.PROCEDURE_EXC_DETAILS.toString(exception.getCode().toString(), exception.getMessage()) + "\n", LRes.TRY_AGAIN, LRes.STEP_BACK, LRes.CANCEL));
-        Text t2 = new Text(LRes.PROCEDURE_EXC_ADV_DETAILS.toString() + ": " + exception.getMessage() + "\n" + stackTrace + (stackTrace.length() != len ? "\n..." : ""));
-        t2.setTextAlignment(TextAlignment.CENTER);
-        t2.setWrappingWidth(WindowManager.getContentWidth() - 100);
-        t2.setFont(Font.font(14));
-        t2.setFill(Color.gray(0.15));
-        errorPane.appendContent(t2);
+        Text text_pre = WindowManager.newText(LRes.PROCEDURE_EXC_TEXT.toString(), true);
+        Text description = WindowManager.newText(exception.getMessage(), true);
+        Pane descPane = new StackPane(description);
+        descPane.setPadding(new Insets(5));
+        Text text_post = WindowManager.newText(LRes.PROCEDURE_EXC_TEXT_2.toString(exception.getCode().toString(), stackTrace, LRes.TRY_AGAIN, LRes.STEP_BACK, LRes.CANCEL), true);
+        description.setFont(Font.font(null, FontWeight.BOLD, 17));
+        errorPane.appendContent(text_pre);
+        errorPane.appendContent(descPane);
+        errorPane.appendContent(text_post);
+
         WindowManager.setMainContent(errorPane, false);
         int msg;
         try {

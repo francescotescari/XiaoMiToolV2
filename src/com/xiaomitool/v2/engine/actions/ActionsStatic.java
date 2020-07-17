@@ -67,7 +67,6 @@ public class ActionsStatic {
             LiveFeedbackEasy.sendOpen(ResourcesConst.getLogString(), null);
             Log.info("Disclaimer accepted");
             CHECK_FOR_UPDATES_V2().run();
-            OVERRIDE_UNLOCK().run();
             REQUIRE_REGION().run();
             INSTALL_DRIVERS().run();
             return MOD_CHOOSE_SCREEN().run();

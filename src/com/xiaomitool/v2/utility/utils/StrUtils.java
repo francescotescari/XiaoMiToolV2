@@ -69,6 +69,10 @@ public class StrUtils {
         return sw.toString();
     }
 
+    public static String exceptionToOriginString(Throwable throwable){
+        return String.valueOf(throwable.getStackTrace()[0]);
+    }
+
     public static String firstNLines(String data, int n) {
         String[] lines = data.split("\\n");
         return firstNLines(lines, n);

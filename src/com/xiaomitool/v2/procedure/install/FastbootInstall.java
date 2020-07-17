@@ -44,6 +44,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.xiaomitool.v2.engine.actions.ActionsStatic.OVERRIDE_UNLOCK;
 import static com.xiaomitool.v2.procedure.install.InstallException.Code.*;
 
 public class FastbootInstall {
@@ -214,6 +215,13 @@ public class FastbootInstall {
         return RNode.sequence(RebootDevice.requireFastboot(), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
+                new Thread(() -> {
+                    try {
+                        OVERRIDE_UNLOCK().run();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
                 Log.info("Starting unlock procedure");
                 Device device = Procedures.requireDevice(runner);
                 XiaomiKeystore keystore = XiaomiKeystore.getInstance();
@@ -278,12 +286,12 @@ public class FastbootInstall {
                         Log.info("Unlock request response: " + unlockData);
                         JSONObject json = new JSONObject(unlockData);
                         int code = json.optInt("code", -100);
-                        String description = json.optString("description", "null");
+                        String description = json.optString("descEN", "empty");
                         String encryptData = json.optString("encryptData", null);
                         if (code != 0 || encryptData == null) {
                             ButtonPane unlockButtonPane = new ButtonPane(LRes.TRY_AGAIN, LRes.ABORT);
                             String additionalDesc = UnlockCommonRequests.getErrorDescription(json);
-                            String text = LRes.UNLOCK_ERROR_TEXT.toString(code, UnlockCommonRequests.getUnlockCodeMeaning(code, json));
+                            String text = LRes.UNLOCK_ERROR_TEXT.toString(code, UnlockCommonRequests.getUnlockCodeMeaning(code, json), description);
                             if (!StrUtils.isNullOrEmpty(additionalDesc)){
                                 text+="\n\n"+LRes.API_DESCRIPTION.toString(additionalDesc);
                             }
