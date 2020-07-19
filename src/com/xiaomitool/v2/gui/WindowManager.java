@@ -48,25 +48,15 @@ public class WindowManager {
     public static final double PREF_WIN_WIDTH = 860;
     public static final double PREF_WIN_HEIGHT = 860;
     private static final String FRAME_POPUP = "Popup";
-    private static final String DEFAULT_TITLE = "XiaoMiTool V2";
+    public static final String DEFAULT_TITLE = "XiaoMiTool V2";
     private static final Image ICON_IMAGE = DrawableManager.getResourceImage("icon.png");
     private static final DropShadow windowDropShadow = new DropShadow(10, 1, 1, Color.gray(0.7));
     private static Stage mainStage;
     private static ToastPane toastPane;
     private static OverlayPane mainOverlay;
     private static VisiblePane mainVisiblePane;
-    private static RunnableMessage ON_BEFORE_CLOSE = null;
-    private static RunnableMessage ASK_FEEDBACK = new RunnableMessage() {
-        @Override
-        public int run() throws InterruptedException {
-            WindowManager.setOnExitAskForFeedback(false);
-            if (LogSender.isLogCooldown()) {
-                return 0;
-            }
-            ActionsStatic.ASK_FOR_FEEDBACK().run();
-            return 0;
-        }
-    };
+
+
     private static MainWindowController mainWindowController = null;
 
     public static void setMainVisiblePane(VisiblePane pane) {
@@ -159,25 +149,13 @@ public class WindowManager {
         return launchWindow(FRAME_LOGIN, new LoginController());
     }
 
-    public static void setOnExitAskForFeedback(boolean ask) {
-        ON_BEFORE_CLOSE = ask ? ASK_FEEDBACK : null;
-    }
 
-    public static void launchMain(Stage primaryStage) {
+
+    public static void launchMain(Stage primaryStage, RunnableMessage onBeforeClose) {
         mainStage = primaryStage;
         mainWindowController = new MainWindowController();
         launchWindow(FRAME_MAIN, mainWindowController, primaryStage);
-        mainWindowController.setOnBeforeClose(new RunnableMessage() {
-            @Override
-            public int run() throws InterruptedException {
-                ActionsStatic.CLOSING().run();
-                RunnableMessage r = ON_BEFORE_CLOSE;
-                if (r != null) {
-                    return r.run();
-                }
-                return 0;
-            }
-        });
+        mainWindowController.setOnBeforeClose(onBeforeClose);
         primaryStage.setOnCloseRequest(event -> {
             ToolManager.exit(0);
         });
@@ -200,11 +178,11 @@ public class WindowManager {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Pointer pointer = new Pointer();
+                Pointer<Pane> pointer = new Pointer<>();
                 PopupController controller = new PopupController(popupWindow);
                 Stage stage = launchWindow(FRAME_POPUP, controller, null, pointer);
                 Parent p = stage.getScene().getRoot();
-                ((Pane) pointer.pointed).setMinSize(popupWindow.getWidth(), popupWindow.getHeight());
+                pointer.pointed.setMinSize(popupWindow.getWidth(), popupWindow.getHeight());
                 stage.setTitle(DEFAULT_TITLE);
                 stage.sizeToScene();
                 centerStage(stage);
@@ -230,7 +208,7 @@ public class WindowManager {
         stage.setY(y);
     }
 
-    private static Stage launchWindow(String fxml, DefaultController controller, Stage primaryStage, Pointer pointer) {
+    private static Stage launchWindow(String fxml, DefaultController controller, Stage primaryStage, Pointer<Pane> pointer) {
         boolean isMain = primaryStage == mainStage && primaryStage != null;
         if (isMain) {
             Log.info("Launching main window");
@@ -250,7 +228,7 @@ public class WindowManager {
         }
         Background background = DEFAULT_BACKGROUND;
         if (pointer != null) {
-            pointer.pointed = root;
+            pointer.pointed = (Pane) root;
         }
         if (root instanceof Pane) {
             ((Pane) root).setBackground(background);
@@ -286,6 +264,9 @@ public class WindowManager {
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);
+        if (isMain){
+
+        }
         ToolManager.showStage(primaryStage);
         if (!isMain) {
             centerStage(primaryStage);

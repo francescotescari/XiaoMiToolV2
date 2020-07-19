@@ -1,18 +1,24 @@
 package com.xiaomitool.v2.engine;
 
+import com.xiaomitool.v2.engine.actions.ActionsStatic;
 import com.xiaomitool.v2.gui.GuiUtils;
+import com.xiaomitool.v2.gui.SplashScreen;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.controller.LoginController;
+import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.language.Lang;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
+import com.xiaomitool.v2.logging.feedback.LogSender;
 import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
+import com.xiaomitool.v2.utility.RunnableMessage;
 import com.xiaomitool.v2.utility.utils.MutexUtils;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.utility.utils.UpdateUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.json.JSONException;
@@ -32,6 +38,18 @@ public class ToolManager {
     private static boolean exiting = false;
     private static List<Stage> activeStages = new ArrayList<>();
     private static String runningInstanceId = null;
+    private static RunnableMessage ON_BEFORE_CLOSE = null;
+    private static RunnableMessage ASK_FEEDBACK = new RunnableMessage() {
+        @Override
+        public int run() throws InterruptedException {
+            ToolManager.setOnExitAskForFeedback(false);
+            if (LogSender.isLogCooldown()) {
+                return 0;
+            }
+            ActionsStatic.ASK_FOR_FEEDBACK().run();
+            return 0;
+        }
+    };
 
     public static String getFeedbackUrl() {
         return XMT_HOST + "/feedback";
@@ -42,6 +60,9 @@ public class ToolManager {
             System.exit(0);
             return;
         }
+        final SplashScreen splashScreen = new SplashScreen(WindowManager.DEFAULT_TITLE, DrawableManager.getResourceImage("splash.png"));
+        WindowManager.runNowOrLater(() -> splashScreen.start(new Stage()));
+
         if (!ResourcesManager.init()) {
             Log.error("Failed to init resources dir");
         }
@@ -52,11 +73,24 @@ public class ToolManager {
             return;
         }
         SettingsUtils.load();
+        ActionsStatic.LOAD_ONLINE_LANGS(XMT_HOST).run();
         Lang.loadSystemLanguage();
         GuiUtils.init();
         checkLoadSession();
+        //WindowManager.runNowOrLater(splashScreen::stopSplash);
         Log.info("Starting XiaoMiTool V2 " + TOOL_VERSION + " : " + ResourcesConst.getLogString());
-        WindowManager.launchMain(primaryStage);
+        WindowManager.runNowOrLater(() -> WindowManager.launchMain(primaryStage, new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+                ActionsStatic.CLOSING().run();
+                RunnableMessage r = ON_BEFORE_CLOSE;
+                if (r != null) {
+                    return r.run();
+                }
+                return 0;
+            }
+        }));
+
     }
 
     public static void showStage(Stage stage) {
@@ -64,7 +98,12 @@ public class ToolManager {
             return;
         }
         activeStages.add(stage);
+        SplashScreen splashScreen = SplashScreen.getInstance();
+        if (splashScreen != null){
+            splashScreen.stopSplash();
+        }
         stage.show();
+        stage.requestFocus();
     }
 
     public static void closeStage(Stage stage) {
@@ -160,4 +199,10 @@ public class ToolManager {
         }
         return runningInstanceId;
     }
+
+    public static void setOnExitAskForFeedback(boolean ask) {
+        ON_BEFORE_CLOSE = ask ? ASK_FEEDBACK : null;
+    }
+
+
 }

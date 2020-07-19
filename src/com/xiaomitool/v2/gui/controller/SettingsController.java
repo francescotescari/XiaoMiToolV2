@@ -110,7 +110,7 @@ public class SettingsController extends DefaultController {
                                     if (!LogSender.uploadFeedback(text, sendLogFile)) {
                                         throw new Exception("Failed to uplaod the feedback, check the log file");
                                     }
-                                    WindowManager.setOnExitAskForFeedback(false);
+                                    ToolManager.setOnExitAskForFeedback(false);
                                     feedbackPopup.getController().closeWindow();
                                     Platform.runLater(() -> settingsToast.toast(LRes.FEEDBACK_SENT.toString()));
                                 } catch (Exception e) {

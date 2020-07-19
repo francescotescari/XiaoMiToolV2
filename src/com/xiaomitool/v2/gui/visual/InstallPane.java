@@ -1,5 +1,6 @@
 package com.xiaomitool.v2.gui.visual;
 
+import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.language.LRes;
@@ -57,7 +58,7 @@ public class InstallPane extends StackPane implements GuiListenerAbstract {
 
     @Override
     public void onException(InstallException exception) {
-        WindowManager.setOnExitAskForFeedback(false); //TOO MANY FEEDBACKS
+        ToolManager.setOnExitAskForFeedback(false); //TOO MANY FEEDBACKS
         Log.log("FATAL", exception.toString(), true);
         Log.exc(exception);
         Log.exc(new Exception("TraceBackException"));

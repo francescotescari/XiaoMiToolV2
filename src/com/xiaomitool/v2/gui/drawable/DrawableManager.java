@@ -13,8 +13,7 @@ public class DrawableManager {
     public static final String ERROR = "error.png";
 
     public static URL getResource(String name) {
-        URL resourcePath = DrawableManager.class.getResource(name);
-        return resourcePath;
+        return DrawableManager.class.getResource(name);
     }
 
     public static URL getPng(String name) {
@@ -26,6 +25,7 @@ public class DrawableManager {
 
     public static Image getResourceImage(String name) {
         URL url = getResource(name);
+
         return url == null ? null : new Image(url.toString());
     }
 }

@@ -15,6 +15,17 @@ public class MainWindow extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        ToolManager.init(primaryStage, arguments);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ToolManager.init(primaryStage, arguments);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+        }).start();
+
     }
 }

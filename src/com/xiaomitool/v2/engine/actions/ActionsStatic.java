@@ -12,7 +12,9 @@ import com.xiaomitool.v2.gui.deviceView.DeviceView;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.raw.RawManager;
 import com.xiaomitool.v2.gui.visual.*;
+import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
+import com.xiaomitool.v2.language.Lang;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.procedure.install.GenericInstall;
@@ -517,6 +519,21 @@ public class ActionsStatic {
             @Override
             public int run() throws InterruptedException {
                 return ActionsDynamic.MAIN_SCREEN_LOADING(LRes.CLOSING).run();
+            }
+        };
+    }
+
+    public static RunnableMessage LOAD_ONLINE_LANGS(String host){
+        return new RunnableMessage() {
+            @Override
+            public int run() throws InterruptedException {
+                try {
+                    Lang.initOnlineLangs(host);
+                } catch (Exception e) {
+                    Log.error("Failed to load online languages");
+                    Log.exc(e);
+                }
+                return 0;
             }
         };
     }

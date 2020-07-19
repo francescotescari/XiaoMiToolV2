@@ -134,7 +134,7 @@ public class GenericInstall {
         return RNode.sequence(RebootDevice.rebootNoWaitIfConnected(), new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, InterruptedException {
-                WindowManager.setOnExitAskForFeedback(false);
+                ToolManager.setOnExitAskForFeedback(false);
                 Installable installable = (Installable) runner.getContext(Procedures.INSTALLABLE);
                 LiveFeedbackEasy.sendSuccess(String.valueOf(installable), runner.getStackStrace());
                 Log.info("Installation succesful, showing donation message");
