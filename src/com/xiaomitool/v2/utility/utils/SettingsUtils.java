@@ -2,7 +2,10 @@ package com.xiaomitool.v2.utility.utils;
 
 import com.xiaomitool.v2.crypto.AES;
 import com.xiaomitool.v2.crypto.Hash;
+import com.xiaomitool.v2.gui.MainWindow;
+import com.xiaomitool.v2.gui.controller.MainWindowController;
 import com.xiaomitool.v2.language.LRes;
+import com.xiaomitool.v2.language.Lang;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
@@ -29,6 +32,7 @@ public class SettingsUtils extends HashMap<String, String> {
     public static final String SESSION_TOKEN = "session_token";
     public static final String PC_ID = "pcId";
     public static final String REGION = "region";
+    public static final String LANGUAGE = "language";
     public static final String lineSeparator = System.lineSeparator();
     public static final String fileSeparator = File.separator;
     private static final Path settingsPath = ResourcesManager.getTmpPath().resolve("settings.app");
@@ -178,6 +182,20 @@ public class SettingsUtils extends HashMap<String, String> {
         return selectedRegion;
     }
 
+    public static String getLanguage(){
+        return instance.get(LANGUAGE);
+    }
+
+    public static void setLanguage(String langCode) {
+        instance.put(LANGUAGE, langCode);
+        Lang.load();
+        MainWindowController mainWindowController = MainWindowController.getInstance();
+        if (mainWindowController != null){
+            mainWindowController.retext();
+        }
+
+    }
+
     public static void setRegion(Region region) {
         selectedRegion = region;
         instance.put(REGION, region.toString());
@@ -202,6 +220,8 @@ public class SettingsUtils extends HashMap<String, String> {
     public static boolean isGlobalRegion() {
         return !Region.CN.equals(getRegion());
     }
+
+
 
     public enum Region {
         EU(LRes.REG_EUROPE, "eu", "reg_europe.png", "_eea_global", "eea"),

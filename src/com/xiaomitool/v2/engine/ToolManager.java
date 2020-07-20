@@ -30,7 +30,7 @@ import java.util.List;
 public class ToolManager {
     public static final String TOOL_VERSION = "20.3.1";
     public static final String URL_DONATION = "https://www.xiaomitool.com/V2/donate";
-    public static final String TOOL_VERSION_EX = "alpha";
+    public static final String TOOL_VERSION_EX = "beta";
     public static final String XMT_HOST = "https://www.xiaomitool.com/V2";
     public static final String URL_UPDATE_V2 = XMT_HOST + "/updateV2.php";
     public static final String URL_LATEST = XMT_HOST + "/latest";
@@ -74,9 +74,9 @@ public class ToolManager {
         }
         SettingsUtils.load();
         ActionsStatic.LOAD_ONLINE_LANGS(XMT_HOST).run();
-        Lang.loadSystemLanguage();
         GuiUtils.init();
         checkLoadSession();
+        Lang.load();
         //WindowManager.runNowOrLater(splashScreen::stopSplash);
         Log.info("Starting XiaoMiTool V2 " + TOOL_VERSION + " : " + ResourcesConst.getLogString());
         WindowManager.runNowOrLater(() -> WindowManager.launchMain(primaryStage, new RunnableMessage() {

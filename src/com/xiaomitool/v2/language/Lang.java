@@ -1,9 +1,14 @@
 package com.xiaomitool.v2.language;
 
-import com.xiaomitool.v2.gui.raw.RawManager;
+import com.xiaomitool.v2.inet.CustomHttpException;
+import com.xiaomitool.v2.inet.EasyHttp;
+import com.xiaomitool.v2.inet.EasyResponse;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.resources.ResourcesManager;
-import com.xiaomitool.v2.utility.MultiMap;
+import com.xiaomitool.v2.utility.Pair;
+import com.xiaomitool.v2.utility.utils.SettingsUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -17,6 +22,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,36 +31,40 @@ import java.util.*;
 public class Lang {
     private static final String STRING_ELEMNENT_NAME = "string";
     private static final String STRING_ID = "id";
-    private static MultiMap<Language, RegionLanguage> regions = new MultiMap<>();
+    private static HashMap<String, LinkedHashMap<String, RegionLanguage>> loadedLanguages = new HashMap<>();
     private static HashMap<String, String> dictionary = new HashMap<>();
+    private static String langHost = null;
 
-    static {
-        regions.putSingle(Language.ENGLISH, new RegionLanguage(Language.ENGLISH, "US"));
-        regions.putSingle(Language.ITALIAN, new RegionLanguage(Language.ITALIAN, "IT"));
-        checkRegions();
+    public static void initOnlineLangs(String host) throws CustomHttpException {
+        langHost = host+"/lang";
+        String indexPath = langHost +"/index.json";
+        JSONArray data = new JSONArray(EasyHttp.get(indexPath).getBody());
+        for (int i = 0; i<data.length(); ++i){
+            JSONObject entry = data.getJSONObject(i);
+            RegionLanguage rl = RegionLanguage.fromJsonEntry(entry);
+            LinkedHashMap<String, RegionLanguage> subMap = loadedLanguages.computeIfAbsent(rl.getLangCode(), k -> new LinkedHashMap<>());
+            subMap.put(rl.getRegionCode(), rl);
+        }
     }
 
-    private static void checkRegions() {
-        List<Language> toRemove = new ArrayList<>();
-        for (Map.Entry<Language, List<RegionLanguage>> entry : regions.entrySet()) {
-            List<RegionLanguage> list = entry.getValue();
-            List<RegionLanguage> toRemove2 = new ArrayList<>();
-            for (RegionLanguage language : list) {
-                if (!Files.exists(ResourcesManager.getLangFilePath(language.getXmlCode()))) {
-                    toRemove2.add(language);
+    public static List<Pair<String, String>> getComboChoices(){
+        List<Pair<String, String>> result = new ArrayList<>();
+        for (LinkedHashMap<String, RegionLanguage> langEntry : loadedLanguages.values()){
+            boolean fullName = langEntry.size() > 1;
+            for (RegionLanguage regLang : langEntry.values()){
+                String name = regLang.getLangName();
+                if (fullName){
+                    name += " ("+regLang.getRegionName()+")";
                 }
-            }
-            for (RegionLanguage l : toRemove2) {
-                list.remove(l);
-            }
-            if (list.size() == 0) {
-                toRemove.add(entry.getKey());
+                result.add(new Pair<>(regLang.toLocaleCode(), name));
             }
         }
-        for (Language l : toRemove) {
-            regions.remove(l);
+        if (result.isEmpty()){
+            result.add(new Pair<>("en_US", "English"));
         }
+        return result;
     }
+
 
     public static String text(String id, Object... params) throws Exception {
         String format = getFormat(id);
@@ -78,7 +88,7 @@ public class Lang {
         for (LRes l : LRes.values()) {
             Element el = doc.createElement(STRING_ELEMNENT_NAME);
             el.setAttribute(STRING_ID, l.getKey());
-            el.setTextContent("");
+            el.setTextContent(l.toEnglish());
             root.appendChild(el);
         }
         DOMSource source = new DOMSource(doc);
@@ -119,107 +129,126 @@ public class Lang {
         Log.info("Loading language from file: " + filepath.toString());
     }
 
-    public static void loadLanguage(String lang) throws Exception {
-        loadLanguage(lang, false);
+    public static void load(){
+        String langCode = SettingsUtils.getLanguage();
+        if (tryLoadLangCode(langCode)){
+            return;
+        }
+        RegionLanguage language = getSystemRegionLanguage();
+        if (tryLoadRegionLanguage(language)){
+            return;
+        }
+        if (tryLoadLangCode("en_US")){
+            return;
+        }
+        Log.warn("Failed to load system or choice lang, switch to english");
+        dictionary = null;
     }
 
-    private static void loadLanguage(String lang, boolean error) throws Exception {
-        if (error) {
-            loadFromInputStream(RawManager.getInputStream("en_US.xml"));
-        } else {
-            try {
-                loadFromXmlFile(ResourcesManager.getLangFilePath(lang));
-            } catch (Exception e) {
-                Log.error("Failed to load language: " + lang + ", switching to english");
-                loadLanguage(lang, true);
+    private static void loadLangCode(String langCode) throws Exception {
+        String[] parts = langCode.split("_", 2);
+        String lan = parts[0];
+        String reg = parts.length > 1 ? parts[1] : null;
+        RegionLanguage rl = getBestFittingRegionLanguage(lan, reg);
+        String rightHash = null;
+        if (rl != null){
+            lan = rl.getLangCode();
+            reg = rl.getRegionCode();
+            langCode = rl.toLocaleCode();
+            rightHash = rl.getHash();
+        }
+        Path localFile = ResourcesManager.getLangFilePath(langCode);
+        boolean present = Files.exists(localFile);
+        if (rightHash != null){
+            boolean needToDownload = true;
+            if (present){
+                //TODO CHECK LOCAL FILE HASH
+                needToDownload = false;
+            }
+            if (needToDownload){
+                downloadLangFile(langCode, localFile);
+                present = true;
             }
         }
+        if (!present){
+            throw new Exception("Lang file not present and not downloadable");
+        }
+        loadFromXmlFile(localFile);
     }
 
-    public static void loadSystemLanguage() throws Exception {
-        RegionLanguage language = getSystemRegionLanguage();
-        if (language == null) {
-            Log.warn("Failed to load system language, switching to English");
-            language = new RegionLanguage(Language.ENGLISH, "US");
+    private static void downloadLangFile(String langCode, Path destination) throws Exception{
+        EasyResponse response = EasyHttp.get(langHost+"/"+langCode+".xml");
+        if (!response.isAllRight()){
+            throw new Exception("Failed to download the lang file: "+response.getCode());
         }
-        loadLanguage(language.getXmlCode());
+        String a = response.getBody();
+        System.out.println(a);
+        try (FileWriter writer = new FileWriter(destination.toFile())){
+            writer.write(response.getBody());
+        }
     }
+
+    private static boolean tryLoadLangCode(String langCode){
+        if (langCode == null){
+            return false;
+        }
+        try {
+            loadLangCode(langCode);
+            return true;
+        } catch (Exception e){
+            Log.warn("Failed to load language: "+langCode+": "+e.getMessage());
+            return false;
+        }
+    }
+
+    private static boolean tryLoadRegionLanguage(RegionLanguage language){
+        if (language == null){
+            return false;
+        }
+        return tryLoadLangCode(language.toLocaleCode());
+    }
+
+
 
     public static RegionLanguage getSystemRegionLanguage() {
-        Language lang = Language.getFromSystem();
-        if (lang == null) {
+        Locale locale = getSystemLocale();
+        if (locale == null) {
             return null;
         }
-        List<RegionLanguage> rlangs = regions.get(lang);
-        if (rlangs == null) {
-            return null;
-        }
-        String region = Locale.getDefault().getCountry();
-        if (region == null) {
-            return null;
-        }
-        region = region.toUpperCase();
-        for (RegionLanguage rlang : rlangs) {
-            if (region.equals(rlang.getRegionCode())) {
-                return rlang;
-            }
-        }
-        if (rlangs.size() == 0) {
-            return null;
-        }
-        return rlangs.get(0);
+        return getBestFittingRegionLanguage(locale.getLanguage(), locale.getCountry());
     }
 
-    private enum Language {
-        ENGLISH("en", "English"),
-        ITALIAN("it", "Italiano");
-        private String code, name;
-
-        Language(String code, String name) {
-            this.code = code;
-            this.name = name;
-        }
-
-        public static Language getFromSystem() {
-            String code = Locale.getDefault().getLanguage();
-            if (code == null) {
-                return null;
-            }
-            code = code.toLowerCase();
-            for (Language l : Language.values()) {
-                if (code.equals(l.getCode())) {
-                    return l;
-                }
-            }
+    private static RegionLanguage getBestFittingRegionLanguage(String lang, String region){
+        LinkedHashMap<String, RegionLanguage> regionsForLang = lang == null ? null : loadedLanguages.get(lang.toLowerCase());
+        if (regionsForLang == null) {
             return null;
         }
-
-        public String getCode() {
-            return code;
+        RegionLanguage res = region == null ? null : regionsForLang.get(region.toUpperCase());
+        if (res == null){
+            res = regionsForLang.values().iterator().next();
         }
-
-        public String getName() {
-            return name;
-        }
+        return res;
     }
+
+    private static Locale getSystemLocale(){
+        return Locale.getDefault();
+    }
+
+
+
 
     private static class RegionLanguage {
-        private Language language;
-        private String region;
-        private String region_name = null;
+        private String lang_code, region_code, lang_name, region_name, mhash;
 
-        public RegionLanguage(Language language, String region) {
-            this(language, region, null);
-        }
-
-        public RegionLanguage(Language language, String region, String regionName) {
-            this.language = language;
-            this.region = region.toUpperCase();
-            this.region_name = regionName;
+        public RegionLanguage(String lang_code, String region_code, String lang_name, String region_name) {
+            this.lang_code = lang_code;
+            this.region_code = region_code;
+            this.lang_name = lang_name;
+            this.region_name = region_name;
         }
 
         public String getRegionCode() {
-            return region;
+            return region_code;
         }
 
         public String getRegionName() {
@@ -227,20 +256,34 @@ public class Lang {
         }
 
         public String getLangCode() {
-            return this.language.getCode();
+            return lang_code;
         }
 
         public String getLangName() {
-            return this.language.getName();
+            return lang_name;
         }
 
-        public String getXmlCode() {
+        public String toLocaleCode() {
             return getLangCode() + "_" + getRegionCode();
+        }
+
+        public String getHash(){
+            return this.mhash;
+        }
+
+        public Locale toLocale(){
+            return new Locale(this.lang_code, this.region_code);
+        }
+
+        public static RegionLanguage fromJsonEntry(JSONObject object){
+            RegionLanguage res = new RegionLanguage(object.getString("langCode"),object.getString("regCode"),object.getString("langName"),object.getString("regName"));
+            res.mhash = object.optString("hash", null);
+            return res;
         }
 
         @Override
         public String toString() {
-            return String.format("%s_%s (%s - %s)", getLangCode(), getRegionCode(), getLangName(), getRegionName());
+            return String.format("%s_%s (%s - %s)", lang_code, region_code, lang_name, region_name);
         }
     }
 }

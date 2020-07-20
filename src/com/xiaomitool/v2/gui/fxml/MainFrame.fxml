@@ -109,7 +109,7 @@
                               <Insets />
                            </HBox.margin>
                         </Label>
-                        <Hyperlink fx:id="TRANSLATOR_LINK" prefHeight="30.0" prefWidth="279.0" style="-fx-border-color: transparent;" text="developer">
+                        <Hyperlink fx:id="TRANSLATED_LINK" prefHeight="30.0" prefWidth="279.0" style="-fx-border-color: transparent;" text="developer">
                            <font>
                               <Font size="13.0" />
                            </font>

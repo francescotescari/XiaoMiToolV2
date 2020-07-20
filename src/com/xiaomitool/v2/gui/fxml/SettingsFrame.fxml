@@ -50,7 +50,7 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="450.0">
                      <children>
-                        <VBox alignment="TOP_CENTER" layoutY="-5.0" prefHeight="500.0" prefWidth="450.0">
+                        <VBox alignment="TOP_CENTER" layoutY="-5.0" prefWidth="450.0">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                            </padding>
@@ -61,7 +61,7 @@
                                        <children>
                                           <Label fx:id="LABEL_DOWNLOAD" prefHeight="27.0" prefWidth="280.0" text="Download directory:">
                                              <font>
-                                                <Font size="18.0" />
+                                                <Font size="15.0" />
                                              </font>
                                           </Label>
                                           <Button fx:id="BUTTON_DOWNLOAD" mnemonicParsing="false" prefHeight="29.0" prefWidth="120.0" text="Change">
@@ -84,7 +84,7 @@
                                        <children>
                                           <Label fx:id="LABEL_EXTRACT" prefHeight="27.0" prefWidth="280.0" text="Extraction directory:">
                                              <font>
-                                                <Font size="18.0" />
+                                                <Font size="15.0" />
                                              </font>
                                           </Label>
                                           <Button fx:id="BUTTON_EXTRACT" mnemonicParsing="false" prefHeight="29.0" prefWidth="120.0" text="Change">
@@ -101,9 +101,9 @@
                                     </Label>
                                  </children>
                               </VBox>
-                              <HBox alignment="CENTER_LEFT" prefHeight="28.0" prefWidth="420.0">
+                              <HBox alignment="CENTER" prefHeight="28.0" prefWidth="420.0">
                                  <children>
-                                    <CheckBox fx:id="CHECK_SAVE_LOGIN" mnemonicParsing="false" prefHeight="40.0" prefWidth="420.0" text="Keep login session token on tool exit">
+                                    <CheckBox fx:id="CHECK_SAVE_LOGIN" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="21.0" prefWidth="290.0" text="Keep login session token on tool exit" textAlignment="CENTER">
                                        <font>
                                           <Font size="15.0" />
                                        </font>
@@ -113,49 +113,43 @@
                                     </CheckBox>
                                  </children>
                               </HBox>
-                              <Button fx:id="BUTTON_RESET" minWidth="290.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="290.0" text="Reset default settings">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin>
-                              </Button>
-                              <Button fx:id="BUTTON_CLEAR" minWidth="290.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="290.0" text="Clear downloads and extraction directories">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin>
-                              </Button>
-                              <Button fx:id="BUTTON_FEEDBACK" minWidth="290.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="290.0" text="Send feedback">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin>
-                              </Button>
-                              <ComboBox fx:id="REGION_COMBO" prefHeight="30.0" prefWidth="290.0" promptText="Select your region">
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin>
-                              </ComboBox>
-                              <HBox alignment="CENTER" prefHeight="48.0" prefWidth="420.0" spacing="5.0">
+                              <VBox alignment="CENTER" spacing="10.0">
                                  <children>
-                                    <Text fx:id="INSTANCE_ID" strokeType="OUTSIDE" strokeWidth="0.0" text="Instance id: ">
+                                    <Button fx:id="BUTTON_RESET" minWidth="290.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="290.0" text="Reset default settings">
                                        <font>
-                                          <Font size="15.0" />
+                                          <Font size="14.0" />
                                        </font>
-                                    </Text>
-                                    <TextField fx:id="INSTANCE_VALUE" alignment="CENTER" editable="false" prefHeight="31.0" prefWidth="100.0">
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button fx:id="BUTTON_CLEAR" minWidth="290.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="290.0" text="Clear downloads and extraction directories">
                                        <font>
-                                          <Font size="15.0" />
+                                          <Font size="14.0" />
                                        </font>
-                                    </TextField>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button fx:id="BUTTON_FEEDBACK" minWidth="290.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="290.0" text="Send feedback">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </Button>
+                                    <ComboBox fx:id="REGION_COMBO" prefHeight="30.0" prefWidth="290.0" promptText="Select your region">
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </ComboBox>
+                                    <ComboBox fx:id="LANG_COMBO" prefHeight="30.0" prefWidth="290.0" promptText="Select your language" />
                                  </children>
-                              </HBox>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </VBox>
                            </children>
                         </VBox>
                      </children>

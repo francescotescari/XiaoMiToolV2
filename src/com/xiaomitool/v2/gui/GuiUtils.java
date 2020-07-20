@@ -10,12 +10,18 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
+import javafx.util.Callback;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -158,6 +164,43 @@ public class GuiUtils {
         public boolean isPressed = false, isHover = false;
 
         public abstract Rectangle2D get(int index);
+    }
+
+
+    public static void specialComboBox(ComboBox<String> combo, LRes closedFormat, int fontSize){
+        combo.setButtonCell(new ListCell<String>() {
+            @Override
+            public void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setFont(Font.font(this.getFont().getName(), fontSize));
+                if (item != null) {
+                    setText(closedFormat.toString(item));
+                    setAlignment(Pos.CENTER_LEFT);
+
+                }
+            }
+        });
+        combo.setCellFactory(
+                new Callback<ListView<String>, ListCell<String>>() {
+                    @Override
+                    public ListCell<String> call(ListView<String> param) {
+                        return new ListCell<String>() {
+                            @Override
+                            public void updateItem(String item,
+                                                   boolean empty) {
+                                super.updateItem(item, empty);
+                                if (item != null) {
+                                    setText(item);
+                                    setFont(Font.font(this.getFont().getName(), fontSize));
+                                    setTextAlignment(TextAlignment.CENTER);
+                                    setAlignment(Pos.CENTER);
+                                } else {
+                                    setText(null);
+                                }
+                            }
+                        };
+                    }
+                });
     }
 }
 

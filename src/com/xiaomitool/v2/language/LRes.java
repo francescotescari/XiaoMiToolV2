@@ -18,6 +18,7 @@ public enum LRes {
     SETTINGS_CLEAR("Wipe download and extract directories"),
     CHOOSE("Choose"),
     TRANSLATED_BY("Translated by"),
+    TRANSLATED_URL("https://www.xiaomitool.com"),
     CHOOSE_RECOVER_DEVICE("My device is bricked\nI want to unbrick it."),
     CHOOSE_MOD_DEVICE("My device works normally\nI want to mod it."),
     SEARCHING_CONNECTED_DEVICES("Searching connected devices"),
@@ -255,9 +256,11 @@ public enum LRes {
     REG_GLOBAL("Global"),
     REG_OTHER("Other regions"),
     PLEASE_SELECT_REGION("Please select your region"),
+    PLEASE_SELECT_LANGUAGE("Please select your language"),
     PLEASE_SELECT_REGION_TEXT("Depending on your region, specific official roms for selected region will be searched\nand specific MIUI servers will be used.\nPlease select the region you are from"),
     SELECT_IF_YOURE_FROM("Select this if you are from %s"),
     SELECTED_REGION("Selected region: %s"),
+    SELECTED_LANG("Selected language: %s"),
     ROM_INSTALL_NOT_ALLOWED("You can't install this rom: %s"),
     ROM_INSTALL_NOT_ALLOWED_EXP("The rom you selected cannot be installed onto the current rom without unlocking the bootloader.\nThis is because locked bootloader installations must be validated and allowed by Xiaomi server\nThe server didn't allowed the installation or errors occurred during installation\nServer response:\n\n%s"),
     CLOSING("Closing XiaoMiTool"),
@@ -318,9 +321,6 @@ public enum LRes {
     }
 
     public String toString() {
-        if (true) {
-            return toEnglish();
-        }
         try {
             return Lang.text(getKey());
         } catch (Exception e) {
@@ -329,9 +329,6 @@ public enum LRes {
     }
 
     public String toString(Object... args) {
-        if (true) {
-            return toEnglish(args);
-        }
         try {
             return Lang.text(getKey(), args);
         } catch (Exception e) {

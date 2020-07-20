@@ -9,8 +9,10 @@ import com.xiaomitool.v2.gui.visual.CustomButton;
 import com.xiaomitool.v2.gui.visual.OverlayPane;
 import com.xiaomitool.v2.gui.visual.ToastPane;
 import com.xiaomitool.v2.language.LRes;
+import com.xiaomitool.v2.language.Lang;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.logging.feedback.LogSender;
+import com.xiaomitool.v2.utility.Pair;
 import com.xiaomitool.v2.utility.RunnableMessage;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import javafx.application.Platform;
@@ -37,6 +39,10 @@ import javafx.util.Callback;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SettingsController extends DefaultController {
     private static final OverlayPane settingsOverlayPane = new OverlayPane();
@@ -55,11 +61,7 @@ public class SettingsController extends DefaultController {
     @FXML
     private StackPane WHOLE;
     @FXML
-    private Text INSTANCE_ID;
-    @FXML
-    private TextField INSTANCE_VALUE;
-    @FXML
-    private ComboBox<String> REGION_COMBO;
+    private ComboBox<String> REGION_COMBO, LANG_COMBO;
 
     public static PopupWindow getFeedbackPopupWindow() {
         if (feedbackPopup == null) {
@@ -144,62 +146,12 @@ public class SettingsController extends DefaultController {
     private void initCss() {
         TEXT_EXTRACT.setStyle("-fx-text-overrun: leading-ellipsis;");
         TEXT_DOWNLOAD.setStyle("-fx-text-overrun: leading-ellipsis;");
-        INSTANCE_VALUE.setStyle("-fx-text-box-border: transparent; -fx-focus-color: transparent;");
-        INSTANCE_VALUE.setBackground(Background.EMPTY);
-        INSTANCE_VALUE.setAlignment(Pos.CENTER);
-        GuiUtils.tooltip(INSTANCE_ID, LRes.INSTANCE_ID_TIP);
-        GuiUtils.tooltip(INSTANCE_VALUE, LRes.INSTANCE_ID_TIP);
         BUTTON_CLEAR.setDisable(true);
-        INSTANCE_VALUE.setFocusTraversable(false);
-        INSTANCE_VALUE.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                WHOLE.requestFocus();
-            }
-        });
-        INSTANCE_VALUE.setCursor(Cursor.HAND);
-        INSTANCE_VALUE.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                ClipboardContent content = new ClipboardContent();
-                content.putString(INSTANCE_VALUE.getText());
-                Clipboard.getSystemClipboard().setContent(content);
-                settingsToastPane.toast(LRes.COPIED_TO_CLIPBOARD.toString());
-            }
-        });
-        REGION_COMBO.setButtonCell(new ListCell<String>() {
-            @Override
-            public void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (item != null) {
-                    setText(LRes.SELECTED_REGION.toString(item));
-                    setAlignment(Pos.CENTER_LEFT);
-                    setFont(Font.font(this.getFont().getName(), 14));
-                }
-            }
-        });
-        REGION_COMBO.setCellFactory(
-                new Callback<ListView<String>, ListCell<String>>() {
-                    @Override
-                    public ListCell<String> call(ListView<String> param) {
-                        return new ListCell<String>() {
-                            @Override
-                            public void updateItem(String item,
-                                                   boolean empty) {
-                                super.updateItem(item, empty);
-                                if (item != null) {
-                                    setText(item);
-                                    setFont(Font.font(this.getFont().getName(), 14));
-                                    setTextAlignment(TextAlignment.CENTER);
-                                    setAlignment(Pos.CENTER);
-                                } else {
-                                    setText(null);
-                                }
-                            }
-                        };
-                    }
-                });
+        GuiUtils.specialComboBox(REGION_COMBO, LRes.SELECTED_REGION, 14);
+        GuiUtils.specialComboBox(LANG_COMBO, LRes.SELECTED_LANG, 14);
     }
+
+    private List<Pair<String, String>> langEntries;
 
     private void initTexts() {
         LABEL_DOWNLOAD.setText(LRes.SETTINGS_DOWNLOAD_DIR.toString());
@@ -209,8 +161,6 @@ public class SettingsController extends DefaultController {
         BUTTON_EXTRACT.setText(LRes.CHOOSE.toString());
         CHECK_SAVE_LOGIN.setText(LRes.SETTINGS_SAVE_SESSION.toString());
         BUTTON_FEEDBACK.setText(LRes.SEND_FEEDBACK.toString());
-        INSTANCE_ID.setText(LRes.INSTANCE_ID.toString() + ": ");
-        INSTANCE_VALUE.setText(Hash.md5Hex(ToolManager.getRunningInstanceId()).substring(0, 8));
         REGION_COMBO.setPromptText(LRes.PLEASE_SELECT_REGION.toString());
         REGION_COMBO.setItems(new ObservableListBase<String>() {
             @Override
@@ -221,6 +171,19 @@ public class SettingsController extends DefaultController {
             @Override
             public String get(int index) {
                 return SettingsUtils.Region.values()[index].toHuman();
+            }
+        });
+        langEntries = Lang.getComboChoices();
+        LANG_COMBO.setPromptText(LRes.PLEASE_SELECT_LANGUAGE.toString());
+        LANG_COMBO.setItems(new ObservableListBase<String>() {
+            @Override
+            public int size() {
+                return langEntries.size();
+            }
+
+            @Override
+            public String get(int index) {
+                return langEntries.get(index).getSecond();
             }
         });
     }
@@ -263,6 +226,27 @@ public class SettingsController extends DefaultController {
                 SettingsUtils.Region region = regions[index];
                 Log.info("Selected region: " + region);
                 SettingsUtils.setRegion(region);
+            }
+        });
+        String langCode = SettingsUtils.getLanguage();
+        if (langEntries != null && langCode != null){
+            int i = 0;
+            for (Pair<String, String> le : langEntries){
+                if (langCode.equals(le.getFirst())){
+                    LANG_COMBO.getSelectionModel().select(i);
+                    break;
+                }
+                i++;
+            }
+        }
+        LANG_COMBO.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                int index = LANG_COMBO.getSelectionModel().getSelectedIndex();
+                String langCode = langEntries.get(index).getFirst();
+                Log.info("Selected language: " + langCode);
+                SettingsUtils.setLanguage(langCode);
+                closeWindow();
             }
         });
         BUTTON_EXTRACT.setOnAction(new EventHandler<ActionEvent>() {

@@ -7,6 +7,7 @@ import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.visual.VisiblePane;
 import com.xiaomitool.v2.language.LRes;
+import com.xiaomitool.v2.utility.utils.InetUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
@@ -35,9 +36,17 @@ public class MainWindowController extends DefaultController {
     public MainWindowController() {
     }
 
+    private String translateUrl = null;
+
     public MainWindowController(Stage primaryStage) {
         super(primaryStage);
         this.primaryStage = primaryStage;
+    }
+
+    private static MainWindowController instance = null;
+
+    public static MainWindowController getInstance(){
+        return instance;
     }
 
     @FXML
@@ -50,6 +59,12 @@ public class MainWindowController extends DefaultController {
         initOnClick();
         initVisiblePane();
         initDisclaimer();
+        initTranslateClick();
+        initText();
+        instance = this;
+    }
+
+    public void retext(){
         initText();
     }
 
@@ -60,6 +75,8 @@ public class MainWindowController extends DefaultController {
             version += " (" + ToolManager.TOOL_VERSION_EX + ")";
         }
         VERSION_NUMBER.setText(version);
+        GuiUtils.tooltip(IMG_SETTINGS, LRes.TIP_WINDOW_SETTINGS);
+        translateUrl = LRes.TRANSLATED_URL.toString();
     }
 
     private void initVisiblePane() {
@@ -87,7 +104,7 @@ public class MainWindowController extends DefaultController {
                 return new Rectangle2D(5 + index * 24, 0, 14, 14);
             }
         });
-        GuiUtils.tooltip(IMG_SETTINGS, LRes.TIP_WINDOW_SETTINGS);
+
         IMG_SETTINGS.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -101,6 +118,17 @@ public class MainWindowController extends DefaultController {
             @Override
             public void handle(MouseEvent event) {
                 LoginController.loginClick();
+            }
+        });
+    }
+
+    private void initTranslateClick(){
+        TRANSLATED_LINK.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (translateUrl != null && translateUrl.startsWith("http")){
+                    InetUtils.openUrlInBrowser(translateUrl);
+                }
             }
         });
     }
