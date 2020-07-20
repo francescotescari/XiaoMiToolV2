@@ -173,10 +173,9 @@ public class GuiUtils {
             public void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 setFont(Font.font(this.getFont().getName(), fontSize));
+                setAlignment(Pos.CENTER);
                 if (item != null) {
                     setText(closedFormat.toString(item));
-                    setAlignment(Pos.CENTER_LEFT);
-
                 }
             }
         });

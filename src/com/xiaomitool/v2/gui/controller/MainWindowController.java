@@ -75,6 +75,8 @@ public class MainWindowController extends DefaultController {
             version += " (" + ToolManager.TOOL_VERSION_EX + ")";
         }
         VERSION_NUMBER.setText(version);
+        TRANSLATED_LINK.setText(LRes.TRANSLATOR.toString());
+        LOGIN_LINK.setText(LRes.LOGIN.toString());
         GuiUtils.tooltip(IMG_SETTINGS, LRes.TIP_WINDOW_SETTINGS);
         translateUrl = LRes.TRANSLATED_URL.toString();
     }

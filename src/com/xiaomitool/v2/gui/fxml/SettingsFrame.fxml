@@ -103,7 +103,7 @@
                               </VBox>
                               <HBox alignment="CENTER" prefHeight="28.0" prefWidth="420.0">
                                  <children>
-                                    <CheckBox fx:id="CHECK_SAVE_LOGIN" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="21.0" prefWidth="290.0" text="Keep login session token on tool exit" textAlignment="CENTER">
+                                    <CheckBox fx:id="CHECK_SAVE_LOGIN" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="21.0" prefWidth="350.0" text="Keep login session token on tool exit" textAlignment="CENTER">
                                        <font>
                                           <Font size="15.0" />
                                        </font>
@@ -115,7 +115,7 @@
                               </HBox>
                               <VBox alignment="CENTER" spacing="10.0">
                                  <children>
-                                    <Button fx:id="BUTTON_RESET" minWidth="290.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="290.0" text="Reset default settings">
+                                    <Button fx:id="BUTTON_RESET" minWidth="350.0" mnemonicParsing="false" prefHeight="30.0" text="Reset default settings">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -123,7 +123,7 @@
                                           <Insets />
                                        </VBox.margin>
                                     </Button>
-                                    <Button fx:id="BUTTON_CLEAR" minWidth="290.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="290.0" text="Clear downloads and extraction directories">
+                                    <Button fx:id="BUTTON_CLEAR" minWidth="350.0" mnemonicParsing="false" prefHeight="30.0" text="Clear downloads and extraction directories">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -131,7 +131,7 @@
                                           <Insets />
                                        </VBox.margin>
                                     </Button>
-                                    <Button fx:id="BUTTON_FEEDBACK" minWidth="290.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="290.0" text="Send feedback">
+                                    <Button fx:id="BUTTON_FEEDBACK" minWidth="350.0" mnemonicParsing="false" prefHeight="30.0" text="Send feedback">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -139,12 +139,12 @@
                                           <Insets />
                                        </VBox.margin>
                                     </Button>
-                                    <ComboBox fx:id="REGION_COMBO" prefHeight="30.0" prefWidth="290.0" promptText="Select your region">
+                                    <ComboBox fx:id="REGION_COMBO" prefHeight="30.0" prefWidth="350.0" promptText="Select your region">
                                        <VBox.margin>
                                           <Insets />
                                        </VBox.margin>
                                     </ComboBox>
-                                    <ComboBox fx:id="LANG_COMBO" prefHeight="30.0" prefWidth="290.0" promptText="Select your language" />
+                                    <ComboBox fx:id="LANG_COMBO" prefHeight="30.0" prefWidth="350.0" promptText="Select your language" />
                                  </children>
                                  <VBox.margin>
                                     <Insets />

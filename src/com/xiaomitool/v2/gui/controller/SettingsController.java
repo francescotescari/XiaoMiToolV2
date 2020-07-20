@@ -158,6 +158,7 @@ public class SettingsController extends DefaultController {
         LABEL_EXTRACT.setText(LRes.SETTINGS_EXTRACT_DIR.toString());
         BUTTON_DOWNLOAD.setText(LRes.CHOOSE.toString());
         BUTTON_CLEAR.setText(LRes.SETTINGS_CLEAR.toString());
+        BUTTON_RESET.setText(LRes.SETTINGS_RESET.toString());
         BUTTON_EXTRACT.setText(LRes.CHOOSE.toString());
         CHECK_SAVE_LOGIN.setText(LRes.SETTINGS_SAVE_SESSION.toString());
         BUTTON_FEEDBACK.setText(LRes.SEND_FEEDBACK.toString());

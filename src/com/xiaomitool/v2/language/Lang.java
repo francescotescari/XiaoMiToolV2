@@ -7,6 +7,7 @@ import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.utility.Pair;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
@@ -21,6 +22,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
@@ -88,7 +90,7 @@ public class Lang {
         for (LRes l : LRes.values()) {
             Element el = doc.createElement(STRING_ELEMNENT_NAME);
             el.setAttribute(STRING_ID, l.getKey());
-            el.setTextContent(l.toEnglish());
+            el.setTextContent(l.toEnglish().replace("\n","\\n"));
             root.appendChild(el);
         }
         DOMSource source = new DOMSource(doc);
@@ -162,8 +164,11 @@ public class Lang {
         if (rightHash != null){
             boolean needToDownload = true;
             if (present){
-                //TODO CHECK LOCAL FILE HASH
-                needToDownload = false;
+                String md5 = "";
+                try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(localFile.toFile()))) {
+                    md5 = DigestUtils.md5Hex(in);
+                }
+                needToDownload = !rightHash.equalsIgnoreCase(md5);
             }
             if (needToDownload){
                 downloadLangFile(langCode, localFile);
@@ -177,12 +182,11 @@ public class Lang {
     }
 
     private static void downloadLangFile(String langCode, Path destination) throws Exception{
+        Log.info("Downloading lang file: "+langCode);
         EasyResponse response = EasyHttp.get(langHost+"/"+langCode+".xml");
         if (!response.isAllRight()){
             throw new Exception("Failed to download the lang file: "+response.getCode());
         }
-        String a = response.getBody();
-        System.out.println(a);
         try (FileWriter writer = new FileWriter(destination.toFile())){
             writer.write(response.getBody());
         }
