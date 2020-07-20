@@ -127,7 +127,7 @@ public class RebootDevice {
                         return;
                     } catch (InstallException e) {
                         ButtonPane buttonPane = new ButtonPane(LRes.TRY_AGAIN, LRes.ABORT);
-                        buttonPane.setContentText(LRes.REBOOT_RECOVERY_FAILED.toString(e.getMessage()));
+                        buttonPane.setContentText(LRes.REBOOT_STATUS_FAILED.toString(Device.Status.RECOVERY.toString(), "+", Device.Status.RECOVERY.toString(), e.getMessage()));
                         DeviceManager.addMessageReceiver(buttonPane.getIdClickReceiver());
                         WindowManager.setMainContent(buttonPane, false);
                         int click = buttonPane.waitClick();
@@ -203,7 +203,7 @@ public class RebootDevice {
                         return;
                     } catch (Exception e) {
                         ButtonPane buttonPane = new ButtonPane(LRes.TRY_AGAIN, LRes.ABORT);
-                        buttonPane.setContentText(LRes.REBOOT_BOOTLOADER_FAILED.toString(e.getMessage()));
+                        buttonPane.setContentText(LRes.REBOOT_STATUS_FAILED.toString(Device.Status.FASTBOOT.toString(), "-", Device.Status.FASTBOOT.toString(), e.getMessage()));
                         DeviceManager.addMessageReceiver(buttonPane.getIdClickReceiver());
                         WindowManager.setMainContent(buttonPane, false);
                         int click = buttonPane.waitClick();
@@ -281,7 +281,7 @@ public class RebootDevice {
                         return;
                     } catch (Exception e) {
                         ButtonPane buttonPane = new ButtonPane(LRes.TRY_AGAIN, LRes.ABORT);
-                        buttonPane.setContentText(LRes.REBOOT_STOCKRECOVERY_FAILED.toString(e.getMessage()));
+                        buttonPane.setContentText(LRes.REBOOT_STATUS_FAILED.toString(Device.Status.RECOVERY.toString(), "+", Device.Status.RECOVERY.toString(), e.getMessage()));
                         DeviceManager.addMessageReceiver(buttonPane.getIdClickReceiver());
                         WindowManager.setMainContent(buttonPane, false);
                         int click = buttonPane.waitClick();

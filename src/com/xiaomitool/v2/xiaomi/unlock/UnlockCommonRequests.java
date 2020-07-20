@@ -71,11 +71,6 @@ public class UnlockCommonRequests {
         return toReturn;
     }
 
-    public static String getErrorDescription(JSONObject data){
-        //TODO
-        return "";
-    }
-
     private static HashMap<Integer, LRes> buildUnlockCodeMeaning() {
         HashMap<Integer, LRes> map = new HashMap<>();
         map.put(10000, LRes.UNL_ERR_10000);
