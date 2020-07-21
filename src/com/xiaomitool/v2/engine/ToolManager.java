@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ToolManager {
-    public static final String TOOL_VERSION = "20.3.1";
+    public static final String TOOL_VERSION = "20.7.21";
     public static final String URL_DONATION = "https://www.xiaomitool.com/V2/donate";
     public static final String TOOL_VERSION_EX = "beta";
     public static final String XMT_HOST = "https://www.xiaomitool.com/V2";
@@ -36,10 +36,10 @@ public class ToolManager {
     public static final String URL_LATEST = XMT_HOST + "/latest";
     public static final boolean DEBUG_MODE = true;
     private static boolean exiting = false;
-    private static List<Stage> activeStages = new ArrayList<>();
+    private static final List<Stage> activeStages = new ArrayList<>();
     private static String runningInstanceId = null;
     private static RunnableMessage ON_BEFORE_CLOSE = null;
-    private static RunnableMessage ASK_FEEDBACK = new RunnableMessage() {
+    private static final RunnableMessage ASK_FEEDBACK = new RunnableMessage() {
         @Override
         public int run() throws InterruptedException {
             ToolManager.setOnExitAskForFeedback(false);

@@ -78,7 +78,7 @@ public class MainWindowController extends DefaultController {
         TRANSLATED_LINK.setText(LRes.TRANSLATOR.toString());
         LOGIN_LINK.setText(LRes.LOGIN.toString());
         GuiUtils.tooltip(IMG_SETTINGS, LRes.TIP_WINDOW_SETTINGS);
-        translateUrl = LRes.TRANSLATED_URL.toString();
+        translateUrl = LRes.TRANSLATOR_URL.toString();
     }
 
     private void initVisiblePane() {

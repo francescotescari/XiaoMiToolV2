@@ -21,7 +21,7 @@ public enum LRes {
     LOGIN("Login"),
     TRANSLATED_BY("Translated by"),
     TRANSLATOR(""),
-    TRANSLATED_URL("https://www.xiaomitool.com"),
+    TRANSLATOR_URL("https://www.xiaomitool.com"),
     CHOOSE_RECOVER_DEVICE("My device is bricked\nI want to unbrick it."),
     CHOOSE_MOD_DEVICE("My device works normally\nI want to mod it."),
     SEARCHING_CONNECTED_DEVICES("Searching connected devices"),

@@ -17,7 +17,7 @@ import java.util.Map;
 public class UnlockCommonRequests {
     private static final HashMap<Integer, LRes> UNLOCK_CODE_MEANING = buildUnlockCodeMeaning();
     private static final String SID = "miui_unlocktool_client";
-    private static final String CLIENT_VERSION = "3.5.1128.45";
+    private static final String CLIENT_VERSION = "4.5.707.49";
     private static final String NONCEV2 = "/api/v2/nonce";
     private static final String USERINFOV3 = "/api/v3/unlock/userinfo";
     private static final String DEVICECLEARV3 = "/api/v2/unlock/device/clear";
