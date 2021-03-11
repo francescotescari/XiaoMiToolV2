@@ -1,8 +1,0 @@
-This tool is a computer software developed by a random guy (me) and NOT by Xiaomi.
-This tool is NOT official and is NOT recognized by Xiaomi. Xiaomi itself has nothing to do with this tool.
-This tool uses advanced procedures that might brick your device, use it at your own risk.
-This tool will send device related data (such as serial number, device model, ...) and user related data (such as userId) to Xiaomi server to use Xiaomi API in some procedures.
-This tool might void your warranty depending on your seller.
-This tool will NOT save or share any personal data, unless you clearly specify to save some on your local pc in the options.
-The whole resposability of the possible outcomes of this tool is handled by the user who decides to use it (you), not by Xiaomi, not by the developer (me).
-By using this tool, you accept that some anonymous data will be sent to the developer server to improve the tool.
