@@ -12,6 +12,8 @@ plugins {
 
     // Apply the application plugin to add support for building a CLI application.
     application
+    id("org.openjfx.javafxplugin") version "0.0.9"
+
 }
 
 repositories {
@@ -23,10 +25,20 @@ repositories {
     jcenter()
 }
 
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+javafx {
+    version = "11.0.2"
+    modules = listOf("javafx.controls", "javafx.fxml", "javafx.web", "javafx.swing")
+}
+
+
 tasks.compileJava {
     options.encoding = "UTF-8"
-    options.isFork = true
-    options.forkOptions.javaHome = File("C:\\Program Files (x86)\\Java\\jdk1.8.0_281")
 }
 
 sourceSets {
@@ -34,8 +46,6 @@ sourceSets {
         resources {
             srcDir("src/main/java")
             includes.add("**/*.*")
-            println(srcDirs)
-            println(includes)
         }
     }
 }
@@ -43,10 +53,8 @@ sourceSets {
 
 
 dependencies {
-    // This dependency is used by the application.
-    implementation("com.google.guava:guava:29.0-jre")
-
     implementation(files("./lib/apktool_2.4.0.jar"))
+    implementation("com.google.guava:guava:29.0-jre")
     implementation("com.google.protobuf:protobuf-java:3.7.0")
     implementation("com.mortennobel:java-image-scaling:0.8.6")
     implementation("commons-codec:commons-codec:1.11")
@@ -57,9 +65,6 @@ dependencies {
     implementation("org.apache.httpcomponents:httpclient:4.5.5")
     implementation("org.json:json:20180130")
 
-
-
-    // Use JUnit test framework
     testImplementation("junit:junit:4.13")
 }
 
