@@ -51,7 +51,7 @@ public class TextScrollPane extends StackPane {
         content.prefHeightProperty().bind(Bindings.createObjectBinding(new Callable<Number>() {
             @Override
             public Number call() throws Exception {
-                return scrollPane.getViewportBounds().getHeight();
+                return scrollPane.getViewportBounds().getHeight()-15;
             }
         }, scrollPane.viewportBoundsProperty()));
         scrollPane.setContent(content);
