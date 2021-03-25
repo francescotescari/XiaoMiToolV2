@@ -12,7 +12,6 @@ test.bat
 test.xml
 build
 buildSrc
-gradle
 .gradle
 openjfx/
 src/META-INF/
