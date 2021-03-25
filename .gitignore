@@ -1,6 +1,6 @@
 out/
-res/lang/
 res/tmp/
+res/lang
 XiaoMiTool\ V2-cache/
 .idea/workspace.xml
 _config.yml
@@ -10,3 +10,7 @@ releases/
 src_release/
 test.bat
 test.xml
+build
+buildSrc
+gradle
+.gradle
