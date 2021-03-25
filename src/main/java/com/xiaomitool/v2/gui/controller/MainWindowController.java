@@ -49,7 +49,6 @@ public class MainWindowController extends DefaultController {
 
     @FXML
     protected void initialize() {
-        saveNodes();
         initHeaderDrag(HEADER);
         setSettingsImage(IMG_SETTINGS);
         setCloseImage(IMG_CLOSE, true);
@@ -59,6 +58,7 @@ public class MainWindowController extends DefaultController {
         initDisclaimer();
         initTranslateClick();
         initText();
+        saveNodes();
         instance = this;
     }
 

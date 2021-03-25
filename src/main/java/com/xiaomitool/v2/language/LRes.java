@@ -19,6 +19,7 @@ public enum LRes {
     SETTINGS_RESET("Reset default settings"),
     CHOOSE("Choose"),
     LOGIN("Login"),
+    LOGOUT("Logout"),
     TRANSLATED_BY("Translated by"),
     TRANSLATOR(""),
     TRANSLATOR_URL("https://www.xiaomitool.com"),

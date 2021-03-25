@@ -139,20 +139,30 @@ public class LoginController extends DefaultController {
         if (userId == null) {
             userId = "";
         }
-        Label uidLabel = (Label) GuiObjects.getNode(GuiObjects.LOGIN_NUMBER);
-        if (uidLabel == null) {
-            Log.error("Cannot set userId label: null object");
-            return;
-        }
-        uidLabel.setText(userId);
+        final String uid = userId;
+
+        GuiObjects.runOnReady(GuiObjects.LOGIN_NUMBER, node -> {
+            Label uidLabel = (Label) node;
+            if (uidLabel == null) {
+                Log.error("Cannot set userId label: null object");
+            } else {
+                uidLabel.setText(uid);
+            }
+            return true;
+        });
+
         loggedIn = !userId.isEmpty();
-        String text = loggedIn ? "Logout" : "Login";
-        Hyperlink link = (Hyperlink) GuiObjects.getNode(GuiObjects.LOGIN_LINK);
-        if (link == null) {
-            Log.error("Cannot set login hyperLink: null object");
-            return;
-        }
-        link.setText(text);
+        final String text = loggedIn ? LRes.LOGOUT.toString() : LRes.LOGIN.toString();
+        GuiObjects.runOnReady(GuiObjects.LOGIN_LINK, node -> {
+            Hyperlink link = (Hyperlink) node;
+            if (link == null) {
+                Log.error("Cannot set login hyperLink: null object");
+            } else {
+                link.setText(text);
+            }
+            return true;
+        });
+
     }
 
     @Override

@@ -32,14 +32,13 @@
                         </Label>
                         <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="431.0">
                             <children>
-                                <Label fx:id="LOGIN_NUMBER" alignment="CENTER_RIGHT" prefHeight="21.0"
-                                       prefWidth="127.0">
+                                <Label fx:id="LOGIN_NUMBER" alignment="CENTER_RIGHT" prefHeight="21.0">
                                     <font>
                                         <Font size="15.0"/>
                                     </font>
                                 </Label>
                                 <Hyperlink fx:id="LOGIN_LINK" alignment="CENTER_RIGHT" prefHeight="29.0"
-                                           prefWidth="300.0" style="-fx-border-color: transparent;" text="Login">
+                                           style="-fx-border-color: transparent;" text="Login">
                                     <font>
                                         <Font size="15.0"/>
                                     </font>
