@@ -37,7 +37,7 @@
                               <Font size="15.0" />
                            </font>
                         </Label>
-                        <Hyperlink fx:id="LOGIN_LINK" alignment="CENTER_RIGHT" prefHeight="29.0" prefWidth="65.0" style="-fx-border-color: transparent;" text="Login">
+                        <Hyperlink fx:id="LOGIN_LINK" alignment="CENTER_RIGHT" prefHeight="29.0" prefWidth="300.0" style="-fx-border-color: transparent;" text="Login">
                            <font>
                               <Font size="15.0" />
                            </font>
