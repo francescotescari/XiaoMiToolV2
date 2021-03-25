@@ -22,7 +22,7 @@
                         <Insets bottom="13.0" top="13.0" />
                      </HBox.margin>
                   </ImageView>
-                  <Label prefHeight="29.0" prefWidth="402.0" text="XiaoMiTool V2 (by Francesco Tescari)" textFill="#363636">
+                  <Label prefHeight="29.0" prefWidth="402.0" text="XiaoMiTool V2" textFill="#363636">
                      <HBox.margin>
                         <Insets bottom="6.0" top="5.0" />
                      </HBox.margin>

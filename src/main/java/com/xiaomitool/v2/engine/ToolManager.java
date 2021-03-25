@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ToolManager {
-    public static final String TOOL_VERSION = "20.7.21";
+    public static final String TOOL_VERSION = "99.9.9";
     public static final String URL_DONATION = "https://www.xiaomitool.com/V2/donate";
-    public static final String TOOL_VERSION_EX = "beta";
+    public static final String TOOL_VERSION_EX = "dev";
     public static final String XMT_HOST = "https://www.xiaomitool.com/V2";
     public static final String URL_UPDATE_V2 = XMT_HOST + "/updateV2.php";
     public static final String URL_LATEST = XMT_HOST + "/latest";
