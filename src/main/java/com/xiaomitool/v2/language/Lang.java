@@ -187,6 +187,9 @@ public class Lang {
         if (!response.isAllRight()){
             throw new Exception("Failed to download the lang file: "+response.getCode());
         }
+        try {
+            Files.createDirectories(destination.getParent());
+        } catch (Exception e) { }
         try (FileWriter writer = new FileWriter(destination.toFile())){
             writer.write(response.getBody());
         }
