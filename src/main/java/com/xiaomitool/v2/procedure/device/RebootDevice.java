@@ -88,7 +88,7 @@ public class RebootDevice {
         };
     }
 
-    public static RInstall rebootStockRecoveryManual(){
+    public static RInstall rebootStockRecoveryManual() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -98,12 +98,12 @@ public class RebootDevice {
         };
     }
 
-    public static RInstall requireStockRecoveryManual(){
+    public static RInstall requireStockRecoveryManual() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
                 Device device = Procedures.requireDevice(runner);
-                while (!Device.Status.SIDELOAD.equals(device.getStatus()) && !Device.Status.RECOVERY.equals(device.getStatus())){
+                while (!Device.Status.SIDELOAD.equals(device.getStatus()) && !Device.Status.RECOVERY.equals(device.getStatus())) {
                     rebootStockRecoveryManual().run(runner);
                 }
             }

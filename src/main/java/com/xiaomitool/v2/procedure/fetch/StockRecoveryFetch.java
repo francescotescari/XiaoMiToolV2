@@ -77,8 +77,8 @@ public class StockRecoveryFetch {
                 MiuiRom.Specie romSpecie = specie.toBranch(installable.getBranch());
                 String id = idBySpecie(romSpecie == null ? specie : romSpecie);
                 chooser.add(id, installable);
-                if (enforceSameSpecie){
-                    if (!specie.equals(installable.getSpecie())){
+                if (enforceSameSpecie) {
+                    if (!specie.equals(installable.getSpecie())) {
                         throw new InstallException("Best rom found is not of the wanted specie", InstallException.Code.ROM_OTA_ERROR);
                     }
                 }
@@ -88,16 +88,16 @@ public class StockRecoveryFetch {
     }
 
 
-    private static MiuiZipRom chooseBestMiuiZipRom(Map<MiuiRom.Kind, MiuiZipRom> roms, MiuiRom.Specie wantedSpecie){
+    private static MiuiZipRom chooseBestMiuiZipRom(Map<MiuiRom.Kind, MiuiZipRom> roms, MiuiRom.Specie wantedSpecie) {
         MiuiRom.Kind[] kinds = new MiuiRom.Kind[]{MiuiRom.Kind.PACKAGE, MiuiRom.Kind.LATEST, MiuiRom.Kind.CURRENT, MiuiRom.Kind.CROSS, MiuiRom.Kind.INCREMENTAL};
         MiuiZipRom chosenRom = null, bestRom = null;
-        for (MiuiRom.Kind kind : kinds){
+        for (MiuiRom.Kind kind : kinds) {
             chosenRom = roms.get(kind);
-            if (chosenRom != null && chosenRom.hasInstallToken()){
-                if (wantedSpecie == null || wantedSpecie.equals(chosenRom.getSpecie())){
+            if (chosenRom != null && chosenRom.hasInstallToken()) {
+                if (wantedSpecie == null || wantedSpecie.equals(chosenRom.getSpecie())) {
                     return chosenRom;
                 }
-                if (bestRom == null){
+                if (bestRom == null) {
                     bestRom = chosenRom;
                 }
             }
@@ -294,8 +294,8 @@ public class StockRecoveryFetch {
                 if (zipinstallable == null) {
                     throw new InstallException("Ota response doesn't contain an installable rom data", InstallException.Code.MISSING_PROPERTY);
                 }
-                if (enforceSameSpecie){
-                    if (!specie.equals(zipinstallable.getSpecie())){
+                if (enforceSameSpecie) {
+                    if (!specie.equals(zipinstallable.getSpecie())) {
                         throw new InstallException("Best rom found is not of the wanted specie", InstallException.Code.ROM_OTA_ERROR);
                     }
                 }
@@ -358,7 +358,7 @@ public class StockRecoveryFetch {
                     throw new InstallException(e);
                 }
                 Boolean isThisMiuiProblem = (Boolean) runner.getContext(ConfirmationProcedure.IS_THIS_MIUI_CANT_INSTALL_MSG);
-                if (isThisMiuiProblem == null){
+                if (isThisMiuiProblem == null) {
                     isThisMiuiProblem = false;
                 }
                 LinkedHashSet<MiuiRom.Specie> suitableSpecies = new LinkedHashSet<>();
@@ -369,7 +369,7 @@ public class StockRecoveryFetch {
                 }
                 suitableSpecies.add(MiuiRom.Specie.CHINA_STABLE);
                 suitableSpecies.add(MiuiRom.Specie.CHINA_DEVELOPER);
-                if (!isThisMiuiProblem){
+                if (!isThisMiuiProblem) {
                     suitableSpecies.add(deviceSpecie);
                     suitableSpecies.add(deviceSpecie.toOppositeBranch());
                 }
@@ -379,10 +379,10 @@ public class StockRecoveryFetch {
         }.next();
     }
 
-    private static RNode findFirstSuitableRom(Set<MiuiRom.Specie> suitableSpecies){
+    private static RNode findFirstSuitableRom(Set<MiuiRom.Specie> suitableSpecies) {
         RInstall[] fetchProcedures = new RInstall[suitableSpecies.size()];
         int i = 0;
-        for (MiuiRom.Specie specie : suitableSpecies){
+        for (MiuiRom.Specie specie : suitableSpecies) {
             fetchProcedures[i++] = findInstallWay(specie, false);
         }
         return RNode.fallback(fetchProcedures);

@@ -4,7 +4,6 @@ import com.xiaomitool.v2.adb.AdbException;
 import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceAnswers;
 import com.xiaomitool.v2.adb.device.DeviceManager;
-import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.engine.CommonsMessages;
 import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.gui.GuiUtils;
@@ -29,7 +28,6 @@ import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.utility.*;
 import com.xiaomitool.v2.utility.utils.ArrayUtils;
-import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.xiaomi.miuithings.UnlockStatus;
 import javafx.animation.Animation;
 import javafx.application.Platform;
@@ -48,12 +46,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -698,7 +694,7 @@ public class ActionsDynamic {
             SidePane sidePane = new SidePane();
             DeviceRecoveryView deviceRecoveryView = new DeviceRecoveryView(DeviceView.DEVICE_18_9, 640);
             String nText;
-            if (rebootingText){
+            if (rebootingText) {
                 deviceRecoveryView.animateSelectThird(3000);
                 nText = LRes.ENTER_STOCK_RECOVERY_MODE.toString(LRes.OK_FINISHED.toString());
             } else {

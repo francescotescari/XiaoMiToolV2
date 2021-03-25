@@ -18,19 +18,6 @@ public abstract class RNode extends RInstall {
         this.children = children;
     }
 
-    public RInstall[] pushChildren(RInstall... children){
-        RInstall[] newChildren = new RInstall[this.children.length+children.length];
-        int i = 0;
-        for (RInstall child : this.children){
-            newChildren[i++] = child;
-        }
-        for (RInstall child : children){
-            newChildren[i++] = child;
-        }
-        this.children = newChildren;
-        return newChildren;
-    }
-
     public static RInstall setSkipOnException(RInstall install) {
         install.setFlag(FLAG_SKIPONEXCEPTION, true);
         return install;
@@ -70,6 +57,19 @@ public abstract class RNode extends RInstall {
                 }
             }
         };
+    }
+
+    public RInstall[] pushChildren(RInstall... children) {
+        RInstall[] newChildren = new RInstall[this.children.length + children.length];
+        int i = 0;
+        for (RInstall child : this.children) {
+            newChildren[i++] = child;
+        }
+        for (RInstall child : children) {
+            newChildren[i++] = child;
+        }
+        this.children = newChildren;
+        return newChildren;
     }
 
     @Override

@@ -1,162 +1,179 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.web.*?>
-
-<StackPane fx:id="WHOLE" prefHeight="540.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox alignment="TOP_CENTER" prefHeight="540.0" prefWidth="547.0">
-         <children>
-            <HBox fx:id="HEADER" prefHeight="40.0" prefWidth="1192.0" spacing="13.0">
-               <children>
-                  <ImageView fitHeight="14.0" fitWidth="42.0" opacity="0.9" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../drawable/mi.png" />
-                     </image>
-                     <HBox.margin>
-                        <Insets bottom="13.0" top="13.0" />
-                     </HBox.margin>
-                  </ImageView>
-                  <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="576.0" spacing="10.0">
-                     <children>
-                        <ImageView fx:id="IMG_CLOSE" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                           <image>
-                              <Image url="@../drawable/close.png" />
-                           </image>
-                           <viewport>
-                              <Rectangle2D height="13.0" minY="-1.0" width="11.0" />
-                           </viewport>
-                           <HBox.margin>
-                              <Insets bottom="14.0" top="14.0" />
-                           </HBox.margin>
+<?import javafx.scene.text.*?>
+<StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="WHOLE" prefHeight="540.0" prefWidth="450.0"
+           xmlns="http://javafx.com/javafx/8">
+    <children>
+        <VBox alignment="TOP_CENTER" prefHeight="540.0" prefWidth="547.0">
+            <children>
+                <HBox fx:id="HEADER" prefHeight="40.0" prefWidth="1192.0" spacing="13.0">
+                    <children>
+                        <ImageView fitHeight="14.0" fitWidth="42.0" opacity="0.9" pickOnBounds="true"
+                                   preserveRatio="true">
+                            <image>
+                                <Image url="@../drawable/mi.png"/>
+                            </image>
+                            <HBox.margin>
+                                <Insets bottom="13.0" top="13.0"/>
+                            </HBox.margin>
                         </ImageView>
-                     </children>
-                  </HBox>
-               </children>
-               <padding>
-                  <Insets left="12.0" right="12.0" />
-               </padding>
-            </HBox>
-            <ScrollPane hbarPolicy="NEVER" prefHeight="500.0" prefWidth="487.0" style="-fx-background-color: rgba(245,245,245,0); -fx-background: rgba(245,245,245,0);">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="450.0">
-                     <children>
-                        <VBox alignment="TOP_CENTER" layoutY="-5.0" prefWidth="450.0">
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
-                           </padding>
-                           <children>
-                              <VBox alignment="CENTER" prefHeight="60.0" prefWidth="417.0">
-                                 <children>
-                                    <HBox alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="417.0" spacing="20.0">
-                                       <children>
-                                          <Label fx:id="LABEL_DOWNLOAD" prefHeight="27.0" prefWidth="280.0" text="Download directory:">
-                                             <font>
-                                                <Font size="15.0" />
-                                             </font>
-                                          </Label>
-                                          <Button fx:id="BUTTON_DOWNLOAD" mnemonicParsing="false" prefHeight="29.0" prefWidth="120.0" text="Change">
-                                             <font>
-                                                <Font size="13.0" />
-                                             </font>
-                                          </Button>
-                                       </children>
-                                    </HBox>
-                                    <Label fx:id="TEXT_DOWNLOAD" prefHeight="19.0" prefWidth="433.0">
-                                       <font>
-                                          <Font size="13.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </VBox>
-                              <VBox alignment="CENTER" prefHeight="60.0" prefWidth="420.0">
-                                 <children>
-                                    <HBox alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="417.0" spacing="20.0">
-                                       <children>
-                                          <Label fx:id="LABEL_EXTRACT" prefHeight="27.0" prefWidth="280.0" text="Extraction directory:">
-                                             <font>
-                                                <Font size="15.0" />
-                                             </font>
-                                          </Label>
-                                          <Button fx:id="BUTTON_EXTRACT" mnemonicParsing="false" prefHeight="29.0" prefWidth="120.0" text="Change">
-                                             <font>
-                                                <Font size="13.0" />
-                                             </font>
-                                          </Button>
-                                       </children>
-                                    </HBox>
-                                    <Label fx:id="TEXT_EXTRACT" prefHeight="19.0" prefWidth="421.0">
-                                       <font>
-                                          <Font size="13.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </VBox>
-                              <HBox alignment="CENTER" prefHeight="28.0" prefWidth="420.0">
-                                 <children>
-                                    <CheckBox fx:id="CHECK_SAVE_LOGIN" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="21.0" prefWidth="350.0" text="Keep login session token on tool exit" textAlignment="CENTER">
-                                       <font>
-                                          <Font size="15.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets bottom="10.0" top="10.0" />
-                                       </HBox.margin>
-                                    </CheckBox>
-                                 </children>
-                              </HBox>
-                              <VBox alignment="CENTER" spacing="10.0">
-                                 <children>
-                                    <Button fx:id="BUTTON_RESET" minWidth="350.0" mnemonicParsing="false" prefHeight="30.0" text="Reset default settings">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets />
-                                       </VBox.margin>
-                                    </Button>
-                                    <Button fx:id="BUTTON_CLEAR" minWidth="350.0" mnemonicParsing="false" prefHeight="30.0" text="Clear downloads and extraction directories">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets />
-                                       </VBox.margin>
-                                    </Button>
-                                    <Button fx:id="BUTTON_FEEDBACK" minWidth="350.0" mnemonicParsing="false" prefHeight="30.0" text="Send feedback">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets />
-                                       </VBox.margin>
-                                    </Button>
-                                    <ComboBox fx:id="REGION_COMBO" prefHeight="30.0" prefWidth="350.0" promptText="Select your region">
-                                       <VBox.margin>
-                                          <Insets />
-                                       </VBox.margin>
-                                    </ComboBox>
-                                    <ComboBox fx:id="LANG_COMBO" prefHeight="30.0" prefWidth="350.0" promptText="Select your language" />
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                              </VBox>
-                           </children>
-                        </VBox>
-                     </children>
-                  </AnchorPane>
-              </content>
-            </ScrollPane>
-         </children>
-      </VBox>
-   </children>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="576.0" spacing="10.0">
+                            <children>
+                                <ImageView fx:id="IMG_CLOSE" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true"
+                                           preserveRatio="true">
+                                    <cursor>
+                                        <Cursor fx:constant="HAND"/>
+                                    </cursor>
+                                    <image>
+                                        <Image url="@../drawable/close.png"/>
+                                    </image>
+                                    <viewport>
+                                        <Rectangle2D height="13.0" minY="-1.0" width="11.0"/>
+                                    </viewport>
+                                    <HBox.margin>
+                                        <Insets bottom="14.0" top="14.0"/>
+                                    </HBox.margin>
+                                </ImageView>
+                            </children>
+                        </HBox>
+                    </children>
+                    <padding>
+                        <Insets left="12.0" right="12.0"/>
+                    </padding>
+                </HBox>
+                <ScrollPane hbarPolicy="NEVER" prefHeight="500.0" prefWidth="487.0"
+                            style="-fx-background-color: rgba(245,245,245,0); -fx-background: rgba(245,245,245,0);">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="450.0">
+                            <children>
+                                <VBox alignment="TOP_CENTER" layoutY="-5.0" prefWidth="450.0">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0"/>
+                                    </padding>
+                                    <children>
+                                        <VBox alignment="CENTER" prefHeight="60.0" prefWidth="417.0">
+                                            <children>
+                                                <HBox alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="417.0"
+                                                      spacing="20.0">
+                                                    <children>
+                                                        <Label fx:id="LABEL_DOWNLOAD" prefHeight="27.0"
+                                                               prefWidth="280.0" text="Download directory:">
+                                                            <font>
+                                                                <Font size="15.0"/>
+                                                            </font>
+                                                        </Label>
+                                                        <Button fx:id="BUTTON_DOWNLOAD" mnemonicParsing="false"
+                                                                prefHeight="29.0" prefWidth="120.0" text="Change">
+                                                            <font>
+                                                                <Font size="13.0"/>
+                                                            </font>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <Label fx:id="TEXT_DOWNLOAD" prefHeight="19.0" prefWidth="433.0">
+                                                    <font>
+                                                        <Font size="13.0"/>
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </VBox>
+                                        <VBox alignment="CENTER" prefHeight="60.0" prefWidth="420.0">
+                                            <children>
+                                                <HBox alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="417.0"
+                                                      spacing="20.0">
+                                                    <children>
+                                                        <Label fx:id="LABEL_EXTRACT" prefHeight="27.0" prefWidth="280.0"
+                                                               text="Extraction directory:">
+                                                            <font>
+                                                                <Font size="15.0"/>
+                                                            </font>
+                                                        </Label>
+                                                        <Button fx:id="BUTTON_EXTRACT" mnemonicParsing="false"
+                                                                prefHeight="29.0" prefWidth="120.0" text="Change">
+                                                            <font>
+                                                                <Font size="13.0"/>
+                                                            </font>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <Label fx:id="TEXT_EXTRACT" prefHeight="19.0" prefWidth="421.0">
+                                                    <font>
+                                                        <Font size="13.0"/>
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </VBox>
+                                        <HBox alignment="CENTER" prefHeight="28.0" prefWidth="420.0">
+                                            <children>
+                                                <CheckBox fx:id="CHECK_SAVE_LOGIN" contentDisplay="CENTER"
+                                                          mnemonicParsing="false" prefHeight="21.0" prefWidth="350.0"
+                                                          text="Keep login session token on tool exit"
+                                                          textAlignment="CENTER">
+                                                    <font>
+                                                        <Font size="15.0"/>
+                                                    </font>
+                                                    <HBox.margin>
+                                                        <Insets bottom="10.0" top="10.0"/>
+                                                    </HBox.margin>
+                                                </CheckBox>
+                                            </children>
+                                        </HBox>
+                                        <VBox alignment="CENTER" spacing="10.0">
+                                            <children>
+                                                <Button fx:id="BUTTON_RESET" minWidth="350.0" mnemonicParsing="false"
+                                                        prefHeight="30.0" text="Reset default settings">
+                                                    <font>
+                                                        <Font size="14.0"/>
+                                                    </font>
+                                                    <VBox.margin>
+                                                        <Insets/>
+                                                    </VBox.margin>
+                                                </Button>
+                                                <Button fx:id="BUTTON_CLEAR" minWidth="350.0" mnemonicParsing="false"
+                                                        prefHeight="30.0"
+                                                        text="Clear downloads and extraction directories">
+                                                    <font>
+                                                        <Font size="14.0"/>
+                                                    </font>
+                                                    <VBox.margin>
+                                                        <Insets/>
+                                                    </VBox.margin>
+                                                </Button>
+                                                <Button fx:id="BUTTON_FEEDBACK" minWidth="350.0" mnemonicParsing="false"
+                                                        prefHeight="30.0" text="Send feedback">
+                                                    <font>
+                                                        <Font size="14.0"/>
+                                                    </font>
+                                                    <VBox.margin>
+                                                        <Insets/>
+                                                    </VBox.margin>
+                                                </Button>
+                                                <ComboBox fx:id="REGION_COMBO" prefHeight="30.0" prefWidth="350.0"
+                                                          promptText="Select your region">
+                                                    <VBox.margin>
+                                                        <Insets/>
+                                                    </VBox.margin>
+                                                </ComboBox>
+                                                <ComboBox fx:id="LANG_COMBO" prefHeight="30.0" prefWidth="350.0"
+                                                          promptText="Select your language"/>
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets/>
+                                            </VBox.margin>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </ScrollPane>
+            </children>
+        </VBox>
+    </children>
 </StackPane>

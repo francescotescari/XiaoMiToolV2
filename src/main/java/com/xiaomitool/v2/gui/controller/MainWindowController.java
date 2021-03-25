@@ -20,6 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class MainWindowController extends DefaultController {
+    private static MainWindowController instance = null;
     private Stage primaryStage;
     private double stageX, stageY;
     @FXML
@@ -32,20 +33,17 @@ public class MainWindowController extends DefaultController {
     private Label LOGIN_NUMBER, VERSION_NUMBER, TEXT_TRANSLATED_BY;
     @FXML
     private BorderPane BORDER_PANE;
+    private String translateUrl = null;
 
     public MainWindowController() {
     }
-
-    private String translateUrl = null;
 
     public MainWindowController(Stage primaryStage) {
         super(primaryStage);
         this.primaryStage = primaryStage;
     }
 
-    private static MainWindowController instance = null;
-
-    public static MainWindowController getInstance(){
+    public static MainWindowController getInstance() {
         return instance;
     }
 
@@ -64,7 +62,7 @@ public class MainWindowController extends DefaultController {
         instance = this;
     }
 
-    public void retext(){
+    public void retext() {
         initText();
     }
 
@@ -124,11 +122,11 @@ public class MainWindowController extends DefaultController {
         });
     }
 
-    private void initTranslateClick(){
+    private void initTranslateClick() {
         TRANSLATED_LINK.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (translateUrl != null && translateUrl.startsWith("http")){
+                if (translateUrl != null && translateUrl.startsWith("http")) {
                     InetUtils.openUrlInBrowser(translateUrl);
                 }
             }

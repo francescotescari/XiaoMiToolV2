@@ -11,7 +11,6 @@ import com.xiaomitool.v2.procedure.fetch.StockRecoveryFetch;
 import com.xiaomitool.v2.procedure.uistuff.ChooseProcedure;
 import com.xiaomitool.v2.procedure.uistuff.ConfirmationProcedure;
 import com.xiaomitool.v2.utility.CommandClass;
-import com.xiaomitool.v2.utility.YesNoMaybe;
 
 public class RecoverInstall {
     public static RInstall recoverFastboot() {
@@ -46,7 +45,7 @@ public class RecoverInstall {
         );
     }
 
-    public static RInstall recoverDeviceOrderSubProcedures(){
+    public static RInstall recoverDeviceOrderSubProcedures() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -54,7 +53,7 @@ public class RecoverInstall {
                 Device.Status status = device.getStatus();
                 RInstall nextProcedure = null;
                 RInstall altProcedure = null;
-                if (Device.Status.FASTBOOT.equals(status)){
+                if (Device.Status.FASTBOOT.equals(status)) {
                     nextProcedure = recoverFastboot();
                     altProcedure = recoverRecovery();
                 } else if (Device.Status.RECOVERY.equals(status)) {
@@ -65,7 +64,7 @@ public class RecoverInstall {
                     nextProcedure = recoverRecovery();
                     altProcedure = recoverFastboot();
                 } else {
-                    throw new InstallException("The device is not in fastboot or recovery mode ("+ status +"), you should not use this feature", InstallException.Code.CANNOT_INSTALL);
+                    throw new InstallException("The device is not in fastboot or recovery mode (" + status + "), you should not use this feature", InstallException.Code.CANNOT_INSTALL);
                 }
                 Procedures.pushRInstallOnStack(runner, ChooseProcedure.alternativeBackupMethod(nextProcedure, altProcedure, LRes.ERROR_WHILE_RECOVERING.toString()));
             }

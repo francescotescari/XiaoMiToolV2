@@ -31,8 +31,8 @@ public class ToolManager {
     public static final String URL_UPDATE_V2 = XMT_HOST + "/updateV2.php";
     public static final String URL_LATEST = XMT_HOST + "/latest";
     public static final boolean DEBUG_MODE = true;
-    private static boolean exiting = false;
     private static final List<Stage> activeStages = new ArrayList<>();
+    private static boolean exiting = false;
     private static String runningInstanceId = null;
     private static RunnableMessage ON_BEFORE_CLOSE = null;
     private static final RunnableMessage ASK_FEEDBACK = new RunnableMessage() {
@@ -91,7 +91,7 @@ public class ToolManager {
         }
         activeStages.add(stage);
         SplashScreen splashScreen = SplashScreen.getInstance();
-        if (splashScreen != null){
+        if (splashScreen != null) {
             splashScreen.stopSplash();
         }
         stage.show();

@@ -1,15 +1,12 @@
 package com.xiaomitool.v2.gui.visual;
 
 import com.xiaomitool.v2.engine.ToolManager;
-import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.procedure.GuiListener;
 import com.xiaomitool.v2.procedure.GuiListenerAbstract;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.utility.CommandClass;
-import com.xiaomitool.v2.utility.CommandClassAbstract;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,10 +17,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 public class InstallPane extends StackPane implements GuiListenerAbstract {
 
+    private final CommandClass commandManager = new CommandClass();
     private TextStackPane textStackPane;
 
     public InstallPane() {
@@ -40,7 +37,6 @@ public class InstallPane extends StackPane implements GuiListenerAbstract {
         vBox.setAlignment(Pos.CENTER);
         super.getChildren().add(vBox);
     }
-
 
     @Override
     public void text(String message) {
@@ -101,8 +97,6 @@ public class InstallPane extends StackPane implements GuiListenerAbstract {
         }
         return this.waitCommand();
     }
-
-    private final CommandClass commandManager = new CommandClass();
 
     @Override
     public void sendCommand(CommandClass.Command cmd) {

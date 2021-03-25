@@ -45,8 +45,8 @@ public class WindowManager {
     public static final String FRAME_SETTINGS = "SettingsFrame";
     public static final double PREF_WIN_WIDTH = 860;
     public static final double PREF_WIN_HEIGHT = 860;
-    private static final String FRAME_POPUP = "Popup";
     public static final String DEFAULT_TITLE = "XiaoMiTool V2";
+    private static final String FRAME_POPUP = "Popup";
     private static final Image ICON_IMAGE = DrawableManager.getResourceImage("icon.png");
     private static final DropShadow windowDropShadow = new DropShadow(10, 1, 1, Color.gray(0.7));
     private static Stage mainStage;
@@ -84,7 +84,7 @@ public class WindowManager {
     }
 
     public static void setMainContent(Node node, boolean deleteUnder) {
-        if (node == null){
+        if (node == null) {
             throw new NullPointerException("Cannot set null node");
         }
         if (mainVisiblePane == null) {
@@ -146,7 +146,6 @@ public class WindowManager {
     public static Stage launchLogin() {
         return launchWindow(FRAME_LOGIN, new LoginController());
     }
-
 
 
     public static void launchMain(Stage primaryStage, RunnableMessage onBeforeClose) {
@@ -262,7 +261,7 @@ public class WindowManager {
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);
-        if (isMain){
+        if (isMain) {
 
         }
         ToolManager.showStage(primaryStage);
@@ -294,10 +293,10 @@ public class WindowManager {
         return mainOverlay;
     }
 
-    public static Text newText(String textValue, boolean center, double fontSize){
+    public static Text newText(String textValue, boolean center, double fontSize) {
         Text text = new Text(textValue);
-        text.setWrappingWidth(getContentWidth()-100);
-        if (center){
+        text.setWrappingWidth(getContentWidth() - 100);
+        if (center) {
             text.setTextAlignment(TextAlignment.CENTER);
         }
         text.setFont(Font.font(fontSize));
@@ -307,7 +306,6 @@ public class WindowManager {
     public static Text newText(String textValue, boolean center) {
         return newText(textValue, center, 15);
     }
-
 
 
 }

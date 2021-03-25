@@ -1,30 +1,27 @@
 package com.xiaomitool.v2.gui;
 
 import com.xiaomitool.v2.logging.Log;
-import javafx.application.Application;
 import javafx.application.Preloader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class SplashScreen extends Preloader {
     private static SplashScreen instance;
-    public static SplashScreen getInstance(){
-        return instance;
-    }
     private String title;
     private Image image;
     private Stage primaryStage, secondaryStage;
-
-    public SplashScreen(String title, Image image){
+    public SplashScreen(String title, Image image) {
         Log.debug(image);
         this.title = title;
         this.image = image;
+    }
+
+    public static SplashScreen getInstance() {
+        return instance;
     }
 
     @Override

@@ -163,7 +163,7 @@ public class AdbCommons {
     public static String raw(String device, String command) {
         return raw(device, command, 30);
     }
-    
+
     public static String raw(String device, String command, int timeout) {
         AdbRunner runner = adb_command("raw " + command, device, timeout);
         if (runner == null || runner.getExitValue() != 0) {

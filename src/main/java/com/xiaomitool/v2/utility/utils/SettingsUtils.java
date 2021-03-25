@@ -2,7 +2,6 @@ package com.xiaomitool.v2.utility.utils;
 
 import com.xiaomitool.v2.crypto.AES;
 import com.xiaomitool.v2.crypto.Hash;
-import com.xiaomitool.v2.gui.MainWindow;
 import com.xiaomitool.v2.gui.controller.MainWindowController;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.language.Lang;
@@ -182,7 +181,12 @@ public class SettingsUtils extends HashMap<String, String> {
         return selectedRegion;
     }
 
-    public static String getLanguage(){
+    public static void setRegion(Region region) {
+        selectedRegion = region;
+        instance.put(REGION, region.toString());
+    }
+
+    public static String getLanguage() {
         return instance.get(LANGUAGE);
     }
 
@@ -190,15 +194,10 @@ public class SettingsUtils extends HashMap<String, String> {
         instance.put(LANGUAGE, langCode);
         Lang.load();
         MainWindowController mainWindowController = MainWindowController.getInstance();
-        if (mainWindowController != null){
+        if (mainWindowController != null) {
             mainWindowController.retext();
         }
 
-    }
-
-    public static void setRegion(Region region) {
-        selectedRegion = region;
-        instance.put(REGION, region.toString());
     }
 
     public static String requirePCId() {
@@ -220,7 +219,6 @@ public class SettingsUtils extends HashMap<String, String> {
     public static boolean isGlobalRegion() {
         return !Region.CN.equals(getRegion());
     }
-
 
 
     public enum Region {

@@ -1,7 +1,5 @@
 package com.xiaomitool.v2.inet;
 
-import com.xiaomitool.v2.logging.Log;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 

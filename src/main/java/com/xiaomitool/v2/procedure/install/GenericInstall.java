@@ -6,7 +6,6 @@ import com.xiaomitool.v2.adb.device.DeviceManager;
 import com.xiaomitool.v2.adb.device.DeviceProperties;
 import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.engine.actions.ActionsDynamic;
-import com.xiaomitool.v2.engine.actions.ActionsStatic;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.visual.ButtonPane;
 import com.xiaomitool.v2.gui.visual.DonationPane;
@@ -255,7 +254,7 @@ public class GenericInstall {
         };
     }
 
-    public static RInstall exitTool(){
+    public static RInstall exitTool() {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -265,7 +264,7 @@ public class GenericInstall {
         };
     }
 
-    public static RInstall goBackToHome(){
+    public static RInstall goBackToHome() {
         return RNode.sequence(new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -330,7 +329,6 @@ public class GenericInstall {
     public static RInstall recoverDeviceStart() {
         return RNode.sequence(OtherProcedures.restoreInstallPane(), OtherProcedures.text(LRes.STARTING_RECOVERY_PROC.toString()), stashContext(), ManageDevice.requireDeviceCodename(), RecoverInstall.recoverDeviceOrderSubProcedures(), GenericInstall.installationSuccess());
     }
-
 
 
     public static RInstall main() {

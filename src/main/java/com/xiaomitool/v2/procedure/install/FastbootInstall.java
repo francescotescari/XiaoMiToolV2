@@ -253,14 +253,15 @@ public class FastbootInstall {
                     }
                     try {
                         UnlockCommonRequests.agreeRequest();
-                    } catch (Exception e){}
+                    } catch (Exception e) {
+                    }
                     runner.text(LRes.UNLOCK_CHECKING_DEVICE);
                     String alert = UnlockCommonRequests.deviceClear(product);
                     if (alert != null) {
                         Log.info("Unlock request device clear: " + alert);
                     }
-                } catch (Exception e){
-                    Log.warn("Pre-unlock requests failed "+e.getMessage());
+                } catch (Exception e) {
+                    Log.warn("Pre-unlock requests failed " + e.getMessage());
                     Log.exc(e);
                 }
                 ButtonPane buttonPane = new ButtonPane(LRes.CONTINUE, LRes.CANCEL);

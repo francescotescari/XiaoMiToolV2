@@ -5,7 +5,6 @@ import com.xiaomitool.v2.utility.utils.InetUtils;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class HttpQuery extends LinkedHashMap<String, Object> {
     @Override

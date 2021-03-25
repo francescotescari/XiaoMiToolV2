@@ -174,12 +174,13 @@ public class Procedures {
             stack = new LinkedList();
             runner.setContext(TO_DO_STACK, stack);
         }
-        if (stack.size() > 0){
-            Log.warn("Multiple procedures on the stack: "+stack);
+        if (stack.size() > 0) {
+            Log.warn("Multiple procedures on the stack: " + stack);
         }
         stack.addLast(install);
     }
-    public static RInstall throwRMessage(CommandClass.Command cmd){
+
+    public static RInstall throwRMessage(CommandClass.Command cmd) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -188,7 +189,7 @@ public class Procedures {
         };
     }
 
-    public static RInstall throwInstallException(InstallException exception){
+    public static RInstall throwInstallException(InstallException exception) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {

@@ -160,14 +160,7 @@ public class GuiUtils {
         return new double[]{centerX1, centerY1};
     }
 
-    public static abstract class GetViewport {
-        public boolean isPressed = false, isHover = false;
-
-        public abstract Rectangle2D get(int index);
-    }
-
-
-    public static void specialComboBox(ComboBox<String> combo, LRes closedFormat, int fontSize){
+    public static void specialComboBox(ComboBox<String> combo, LRes closedFormat, int fontSize) {
         combo.setButtonCell(new ListCell<String>() {
             @Override
             public void updateItem(String item, boolean empty) {
@@ -200,6 +193,12 @@ public class GuiUtils {
                         };
                     }
                 });
+    }
+
+    public static abstract class GetViewport {
+        public boolean isPressed = false, isHover = false;
+
+        public abstract Rectangle2D get(int index);
     }
 }
 

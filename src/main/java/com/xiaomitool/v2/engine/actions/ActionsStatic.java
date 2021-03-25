@@ -1,7 +1,6 @@
 package com.xiaomitool.v2.engine.actions;
 
 import com.xiaomitool.v2.adb.AdbCommunication;
-import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceManager;
 import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.gui.GuiUtils;
@@ -12,7 +11,6 @@ import com.xiaomitool.v2.gui.deviceView.DeviceView;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.raw.RawManager;
 import com.xiaomitool.v2.gui.visual.*;
-import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.language.Lang;
 import com.xiaomitool.v2.logging.Log;
@@ -51,7 +49,6 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import static com.xiaomitool.v2.engine.CommonsMessages.NOOP;
-import static com.xiaomitool.v2.engine.actions.ActionsDynamic.SEARCH_SELECT_DEVICES;
 
 public class ActionsStatic {
     public static final String XMT_UPDATE_FILENAME = "XiaoMiTool_update.jar";
@@ -73,12 +70,12 @@ public class ActionsStatic {
         };
     }
 
-    public static RunnableMessage OVERRIDE_UNLOCK(){
+    public static RunnableMessage OVERRIDE_UNLOCK() {
         return () -> {
             try {
                 UpdateUtils.overrideUnlockOptions(ToolManager.XMT_HOST);
-            } catch (Exception e){
-                Log.error("Failed to override unlock options: "+e.getMessage());
+            } catch (Exception e) {
+                Log.error("Failed to override unlock options: " + e.getMessage());
                 Log.exc(e);
                 return 1;
             }
@@ -208,14 +205,14 @@ public class ActionsStatic {
     public static RunnableMessage MAIN_RECOVER_DEVICE() {
         return () -> {
             int accept = RECOVERY_MODE_EXP().run();
-            if (accept == 0){
+            if (accept == 0) {
                 return MOD_CHOOSE_SCREEN().run();
             }
             return ActionsDynamic.START_PROCEDURE(null, GenericInstall.recoverMain(), null, GenericInstall.goBackToHome()).run();
         };
     }
 
-    private static RunnableMessage RECOVERY_MODE_EXP(){
+    private static RunnableMessage RECOVERY_MODE_EXP() {
         return () -> {
             ButtonPane buttonPane = new ButtonPane(LRes.CANCEL, LRes.OK_UNDERSTAND);
             buttonPane.setContentText(LRes.RECOVERY_MODE_EXP);
@@ -225,7 +222,6 @@ public class ActionsStatic {
             return click;
         };
     }
-
 
 
     public static RunnableMessage REQUIRE_INTERNET_CONNECTION() {
@@ -521,7 +517,7 @@ public class ActionsStatic {
         };
     }
 
-    public static RunnableMessage LOAD_ONLINE_LANGS(String host){
+    public static RunnableMessage LOAD_ONLINE_LANGS(String host) {
         return new RunnableMessage() {
             @Override
             public int run() throws InterruptedException {

@@ -150,7 +150,7 @@ public class ChooseProcedure {
         }.next();
     }
 
-    public static RInstall alternativeBackupMethod(RInstall originalProcedure, RInstall backupProcedure, String text){
+    public static RInstall alternativeBackupMethod(RInstall originalProcedure, RInstall backupProcedure, String text) {
         return new RInstall() {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, RMessage, InterruptedException {
@@ -158,17 +158,17 @@ public class ChooseProcedure {
                     originalProcedure.setFlag(RNode.FLAG_THROWRAWEXCEPTION, true).run(runner);
                 } catch (InstallException exception) {
                     ButtonPane buttonPane = new ButtonPane(LRes.DETAILS, LRes.ALTERNATIVE);
-                    buttonPane.setContentText(text+"\n\n"+LRes.PROCEDURE_EXC_DETAILS.toString(exception.getCode().toString(), exception.getMessage())+"\n\n"+LRes.ALTERNATIVE_PROCEDURE_EXP.toString(LRes.DETAILS, LRes.ALTERNATIVE));
+                    buttonPane.setContentText(text + "\n\n" + LRes.PROCEDURE_EXC_DETAILS.toString(exception.getCode().toString(), exception.getMessage()) + "\n\n" + LRes.ALTERNATIVE_PROCEDURE_EXP.toString(LRes.DETAILS, LRes.ALTERNATIVE));
                     WindowManager.setMainContent(buttonPane, false);
                     int click = buttonPane.waitClick();
                     WindowManager.removeTopContent();
-                    if (click == 0){
+                    if (click == 0) {
                         throw exception;
                     } else {
                         backupProcedure.run(runner);
                     }
-                } catch (RMessage msg){
-                    if (!CommandClass.Command.ALTERNATIVE.equals(msg.getCmd())){
+                } catch (RMessage msg) {
+                    if (!CommandClass.Command.ALTERNATIVE.equals(msg.getCmd())) {
                         throw msg;
                     }
                     backupProcedure.run(runner);

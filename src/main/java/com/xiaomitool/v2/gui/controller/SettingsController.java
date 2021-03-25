@@ -1,6 +1,5 @@
 package com.xiaomitool.v2.gui.controller;
 
-import com.xiaomitool.v2.crypto.Hash;
 import com.xiaomitool.v2.engine.ToolManager;
 import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.PopupWindow;
@@ -22,7 +21,10 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
@@ -50,7 +52,7 @@ public class SettingsController extends DefaultController {
     private StackPane WHOLE;
     @FXML
     private ComboBox<String> REGION_COMBO, LANG_COMBO;
-
+    private List<Pair<String, String>> langEntries;
 
     public static PopupWindow getFeedbackPopupWindow() {
         if (feedbackPopup == null) {
@@ -141,8 +143,6 @@ public class SettingsController extends DefaultController {
         GuiUtils.specialComboBox(LANG_COMBO, LRes.SELECTED_LANG, 14);
     }
 
-    private List<Pair<String, String>> langEntries;
-
     private void initTexts() {
         LABEL_DOWNLOAD.setText(LRes.SETTINGS_DOWNLOAD_DIR.toString());
         LABEL_EXTRACT.setText(LRes.SETTINGS_EXTRACT_DIR.toString());
@@ -220,10 +220,10 @@ public class SettingsController extends DefaultController {
             }
         });
         String langCode = SettingsUtils.getLanguage();
-        if (langEntries != null && langCode != null){
+        if (langEntries != null && langCode != null) {
             int i = 0;
-            for (Pair<String, String> le : langEntries){
-                if (langCode.equals(le.getFirst())){
+            for (Pair<String, String> le : langEntries) {
+                if (langCode.equals(le.getFirst())) {
                     LANG_COMBO.getSelectionModel().select(i);
                     break;
                 }

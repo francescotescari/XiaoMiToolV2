@@ -7,6 +7,8 @@ import com.xiaomitool.v2.utility.CommandClass;
 public abstract class GuiListener implements GuiListenerAbstract {
 
 
+    private final CommandClass msgManager = new CommandClass();
+
     public abstract void toast(String message);
 
     public void toast(LRes msg) {
@@ -26,7 +28,6 @@ public abstract class GuiListener implements GuiListenerAbstract {
         }
         return this.waitCommand();
     }
-    private final CommandClass msgManager = new CommandClass();
 
     @Override
     public void sendCommand(CommandClass.Command cmd) {

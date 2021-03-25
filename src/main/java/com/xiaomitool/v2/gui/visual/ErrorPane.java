@@ -1,6 +1,5 @@
 package com.xiaomitool.v2.gui.visual;
 
-import com.xiaomitool.v2.gui.GuiUtils;
 import com.xiaomitool.v2.gui.WindowManager;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.language.LRes;
@@ -21,8 +20,8 @@ import javafx.scene.text.TextAlignment;
 
 public class ErrorPane extends ButtonPane {
     private static Image ERROR_IMAGE;
-    private StackPane textZone, titleZone;
     private final VBox children = new VBox();
+    private StackPane textZone, titleZone;
 
     public ErrorPane(String... texts) {
         super(texts);

@@ -21,6 +21,7 @@ import java.util.Set;
 public class UpdateUtils {
     private static final String BLOCK_VERSION = "0.0.0";
     private static final String ALIVE_YEAH = "what_a_nice_time_to_be_alive";
+    private static boolean OPTIONS_OVERRODE = false;
 
     public static UpdateStatus checkForUpdatesV2(String urlUpdateV2, String toolVersion, String requireHashedPCId) throws Exception {
         JSONObject jsonObject = new JSONObject(EasyHttp.get(urlUpdateV2 + "?i=" + requireHashedPCId + "&v=" + toolVersion + "&p=" + ResourcesConst.getOSName()).getBody());
@@ -136,19 +137,18 @@ public class UpdateUtils {
         System.out.flush();
     }
 
-    private static boolean OPTIONS_OVERRODE = false;
     public static void overrideUnlockOptions(String host) throws CustomHttpException, JSONException {
-        if (OPTIONS_OVERRODE){
+        if (OPTIONS_OVERRODE) {
             return;
         }
-        String url = host+"/override_unlock.php";
+        String url = host + "/override_unlock.php";
         String res = EasyHttp.get(url).getBody();
         JSONObject object = new JSONObject(res);
         UnlockCommonRequests.overrideClientVersion(object.optString("client", null));
         JSONObject unlock = object.optJSONObject("unlock");
-        if (unlock != null){
+        if (unlock != null) {
             HashMap<String, Object> hm = new HashMap<>();
-            for (String k : unlock.keySet()){
+            for (String k : unlock.keySet()) {
                 hm.put(k, object.get(k));
             }
             UnlockCommonRequests.overrideUnlockOptions(hm);

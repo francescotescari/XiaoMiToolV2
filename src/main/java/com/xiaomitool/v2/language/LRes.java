@@ -312,7 +312,7 @@ public enum LRes {
     public String toEnglish(Object... args) {
         try {
             return String.format(text, args);
-        } catch (Exception e){
+        } catch (Exception e) {
             return text;
         }
     }

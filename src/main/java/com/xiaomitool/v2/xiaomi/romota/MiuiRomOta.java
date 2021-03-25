@@ -165,7 +165,7 @@ public class MiuiRomOta {
             String token = object.getString(OTA_TOKEN);
             String branch = object.getString(OTA_BRANCH);
             String descriptionUrl = object.optString(OTA_DESCRIPTION_URL, null);
-            Branch bbranch  = Branch.fromCode(branch);
+            Branch bbranch = Branch.fromCode(branch);
             return new MiuiZipRom(filename, new MiuiVersion(s_version), bbranch, new Codebase(s_codebase), md5, token, kind, descriptionUrl, specie.toBranch(bbranch));
         } catch (Exception e) {
             return new MiuiZipRom(true);

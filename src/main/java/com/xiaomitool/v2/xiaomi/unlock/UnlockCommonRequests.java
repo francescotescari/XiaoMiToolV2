@@ -29,18 +29,18 @@ public class UnlockCommonRequests {
     private static String OVERRIDE_CLIENT_VERSION = null;
     private static Map<String, Object> OVERRIDE_UNLOCK_REQUEST = null;
 
-    private static String getClientVersion(){
-        if (OVERRIDE_CLIENT_VERSION != null){
+    private static String getClientVersion() {
+        if (OVERRIDE_CLIENT_VERSION != null) {
             return OVERRIDE_CLIENT_VERSION;
         }
         return CLIENT_VERSION;
     }
 
-    public static void overrideClientVersion(String version){
+    public static void overrideClientVersion(String version) {
         OVERRIDE_CLIENT_VERSION = version;
     }
 
-    public static void overrideUnlockOptions(Map<String, Object> overrideFields){
+    public static void overrideUnlockOptions(Map<String, Object> overrideFields) {
         OVERRIDE_UNLOCK_REQUEST = overrideFields;
     }
 
@@ -200,8 +200,8 @@ public class UnlockCommonRequests {
         pp.put("pcId", keystore.getPcId());
         pp.put("region", "");
         pp.put("uid", keystore.getUserId());
-        if (OVERRIDE_UNLOCK_REQUEST != null){
-            for (Map.Entry<String, Object> entry : OVERRIDE_UNLOCK_REQUEST.entrySet()){
+        if (OVERRIDE_UNLOCK_REQUEST != null) {
+            for (Map.Entry<String, Object> entry : OVERRIDE_UNLOCK_REQUEST.entrySet()) {
                 pp.put(entry.getKey(), entry.getValue());
             }
         }

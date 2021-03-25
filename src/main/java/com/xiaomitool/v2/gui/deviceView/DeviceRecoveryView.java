@@ -57,7 +57,7 @@ public class DeviceRecoveryView extends DeviceView implements Animatable {
         });
     }
 
-    public void animateSelectThird(long duration){
+    public void animateSelectThird(long duration) {
         final DeviceRecoveryView view = this;
         this.animateSelectThird(duration, new Runnable() {
             @Override
@@ -69,7 +69,7 @@ public class DeviceRecoveryView extends DeviceView implements Animatable {
         });
     }
 
-    public void animateTurnOnSelectThird(long duration, Runnable callback){
+    public void animateTurnOnSelectThird(long duration, Runnable callback) {
         setContent(Color.BLACK);
         Animation anim = this.setClickPower(3);
         Animation anim2 = this.setClickVolumeUp(3);
@@ -87,7 +87,7 @@ public class DeviceRecoveryView extends DeviceView implements Animatable {
         });
     }
 
-    public void animateTurnOnSelectThird(long duration){
+    public void animateTurnOnSelectThird(long duration) {
         final DeviceRecoveryView view = this;
         animateTurnOnSelectThird(duration, new Runnable() {
             @Override
