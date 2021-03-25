@@ -16,7 +16,6 @@ import com.xiaomitool.v2.inet.CustomHttpException;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.language.Lang;
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
@@ -66,7 +65,6 @@ public class ActionsStatic {
                 System.exit(0);
                 return 0;
             }
-            LiveFeedbackEasy.sendOpen(ResourcesConst.getLogString(), null);
             Log.info("Disclaimer accepted");
             CHECK_FOR_UPDATES_V2().run();
             REQUIRE_REGION().run();

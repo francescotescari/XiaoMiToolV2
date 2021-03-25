@@ -1,7 +1,6 @@
 package com.xiaomitool.v2.gui;
 
 import com.xiaomitool.v2.engine.ToolManager;
-import com.xiaomitool.v2.engine.actions.ActionsStatic;
 import com.xiaomitool.v2.gui.controller.*;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.gui.fxml.FxmlManager;
@@ -9,7 +8,6 @@ import com.xiaomitool.v2.gui.visual.OverlayPane;
 import com.xiaomitool.v2.gui.visual.ToastPane;
 import com.xiaomitool.v2.gui.visual.VisiblePane;
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.logging.feedback.LogSender;
 import com.xiaomitool.v2.utility.Pointer;
 import com.xiaomitool.v2.utility.RunnableMessage;
 import com.xiaomitool.v2.utility.SilentCompleteFuture;

@@ -4,11 +4,9 @@ import com.xiaomitool.v2.adb.device.Device;
 import com.xiaomitool.v2.adb.device.DeviceManager;
 import com.xiaomitool.v2.gui.visual.InstallPane;
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.procedure.install.GenericInstall;
 import com.xiaomitool.v2.procedure.install.InstallException;
 import com.xiaomitool.v2.rom.Installable;
-import com.xiaomitool.v2.utility.CommandClass;
 import com.xiaomitool.v2.utility.CommandClass.Command;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import javafx.scene.layout.Pane;
@@ -25,7 +23,6 @@ public class ProcedureRunner extends GuiListener {
     private GuiListenerAbstract listener;
     private Pane afterExeptionPane;
     private RInstall runnableInstall;
-    private boolean sendFeedback = true;
     private RInstall restarter = null;
     private int spaces = 0;
     private HashMap<String, Object> context = new HashMap<>();
@@ -95,11 +92,7 @@ public class ProcedureRunner extends GuiListener {
         }
         Log.error(this.getStackStrace());
         Command out;
-        if (sendFeedback) {
-            out = listener.exception(exception, () -> LiveFeedbackEasy.sendInstallException(exceptionFinal, ProcedureRunner.this));
-        } else {
-            out = listener.exception(exception, null);
-        }
+        out = listener.exception(exception, null);
         if (Command.ABORT.equals(out)) {
             throw new RMessage(out);
         }

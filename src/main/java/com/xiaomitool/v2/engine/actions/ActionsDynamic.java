@@ -20,7 +20,6 @@ import com.xiaomitool.v2.gui.other.DeviceTableEntry;
 import com.xiaomitool.v2.gui.visual.*;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.procedure.ProcedureRunner;
 import com.xiaomitool.v2.procedure.RInstall;
 import com.xiaomitool.v2.procedure.RMessage;
@@ -581,20 +580,6 @@ public class ActionsDynamic {
         return new RunnableMessage() {
             @Override
             public int run() throws InterruptedException {
-                if (startFromHere == null && device != null) {
-                    try {
-                        DeviceProperties properties = device.getDeviceProperties();
-                        HashMap<String, String> logginProps = new HashMap<>();
-                        logginProps.put("d", String.valueOf(properties.getCodename(false)));
-                        logginProps.put("c", String.valueOf(properties.get(DeviceProperties.CODEBASE)));
-                        logginProps.put("v", String.valueOf(properties.get(DeviceProperties.FULL_VERSION)));
-                        logginProps.put("bs", String.valueOf(device.getAnswers().getUnlockStatus()));
-                        logginProps.put("sn", String.valueOf(device.getAnswers().getSerialNumber()));
-                        logginProps.put("rg", String.valueOf(SettingsUtils.getRegion()));
-                        LiveFeedbackEasy.sendLog("DATA", new JSONObject(logginProps).toString());
-                    } catch (Exception ignored) {
-                    }
-                }
                 Log.info("Starting installation part main procedure");
                 InstallPane installPane;
                 ProcedureRunner thisRunner;

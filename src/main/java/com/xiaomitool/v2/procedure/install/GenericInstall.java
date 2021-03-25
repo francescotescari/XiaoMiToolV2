@@ -14,7 +14,6 @@ import com.xiaomitool.v2.gui.visual.ProgressPane;
 import com.xiaomitool.v2.gui.visual.SmilePane;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
 import com.xiaomitool.v2.procedure.*;
 import com.xiaomitool.v2.procedure.device.ManageDevice;
 import com.xiaomitool.v2.procedure.device.OtherProcedures;
@@ -135,8 +134,6 @@ public class GenericInstall {
             @Override
             public void run(ProcedureRunner runner) throws InstallException, InterruptedException {
                 ToolManager.setOnExitAskForFeedback(false);
-                Installable installable = (Installable) runner.getContext(Procedures.INSTALLABLE);
-                LiveFeedbackEasy.sendSuccess(String.valueOf(installable), runner.getStackStrace());
                 Log.info("Installation succesful, showing donation message");
                 DeviceManager.stopScanThreads();
                 DonationPane donationPane = new DonationPane();

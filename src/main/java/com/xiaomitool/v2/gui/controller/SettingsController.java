@@ -11,38 +11,26 @@ import com.xiaomitool.v2.gui.visual.ToastPane;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.language.Lang;
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.logging.feedback.LogSender;
 import com.xiaomitool.v2.utility.Pair;
 import com.xiaomitool.v2.utility.RunnableMessage;
 import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableListBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
-import javafx.util.Callback;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class SettingsController extends DefaultController {
     private static final OverlayPane settingsOverlayPane = new OverlayPane();
@@ -63,6 +51,7 @@ public class SettingsController extends DefaultController {
     @FXML
     private ComboBox<String> REGION_COMBO, LANG_COMBO;
 
+
     public static PopupWindow getFeedbackPopupWindow() {
         if (feedbackPopup == null) {
             feedbackPopup = new PopupWindow(500, 400);
@@ -71,11 +60,12 @@ public class SettingsController extends DefaultController {
             TextArea textArea = new TextArea();
             textArea.setPrefHeight(180);
             textArea.setFont(Font.font(14));
-            textArea.setPromptText("Please explain your problem here.\r\nWrite in English or leave blank if you just want to send the log.\r\n" + LRes.FEEDBACK_ONLY_ONE.toEnglish());
+            textArea.setPromptText("Sending feedback is not available in this build");
             textArea.setTextFormatter(new TextFormatter<String>(change ->
                     change.getControlNewText().length() <= 500 ? change : null));
             CustomButton button = new CustomButton(LRes.SEND_FEEDBACK);
             button.setFont(Font.font(15));
+            button.setDisable(true);
             textArea.setFocusTraversable(false);
             CheckBox checkBox = new CheckBox(LRes.INCLUDE_LOG_FILES.toString());
             checkBox.setSelected(true);
@@ -109,9 +99,9 @@ public class SettingsController extends DefaultController {
                                 ToastPane feedbackToast = feedbackPopup.getToastPane();
                                 ToastPane settingsToast = settingsToastPane;
                                 try {
-                                    if (!LogSender.uploadFeedback(text, sendLogFile)) {
+                                    /* if (!LogSender.uploadFeedback(text, sendLogFile)) {
                                         throw new Exception("Failed to uplaod the feedback, check the log file");
-                                    }
+                                    }*/
                                     ToolManager.setOnExitAskForFeedback(false);
                                     feedbackPopup.getController().closeWindow();
                                     Platform.runLater(() -> settingsToast.toast(LRes.FEEDBACK_SENT.toString()));
@@ -122,7 +112,7 @@ public class SettingsController extends DefaultController {
                                         Platform.runLater(() -> feedbackToast.toast(LRes.FEEDBACK_ERROR.toString()));
                                     }
                                 }
-                                LogSender.cooldownCounter(button);
+                                //LogSender.cooldownCounter(button);
                             }
                         }).start();
                     }

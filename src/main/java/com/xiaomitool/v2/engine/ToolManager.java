@@ -8,8 +8,6 @@ import com.xiaomitool.v2.gui.controller.LoginController;
 import com.xiaomitool.v2.gui.drawable.DrawableManager;
 import com.xiaomitool.v2.language.Lang;
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.logging.feedback.LiveFeedbackEasy;
-import com.xiaomitool.v2.logging.feedback.LogSender;
 import com.xiaomitool.v2.resources.ResourcesConst;
 import com.xiaomitool.v2.resources.ResourcesManager;
 import com.xiaomitool.v2.utility.RunnableMessage;
@@ -18,10 +16,8 @@ import com.xiaomitool.v2.utility.utils.SettingsUtils;
 import com.xiaomitool.v2.utility.utils.StrUtils;
 import com.xiaomitool.v2.utility.utils.UpdateUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -43,10 +39,6 @@ public class ToolManager {
         @Override
         public int run() throws InterruptedException {
             ToolManager.setOnExitAskForFeedback(false);
-            if (LogSender.isLogCooldown()) {
-                return 0;
-            }
-            ActionsStatic.ASK_FOR_FEEDBACK().run();
             return 0;
         }
     };
@@ -119,9 +111,8 @@ public class ToolManager {
             return;
         }
         exiting = true;
-        LiveFeedbackEasy.sendClose();
         saveOptions();
-        LiveFeedbackEasy.runOnFeedbackSent(() -> {
+        Platform.runLater(() -> {
             for (Stage stage : activeStages) {
                 Platform.runLater(new Runnable() {
                     @Override
@@ -139,7 +130,7 @@ public class ToolManager {
                 }
             });
             System.exit(code);
-        }, Platform.isFxApplicationThread());
+        });
     }
 
     private static void saveOptions() {
