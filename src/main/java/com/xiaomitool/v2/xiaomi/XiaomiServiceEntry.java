@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class XiaomiServiceEntry {
-    private static String URL_FIRST = "https://account.xiaomi.com/pass/serviceLogin?sid=%s&_json=true&passive=true&hidden=false";
+    private static String URL_FIRST = "https://account.xiaomi.com/pass/serviceLogin?sid=unlockApi&json=false&passive=true&hidden=false&_snsDefault=facebook&_locale=en&checkSafePhone=true";
     private XiaomiKeystore keystore;
     private String id;
     private String serviceToken;
