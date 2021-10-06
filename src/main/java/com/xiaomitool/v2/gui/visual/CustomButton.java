@@ -5,21 +5,21 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 
 public class CustomButton extends Button {
-    public CustomButton() {
-        super();
-        init();
-    }
+  public CustomButton() {
+    super();
+    init();
+  }
 
-    public CustomButton(String text) {
-        super(text);
-        init();
-    }
+  public CustomButton(String text) {
+    super(text);
+    init();
+  }
 
-    public CustomButton(LRes lRes) {
-        this(lRes.toString());
-    }
+  public CustomButton(LRes lRes) {
+    this(lRes.toString());
+  }
 
-    private void init() {
-        this.setCursor(Cursor.HAND);
-    }
+  private void init() {
+    this.setCursor(Cursor.HAND);
+  }
 }
