@@ -152,12 +152,22 @@ public class ResourcesManager {
     return currentPath;
   }
 
+  private static String getOSDir() {
+    if (ResourcesConst.isWindows()) {
+      return "win";
+    } else if (ResourcesConst.isMac()) {
+      return "mac";
+    } else {
+      return "lin";
+    }
+  }
+
   public static Path getResourcesPath() {
     return getCurrentPath().resolve(RESOURCE_DIR);
   }
 
   public static Path getToolsPath() {
-    return getResourcesPath().resolve(TOOLS_DIR);
+    return getResourcesPath().resolve(TOOLS_DIR).resolve(getOSDir());
   }
 
   public static Path getToolPath(String path) {
