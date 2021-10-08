@@ -2,7 +2,9 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'com.github.sherter.google-java-format' version '0.9'
+    id "com.github.johnrengelman.shadow" version "6.1.0"
 }
+
 
 
 repositories {
@@ -30,6 +32,15 @@ java {
 javafx {
     version = '11'
     modules = ["javafx.controls", "javafx.fxml", "javafx.web", "javafx.swing"]
+}
+
+shadowJar {
+    exclude "LICENSE.txt"
+    exclude "prebuilt/**"
+    javafx {
+        configuration = "shadow"
+    }
+    minimize()
 }
 
 dependencies {
