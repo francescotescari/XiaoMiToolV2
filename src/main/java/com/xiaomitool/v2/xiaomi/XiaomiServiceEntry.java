@@ -14,19 +14,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class XiaomiServiceEntry {
-  private static String URL_FIRST =
-      "https://account.xiaomi.com/pass/serviceLogin?sid=%s&_json=true&passive=true&hidden=false";
-  private XiaomiKeystore keystore;
-  private String id;
-  private String serviceToken;
-  private String ssecurity;
-  private String psecurity;
-  private String slh_key;
-  private String ph_key;
-  private String location;
-  private String nonce;
-  private String cUserId;
   private int code;
+  private String cUserId;
+  private String nonce;
+  private String location;
+  private String ph_key;
+  private String slh_key;
+  private String psecurity;
+  private String ssecurity;
+  private String serviceToken;
+  private String id;
+  private XiaomiKeystore keystore;
+    private static String URL_FIRST = "https://account.xiaomi.com/pass/serviceLogin?sid=unlockApi&json=false&passive=true&hidden=false&_snsDefault=facebook&_locale=en&checkSafePhone=true";
 
   public XiaomiServiceEntry(String id, XiaomiKeystore keystore) {
     this.id = id;
