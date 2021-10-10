@@ -1,0 +1,121 @@
+import org.gradle.internal.os.OperatingSystem;
+
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
+    id 'com.github.sherter.google-java-format' version '0.9'
+    id "com.github.johnrengelman.shadow" version "7.1.0"
+    id 'org.beryx.runtime' version '1.12.6'
+}
+ext {
+    XMT_VERSION = "21.10.10"
+    XMT_NAME = "XiaoMiTool V2"
+    XMT_DESC = "Unofficial tool for simple Xiaomi modding"
+    XMT_URL = "https://www.xiaomitool.com"
+}
+
+version = XMT_VERSION
+
+repositories {
+    flatDir {
+        dirs("lib")
+    }
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/java")
+            includes.add("**/*.*")
+        }
+    }
+}
+
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+
+javafx {
+    version = '17'
+    modules = ["javafx.controls", "javafx.fxml", "javafx.web", "javafx.swing"]
+}
+
+def currentOs = OperatingSystem.current()
+
+WorkResult copyResources(Object destination, OperatingSystem system) {
+    return copy {
+        from "."
+        include "res/lang/*.xml"
+        if (system.windows) {
+            include "res/tools/win/**/*.*"
+            include "res/driver/**/*.*"
+        } else if (system.macOsX) {
+            include "res/tools/mac/**/*.*"
+        } else {
+            include "res/tools/lin/**/*.*"
+        }
+        into destination
+    }
+}
+
+
+runtime {
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher {
+        noConsole = true
+    }
+    jpackage {
+        imageName = XMT_NAME
+        installerOptions += ['--description', XMT_DESC]
+        installerOptions += ['--about-url', XMT_URL]
+        installerOptions += ['--license-file', 'LICENSE']
+
+        if (currentOs.windows) {
+            installerOptions += ['--win-help-url', XMT_URL]
+            installerOptions += ['--win-menu']
+            installerOptions += ['--win-update-url', XMT_URL]
+        }
+
+        tasks.jpackageImage.doLast {
+            copyResources(imageOutputDirOrDefault.toPath().resolve(imageNameOrDefault).toFile(), currentOs)
+        }
+    }
+
+    tasks.runtime.doLast {
+        copyResources(imageDir.asFile, currentOs)
+    }
+
+}
+
+
+dependencies {
+    implementation 'com.github.iBotPeaches:Apktool:2.4.0'
+    implementation 'com.google.guava:guava:29.0-jre'
+    implementation 'com.google.protobuf:protobuf-java:3.7.0'
+    implementation 'com.mortennobel:java-image-scaling:0.8.6'
+    implementation 'commons-codec:commons-codec:1.11'
+    implementation 'commons-io:commons-io:2.6'
+    implementation 'commons-logging:commons-logging:1.2'
+    implementation 'org.apache.commons:commons-compress:1.17'
+    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.5'
+    implementation 'org.json:json:20180130'
+}
+
+tasks.compileJava {
+    options.encoding = "UTF-8"
+}
+
+
+application {
+    mainClass.set("com.xiaomitool.v2.gui.Launcher")
+    applicationName = XMT_NAME
+}
+
+

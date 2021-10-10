@@ -19,73 +19,76 @@ import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 public class TextStackPane extends StackPane {
-    private Color background = WindowManager.DEFAULT_BACKGROUND_COLOR;
-    private double paneWidth, paneHeight;
-    private double moved = 0;
-    private VBox vBox;
-    private HBox hBox;
-    private Pane movingPane;
+  private Color background = WindowManager.DEFAULT_BACKGROUND_COLOR;
+  private double paneWidth, paneHeight;
+  private double moved = 0;
+  private VBox vBox;
+  private HBox hBox;
+  private Pane movingPane;
 
-    public TextStackPane(double width, double height) {
-        this.paneWidth = width;
-        this.paneHeight = height;
-        build();
-    }
+  public TextStackPane(double width, double height) {
+    this.paneWidth = width;
+    this.paneHeight = height;
+    build();
+  }
 
-    private void build() {
-        vBox = new VBox();
-        vBox.setAlignment(Pos.TOP_CENTER);
-        vBox.setPrefHeight(-1);
-        hBox = new HBox(vBox);
-        hBox.setPrefWidth(paneWidth);
-        hBox.setAlignment(Pos.TOP_CENTER);
-        hBox.setLayoutY(paneHeight);
-        movingPane = new Pane(hBox);
-        ImageView imageView = new ImageView(new Image(DrawableManager.getPng("overlay").toString(), paneWidth, paneHeight, false, true));
-        imageView.setFitHeight(paneHeight);
-        imageView.setFitWidth(paneWidth);
-        super.getChildren().addAll(movingPane, imageView);
-        super.setPrefSize(paneWidth, paneHeight);
-        super.setMaxSize(paneWidth, paneHeight);
-        movingPane.setClip(new Rectangle(paneWidth, paneHeight));
-        super.setClip(new Rectangle(paneWidth, paneHeight));
-        super.setBackground(new Background(new BackgroundFill(background, null, null)));
-    }
+  private void build() {
+    vBox = new VBox();
+    vBox.setAlignment(Pos.TOP_CENTER);
+    vBox.setPrefHeight(-1);
+    hBox = new HBox(vBox);
+    hBox.setPrefWidth(paneWidth);
+    hBox.setAlignment(Pos.TOP_CENTER);
+    hBox.setLayoutY(paneHeight);
+    movingPane = new Pane(hBox);
+    ImageView imageView =
+        new ImageView(
+            new Image(
+                DrawableManager.getPng("overlay").toString(), paneWidth, paneHeight, false, true));
+    imageView.setFitHeight(paneHeight);
+    imageView.setFitWidth(paneWidth);
+    super.getChildren().addAll(movingPane, imageView);
+    super.setPrefSize(paneWidth, paneHeight);
+    super.setMaxSize(paneWidth, paneHeight);
+    movingPane.setClip(new Rectangle(paneWidth, paneHeight));
+    super.setClip(new Rectangle(paneWidth, paneHeight));
+    super.setBackground(new Background(new BackgroundFill(background, null, null)));
+  }
 
-    public void addText(String text) {
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(() -> addText(text));
-            return;
-        }
-        Text t = new Text(text);
-        t.setTextAlignment(TextAlignment.CENTER);
-        if (super.getWidth() > 0) {
-            t.setWrappingWidth(super.getWidth() * 0.9);
-        } else {
-            t.setWrappingWidth(paneWidth);
-        }
-        t.setFont(Font.font(16));
-        StackPane textContainer = new StackPane(t);
-        double toMove = t.getLayoutBounds().getHeight();
-        toMove += 14;
-        textContainer.setMaxHeight(toMove);
-        textContainer.setMinHeight(toMove);
-        textContainer.setPrefHeight(toMove);
-        vBox.getChildren().add(textContainer);
-        toMove += moved + 1;
-        if (toMove > 0) {
-            buildTransition(hBox, toMove).play();
-        }
-        moved = toMove;
+  public void addText(String text) {
+    if (!Platform.isFxApplicationThread()) {
+      Platform.runLater(() -> addText(text));
+      return;
     }
+    Text t = new Text(text);
+    t.setTextAlignment(TextAlignment.CENTER);
+    if (super.getWidth() > 0) {
+      t.setWrappingWidth(super.getWidth() * 0.9);
+    } else {
+      t.setWrappingWidth(paneWidth);
+    }
+    t.setFont(Font.font(16));
+    StackPane textContainer = new StackPane(t);
+    double toMove = t.getLayoutBounds().getHeight();
+    toMove += 14;
+    textContainer.setMaxHeight(toMove);
+    textContainer.setMinHeight(toMove);
+    textContainer.setPrefHeight(toMove);
+    vBox.getChildren().add(textContainer);
+    toMove += moved + 1;
+    if (toMove > 0) {
+      buildTransition(hBox, toMove).play();
+    }
+    moved = toMove;
+  }
 
-    private Transition buildTransition(Node node, double toMove) {
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(500), node);
-        translateTransition.setFromY(node.getTranslateY());
-        translateTransition.setToY(-1 * toMove);
-        translateTransition.setCycleCount(1);
-        translateTransition.setAutoReverse(false);
-        translateTransition.setInterpolator(Interpolator.EASE_OUT);
-        return translateTransition;
-    }
+  private Transition buildTransition(Node node, double toMove) {
+    TranslateTransition translateTransition = new TranslateTransition(Duration.millis(500), node);
+    translateTransition.setFromY(node.getTranslateY());
+    translateTransition.setToY(-1 * toMove);
+    translateTransition.setCycleCount(1);
+    translateTransition.setAutoReverse(false);
+    translateTransition.setInterpolator(Interpolator.EASE_OUT);
+    return translateTransition;
+  }
 }

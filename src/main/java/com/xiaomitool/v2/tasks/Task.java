@@ -2,195 +2,195 @@ package com.xiaomitool.v2.tasks;
 
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.WaitSemaphore;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 public abstract class Task {
-    protected STATUS status = STATUS.READY;
-    protected UpdateListener listener;
-    protected Thread runningThread;
-    private Object result;
-    private Exception error;
-    private long totalSize = -1;
-    private LocalDateTime timeLatestUpdate, timeStart;
-    private WaitSemaphore isNotRunning = new WaitSemaphore();
-    private long latestUpdate = -1;
-    private int nextLogStep = 0;
+  protected STATUS status = STATUS.READY;
+  protected UpdateListener listener;
+  protected Thread runningThread;
+  private Object result;
+  private Exception error;
+  private long totalSize = -1;
+  private LocalDateTime timeLatestUpdate, timeStart;
+  private WaitSemaphore isNotRunning = new WaitSemaphore();
+  private long latestUpdate = -1;
+  private int nextLogStep = 0;
 
-    public Task() {
-        this.listener = new UpdateListener.Debug();
+  public Task() {
+    this.listener = new UpdateListener.Debug();
+  }
+
+  public Task(UpdateListener listener) {
+    this.listener = listener;
+  }
+
+  public UpdateListener getListener() {
+    return listener;
+  }
+
+  public void setListener(UpdateListener listener) {
+    this.listener = listener;
+  }
+
+  void restart() throws InterruptedException {
+    Log.info("Restarting task: " + this);
+    if (runningThread != null) {
+      runningThread.join(2000);
+      start(false);
+    } else {
+      start(true);
     }
+  }
 
-    public Task(UpdateListener listener) {
-        this.listener = listener;
-    }
+  void start() {
+    start(false);
+  }
 
-    public UpdateListener getListener() {
-        return listener;
-    }
-
-    public void setListener(UpdateListener listener) {
-        this.listener = listener;
-    }
-
-    void restart() throws InterruptedException {
-        Log.info("Restarting task: " + this);
-        if (runningThread != null) {
-            runningThread.join(2000);
-            start(false);
-        } else {
-            start(true);
-        }
-    }
-
-    void start() {
-        start(false);
-    }
-
-    private void start(boolean sameThread) {
-        status = STATUS.RUNNING;
-        timeStart = LocalDateTime.now();
-        timeLatestUpdate = LocalDateTime.now();
-        Log.info("Starting task: same thread: " + sameThread + " : " + this);
-        Runnable runnable = () -> {
-            try {
-                startInternal();
-            } catch (Exception e) {
-                error(e);
-            }
+  private void start(boolean sameThread) {
+    status = STATUS.RUNNING;
+    timeStart = LocalDateTime.now();
+    timeLatestUpdate = LocalDateTime.now();
+    Log.info("Starting task: same thread: " + sameThread + " : " + this);
+    Runnable runnable =
+        () -> {
+          try {
+            startInternal();
+          } catch (Exception e) {
+            error(e);
+          }
         };
-        if (sameThread) {
-            runnable.run();
-        } else {
-            runningThread = new Thread(runnable);
-            runningThread.start();
-        }
+    if (sameThread) {
+      runnable.run();
+    } else {
+      runningThread = new Thread(runnable);
+      runningThread.start();
     }
+  }
 
-    protected void update(long done) {
-        if (done >= 0 || totalSize > 0) {
-            long percent = done / totalSize;
-            if (percent >= nextLogStep) {
-                Log.info("Task completed at " + percent + "%");
-                nextLogStep += 10;
-            }
-        }
-        this.latestUpdate = done;
-        Duration durationLatest = Duration.between(timeLatestUpdate, LocalDateTime.now());
-        timeLatestUpdate = (LocalDateTime) durationLatest.addTo(timeLatestUpdate);
-        Duration durationTotal = Duration.between(timeStart, timeLatestUpdate);
-        listener.onUpdate(done, totalSize, durationLatest, durationTotal);
+  protected void update(long done) {
+    if (done >= 0 || totalSize > 0) {
+      long percent = done / totalSize;
+      if (percent >= nextLogStep) {
+        Log.info("Task completed at " + percent + "%");
+        nextLogStep += 10;
+      }
     }
+    this.latestUpdate = done;
+    Duration durationLatest = Duration.between(timeLatestUpdate, LocalDateTime.now());
+    timeLatestUpdate = (LocalDateTime) durationLatest.addTo(timeLatestUpdate);
+    Duration durationTotal = Duration.between(timeStart, timeLatestUpdate);
+    listener.onUpdate(done, totalSize, durationLatest, durationTotal);
+  }
 
-    public long getLatestUpdate() {
-        return this.latestUpdate;
+  public long getLatestUpdate() {
+    return this.latestUpdate;
+  }
+
+  protected void finished(Object subject) {
+    Log.info("Task finished: result: " + subject + " : " + this);
+    update(totalSize);
+    result = subject;
+    this.status = STATUS.FINISHED;
+    listener.onFinished(subject);
+    isNotRunning.increase();
+    if (runningThread != null) {
+      runningThread.interrupt();
     }
+  }
 
-    protected void finished(Object subject) {
-        Log.info("Task finished: result: " + subject + " : " + this);
-        update(totalSize);
-        result = subject;
-        this.status = STATUS.FINISHED;
-        listener.onFinished(subject);
-        isNotRunning.increase();
-        if (runningThread != null) {
-            runningThread.interrupt();
-        }
+  protected void error(Exception e) {
+    Log.error("Task error: exception: " + e.getMessage() + " : " + this);
+    this.status = STATUS.ERROR;
+    this.error = e;
+    listener.onError(e);
+    isNotRunning.increase();
+  }
+
+  protected abstract void startInternal() throws Exception;
+
+  public long getTotalSize() {
+    return this.totalSize;
+  }
+
+  protected void setTotalSize(long size) {
+    this.totalSize = size;
+    listener.onStart(totalSize);
+  }
+
+  public boolean pause() {
+    if (!canPause()) {
+      return false;
     }
-
-    protected void error(Exception e) {
-        Log.error("Task error: exception: " + e.getMessage() + " : " + this);
-        this.status = STATUS.ERROR;
-        this.error = e;
-        listener.onError(e);
-        isNotRunning.increase();
+    if (pauseInternal()) {
+      Log.info("Task paused: " + this);
+      status = STATUS.PAUSED;
+      return true;
     }
+    return false;
+  }
 
-    protected abstract void startInternal() throws Exception;
-
-    public long getTotalSize() {
-        return this.totalSize;
+  public boolean stop() {
+    if (!canStop()) {
+      return false;
     }
-
-    protected void setTotalSize(long size) {
-        this.totalSize = size;
-        listener.onStart(totalSize);
+    if (stopInternal()) {
+      Log.info("Task aborted: " + this);
+      status = STATUS.ABORTED;
+      return true;
     }
+    return false;
+  }
 
-    public boolean pause() {
-        if (!canPause()) {
-            return false;
-        }
-        if (pauseInternal()) {
-            Log.info("Task paused: " + this);
-            status = STATUS.PAUSED;
-            return true;
-        }
-        return false;
-    }
+  protected void abort() {
+    this.status = STATUS.ABORTED;
+    isNotRunning.increase();
+  }
 
-    public boolean stop() {
-        if (!canStop()) {
-            return false;
-        }
-        if (stopInternal()) {
-            Log.info("Task aborted: " + this);
-            status = STATUS.ABORTED;
-            return true;
-        }
-        return false;
-    }
+  public STATUS waitFinished() throws InterruptedException {
+    isNotRunning.waitOnce();
+    return status;
+  }
 
-    protected void abort() {
-        this.status = STATUS.ABORTED;
-        isNotRunning.increase();
-    }
+  public Object getResult() {
+    return result;
+  }
 
-    public STATUS waitFinished() throws InterruptedException {
-        isNotRunning.waitOnce();
-        return status;
-    }
+  public Exception getError() {
+    return error;
+  }
 
-    public Object getResult() {
-        return result;
-    }
+  public String getStatusString() {
+    return this.status.toString();
+  }
 
-    public Exception getError() {
-        return error;
-    }
+  public boolean isFinished() {
+    return STATUS.FINISHED.equals(status);
+  }
 
-    public String getStatusString() {
-        return this.status.toString();
-    }
+  protected abstract boolean canPause();
 
-    public boolean isFinished() {
-        return STATUS.FINISHED.equals(status);
-    }
+  protected abstract boolean canStop();
 
-    protected abstract boolean canPause();
+  protected abstract boolean pauseInternal();
 
-    protected abstract boolean canStop();
+  protected abstract boolean stopInternal();
 
-    protected abstract boolean pauseInternal();
+  void startSameThread() {
+    start(true);
+  }
 
-    protected abstract boolean stopInternal();
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + " -> status: " + this.status;
+  }
 
-    void startSameThread() {
-        start(true);
-    }
-
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + " -> status: " + this.status;
-    }
-
-    public enum STATUS {
-        READY,
-        RUNNING,
-        PAUSED,
-        ERROR,
-        FINISHED,
-        ABORTED
-    }
+  public enum STATUS {
+    READY,
+    RUNNING,
+    PAUSED,
+    ERROR,
+    FINISHED,
+    ABORTED
+  }
 }
