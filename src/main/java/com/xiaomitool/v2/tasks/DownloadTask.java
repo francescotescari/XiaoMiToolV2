@@ -16,6 +16,7 @@ public class DownloadTask extends Task {
     private File destination;
     private Map<String, String> headers;
     private long totalSize = 0, downloaded;
+    private int redirectDepth = 0;
 
     public DownloadTask(UpdateListener listener, String url, String fileOutput) {
         this(listener, url, fileOutput == null ? null : new File(fileOutput));
@@ -57,7 +58,13 @@ public class DownloadTask extends Task {
         } catch (CustomHttpException e) {
             error(e);
         }
-        if (responseCode == 302) {
+        if (responseCode > 299 && responseCode < 399) {
+            if (redirectDepth > 10) {
+                error(new CustomHttpException("Too many redirects. Trying to reach " + url));
+
+                return;
+            }
+
             String location;
             try {
                 location = request.getResponseHeaders().get("location").get(0);
@@ -66,6 +73,7 @@ public class DownloadTask extends Task {
                 return;
             }
             url = location;
+            redirectDepth++;
             startInternal();
             return;
         } else if (responseCode != 200) {
