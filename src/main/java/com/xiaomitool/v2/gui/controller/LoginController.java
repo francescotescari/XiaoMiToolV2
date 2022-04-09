@@ -36,7 +36,7 @@ import java.net.URI;
 import java.util.Locale;
 
 public class LoginController extends DefaultController {
-private static final String LOGIN_URL = "https://account.xiaomi.com/pass/serviceLogin?sid=unlockApi&json=false&passive=true&hidden=false&_snsDefault=facebook&checkSafePhone=true&_locale=" + Locale.getDefault().getLanguage().toLowerCase();    
+    private static final String LOGIN_URL = "https://account.xiaomi.com/pass/serviceLogin?sid=unlockApi&json=false&passive=true&hidden=false&_snsDefault=facebook&checkSafePhone=true&_locale=" + Locale.getDefault().getLanguage().toLowerCase();    
     private static boolean loggedIn = false;
     private static Thread loginThread = null;
     @FXML
