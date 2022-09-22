@@ -1,3 +1,4 @@
 package com.xiaomitool.v2.utility;
 
-public @interface NotNull {}
+public @interface NotNull {
+}

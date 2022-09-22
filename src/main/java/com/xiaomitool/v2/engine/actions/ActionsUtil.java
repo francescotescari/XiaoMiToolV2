@@ -10,70 +10,47 @@ import javafx.application.Platform;
 import javafx.scene.text.Text;
 
 public class ActionsUtil {
-  public static void setDevicePropertiesText(Device device, Text... texts) {
-    if (!Platform.isFxApplicationThread()) {
-      Platform.runLater(
-          new Runnable() {
-            @Override
-            public void run() {
-              setDevicePropertiesText(device, texts);
-            }
-          });
-      return;
+    public static void setDevicePropertiesText(Device device, Text... texts) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    setDevicePropertiesText(device, texts);
+                }
+            });
+            return;
+        }
+        if (texts.length < 10) {
+            return;
+        }
+        DeviceProperties props = device.getDeviceProperties();
+        String brand, codename, model, serial, bootStatus, miuiVersion, androidVersion, recoveryAvailable, fastbootAvailable, serialNumber;
+        brand = props.get(DeviceProperties.BRAND, LRes.UNKNOWN).toString();
+        codename = props.getCodename(true);
+        if (codename == null) {
+            codename = LRes.UNKNOWN.toString();
+        }
+        model = props.get(DeviceProperties.MODEL, LRes.UNKNOWN).toString();
+        serial = device.getSerial();
+        UnlockStatus unlockStatus = device.getAnswers().getUnlockStatus();
+        bootStatus = (UnlockStatus.UNLOCKED.equals(unlockStatus) ? LRes.UNLOCKED : (UnlockStatus.LOCKED.equals(unlockStatus) ? LRes.LOCKED : LRes.UNKNOWN)).toString();
+        miuiVersion = props.get(DeviceProperties.FULL_VERSION, LRes.UNKNOWN).toString();
+        androidVersion = props.get(DeviceProperties.CODEBASE, LRes.UNKNOWN).toString();
+        Properties sideloadProperties = props.getSideloadProperties();
+        recoveryAvailable = !UnlockStatus.UNLOCKED.equals(unlockStatus) ? (sideloadProperties.isParsed() ? LRes.YES : (sideloadProperties.isFailed() ? LRes.NO : LRes.UNKNOWN)).toString() : LRes.IRRELEVANT.toString();
+        Properties fastbootProperties = props.getFastbootProperties();
+        fastbootAvailable = fastbootProperties.isParsed() ? LRes.YES.toString() : (fastbootProperties.isFailed() ? LRes.NO.toString() : LRes.UNKNOWN.toString());
+        SerialNumber sn = (SerialNumber) props.get(DeviceProperties.X_SERIAL_NUMBER, null);
+        serialNumber = sn != null ? sn.toHexString() : LRes.UNKNOWN.toString();
+        texts[0].setText(serial);
+        texts[1].setText(brand);
+        texts[2].setText(model);
+        texts[3].setText(codename);
+        texts[4].setText(miuiVersion);
+        texts[5].setText(androidVersion);
+        texts[6].setText(serialNumber);
+        texts[7].setText(bootStatus);
+        texts[8].setText(fastbootAvailable);
+        texts[9].setText(recoveryAvailable);
     }
-    if (texts.length < 10) {
-      return;
-    }
-    DeviceProperties props = device.getDeviceProperties();
-    String brand,
-        codename,
-        model,
-        serial,
-        bootStatus,
-        miuiVersion,
-        androidVersion,
-        recoveryAvailable,
-        fastbootAvailable,
-        serialNumber;
-    brand = props.get(DeviceProperties.BRAND, LRes.UNKNOWN).toString();
-    codename = props.getCodename(true);
-    if (codename == null) {
-      codename = LRes.UNKNOWN.toString();
-    }
-    model = props.get(DeviceProperties.MODEL, LRes.UNKNOWN).toString();
-    serial = device.getSerial();
-    UnlockStatus unlockStatus = device.getAnswers().getUnlockStatus();
-    bootStatus =
-        (UnlockStatus.UNLOCKED.equals(unlockStatus)
-                ? LRes.UNLOCKED
-                : (UnlockStatus.LOCKED.equals(unlockStatus) ? LRes.LOCKED : LRes.UNKNOWN))
-            .toString();
-    miuiVersion = props.get(DeviceProperties.FULL_VERSION, LRes.UNKNOWN).toString();
-    androidVersion = props.get(DeviceProperties.CODEBASE, LRes.UNKNOWN).toString();
-    Properties sideloadProperties = props.getSideloadProperties();
-    recoveryAvailable =
-        !UnlockStatus.UNLOCKED.equals(unlockStatus)
-            ? (sideloadProperties.isParsed()
-                    ? LRes.YES
-                    : (sideloadProperties.isFailed() ? LRes.NO : LRes.UNKNOWN))
-                .toString()
-            : LRes.IRRELEVANT.toString();
-    Properties fastbootProperties = props.getFastbootProperties();
-    fastbootAvailable =
-        fastbootProperties.isParsed()
-            ? LRes.YES.toString()
-            : (fastbootProperties.isFailed() ? LRes.NO.toString() : LRes.UNKNOWN.toString());
-    SerialNumber sn = (SerialNumber) props.get(DeviceProperties.X_SERIAL_NUMBER, null);
-    serialNumber = sn != null ? sn.toHexString() : LRes.UNKNOWN.toString();
-    texts[0].setText(serial);
-    texts[1].setText(brand);
-    texts[2].setText(model);
-    texts[3].setText(codename);
-    texts[4].setText(miuiVersion);
-    texts[5].setText(androidVersion);
-    texts[6].setText(serialNumber);
-    texts[7].setText(bootStatus);
-    texts[8].setText(fastbootAvailable);
-    texts[9].setText(recoveryAvailable);
-  }
 }

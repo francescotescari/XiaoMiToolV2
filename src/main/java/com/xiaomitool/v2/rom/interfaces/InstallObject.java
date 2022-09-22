@@ -4,15 +4,15 @@ import com.xiaomitool.v2.rom.Installable;
 import javafx.scene.image.Image;
 
 public interface InstallObject extends StatedProcedure {
-  String getTitle();
+    String getTitle();
 
-  String getText();
+    String getText();
 
-  Image getIcon();
+    Image getIcon();
 
-  String toLogString();
+    String toLogString();
 
-  Installable.Type getInstallType();
+    Installable.Type getInstallType();
 
-  boolean isProcedure();
+    boolean isProcedure();
 }

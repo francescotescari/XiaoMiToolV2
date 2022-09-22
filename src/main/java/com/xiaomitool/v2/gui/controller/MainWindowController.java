@@ -20,115 +20,116 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class MainWindowController extends DefaultController {
-  private static MainWindowController instance = null;
-  private Stage primaryStage;
-  private double stageX, stageY;
-  @FXML private HBox HEADER;
-  @FXML private ImageView IMG_SETTINGS, IMG_CLOSE, IMG_MIN;
-  @FXML private Hyperlink TRANSLATED_LINK, LOGIN_LINK;
-  @FXML private Label LOGIN_NUMBER, VERSION_NUMBER, TEXT_TRANSLATED_BY;
-  @FXML private BorderPane BORDER_PANE;
-  private String translateUrl = null;
+    private static MainWindowController instance = null;
+    private Stage primaryStage;
+    private double stageX, stageY;
+    @FXML
+    private HBox HEADER;
+    @FXML
+    private ImageView IMG_SETTINGS, IMG_CLOSE, IMG_MIN;
+    @FXML
+    private Hyperlink TRANSLATED_LINK, LOGIN_LINK;
+    @FXML
+    private Label LOGIN_NUMBER, VERSION_NUMBER, TEXT_TRANSLATED_BY;
+    @FXML
+    private BorderPane BORDER_PANE;
+    private String translateUrl = null;
 
-  public MainWindowController() {}
-
-  public MainWindowController(Stage primaryStage) {
-    super(primaryStage);
-    this.primaryStage = primaryStage;
-  }
-
-  public static MainWindowController getInstance() {
-    return instance;
-  }
-
-  @FXML
-  protected void initialize() {
-    initHeaderDrag(HEADER);
-    setSettingsImage(IMG_SETTINGS);
-    setCloseImage(IMG_CLOSE, true);
-    setMinifyImage(IMG_MIN);
-    initOnClick();
-    initVisiblePane();
-    initDisclaimer();
-    initTranslateClick();
-    initText();
-    saveNodes();
-    instance = this;
-  }
-
-  public void retext() {
-    initText();
-  }
-
-  private void initText() {
-    TEXT_TRANSLATED_BY.setText(LRes.TRANSLATED_BY.toString());
-    String version = "V" + ToolManager.TOOL_VERSION;
-    if (ToolManager.TOOL_VERSION_EX != null && !ToolManager.TOOL_VERSION_EX.isEmpty()) {
-      version += " (" + ToolManager.TOOL_VERSION_EX + ")";
+    public MainWindowController() {
     }
-    VERSION_NUMBER.setText(version);
-    TRANSLATED_LINK.setText(LRes.TRANSLATOR.toString());
-    LOGIN_LINK.setText(LRes.LOGIN.toString());
-    GuiUtils.tooltip(IMG_SETTINGS, LRes.TIP_WINDOW_SETTINGS);
-    translateUrl = LRes.TRANSLATOR_URL.toString();
-  }
 
-  private void initVisiblePane() {
-    VisiblePane pane = new VisiblePane();
-    WindowManager.setMainVisiblePane(pane);
-    BORDER_PANE.setCenter(pane.getPane());
-  }
+    public MainWindowController(Stage primaryStage) {
+        super(primaryStage);
+        this.primaryStage = primaryStage;
+    }
 
-  private void initDisclaimer() {
-    ToolRunner.start();
-  }
+    public static MainWindowController getInstance() {
+        return instance;
+    }
 
-  private void saveNodes() {
-    GuiObjects.set(GuiObjects.IMG_CLOSE, IMG_CLOSE);
-    GuiObjects.set(GuiObjects.IMG_MINIFY, IMG_MIN);
-    GuiObjects.set(GuiObjects.IMG_SETTINGS, IMG_SETTINGS);
-    GuiObjects.set(GuiObjects.LOGIN_LINK, LOGIN_LINK);
-    GuiObjects.set(GuiObjects.LOGIN_NUMBER, LOGIN_NUMBER);
-  }
+    @FXML
+    protected void initialize() {
+        initHeaderDrag(HEADER);
+        setSettingsImage(IMG_SETTINGS);
+        setCloseImage(IMG_CLOSE, true);
+        setMinifyImage(IMG_MIN);
+        initOnClick();
+        initVisiblePane();
+        initDisclaimer();
+        initTranslateClick();
+        initText();
+        saveNodes();
+        instance = this;
+    }
 
-  private void setSettingsImage(ImageView IMG_SETTINGS) {
-    GuiUtils.setViewportChange(
-        IMG_SETTINGS,
-        new GuiUtils.GetViewport() {
-          @Override
-          public Rectangle2D get(int index) {
-            return new Rectangle2D(5 + index * 24, 0, 14, 14);
-          }
-        });
+    public void retext() {
+        initText();
+    }
 
-    IMG_SETTINGS.setOnMouseClicked(
-        new EventHandler<MouseEvent>() {
-          @Override
-          public void handle(MouseEvent event) {
-            WindowManager.launchSettings();
-          }
-        });
-  }
+    private void initText() {
+        TEXT_TRANSLATED_BY.setText(LRes.TRANSLATED_BY.toString());
+        String version = "V" + ToolManager.TOOL_VERSION;
+        if (ToolManager.TOOL_VERSION_EX != null && !ToolManager.TOOL_VERSION_EX.isEmpty()) {
+            version += " (" + ToolManager.TOOL_VERSION_EX + ")";
+        }
+        VERSION_NUMBER.setText(version);
+        TRANSLATED_LINK.setText(LRes.TRANSLATOR.toString());
+        LOGIN_LINK.setText(LRes.LOGIN.toString());
+        GuiUtils.tooltip(IMG_SETTINGS, LRes.TIP_WINDOW_SETTINGS);
+        translateUrl = LRes.TRANSLATOR_URL.toString();
+    }
 
-  private void initOnClick() {
-    LOGIN_LINK.setOnMouseClicked(
-        new EventHandler<MouseEvent>() {
-          @Override
-          public void handle(MouseEvent event) {
-            LoginController.loginClick();
-          }
-        });
-  }
+    private void initVisiblePane() {
+        VisiblePane pane = new VisiblePane();
+        WindowManager.setMainVisiblePane(pane);
+        BORDER_PANE.setCenter(pane.getPane());
+    }
 
-  private void initTranslateClick() {
-    TRANSLATED_LINK.setOnMouseClicked(
-        new EventHandler<MouseEvent>() {
-          @Override
-          public void handle(MouseEvent event) {
-            if (translateUrl != null && translateUrl.startsWith("http")) {
-              InetUtils.openUrlInBrowser(translateUrl);
+    private void initDisclaimer() {
+        ToolRunner.start();
+    }
+
+    private void saveNodes() {
+        GuiObjects.set(GuiObjects.IMG_CLOSE, IMG_CLOSE);
+        GuiObjects.set(GuiObjects.IMG_MINIFY, IMG_MIN);
+        GuiObjects.set(GuiObjects.IMG_SETTINGS, IMG_SETTINGS);
+        GuiObjects.set(GuiObjects.LOGIN_LINK, LOGIN_LINK);
+        GuiObjects.set(GuiObjects.LOGIN_NUMBER, LOGIN_NUMBER);
+    }
+
+    private void setSettingsImage(ImageView IMG_SETTINGS) {
+        GuiUtils.setViewportChange(IMG_SETTINGS, new GuiUtils.GetViewport() {
+            @Override
+            public Rectangle2D get(int index) {
+                return new Rectangle2D(5 + index * 24, 0, 14, 14);
             }
-          }
         });
-  }
+
+        IMG_SETTINGS.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                WindowManager.launchSettings();
+            }
+        });
+    }
+
+    private void initOnClick() {
+        LOGIN_LINK.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                LoginController.loginClick();
+            }
+        });
+    }
+
+    private void initTranslateClick() {
+        TRANSLATED_LINK.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (translateUrl != null && translateUrl.startsWith("http")) {
+                    InetUtils.openUrlInBrowser(translateUrl);
+                }
+            }
+        });
+    }
 }
