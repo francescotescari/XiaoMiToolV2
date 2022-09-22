@@ -9,12 +9,13 @@ import java.util.Map;
 import org.apache.http.HttpEntity;
 
 public class DownloadTask extends Task {
-  private static final int DOWNLOAD_CHUNCK = 1024 * 16;
-  private static final int WRITE_CHUNCK = 1024 * 256;
-  private String url;
-  private File destination;
-  private Map<String, String> headers;
-  private long totalSize = 0, downloaded;
+    private static final int DOWNLOAD_CHUNCK = 1024 * 16;
+    private static final int WRITE_CHUNCK = 1024 * 256;
+    private String url;
+    private File destination;
+    private Map<String, String> headers;
+    private long totalSize = 0, downloaded;
+    private int redirectDepth = 0;
 
   public DownloadTask(UpdateListener listener, String url, String fileOutput) {
     this(listener, url, fileOutput == null ? null : new File(fileOutput));
@@ -110,13 +111,91 @@ public class DownloadTask extends Task {
         if (read < 0) {
           break;
         }
-        outputStream.write(buffer, 0, read);
-        downloaded += read;
-        update(downloaded);
-      } catch (IOException e) {
-        error(e);
-        return;
-      }
+        int responseCode = 200;
+        try {
+            responseCode = request.getResponseCode();
+        } catch (CustomHttpException e) {
+            error(e);
+        }
+        if (responseCode > 299 && responseCode < 399) {
+            if (redirectDepth > 10) {
+                error(new CustomHttpException("Too many redirects. Trying to reach " + url));
+
+                return;
+            }
+
+            String location;
+            try {
+                location = request.getResponseHeaders().get("location").get(0);
+            } catch (Exception e) {
+                error(e);
+                return;
+            }
+            url = location;
+            redirectDepth++;
+            startInternal();
+            return;
+        } else if (responseCode != 200) {
+            error(new CustomHttpException("Response code is not valid: " + responseCode));
+            return;
+        }
+        if (this.destination == null) {
+            this.destination = SettingsUtils.getDownloadFile(url);
+        }
+        totalSize = entity.getContentLength();
+        setTotalSize(totalSize);
+        if (this.destination.exists() && this.destination.length() == totalSize && totalSize != 0) {
+            request.abort();
+            finished(this.destination);
+            return;
+        }
+        InputStream downloadStream;
+        try {
+            downloadStream = entity.getContent();
+        } catch (IOException e) {
+            error(e);
+            return;
+        }
+        BufferedOutputStream outputStream;
+        try {
+            outputStream = new BufferedOutputStream(new FileOutputStream(destination));
+        } catch (FileNotFoundException e) {
+            error(e);
+            return;
+        }
+        byte[] buffer = new byte[DOWNLOAD_CHUNCK];
+        while (!STATUS.ABORTED.equals(status)) {
+            if (STATUS.PAUSED.equals(status)) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                continue;
+            }
+            try {
+                int read = downloadStream.read(buffer);
+                if (read < 0) {
+                    break;
+                }
+                outputStream.write(buffer, 0, read);
+                downloaded += read;
+                update(downloaded);
+            } catch (IOException e) {
+                error(e);
+                return;
+            }
+        }
+        try {
+            downloadStream.close();
+            outputStream.close();
+        } catch (IOException e) {
+            error(e);
+            return;
+        }
+        if (!STATUS.ABORTED.equals(status)) {
+            finished(destination);
+        }
     }
     try {
       downloadStream.close();
