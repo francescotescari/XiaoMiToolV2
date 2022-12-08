@@ -231,7 +231,7 @@ public class FastbootInstall {
                         throw new InstallException("Login is required for this action. Please login with your Xiaomi account", InstallException.Code.INFO_RETRIVE_FAILED);
                     }
                 }
-                String token = FastbootCommons.getvar("token", device.getSerial());
+                String token = FastbootCommons.getUnlockToken(device.getSerial());
                 Thread.sleep(400);
                 if (token == null) {
                     throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, FastbootCommons.getLastError(device.getSerial()));
@@ -274,7 +274,7 @@ public class FastbootInstall {
                 }
                 Log.info("Unlock request confirmation success");
                 while (true) {
-                    token = FastbootCommons.getvar("token", device.getSerial());
+                    token = FastbootCommons.getUnlockToken(device.getSerial());
                     if (token == null) {
                         throw new InstallException("Failed to get the device unlock token", InstallException.Code.INFO_RETRIVE_FAILED, FastbootCommons.getLastError(device.getSerial()));
                     }

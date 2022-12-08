@@ -73,6 +73,15 @@ public class FastbootCommons {
         return command_list("devices");
     }
 
+    public static String getUnlockToken(String device) {
+        String token = getvar("token", device);
+        if (token != null) {
+            return token;
+        } else {
+            return oemGetToken(device);
+        }
+    }
+
     public static List<String> getvars(String device) {
         FastbootRunner runner = command_fast("getvar all", device, DEFAULT_TIMEOUT);
         if (runner == null) {
@@ -93,6 +102,17 @@ public class FastbootCommons {
             return "";
         }
         return AdbUtils.parseFastbootVar(var, runner.getOutputString());
+    }
+
+    public static String oemGetToken(String device) {
+        FastbootRunner runner = command_fast("oem get_token", device, DEFAULT_TIMEOUT);
+        if (runner == null) {
+            return null;
+        }
+        if (runner.getExitValue() != 0) {
+            return "";
+        }
+        return AdbUtils.parseOemToken(runner.getOutputString());
     }
 
     public static List<String> oemDeviceInfo(String device) {
