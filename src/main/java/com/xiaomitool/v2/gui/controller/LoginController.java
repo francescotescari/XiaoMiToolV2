@@ -8,7 +8,6 @@ import com.xiaomitool.v2.gui.visual.TextScrollPane;
 import com.xiaomitool.v2.gui.visual.VisiblePane;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
-import com.xiaomitool.v2.utility.Pointer;
 import com.xiaomitool.v2.utility.WaitSemaphore;
 import com.xiaomitool.v2.utility.utils.CookieUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
@@ -31,9 +30,12 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import java.net.HttpCookie;
+import java.net.CookieHandler;
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class LoginController extends DefaultController {
 private static final String LOGIN_URL = "https://account.xiaomi.com/pass/serviceLogin?sid=unlockApi&json=false&passive=true&hidden=false&_snsDefault=facebook&checkSafePhone=true&_locale=" + Locale.getDefault().getLanguage().toLowerCase();    
@@ -203,26 +205,6 @@ private static final String LOGIN_URL = "https://account.xiaomi.com/pass/service
         BROWSER_AREA.add(LOADING_NODE);
         ENGINE = BROWSER.getEngine();
         ENGINE.load(LOGIN_URL);
-        Pointer pointer = new Pointer();
-        pointer.pointed = new CookieUtils.EventCookieAdd() {
-            @Override
-            public boolean run(URI url, HttpCookie cookie) {
-                String name = cookie.getName();
-                if ("passToken".equals(name)) {
-                    passToken = cookie.getValue();
-                } else if ("deviceId".equals(name)) {
-                    deviceId = cookie.getValue();
-                } else if ("userId".equals(name)) {
-                    userId = cookie.getValue();
-                }
-                if (passToken != null && userId != null && deviceId != null && !passToken.isEmpty() && !userId.isEmpty() && !deviceId.isEmpty()) {
-                    loginDone();
-                    return false;
-                }
-                return true;
-            }
-        };
-        CookieUtils.addCookieListener((CookieUtils.EventCookieAdd) pointer.pointed);
         ENGINE.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (loadingLocalContent) {
                 return;
@@ -236,8 +218,49 @@ private static final String LOGIN_URL = "https://account.xiaomi.com/pass/service
                 setErrorPage();
             } else if (Worker.State.SUCCEEDED.equals(newValue)) {
                 setBrowserPage();
+
+                scanCookies();
+                if (passToken != null && !passToken.isEmpty()
+                        && userId != null && !userId.isEmpty()
+                        && deviceId != null && !deviceId.isEmpty()) {
+                    loginDone();
+                }
             }
         });
+    }
+
+    private void scanCookies() {
+        CookieHandler cookies = CookieHandler.getDefault();
+        if (cookies == null) {
+            Log.error("disabled cookie handler");
+            return;
+        }
+
+        Map<String, List<String>> headers = Collections.emptyMap();
+        try {
+            headers = cookies.get(new URI(LOGIN_URL), headers);
+        } catch (java.net.URISyntaxException e) {
+            assert false;  // unreachable
+        } catch (java.io.IOException e) {
+            assert false;  // unreachable
+        }
+
+        for (String hdr : headers.getOrDefault("Cookie", Collections.emptyList())) {
+            for (String pair : hdr.split(";")) {
+                String[] p = pair.split("=", 2);
+                if (p.length < 2) continue;
+                String name = p[0].trim();
+                String value = p[1].trim();
+
+                if ("passToken".equals(name)) {
+                    passToken = value;
+                } else if ("userId".equals(name)) {
+                    userId = value;
+                } else if ("deviceId".equals(name)) {
+                    deviceId = value;
+                }
+            }
+        }
     }
 
     private void loginDone() {
