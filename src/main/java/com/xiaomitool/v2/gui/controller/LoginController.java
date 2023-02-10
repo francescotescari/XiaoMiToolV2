@@ -9,7 +9,6 @@ import com.xiaomitool.v2.gui.visual.VisiblePane;
 import com.xiaomitool.v2.language.LRes;
 import com.xiaomitool.v2.logging.Log;
 import com.xiaomitool.v2.utility.WaitSemaphore;
-import com.xiaomitool.v2.utility.utils.CookieUtils;
 import com.xiaomitool.v2.xiaomi.XiaomiKeystore;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
@@ -92,7 +91,7 @@ private static final String LOGIN_URL = "https://account.xiaomi.com/pass/service
     }
 
     public static void logout() {
-        CookieUtils.clear();
+        CookieHandler.setDefault(null);
         XiaomiKeystore.clear();
         setLoginNumber(null);
     }
