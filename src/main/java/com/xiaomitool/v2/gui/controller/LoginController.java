@@ -203,6 +203,7 @@ private static final String LOGIN_URL = "https://account.xiaomi.com/pass/service
         BROWSER_AREA = new VisiblePane(CONTENT);
         BROWSER_AREA.add(LOADING_NODE);
         ENGINE = BROWSER.getEngine();
+        ENGINE.setUserAgent("miNative/1.0");
         ENGINE.load(LOGIN_URL);
         ENGINE.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (loadingLocalContent) {
