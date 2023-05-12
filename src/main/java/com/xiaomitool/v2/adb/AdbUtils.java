@@ -129,6 +129,22 @@ public class AdbUtils {
         return m.group(1).trim();
     }
 
+    public static String parseOemToken(String output) {
+        if (output == null) {
+            return null;
+        }
+        Pattern pattern = Pattern.compile("\\s*" + "token" + "\\s*:\\s*([^\\n]+)");
+        Matcher m = pattern.matcher(output);
+        if (!m.find()) {
+            return null;
+        }
+        String first =  m.group(1).trim();
+        if (!m.find()) {
+            return first;
+        }
+        return first + m.group(1).trim();
+    }
+
     public static String parseFastbootOemInfo(List<String> output) {
         Pattern pattern = Pattern.compile("Device unlocked:\\s*(\\w+)", Pattern.CASE_INSENSITIVE);
         for (String line : output) {
